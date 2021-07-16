@@ -14,6 +14,7 @@ public class GradCommonConfig implements WebMvcConfigurer {
 
 	@Autowired
 	RequestInterceptor requestInterceptor;
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(requestInterceptor);
