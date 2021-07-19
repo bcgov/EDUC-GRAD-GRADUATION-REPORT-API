@@ -8,7 +8,7 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.GradCertificateTypesTran
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradReportTypesTransformer;
 import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
-import ca.bc.gov.educ.api.grad.report.util.EducGradCodeApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class CodeService {
 	GradValidation validation;
 	
 	@Autowired
-	private EducGradCodeApiConstants educGradCodeApiConstants;
+	private EducGradReportApiConstants educGradReportApiConstants;
     
     @Autowired
     RestTemplate restTemplate;

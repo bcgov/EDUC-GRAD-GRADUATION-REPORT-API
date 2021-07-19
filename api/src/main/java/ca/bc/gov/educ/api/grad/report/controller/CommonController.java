@@ -26,7 +26,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping(EducGradCommonApiConstants.GRAD_COMMON_API_ROOT_MAPPING)
+@RequestMapping(EducGradReportApiConstants.GRAD_REPORT_API_ROOT_MAPPING)
 @EnableResourceServer
 @OpenAPIDefinition(info = @Info(title = "API for Common endpoints.", description = "This API is for Reading Common endpoints.", version = "1"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_UNGRAD_REASONS_DATA","READ_GRAD_STUDENT_CAREER_DATA"})})
 public class CommonController {
@@ -42,7 +42,7 @@ public class CommonController {
     @Autowired
 	ResponseHelper response;
     
-    @GetMapping(EducGradCommonApiConstants.GET_STUDENT_CERTIFICATE_BY_CERTIFICATE_CODE_MAPPING)
+    @GetMapping(EducGradReportApiConstants.GET_STUDENT_CERTIFICATE_BY_CERTIFICATE_CODE_MAPPING)
     @PreAuthorize(PermissionsContants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Check if Certificate type is valid", description = "Check if Certificate Type is valid", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -51,7 +51,7 @@ public class CommonController {
         return response.GET(commonService.getStudentCertificate(certificateTypeCode));
     }
     
-    @GetMapping(EducGradCommonApiConstants.GET_STUDENT_REPORT_BY_REPORT_CODE_MAPPING)
+    @GetMapping(EducGradReportApiConstants.GET_STUDENT_REPORT_BY_REPORT_CODE_MAPPING)
     @PreAuthorize(PermissionsContants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Check if Report type is valid", description = "Check if Report Type is valid", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -61,7 +61,7 @@ public class CommonController {
     }
     
     
-    @PostMapping (EducGradCommonApiConstants.STUDENT_REPORT)
+    @PostMapping (EducGradReportApiConstants.STUDENT_REPORT)
     @PreAuthorize(PermissionsContants.UPDATE_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Save Student Reports", description = "Save Student Reports", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -71,7 +71,7 @@ public class CommonController {
         return response.UPDATED(commonService.saveGradReports(gradStudentReports));
     }
     
-    @GetMapping(EducGradCommonApiConstants.STUDENT_REPORT)
+    @GetMapping(EducGradReportApiConstants.STUDENT_REPORT)
     @PreAuthorize(PermissionsContants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Read Student Reports by Student ID and Report Type", description = "Read Student Reports by Student ID and Report Type", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -82,7 +82,7 @@ public class CommonController {
     	return commonService.getStudentReportByType(UUID.fromString(studentID),reportType);
     }
     
-    @PostMapping (EducGradCommonApiConstants.STUDENT_CERTIFICATE)
+    @PostMapping (EducGradReportApiConstants.STUDENT_CERTIFICATE)
     @PreAuthorize(PermissionsContants.UPDATE_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Save Student Certificate", description = "Save Student Certificate", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -92,7 +92,7 @@ public class CommonController {
         return response.UPDATED(commonService.saveGradCertificates(gradStudentCertificates));
     }
     
-    @GetMapping(EducGradCommonApiConstants.STUDENT_CERTIFICATE)
+    @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE)
     @PreAuthorize(PermissionsContants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Read Student Certificate by Student ID and Certificate Type", description = "Read Student Certificate by Student ID and Certificate Type", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -103,7 +103,7 @@ public class CommonController {
     	return commonService.getStudentCertificateByType(UUID.fromString(studentID),certificateType);
     }
     
-    @GetMapping(EducGradCommonApiConstants.STUDENT_CERTIFICATE_BY_STUDENTID)
+    @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE_BY_STUDENTID)
     @PreAuthorize(PermissionsContants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Read All  Student Certificates by Student ID", description = "Read All Student Certificates by Student ID", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})

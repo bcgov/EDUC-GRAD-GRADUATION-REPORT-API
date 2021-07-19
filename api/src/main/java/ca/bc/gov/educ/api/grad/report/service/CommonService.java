@@ -9,7 +9,7 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.GradStudentCertificatesT
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradStudentReportsTransformer;
 import ca.bc.gov.educ.api.grad.report.repository.GradStudentCertificatesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradStudentReportsRepository;
-import ca.bc.gov.educ.api.grad.report.util.EducGradCommonApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class CommonService {
     private GradStudentReportsRepository gradStudentReportsRepository;
 
     @Autowired
-	private EducGradCommonApiConstants constants;
+	private EducGradReportApiConstants constants;
     
     @Autowired
     RestTemplate restTemplate;
