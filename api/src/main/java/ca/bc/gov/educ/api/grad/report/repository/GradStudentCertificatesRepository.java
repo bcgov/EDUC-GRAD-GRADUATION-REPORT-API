@@ -12,13 +12,9 @@ import java.util.UUID;
 @Repository
 public interface GradStudentCertificatesRepository extends JpaRepository<GradStudentCertificatesEntity, UUID> {
 
-	List<GradStudentCertificatesEntity> findByPen(String pen);
-	
 	List<GradStudentCertificatesEntity> findByStudentID(UUID studentID);
-	
-   	Optional<GradStudentCertificatesEntity> findByPenAndGradCertificateTypeCode(String pen,String certificateTypeCode);
-   	
-   	Optional<GradStudentCertificatesEntity> findByStudentIDAndGradCertificateTypeCode(UUID studentID,String certificateTypeCode);
+
+	Optional<GradStudentCertificatesEntity> findByStudentIDAndGradCertificateTypeCode(UUID studentID,String certificateTypeCode);
    	
    	@Query("select c from GradStudentCertificatesEntity c where c.gradCertificateTypeCode=:certificateType")
 	List<GradStudentCertificatesEntity> existsByCertificateTypeCode(String certificateType);

@@ -117,7 +117,7 @@ public class CommonService {
 
 	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports) {
 		GradStudentReportsEntity toBeSaved = gradStudentReportsTransformer.transformToEntity(gradStudentReports);
-		Optional<GradStudentReportsEntity> existingEnity = gradStudentReportsRepository.findByPenAndGradReportTypeCode(gradStudentReports.getPen(), gradStudentReports.getGradReportTypeCode());
+		Optional<GradStudentReportsEntity> existingEnity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(gradStudentReports.getStudentID(), gradStudentReports.getGradReportTypeCode());
 		if(existingEnity.isPresent()) {
 			GradStudentReportsEntity gradEntity = existingEnity.get();
 			if(gradStudentReports.getReport() != null) {
@@ -157,7 +157,7 @@ public class CommonService {
 
 	public GradStudentCertificates saveGradCertificates(GradStudentCertificates gradStudentCertificates) {
 		GradStudentCertificatesEntity toBeSaved = gradStudentCertificatesTransformer.transformToEntity(gradStudentCertificates);
-		Optional<GradStudentCertificatesEntity> existingEnity = gradStudentCertificatesRepository.findByPenAndGradCertificateTypeCode(gradStudentCertificates.getPen(), gradStudentCertificates.getGradCertificateTypeCode());
+		Optional<GradStudentCertificatesEntity> existingEnity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode());
 		if(existingEnity.isPresent()) {
 			GradStudentCertificatesEntity gradEntity = existingEnity.get();
 			if(gradStudentCertificates.getCertificate() != null) {

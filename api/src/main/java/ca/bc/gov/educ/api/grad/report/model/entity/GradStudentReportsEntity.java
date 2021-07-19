@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@Table(name = "GRAD_STUDENT_REPORTS")
+@Table(name = "STUDENT_REPORT")
 public class GradStudentReportsEntity extends BaseEntity {
    
 	@Id
@@ -19,20 +19,20 @@ public class GradStudentReportsEntity extends BaseEntity {
 		name = "UUID",
 		strategy = "org.hibernate.id.UUIDGenerator"
 	)
-	@Column(name = "ID", nullable = false)
+	@Column(name = "STUDENT_REPORT_ID", nullable = false)
     private UUID id; 
 	
-	@Column(name = "FK_GRAD_STUDENT_PEN", nullable = false)
+	@Transient
     private String pen; 
 	
 	@Lob
     @Column(name = "REPORT", columnDefinition="CLOB")
 	private String report;
 	
-	@Column(name = "FK_GRAD_REPORT_TYPES_CODE", nullable = false)
+	@Column(name = "REPORT_TYPE_CODE", nullable = false)
     private String gradReportTypeCode;
 	
-	@Column(name = "FK_GRAD_STUDENT_STUDENT_ID", nullable = false)
+	@Column(name = "GRADUTION_STUDENT_RECORD_ID", nullable = false)
     private UUID studentID;
 	
 }

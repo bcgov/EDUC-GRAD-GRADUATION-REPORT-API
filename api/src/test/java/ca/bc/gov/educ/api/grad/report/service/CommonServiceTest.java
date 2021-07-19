@@ -353,7 +353,7 @@ public class CommonServiceTest {
 
         final Optional<GradStudentCertificatesEntity> optionalEmpty = Optional.empty();
 
-        when(this.gradStudentCertificatesRepository.findByPenAndGradCertificateTypeCode(pen, gradCertificateType.getCode())).thenReturn(optionalEmpty);
+        when(this.gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCode(studentID, gradCertificateType.getCode())).thenReturn(optionalEmpty);
         when(this.gradStudentCertificatesRepository.save(studentCertificateEntity)).thenReturn(studentCertificateEntity);
 
         var result = commonService.saveGradCertificates(studentCertificate);
@@ -387,7 +387,7 @@ public class CommonServiceTest {
 
         final Optional<GradStudentCertificatesEntity> optional = Optional.of(studentCertificateEntity);
 
-        when(this.gradStudentCertificatesRepository.findByPenAndGradCertificateTypeCode(pen, gradCertificateType.getCode())).thenReturn(optional);
+        when(this.gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCode(studentID, gradCertificateType.getCode())).thenReturn(optional);
         when(this.gradStudentCertificatesRepository.save(studentCertificateEntity)).thenReturn(studentCertificateEntity);
 
         var result = commonService.saveGradCertificates(studentCertificate);
@@ -433,7 +433,7 @@ public class CommonServiceTest {
 
         final Optional<GradStudentReportsEntity> optionalEmpty = Optional.empty();
 
-        when(this.gradStudentReportsRepository.findByPenAndGradReportTypeCode(pen, reportTypeCode)).thenReturn(optionalEmpty);
+        when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(optionalEmpty);
         when(this.gradStudentReportsRepository.save(gradStudentReportEntity)).thenReturn(gradStudentReportEntity);
 
         var result = commonService.saveGradReports(gradStudentReport);
@@ -467,7 +467,7 @@ public class CommonServiceTest {
 
         final Optional<GradStudentReportsEntity> optional = Optional.of(gradStudentReportEntity);
 
-        when(this.gradStudentReportsRepository.findByPenAndGradReportTypeCode(pen, reportTypeCode)).thenReturn(optional);
+        when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(optional);
         when(this.gradStudentReportsRepository.save(gradStudentReportEntity)).thenReturn(gradStudentReportEntity);
 
         var result = commonService.saveGradReports(gradStudentReport);
