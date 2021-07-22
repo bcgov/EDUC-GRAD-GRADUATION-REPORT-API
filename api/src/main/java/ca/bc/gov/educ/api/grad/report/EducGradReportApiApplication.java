@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,18 +12,17 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableCaching
-public class EducGradCommonApiApplication {
+public class EducGradReportApiApplication {
 
-    private static Logger logger = LoggerFactory.getLogger(EducGradCommonApiApplication.class);
+    private static Logger logger = LoggerFactory.getLogger(EducGradReportApiApplication.class);
 
     public static void main(String[] args) {
         logger.debug("########Starting API");
-        SpringApplication.run(EducGradCommonApiApplication.class, args);
+        SpringApplication.run(EducGradReportApiApplication.class, args);
         logger.debug("########Started API");
     }
 
@@ -33,11 +31,6 @@ public class EducGradCommonApiApplication {
 
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper;
-    }
-
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
     }
 
     @Configuration

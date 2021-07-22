@@ -37,7 +37,7 @@ logging:
         gov:
           educ:
             api:
-              common: INFO
+              report: INFO
     org:
       springframework:
         web: INFO

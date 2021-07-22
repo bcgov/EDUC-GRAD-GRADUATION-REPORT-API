@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @PropertySource("classpath:messages.properties")
-public class GradCommonConfig implements WebMvcConfigurer {
+public class GradReportConfig implements WebMvcConfigurer {
 
 	@Autowired
 	RequestInterceptor requestInterceptor;

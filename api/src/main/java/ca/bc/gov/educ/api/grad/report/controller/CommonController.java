@@ -43,7 +43,7 @@ public class CommonController {
 	ResponseHelper response;
     
     @GetMapping(EducGradReportApiConstants.GET_STUDENT_CERTIFICATE_BY_CERTIFICATE_CODE_MAPPING)
-    @PreAuthorize(PermissionsContants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Check if Certificate type is valid", description = "Check if Certificate Type is valid", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Boolean> getStudentCertificate(@PathVariable String certificateTypeCode) {
@@ -52,7 +52,7 @@ public class CommonController {
     }
     
     @GetMapping(EducGradReportApiConstants.GET_STUDENT_REPORT_BY_REPORT_CODE_MAPPING)
-    @PreAuthorize(PermissionsContants.READ_GRADUATION_STUDENT_REPORTS)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Check if Report type is valid", description = "Check if Report Type is valid", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Boolean> getStudentReport(@PathVariable String reportTypeCode) { 
@@ -62,7 +62,7 @@ public class CommonController {
     
     
     @PostMapping (EducGradReportApiConstants.STUDENT_REPORT)
-    @PreAuthorize(PermissionsContants.UPDATE_GRADUATION_STUDENT_REPORTS)
+    @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Save Student Reports", description = "Save Student Reports", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<ApiResponseModel<GradStudentReports>> saveStudentReport(@RequestBody GradStudentReports gradStudentReports) {
@@ -72,7 +72,7 @@ public class CommonController {
     }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_REPORT)
-    @PreAuthorize(PermissionsContants.READ_GRADUATION_STUDENT_REPORTS)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Read Student Reports by Student ID and Report Type", description = "Read Student Reports by Student ID and Report Type", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<InputStreamResource> getStudentReportByType(
@@ -83,7 +83,7 @@ public class CommonController {
     }
     
     @PostMapping (EducGradReportApiConstants.STUDENT_CERTIFICATE)
-    @PreAuthorize(PermissionsContants.UPDATE_GRADUATION_STUDENT_CERTIFICATES)
+    @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Save Student Certificate", description = "Save Student Certificate", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<ApiResponseModel<GradStudentCertificates>> saveStudentCertificate(@RequestBody GradStudentCertificates gradStudentCertificates) {
@@ -93,7 +93,7 @@ public class CommonController {
     }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE)
-    @PreAuthorize(PermissionsContants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Read Student Certificate by Student ID and Certificate Type", description = "Read Student Certificate by Student ID and Certificate Type", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<InputStreamResource> getStudentCertificateByType(
@@ -104,7 +104,7 @@ public class CommonController {
     }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE_BY_STUDENTID)
-    @PreAuthorize(PermissionsContants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Read All  Student Certificates by Student ID", description = "Read All Student Certificates by Student ID", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<GradStudentCertificates>> getAllStudentCertificateList(@PathVariable String studentID) { 

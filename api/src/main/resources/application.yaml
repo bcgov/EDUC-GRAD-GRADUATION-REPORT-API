@@ -46,7 +46,7 @@ logging:
         gov:
           educ:
             api:
-              common: ${APP_LOG_LEVEL}
+              report: ${APP_LOG_LEVEL}
     org:
       springframework:
         web: ${SPRING_WEB_LOG_LEVEL}

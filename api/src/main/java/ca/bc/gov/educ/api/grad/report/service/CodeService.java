@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -43,9 +42,6 @@ public class CodeService {
 	
 	@Autowired
 	private EducGradReportApiConstants educGradReportApiConstants;
-    
-    @Autowired
-    RestTemplate restTemplate;
 
 	private static Logger logger = LoggerFactory.getLogger(CodeService.class);
 	private static final String EXCEPTION_MSG = "Exception: %s";

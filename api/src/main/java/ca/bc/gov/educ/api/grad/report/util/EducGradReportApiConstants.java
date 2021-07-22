@@ -30,9 +30,9 @@ public class EducGradReportApiConstants {
     public static final String GET_STUDENT_REPORT_BY_REPORT_CODE_MAPPING = "/report/{reportTypeCode}";
 
     //Default Attribute value constants
-    public static final String DEFAULT_CREATED_BY = "ReportAPI";
+    public static final String DEFAULT_CREATED_BY = "API_GRAD_REPORT";
     public static final Date DEFAULT_CREATED_TIMESTAMP = new Date();
-    public static final String DEFAULT_UPDATED_BY = "ReportAPI";
+    public static final String DEFAULT_UPDATED_BY = "API_GRAD_REPORT";
     public static final Date DEFAULT_UPDATED_TIMESTAMP = new Date();
 
     //Default Date format constants

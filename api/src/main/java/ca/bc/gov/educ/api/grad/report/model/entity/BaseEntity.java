@@ -27,10 +27,10 @@ public class BaseEntity {
 	@PrePersist
 	protected void onCreate() {
 		if (StringUtils.isBlank(createdBy)) {
-			this.createdBy = "GRADUATION";
+			this.createdBy = "API_GRAD_REPORT";
 		}		
 		if (StringUtils.isBlank(updatedBy)) {
-			this.updatedBy = "GRADUATION";
+			this.updatedBy = "API_GRAD_REPORT";
 		}		
 		this.createdTimestamp = new Date(System.currentTimeMillis());
 		this.updatedTimestamp = new Date(System.currentTimeMillis());
@@ -41,10 +41,10 @@ public class BaseEntity {
 	protected void onPersist() {
 		this.updatedTimestamp = new Date(System.currentTimeMillis());
 		if (StringUtils.isBlank(updatedBy)) {
-			this.updatedBy = "GRADUATION";
+			this.updatedBy = "API_GRAD_REPORT";
 		}
 		if (StringUtils.isBlank(createdBy)) {
-			this.createdBy = "GRADUATION";
+			this.createdBy = "API_GRAD_REPORT";
 		}
 		if (this.createdTimestamp == null) {
 			this.createdTimestamp = new Date(System.currentTimeMillis());

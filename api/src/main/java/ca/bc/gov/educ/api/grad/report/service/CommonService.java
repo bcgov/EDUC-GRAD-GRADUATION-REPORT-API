@@ -20,7 +20,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -46,9 +45,6 @@ public class CommonService {
 
     @Autowired
 	private EducGradReportApiConstants constants;
-    
-    @Autowired
-    RestTemplate restTemplate;
     
     @Autowired
 	GradValidation validation;

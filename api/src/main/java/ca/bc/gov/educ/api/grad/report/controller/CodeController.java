@@ -58,7 +58,7 @@ public class CodeController {
     ResponseHelper response;
 
     @GetMapping(EducGradReportApiConstants.GET_ALL_CERTIFICATE_TYPE_MAPPING)
-    @PreAuthorize(PermissionsContants.READ_GRAD_CERTIFICATE)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_CERTIFICATE)
     @Operation(summary = "Find all Certificate Types", description = "Get all Certificate Types", tags = {"Certificate"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<GradCertificateTypes>> getAllCertificateTypeCodeList() {
@@ -67,7 +67,7 @@ public class CodeController {
     }
 
     @GetMapping(EducGradReportApiConstants.GET_ALL_CERTIFICATE_TYPE_BY_CODE_MAPPING)
-    @PreAuthorize(PermissionsContants.READ_GRAD_CERTIFICATE)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_CERTIFICATE)
     @Operation(summary = "Find a Certificate Type by code", description = "Get a Certificate Type by Code", tags = {"Certificate"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "204", description = "NO CONTENT")})
@@ -82,7 +82,7 @@ public class CodeController {
     }
 
     @PostMapping(EducGradReportApiConstants.GET_ALL_CERTIFICATE_TYPE_MAPPING)
-    @PreAuthorize(PermissionsContants.CREATE_CERTIFICATE_TYPE)
+    @PreAuthorize(PermissionsConstants.CREATE_CERTIFICATE_TYPE)
     @Operation(summary = "Create a Certificate Type", description = "Create a Certificate Type", tags = {"Certificate"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST")})
@@ -99,7 +99,7 @@ public class CodeController {
     }
 
     @PutMapping(EducGradReportApiConstants.GET_ALL_CERTIFICATE_TYPE_MAPPING)
-    @PreAuthorize(PermissionsContants.UPDATE_CERTIFICATE_TYPE)
+    @PreAuthorize(PermissionsConstants.UPDATE_CERTIFICATE_TYPE)
     @Operation(summary = "Update a Certificate Type", description = "Update a Certificate Type", tags = {"Certificate"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST")})
@@ -116,7 +116,7 @@ public class CodeController {
     }
 
     @DeleteMapping(EducGradReportApiConstants.GET_ALL_CERTIFICATE_TYPE_BY_CODE_MAPPING)
-    @PreAuthorize(PermissionsContants.DELETE_CERTIFICATE_TYPE)
+    @PreAuthorize(PermissionsConstants.DELETE_CERTIFICATE_TYPE)
     @Operation(summary = "Delete a Certificate Type", description = "Delete a Certificate", tags = {"Certificate"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST")})
@@ -134,7 +134,7 @@ public class CodeController {
     }
 
     @GetMapping(EducGradReportApiConstants.GET_ALL_REPORT_TYPE_MAPPING)
-    @PreAuthorize(PermissionsContants.READ_GRAD_REPORT)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_REPORT)
     @Operation(summary = "Find all Report Types", description = "Get all Report Types", tags = {"Report Type"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<GradReportTypes>> getAllReportTypeCodeList() {
@@ -143,7 +143,7 @@ public class CodeController {
     }
 
     @GetMapping(EducGradReportApiConstants.GET_ALL_REPORT_TYPE_BY_CODE_MAPPING)
-    @PreAuthorize(PermissionsContants.READ_GRAD_REPORT)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_REPORT)
     @Operation(summary = "Find a Report Type", description = "Get a Report Type", tags = {"Report Type"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "204", description = "NO CONTENT")})
@@ -158,7 +158,7 @@ public class CodeController {
     }
 
     @PostMapping(EducGradReportApiConstants.GET_ALL_REPORT_TYPE_MAPPING)
-    @PreAuthorize(PermissionsContants.CREATE_REPORT_TYPE)
+    @PreAuthorize(PermissionsConstants.CREATE_REPORT_TYPE)
     @Operation(summary = "Create a Report Type", description = "Create a Report Type", tags = {"Report Type"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST")})
@@ -175,7 +175,7 @@ public class CodeController {
     }
 
     @PutMapping(EducGradReportApiConstants.GET_ALL_REPORT_TYPE_MAPPING)
-    @PreAuthorize(PermissionsContants.UPDATE_REPORT_TYPE)
+    @PreAuthorize(PermissionsConstants.UPDATE_REPORT_TYPE)
     @Operation(summary = "Update a Report Type", description = "Update a Report Type", tags = {"Report Type"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST")})
@@ -192,7 +192,7 @@ public class CodeController {
     }
 
     @DeleteMapping(EducGradReportApiConstants.GET_ALL_REPORT_TYPE_BY_CODE_MAPPING)
-    @PreAuthorize(PermissionsContants.DELETE_REPORT_TYPE)
+    @PreAuthorize(PermissionsConstants.DELETE_REPORT_TYPE)
     @Operation(summary = "Delete a Report Type", description = "Delete a Report Type", tags = {"Report Type"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST")})
