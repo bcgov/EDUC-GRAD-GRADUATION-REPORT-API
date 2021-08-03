@@ -33,9 +33,9 @@ pipeline{
         IMAGE_PROJECT = '77c02f-tools'
         IMAGE_TAG = 'latest'
         APP_SUBDOMAIN_SUFFIX = '77c02f-test'
-        REPO_NAME = 'educ-report-api'
+        REPO_NAME = 'educ-grad-graduation-report-api'
         JOB_NAME = 'main'
-        APP_NAME = 'educ-report-api'
+        APP_NAME = 'educ-grad-graduation-report-api'
         APP_DOMAIN = 'apps.silver.devops.gov.bc.ca'
     }
 

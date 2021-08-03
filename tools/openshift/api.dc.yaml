@@ -52,7 +52,7 @@ objects:
             - configMapRef:
                 name: educ-grad-api-config-map
             - secretRef:
-                name: educ-grad-db-secret
+                name: api-grad-report-db-secret
             - secretRef:
                 name: grad-cdogs-secret
             - secretRef:
