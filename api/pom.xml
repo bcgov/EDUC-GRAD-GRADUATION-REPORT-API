@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ca.bc.gov.educ</groupId>
-	<artifactId>gradstudent-api</artifactId>
+	<artifactId>educ-grad-graduation-report-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>educ-grad-student-api</name>
-	<description>Student Demographics API for GRAD team</description>
+	<name>educ-grad-graduation-report-api</name>
+	<description>Grad Graduation Report API for GRAD team</description>
    
 
     <properties>
