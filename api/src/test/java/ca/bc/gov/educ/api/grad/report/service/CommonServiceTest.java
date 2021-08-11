@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -311,5 +312,13 @@ public class CommonServiceTest {
         assertThat(result.get(0).getGradCertificateTypeCode()).isEqualTo(gradCertificateType.getCode());
         assertThat(result.get(1).getStudentID()).isEqualTo(studentID);
         assertThat(result.get(1).getGradCertificateTypeCode()).isEqualTo(gradCertificateType.getCode());
+    }
+    
+    @Test
+    public void testGetAllStudentAchievement() {
+    	UUID studentID = new UUID(1, 1);
+    	Mockito.when(gradStudentReportsRepository.deleteByStudentID(studentID)).thenReturn(2L);
+    	Mockito.when(gradStudentCertificatesRepository.deleteByStudentID(studentID)).thenReturn(2L);
+    	commonService.getAllStudentAchievement(studentID);
     }
 }

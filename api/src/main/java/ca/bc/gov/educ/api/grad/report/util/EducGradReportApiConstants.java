@@ -28,6 +28,8 @@ public class EducGradReportApiConstants {
 
     public static final String GET_STUDENT_CERTIFICATE_BY_CERTIFICATE_CODE_MAPPING = "/certificate/{certificateTypeCode}";
     public static final String GET_STUDENT_REPORT_BY_REPORT_CODE_MAPPING = "/report/{reportTypeCode}";
+    
+    public static final String DELETE_ACHIEVEMENTS_BY_STUDENTID = "/studentachievement/{studentID}";
 
     //Default Attribute value constants
     public static final String DEFAULT_CREATED_BY = "API_GRAD_REPORT";
