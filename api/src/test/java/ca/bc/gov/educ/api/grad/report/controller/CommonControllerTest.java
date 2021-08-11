@@ -185,4 +185,11 @@ public class CommonControllerTest {
         commonController.getAllStudentCertificateList(studentID.toString());
         Mockito.verify(commonService).getAllStudentCertificateList(studentID, null);
     }
+    
+    @Test
+    public void testDeleteAllStudentAchievements() {
+    	UUID studentID = new UUID(1, 1);
+    	Mockito.when(commonService.getAllStudentAchievement(studentID)).thenReturn(1);
+    	commonController.deleteAllStudentAchievements(studentID.toString());
+    }
 }

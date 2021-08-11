@@ -113,5 +113,14 @@ public class CommonController {
     	String accessToken = auth.getTokenValue();
         return response.GET(commonService.getAllStudentCertificateList(UUID.fromString(studentID),accessToken));
     }
+    
+    @DeleteMapping(EducGradReportApiConstants.DELETE_ACHIEVEMENTS_BY_STUDENTID)
+    @PreAuthorize(PermissionsConstants.DELETE_STUDENT_ACHIEVEMENT_DATA)
+    @Operation(summary = "Delete All  Student Achievements by Student ID", description = "Delete All Student Certificates by Student ID", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO_CONTENT")})
+    public ResponseEntity<Void> deleteAllStudentAchievements(@PathVariable String studentID) { 
+    	logger.debug("deleteAllStudentAchievements : ");
+        return response.DELETE(commonService.getAllStudentAchievement(UUID.fromString(studentID)));
+    }
    
 }
