@@ -18,4 +18,6 @@ public interface GradStudentCertificatesRepository extends JpaRepository<GradStu
    	
    	@Query("select c from GradStudentCertificatesEntity c where c.gradCertificateTypeCode=:certificateType")
 	List<GradStudentCertificatesEntity> existsByCertificateTypeCode(String certificateType);
+
+	long deleteByStudentID(UUID studentID);
 }

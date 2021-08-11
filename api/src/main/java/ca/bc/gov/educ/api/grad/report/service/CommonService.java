@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 
 @Service
 public class CommonService {
@@ -42,9 +44,6 @@ public class CommonService {
     
     @Autowired
     private GradStudentReportsRepository gradStudentReportsRepository;
-
-    @Autowired
-	private EducGradReportApiConstants constants;
     
     @Autowired
 	GradValidation validation;
@@ -52,6 +51,7 @@ public class CommonService {
     @SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(CommonService.class);
 
+    @Transactional
 	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports) {
 		GradStudentReportsEntity toBeSaved = gradStudentReportsTransformer.transformToEntity(gradStudentReports);
 		Optional<GradStudentReportsEntity> existingEnity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(gradStudentReports.getStudentID(), gradStudentReports.getGradReportTypeCode());
@@ -92,6 +92,7 @@ public class CommonService {
 		return !gradList.isEmpty();
 	}
 
+	@Transactional
 	public GradStudentCertificates saveGradCertificates(GradStudentCertificates gradStudentCertificates) {
 		GradStudentCertificatesEntity toBeSaved = gradStudentCertificatesTransformer.transformToEntity(gradStudentCertificates);
 		Optional<GradStudentCertificatesEntity> existingEnity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode());
@@ -106,6 +107,7 @@ public class CommonService {
 		}
 	}
 
+	@Transactional
 	public ResponseEntity<InputStreamResource> getStudentCertificateByType(UUID studentID, String certificateType) {
 		GradStudentCertificates studentCertificate = gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCode(studentID,certificateType));
 		if(studentCertificate != null && studentCertificate.getCertificate() != null) {
@@ -124,5 +126,18 @@ public class CommonService {
 
 	public List<GradStudentCertificates> getAllStudentCertificateList(UUID studentID,String accessToken) {
 		return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentID(studentID));
+	}
+
+	@Transactional
+	public int getAllStudentAchievement(UUID studentID) {
+		long numberOfReportRecordsDeleted = gradStudentReportsRepository.deleteByStudentID(studentID);
+		long numberOfCertificateRecordsDeleted = gradStudentCertificatesRepository.deleteByStudentID(studentID);
+		long total = numberOfReportRecordsDeleted + numberOfCertificateRecordsDeleted;
+		if(total > 0) {
+			return 1;
+		}else {
+			return 0;
+		}
+		
 	}
 }
