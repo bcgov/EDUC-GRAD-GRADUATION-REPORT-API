@@ -1,28 +1,39 @@
 package ca.bc.gov.educ.api.grad.report.controller;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentReports;
-import ca.bc.gov.educ.api.grad.report.service.CommonService;
-import ca.bc.gov.educ.api.grad.report.util.*;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.util.List;
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.UUID;
+import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
+import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentReports;
+import ca.bc.gov.educ.api.grad.report.service.CommonService;
+import ca.bc.gov.educ.api.grad.report.util.ApiResponseModel;
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import ca.bc.gov.educ.api.grad.report.util.PermissionsConstants;
+import ca.bc.gov.educ.api.grad.report.util.ResponseHelper;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @CrossOrigin
 @RestController
@@ -102,16 +113,22 @@ public class CommonController {
     	logger.debug("getStudentCertificateByType :");
     	return commonService.getStudentCertificateByType(UUID.fromString(studentID),certificateType);
     }
-    
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE_BY_STUDENTID)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Read All  Student Certificates by Student ID", description = "Read All Student Certificates by Student ID", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<GradStudentCertificates>> getAllStudentCertificateList(@PathVariable String studentID) { 
     	logger.debug("getAllStudentCertificateList : ");
-    	OAuth2AuthenticationDetails auth = (OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails(); 
-    	String accessToken = auth.getTokenValue();
-        return response.GET(commonService.getAllStudentCertificateList(UUID.fromString(studentID),accessToken));
+        return response.GET(commonService.getAllStudentCertificateList(UUID.fromString(studentID)));
+    }
+    
+    @GetMapping(EducGradReportApiConstants.STUDENT_REPORTS_BY_STUDENTID)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read All  Student Reports by Student ID", description = "Read All Student Reports by Student ID", tags = { "Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<GradStudentReports>> getAllStudentReportsList(@PathVariable String studentID) { 
+    	logger.debug("getAllStudentReportsList : ");
+        return response.GET(commonService.getAllStudentReportList(UUID.fromString(studentID)));
     }
     
     @DeleteMapping(EducGradReportApiConstants.DELETE_ACHIEVEMENTS_BY_STUDENTID)

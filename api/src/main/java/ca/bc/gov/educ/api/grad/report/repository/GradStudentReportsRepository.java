@@ -1,13 +1,14 @@
 package ca.bc.gov.educ.api.grad.report.repository;
 
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
 
 @Repository
 public interface GradStudentReportsRepository extends JpaRepository<GradStudentReportsEntity, UUID> {
@@ -18,4 +19,6 @@ public interface GradStudentReportsRepository extends JpaRepository<GradStudentR
 	List<GradStudentReportsEntity> existsByReportTypeCode(String reportType);
    	
    	long deleteByStudentID(UUID studentID);
+
+	List<GradStudentReportsEntity> findByStudentID(UUID studentID);
 }
