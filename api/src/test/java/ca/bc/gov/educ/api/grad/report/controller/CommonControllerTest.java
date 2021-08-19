@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.controller;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
+import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentReports;
 import ca.bc.gov.educ.api.grad.report.service.CommonService;
@@ -173,17 +174,40 @@ public class CommonControllerTest {
         studentCertificate2.setGradCertificateTypeCode(gradCertificateType.getCode());
         gradStudentCertificatesList.add(studentCertificate2);
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        OAuth2AuthenticationDetails details = Mockito.mock(OAuth2AuthenticationDetails.class);
-        // Mockito.whens() for your authorization object
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(authentication.getDetails()).thenReturn(details);
-        SecurityContextHolder.setContext(securityContext);
-
-        Mockito.when(commonService.getAllStudentCertificateList(studentID, null)).thenReturn(gradStudentCertificatesList);
+        Mockito.when(commonService.getAllStudentCertificateList(studentID)).thenReturn(gradStudentCertificatesList);
         commonController.getAllStudentCertificateList(studentID.toString());
-        Mockito.verify(commonService).getAllStudentCertificateList(studentID, null);
+        Mockito.verify(commonService).getAllStudentCertificateList(studentID);
+    }
+    
+    @Test
+    public void testGetAllStudentReportList() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String pen = "123456789";
+        // Certificate Type
+        final GradReportTypes gradCertificateType = new GradReportTypes();
+        gradCertificateType.setCode("TEST");
+        gradCertificateType.setDescription("Test Code Name");
+
+        // Student Certificate Types
+        final List<GradStudentReports> gradStudentReportList = new ArrayList<>();
+        final GradStudentReports studentCertificate1 = new GradStudentReports();
+        studentCertificate1.setId(UUID.randomUUID());
+        studentCertificate1.setPen(pen);
+        studentCertificate1.setStudentID(studentID);
+        studentCertificate1.setGradReportTypeCode(gradCertificateType.getCode());
+        gradStudentReportList.add(studentCertificate1);
+
+        final GradStudentReports studentCertificate2 = new GradStudentReports();
+        studentCertificate2.setId(UUID.randomUUID());
+        studentCertificate2.setPen(pen);
+        studentCertificate2.setStudentID(studentID);
+        studentCertificate2.setGradReportTypeCode(gradCertificateType.getCode());
+        gradStudentReportList.add(studentCertificate2);
+
+        Mockito.when(commonService.getAllStudentReportList(studentID)).thenReturn(gradStudentReportList);
+        commonController.getAllStudentReportsList(studentID.toString());
+        Mockito.verify(commonService).getAllStudentReportList(studentID);
     }
     
     @Test
