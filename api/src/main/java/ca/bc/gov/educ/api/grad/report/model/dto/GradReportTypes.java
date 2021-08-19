@@ -1,14 +1,11 @@
 package ca.bc.gov.educ.api.grad.report.model.dto;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-
 import org.springframework.stereotype.Component;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
