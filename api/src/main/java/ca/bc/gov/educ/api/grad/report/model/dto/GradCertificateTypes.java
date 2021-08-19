@@ -2,6 +2,9 @@ package ca.bc.gov.educ.api.grad.report.model.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.Date;
+
 import org.springframework.stereotype.Component;
 
 @Data
@@ -9,12 +12,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class GradCertificateTypes extends BaseModel {
 
-	private String code;	
+	private String code;
+	private String label;
 	private String description;
+	private Integer displayOrder;
+	private Date effectiveDate;
+	private Date expiryDate;
 	
 	@Override
 	public String toString() {
-		return "GradCertificateTypes [code=" + code + ", description=" + description + "]";
+		return "GradReportTypes [code=" + code + ", label=" + label + ", description=" + description + ", displayOrder="
+				+ displayOrder + ", effectiveDate=" + effectiveDate + ", expiryDate=" + expiryDate + "]";
 	}
 	
 	
