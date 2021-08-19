@@ -1,12 +1,18 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
 
+import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
+import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentReports;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
+import ca.bc.gov.educ.api.grad.report.model.transformer.GradCertificateTypesTransformer;
+import ca.bc.gov.educ.api.grad.report.model.transformer.GradReportTypesTransformer;
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradStudentCertificatesTransformer;
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradStudentReportsTransformer;
+import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
+import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradStudentCertificatesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradStudentReportsRepository;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
@@ -44,6 +50,18 @@ public class CommonService {
     
     @Autowired
     private GradStudentReportsRepository gradStudentReportsRepository;
+    
+    @Autowired
+	private GradCertificateTypesRepository gradCertificateTypesRepository;
+
+	@Autowired
+	private GradCertificateTypesTransformer gradCertificateTypesTransformer;
+	
+	@Autowired
+	private GradReportTypesRepository gradReportTypesRepository;
+
+	@Autowired
+	private GradReportTypesTransformer gradReportTypesTransformer;
     
     @Autowired
 	GradValidation validation;
@@ -124,8 +142,14 @@ public class CommonService {
 		return null;
 	}
 
-	public List<GradStudentCertificates> getAllStudentCertificateList(UUID studentID,String accessToken) {
-		return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentID(studentID));
+	public List<GradStudentCertificates> getAllStudentCertificateList(UUID studentID) {
+		List<GradStudentCertificates> certList =  gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentID(studentID));
+		certList.forEach(cert -> {
+			GradCertificateTypes types = gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.findById(cert.getGradCertificateTypeCode()));
+			if(types != null)
+				cert.setGradCertificateTypeLabel(types.getLabel());
+		});
+		return certList;
 	}
 
 	@Transactional
@@ -139,5 +163,15 @@ public class CommonService {
 			return 0;
 		}
 		
+	}
+
+	public List<GradStudentReports> getAllStudentReportList(UUID studentID) {
+		List<GradStudentReports> reportList = gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.findByStudentID(studentID));
+		reportList.forEach(rep -> {
+			GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getGradReportTypeCode()));
+			if(types != null)
+				rep.setGradReportTypeLabel(types.getLabel());
+		});
+		return reportList;
 	}
 }
