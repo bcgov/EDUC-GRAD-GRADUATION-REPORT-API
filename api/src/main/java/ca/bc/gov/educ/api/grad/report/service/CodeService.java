@@ -1,15 +1,11 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.transformer.GradCertificateTypesTransformer;
-import ca.bc.gov.educ.api.grad.report.model.transformer.GradReportTypesTransformer;
-import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
-import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +13,19 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
+import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
+import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
+import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificate;
+import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificateReq;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
+import ca.bc.gov.educ.api.grad.report.model.transformer.GradCertificateTypesTransformer;
+import ca.bc.gov.educ.api.grad.report.model.transformer.GradReportTypesTransformer;
+import ca.bc.gov.educ.api.grad.report.model.transformer.ProgramCertificateTransformer;
+import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
+import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
+import ca.bc.gov.educ.api.grad.report.repository.ProgramCertificateRepository;
+import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 
 @Service
 public class CodeService {
@@ -38,13 +43,16 @@ public class CodeService {
 	private GradReportTypesTransformer gradReportTypesTransformer;
 	
 	@Autowired
-	GradValidation validation;
+	private ProgramCertificateRepository programCertificateRepository;
+
+	@Autowired
+	private ProgramCertificateTransformer programCertificateTransformer;
 	
 	@Autowired
-	private EducGradReportApiConstants educGradReportApiConstants;
+	GradValidation validation;
 
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(CodeService.class);
-	private static final String EXCEPTION_MSG = "Exception: %s";
 	private static final String CREATED_BY="createdBy";
 	private static final String CREATED_TIMESTAMP="createdTimestamp";
 
@@ -149,5 +157,9 @@ public class CodeService {
 			return 1;
 		}
 		return 0;
+	}
+
+	public List<ProgramCertificate> getProgramCertificateList(ProgramCertificateReq programCertificateReq) {
+		return programCertificateTransformer.transformToDTO(programCertificateRepository.findCertificates(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolFundingCode(),programCertificateReq.getOptionalProgram()));
 	}
 }
