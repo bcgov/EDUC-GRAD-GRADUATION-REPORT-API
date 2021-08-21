@@ -1,15 +1,9 @@
 package ca.bc.gov.educ.api.grad.report.controller;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
-import ca.bc.gov.educ.api.grad.report.service.CodeService;
-import ca.bc.gov.educ.api.grad.report.util.*;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +13,32 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.List;
+import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
+import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
+import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificate;
+import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificateReq;
+import ca.bc.gov.educ.api.grad.report.service.CodeService;
+import ca.bc.gov.educ.api.grad.report.util.ApiResponseModel;
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import ca.bc.gov.educ.api.grad.report.util.PermissionsConstants;
+import ca.bc.gov.educ.api.grad.report.util.ResponseHelper;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping(EducGradReportApiConstants.GRAD_REPORT_API_ROOT_MAPPING)
@@ -208,4 +224,14 @@ public class CodeController {
         String accessToken = auth.getTokenValue();
         return response.DELETE(codeService.deleteGradReportTypes(reportTypeCode, accessToken));
     }
+    
+    @PostMapping(EducGradReportApiConstants.GET_ALL_PROGRAM_CERTIFICATES_MAPPING)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_CERTIFICATE)
+    @Operation(summary = "Find all Program Certificates", description = "Get all Program Certificates", tags = {"Program Certificate"})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<ProgramCertificate>> getProgramCertificateList(@RequestBody ProgramCertificateReq programCertificateReq) {
+        logger.debug("getProgramCertificateList : ");
+        return response.GET(codeService.getProgramCertificateList(programCertificateReq));
+    }
+    
 }
