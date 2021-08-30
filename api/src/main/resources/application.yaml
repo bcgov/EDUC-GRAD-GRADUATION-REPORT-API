@@ -29,6 +29,8 @@ spring:
   jackson:
     deserialization:
       fail-on-unknown-properties: false
+  codec:
+    max-in-memory-size: 20MB
 
 #Logging properties
 logging:
