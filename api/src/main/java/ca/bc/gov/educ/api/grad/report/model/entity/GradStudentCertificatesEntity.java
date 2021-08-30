@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -34,4 +36,7 @@ public class GradStudentCertificatesEntity extends BaseEntity {
 	
 	@Column(name = "GRADUTION_STUDENT_RECORD_ID", nullable = false)
     private UUID studentID;
+	
+	@Column(name = "DISTRIBUTION_DATE",nullable = true)
+	private Date distributionDate;
 }
