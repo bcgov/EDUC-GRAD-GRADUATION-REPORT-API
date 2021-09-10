@@ -1,6 +1,24 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.transaction.Transactional;
+
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
 import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
@@ -15,25 +33,7 @@ import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradStudentCertificatesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradStudentReportsRepository;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.transaction.Transactional;
 
 
 @Service
@@ -154,8 +154,16 @@ public class CommonService {
 
 	@Transactional
 	public int getAllStudentAchievement(UUID studentID) {
-		long numberOfReportRecordsDeleted = gradStudentReportsRepository.deleteByStudentID(studentID);
-		long numberOfCertificateRecordsDeleted = gradStudentCertificatesRepository.deleteByStudentID(studentID);
+		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentID(studentID);
+		long numberOfReportRecordsDeleted = 0L;
+		if(!repList.isEmpty()) {
+			numberOfReportRecordsDeleted = gradStudentReportsRepository.deleteByStudentID(studentID);
+		}
+		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentID(studentID);
+		long numberOfCertificateRecordsDeleted = 0L;
+		if(!certList.isEmpty()) {
+			numberOfCertificateRecordsDeleted = gradStudentCertificatesRepository.deleteByStudentID(studentID);
+		}
 		long total = numberOfReportRecordsDeleted + numberOfCertificateRecordsDeleted;
 		if(total > 0) {
 			return 1;
