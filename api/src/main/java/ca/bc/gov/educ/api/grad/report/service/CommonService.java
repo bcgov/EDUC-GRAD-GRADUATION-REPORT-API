@@ -155,20 +155,27 @@ public class CommonService {
 	@Transactional
 	public int getAllStudentAchievement(UUID studentID) {
 		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentID(studentID);
+		boolean hasCertificates  = false;
 		long numberOfReportRecordsDeleted = 0L;
 		if(!repList.isEmpty()) {
+			hasCertificates = true;
 			numberOfReportRecordsDeleted = gradStudentReportsRepository.deleteByStudentID(studentID);
 		}
 		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentID(studentID);
 		long numberOfCertificateRecordsDeleted = 0L;
 		if(!certList.isEmpty()) {
+			hasCertificates = true;
 			numberOfCertificateRecordsDeleted = gradStudentCertificatesRepository.deleteByStudentID(studentID);
 		}
-		long total = numberOfReportRecordsDeleted + numberOfCertificateRecordsDeleted;
-		if(total > 0) {
-			return 1;
+		if(hasCertificates) {
+			long total = numberOfReportRecordsDeleted + numberOfCertificateRecordsDeleted;
+			if(total > 0) {
+				return 1;
+			}else {
+				return 0;
+			}
 		}else {
-			return 0;
+			return 1;
 		}
 		
 	}
