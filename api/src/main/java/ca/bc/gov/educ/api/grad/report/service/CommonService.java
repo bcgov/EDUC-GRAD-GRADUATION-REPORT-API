@@ -19,16 +19,19 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.DocumentStatusCode;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentReports;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
+import ca.bc.gov.educ.api.grad.report.model.transformer.DocumentStatusCodeTransformer;
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradCertificateTypesTransformer;
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradReportTypesTransformer;
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradStudentCertificatesTransformer;
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradStudentReportsTransformer;
+import ca.bc.gov.educ.api.grad.report.repository.DocumentStatusCodeRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradStudentCertificatesRepository;
@@ -62,6 +65,12 @@ public class CommonService {
 
 	@Autowired
 	private GradReportTypesTransformer gradReportTypesTransformer;
+	
+	@Autowired
+	private DocumentStatusCodeRepository documentStatusCodeRepository;
+
+	@Autowired
+	private DocumentStatusCodeTransformer documentStatusCodeTransformer;
     
     @Autowired
 	GradValidation validation;
@@ -70,14 +79,18 @@ public class CommonService {
 	private static Logger logger = LoggerFactory.getLogger(CommonService.class);
 
     @Transactional
-	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports) {
+	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports,boolean isGraduated) {
 		GradStudentReportsEntity toBeSaved = gradStudentReportsTransformer.transformToEntity(gradStudentReports);
 		Optional<GradStudentReportsEntity> existingEnity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(gradStudentReports.getStudentID(), gradStudentReports.getGradReportTypeCode());
 		if(existingEnity.isPresent()) {
 			GradStudentReportsEntity gradEntity = existingEnity.get();
+			if(isGraduated && gradEntity.getDocumentStatusCode().equals("IP")) {
+				gradEntity.setDocumentStatusCode("COMPL");
+				
+			}
 			if(gradStudentReports.getReport() != null) {
 				gradEntity.setReport(gradStudentReports.getReport());
-			}			
+			}
 			return gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.save(gradEntity));
 		}else {
 			return gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.save(toBeSaved));
@@ -113,12 +126,10 @@ public class CommonService {
 	@Transactional
 	public GradStudentCertificates saveGradCertificates(GradStudentCertificates gradStudentCertificates) {
 		GradStudentCertificatesEntity toBeSaved = gradStudentCertificatesTransformer.transformToEntity(gradStudentCertificates);
-		Optional<GradStudentCertificatesEntity> existingEnity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode());
-		if(existingEnity.isPresent()) {
+		Optional<GradStudentCertificatesEntity> existingEnity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode(),"COMPL");
+		if(existingEnity.isPresent() && gradStudentCertificates.getCertificate() != null) {
 			GradStudentCertificatesEntity gradEntity = existingEnity.get();
-			if(gradStudentCertificates.getCertificate() != null) {
-				gradEntity.setCertificate(gradStudentCertificates.getCertificate());
-			}			
+			gradEntity.setCertificate(gradStudentCertificates.getCertificate());			
 			return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.save(gradEntity));
 		}else {
 			return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.save(toBeSaved));
@@ -126,8 +137,8 @@ public class CommonService {
 	}
 
 	@Transactional
-	public ResponseEntity<InputStreamResource> getStudentCertificateByType(UUID studentID, String certificateType) {
-		GradStudentCertificates studentCertificate = gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCode(studentID,certificateType));
+	public ResponseEntity<InputStreamResource> getStudentCertificateByType(UUID studentID, String certificateType,String documentStatusCode) {
+		GradStudentCertificates studentCertificate = gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID,certificateType,documentStatusCode));
 		if(studentCertificate != null && studentCertificate.getCertificate() != null) {
 				byte[] certificateByte = Base64.decodeBase64(studentCertificate.getCertificate().getBytes(StandardCharsets.US_ASCII));
 				ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
@@ -148,6 +159,10 @@ public class CommonService {
 			GradCertificateTypes types = gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.findById(cert.getGradCertificateTypeCode()));
 			if(types != null)
 				cert.setGradCertificateTypeLabel(types.getLabel());
+			
+			DocumentStatusCode code = documentStatusCodeTransformer.transformToDTO(documentStatusCodeRepository.findById(cert.getDocumentStatusCode()));
+			if(code != null)
+				cert.setDocumentStatusLabel(code.getLabel());
 		});
 		return certList;
 	}
@@ -155,20 +170,28 @@ public class CommonService {
 	@Transactional
 	public int getAllStudentAchievement(UUID studentID) {
 		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentID(studentID);
-		boolean hasCertificates  = false;
-		long numberOfReportRecordsDeleted = 0L;
+		boolean hasDocuments  = false;
+		int numberOfReportRecords = 0;
 		if(!repList.isEmpty()) {
-			hasCertificates = true;
-			numberOfReportRecordsDeleted = gradStudentReportsRepository.deleteByStudentID(studentID);
+			numberOfReportRecords =repList.size(); 
+			repList.forEach(rep-> {
+				rep.setDocumentStatusCode("ARCH");
+				gradStudentReportsRepository.save(rep);
+			});
+			hasDocuments = true;
 		}
 		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentID(studentID);
-		long numberOfCertificateRecordsDeleted = 0L;
+		int numberOfCertificateRecords = 0;
 		if(!certList.isEmpty()) {
-			hasCertificates = true;
-			numberOfCertificateRecordsDeleted = gradStudentCertificatesRepository.deleteByStudentID(studentID);
+			numberOfCertificateRecords =certList.size();
+			hasDocuments = true;
+			certList.forEach(cert-> {
+				cert.setDocumentStatusCode("ARCH");
+				gradStudentCertificatesRepository.save(cert);
+			});
 		}
-		if(hasCertificates) {
-			long total = numberOfReportRecordsDeleted + numberOfCertificateRecordsDeleted;
+		if(hasDocuments) {
+			long total = numberOfReportRecords + numberOfCertificateRecords;
 			if(total > 0) {
 				return 1;
 			}else {
@@ -186,6 +209,10 @@ public class CommonService {
 			GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getGradReportTypeCode()));
 			if(types != null)
 				rep.setGradReportTypeLabel(types.getLabel());
+			
+			DocumentStatusCode code = documentStatusCodeTransformer.transformToDTO(documentStatusCodeRepository.findById(rep.getDocumentStatusCode()));
+			if(code != null)
+				rep.setDocumentStatusLabel(code.getLabel());
 		});
 		return reportList;
 	}

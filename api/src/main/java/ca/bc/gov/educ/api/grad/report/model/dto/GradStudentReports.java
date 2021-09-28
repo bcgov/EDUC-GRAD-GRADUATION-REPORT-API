@@ -17,4 +17,6 @@ public class GradStudentReports extends BaseModel {
 	private String gradReportTypeLabel;
 	private UUID studentID;
 	private Date distributionDate;
+	private String documentStatusCode;
+	private String documentStatusLabel;
 }

@@ -17,4 +17,6 @@ public class GradStudentCertificates extends BaseModel {
 	private String gradCertificateTypeLabel;
 	private UUID studentID;
 	private Date distributionDate;
+	private String documentStatusCode;
+	private String documentStatusLabel;
 }

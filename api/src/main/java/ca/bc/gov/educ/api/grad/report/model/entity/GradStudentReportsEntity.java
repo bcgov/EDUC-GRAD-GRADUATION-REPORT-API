@@ -40,4 +40,7 @@ public class GradStudentReportsEntity extends BaseEntity {
 	@Column(name = "DISTRIBUTION_DATE",nullable = true)
 	private Date distributionDate;
 	
+	@Column(name="DOCUMENT_STATUS_CODE",nullable=false)
+	private String documentStatusCode;
+	
 }
