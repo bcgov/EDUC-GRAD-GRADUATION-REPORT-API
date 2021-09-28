@@ -88,9 +88,10 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<InputStreamResource> getStudentReportByType(
     		@RequestParam(value = "studentID", required = true) String studentID,
-    		@RequestParam(value = "reportType", required = true) String reportType) { 
+    		@RequestParam(value = "reportType", required = true) String reportType,
+    		@RequestParam(value = "documentStatusCode", required = true) String documentStatusCode) { 
     	logger.debug("getStudentReportByType : ");
-    	return commonService.getStudentReportByType(UUID.fromString(studentID),reportType);
+    	return commonService.getStudentReportByType(UUID.fromString(studentID),reportType,documentStatusCode);
     }
     
     @PostMapping (EducGradReportApiConstants.STUDENT_CERTIFICATE)

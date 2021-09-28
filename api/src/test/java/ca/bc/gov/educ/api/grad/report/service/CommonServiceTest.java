@@ -198,7 +198,7 @@ public class CommonServiceTest {
         final String pen = "123456789";
         final String reportTypeCode = "TEST";
         boolean isGraduated = false;
-        
+        final String documentStatusCode="ARCH";
         final GradStudentReports gradStudentReport = new GradStudentReports();
         gradStudentReport.setGradReportTypeCode(reportTypeCode);
         gradStudentReport.setPen(pen);
@@ -213,7 +213,7 @@ public class CommonServiceTest {
 
         final Optional<GradStudentReportsEntity> optionalEmpty = Optional.empty();
 
-        when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(optionalEmpty);
+        when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optionalEmpty);
         when(this.gradStudentReportsRepository.save(gradStudentReportEntity)).thenReturn(gradStudentReportEntity);
 
         var result = commonService.saveGradReports(gradStudentReport,isGraduated);
@@ -231,6 +231,7 @@ public class CommonServiceTest {
         final String pen = "123456789";
         final String reportTypeCode = "TEST";
         boolean isGraduated = false;
+        final String documentStatusCode = "COMPL";
         final GradStudentReports gradStudentReport = new GradStudentReports();
         gradStudentReport.setId(reportID);
         gradStudentReport.setGradReportTypeCode(reportTypeCode);
@@ -247,7 +248,7 @@ public class CommonServiceTest {
 
         final Optional<GradStudentReportsEntity> optional = Optional.of(gradStudentReportEntity);
 
-        when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(optional);
+        when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optional);
         when(this.gradStudentReportsRepository.save(gradStudentReportEntity)).thenReturn(gradStudentReportEntity);
 
         var result = commonService.saveGradReports(gradStudentReport,isGraduated);
@@ -264,6 +265,7 @@ public class CommonServiceTest {
         final UUID studentID = UUID.randomUUID();
         final String pen = "123456789";
         final String reportTypeCode = "TEST";
+        final String documentStatusCode = "IP";
 
         final GradStudentReportsEntity gradStudentReport = new GradStudentReportsEntity();
         gradStudentReport.setId(reportID);
@@ -272,8 +274,8 @@ public class CommonServiceTest {
         gradStudentReport.setStudentID(studentID);
         gradStudentReport.setReport("TEST Report Body");
 
-        when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(Optional.of(gradStudentReport));
-        var result = commonService.getStudentReportByType(studentID, reportTypeCode);
+        when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(studentID, reportTypeCode,documentStatusCode)).thenReturn(Optional.of(gradStudentReport));
+        var result = commonService.getStudentReportByType(studentID, reportTypeCode,documentStatusCode);
         assertThat(result).isNotNull();
         assertThat(result.getHeaders().get("Content-Disposition").toString()).isEqualTo("[inline; filename=student_TEST_report.pdf]");
         assertThat(result.getBody()).isNotNull();
