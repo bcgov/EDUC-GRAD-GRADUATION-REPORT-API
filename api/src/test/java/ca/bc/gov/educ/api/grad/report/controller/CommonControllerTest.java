@@ -111,20 +111,20 @@ public class CommonControllerTest {
         final UUID studentID = new UUID(1, 1);
         final String reportTypeCode = "TEST";
         final String reportBody = "Test Report Body";
-
+        final String documentStatusCode = "IP";
         byte[] certificateByte = Base64.decodeBase64(reportBody.getBytes(StandardCharsets.US_ASCII));
         ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=student_"+reportTypeCode+"_report.pdf");
 
-        Mockito.when(commonService.getStudentReportByType(studentID, reportTypeCode)).thenReturn(
+        Mockito.when(commonService.getStudentReportByType(studentID, reportTypeCode,documentStatusCode)).thenReturn(
                 ResponseEntity
                         .ok()
                         .headers(headers)
                         .contentType(MediaType.APPLICATION_PDF)
                         .body(new InputStreamResource(bis)));
-        commonController.getStudentReportByType(studentID.toString(), reportTypeCode);
-        Mockito.verify(commonService).getStudentReportByType(studentID, reportTypeCode);
+        commonController.getStudentReportByType(studentID.toString(), reportTypeCode,documentStatusCode);
+        Mockito.verify(commonService).getStudentReportByType(studentID, reportTypeCode,documentStatusCode);
 
     }
 

@@ -13,7 +13,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
 @Repository
 public interface GradStudentReportsRepository extends JpaRepository<GradStudentReportsEntity, UUID> {
 
-	Optional<GradStudentReportsEntity> findByStudentIDAndGradReportTypeCode(UUID studentID,String gradReportTypeCode);
+	Optional<GradStudentReportsEntity> findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(UUID studentID,String gradReportTypeCode,String documentStatusCode);
    	
    	@Query("select c from GradStudentReportsEntity c where c.gradReportTypeCode=:reportType")
 	List<GradStudentReportsEntity> existsByReportTypeCode(String reportType);
@@ -21,4 +21,6 @@ public interface GradStudentReportsRepository extends JpaRepository<GradStudentR
    	long deleteByStudentID(UUID studentID);
 
 	List<GradStudentReportsEntity> findByStudentID(UUID studentID);
+	
+	Optional<GradStudentReportsEntity> findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(UUID studentID,String gradReportTypeCode,String documentStatusCode);
 }
