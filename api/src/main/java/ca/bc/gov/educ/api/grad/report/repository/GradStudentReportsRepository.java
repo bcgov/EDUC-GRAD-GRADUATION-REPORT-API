@@ -22,5 +22,7 @@ public interface GradStudentReportsRepository extends JpaRepository<GradStudentR
 
 	List<GradStudentReportsEntity> findByStudentID(UUID studentID);
 	
+	List<GradStudentReportsEntity> findByStudentIDAndDocumentStatusCodeNot(UUID studentID,String documentStatusCode);
+	
 	Optional<GradStudentReportsEntity> findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(UUID studentID,String gradReportTypeCode,String documentStatusCode);
 }

@@ -169,7 +169,7 @@ public class CommonService {
 
 	@Transactional
 	public int getAllStudentAchievement(UUID studentID) {
-		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentID(studentID);
+		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
 		boolean hasDocuments  = false;
 		int numberOfReportRecords = 0;
 		if(!repList.isEmpty()) {
@@ -180,7 +180,7 @@ public class CommonService {
 			});
 			hasDocuments = true;
 		}
-		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentID(studentID);
+		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
 		int numberOfCertificateRecords = 0;
 		if(!certList.isEmpty()) {
 			numberOfCertificateRecords =certList.size();
