@@ -92,16 +92,17 @@ public class CommonControllerTest {
         final UUID studentID = UUID.randomUUID();
         final String pen = "123456789";
         final String reportTypeCode = "TEST";
-
+        boolean isGraduated= false;
         final GradStudentReports gradStudentReport = new GradStudentReports();
         gradStudentReport.setGradReportTypeCode(reportTypeCode);
         gradStudentReport.setPen(pen);
         gradStudentReport.setStudentID(studentID);
         gradStudentReport.setReport("TEST Report Body");
+        gradStudentReport.setDocumentStatusCode("IP");
 
-        Mockito.when(commonService.saveGradReports(gradStudentReport)).thenReturn(gradStudentReport);
-        commonController.saveStudentReport(gradStudentReport);
-        Mockito.verify(commonService).saveGradReports(gradStudentReport);
+        Mockito.when(commonService.saveGradReports(gradStudentReport,isGraduated)).thenReturn(gradStudentReport);
+        commonController.saveStudentReport(gradStudentReport,isGraduated);
+        Mockito.verify(commonService).saveGradReports(gradStudentReport,isGraduated);
     }
 
     @Test
@@ -132,20 +133,20 @@ public class CommonControllerTest {
         final UUID studentID = new UUID(1, 1);
         final String certificateTypeCode = "TEST";
         final String certificateBody = "Test Certificate Body";
-
+        final String documentStatusCode = "COMPL";
         byte[] certificateByte = Base64.decodeBase64(certificateBody.getBytes(StandardCharsets.US_ASCII));
         ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=student_"+certificateTypeCode+"_certificate.pdf");
 
-        Mockito.when(commonService.getStudentCertificateByType(studentID, certificateTypeCode)).thenReturn(
+        Mockito.when(commonService.getStudentCertificateByType(studentID, certificateTypeCode,documentStatusCode)).thenReturn(
                 ResponseEntity
                 .ok()
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(bis)));
-        commonController.getStudentCertificateByType(studentID.toString(), certificateTypeCode);
-        Mockito.verify(commonService).getStudentCertificateByType(studentID, certificateTypeCode);
+        commonController.getStudentCertificateByType(studentID.toString(), certificateTypeCode,documentStatusCode);
+        Mockito.verify(commonService).getStudentCertificateByType(studentID, certificateTypeCode,documentStatusCode);
     }
 
     @Test

@@ -76,10 +76,10 @@ public class CommonController {
     @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Save Student Reports", description = "Save Student Reports", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<ApiResponseModel<GradStudentReports>> saveStudentReport(@RequestBody GradStudentReports gradStudentReports) {
-        logger.debug("Save student Grad Report for PEN: " + gradStudentReports.getPen());
-        validation.requiredField(gradStudentReports.getPen(), "Pen");
-        return response.UPDATED(commonService.saveGradReports(gradStudentReports));
+    public ResponseEntity<ApiResponseModel<GradStudentReports>> saveStudentReport(@RequestBody GradStudentReports gradStudentReports,@RequestParam(value = "isGraduated", required = false, defaultValue = "false") boolean isGraduated) {
+        logger.debug("Save student Grad Report for Student ID: " + gradStudentReports.getStudentID());
+        validation.requiredField(gradStudentReports.getStudentID(), "Student ID");
+        return response.UPDATED(commonService.saveGradReports(gradStudentReports,isGraduated));
     }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_REPORT)
@@ -109,9 +109,10 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<InputStreamResource> getStudentCertificateByType(
     		@RequestParam(value = "studentID", required = true) String studentID,
-    		@RequestParam(value = "certificateType", required = true) String certificateType) { 
+    		@RequestParam(value = "certificateType", required = true) String certificateType,
+    		@RequestParam(value = "documentStatusCode", required = true) String documentStatusCode) { 
     	logger.debug("getStudentCertificateByType :");
-    	return commonService.getStudentCertificateByType(UUID.fromString(studentID),certificateType);
+    	return commonService.getStudentCertificateByType(UUID.fromString(studentID),certificateType,documentStatusCode);
     }
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE_BY_STUDENTID)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
