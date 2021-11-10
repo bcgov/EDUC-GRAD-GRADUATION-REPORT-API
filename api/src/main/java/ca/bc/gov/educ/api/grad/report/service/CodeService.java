@@ -6,25 +6,24 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificateTranscript;
+import ca.bc.gov.educ.api.grad.report.model.transformer.ProgramCertificateTranscriptTransformer;
+import ca.bc.gov.educ.api.grad.report.repository.ProgramCertificateTranscriptRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificate;
 import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificateReq;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradCertificateTypesTransformer;
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradReportTypesTransformer;
-import ca.bc.gov.educ.api.grad.report.model.transformer.ProgramCertificateTransformer;
 import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.ProgramCertificateRepository;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 
 @Service
@@ -43,10 +42,10 @@ public class CodeService {
 	private GradReportTypesTransformer gradReportTypesTransformer;
 	
 	@Autowired
-	private ProgramCertificateRepository programCertificateRepository;
+	private ProgramCertificateTranscriptRepository programCertificateTranscriptRepository;
 
 	@Autowired
-	private ProgramCertificateTransformer programCertificateTransformer;
+	private ProgramCertificateTranscriptTransformer programCertificateTranscriptTransformer;
 	
 	@Autowired
 	GradValidation validation;
@@ -159,7 +158,7 @@ public class CodeService {
 		return 0;
 	}
 
-	public List<ProgramCertificate> getProgramCertificateList(ProgramCertificateReq programCertificateReq) {
-		return programCertificateTransformer.transformToDTO(programCertificateRepository.findCertificates(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolFundingCode(),programCertificateReq.getOptionalProgram()));
+	public List<ProgramCertificateTranscript> getProgramCertificateList(ProgramCertificateReq programCertificateReq) {
+		return programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findCertificates(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolCategoryCode(),programCertificateReq.getOptionalProgram()));
 	}
 }

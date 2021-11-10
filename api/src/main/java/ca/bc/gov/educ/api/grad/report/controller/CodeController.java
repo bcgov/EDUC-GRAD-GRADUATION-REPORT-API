@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificateTranscript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificate;
 import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificateReq;
 import ca.bc.gov.educ.api.grad.report.service.CodeService;
 import ca.bc.gov.educ.api.grad.report.util.ApiResponseModel;
@@ -229,7 +229,7 @@ public class CodeController {
     @PreAuthorize(PermissionsConstants.READ_GRAD_CERTIFICATE)
     @Operation(summary = "Find all Program Certificates", description = "Get all Program Certificates", tags = {"Program Certificate"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<ProgramCertificate>> getProgramCertificateList(@RequestBody ProgramCertificateReq programCertificateReq) {
+    public ResponseEntity<List<ProgramCertificateTranscript>> getProgramCertificateList(@RequestBody ProgramCertificateReq programCertificateReq) {
         logger.debug("getProgramCertificateList : ");
         return response.GET(codeService.getProgramCertificateList(programCertificateReq));
     }
