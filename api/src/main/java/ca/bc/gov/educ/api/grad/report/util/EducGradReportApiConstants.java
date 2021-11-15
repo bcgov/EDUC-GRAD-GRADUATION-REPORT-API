@@ -19,6 +19,11 @@ public class EducGradReportApiConstants {
     public static final String GET_ALL_CERTIFICATE_TYPE_MAPPING = "/certificatetype";
     public static final String GET_ALL_CERTIFICATE_TYPE_BY_CODE_MAPPING = "/certificatetype/{certTypeCode}";
 
+    public static final String GET_ALL_TRANSCRIPT_TYPE_MAPPING = "/transcripttype";
+    public static final String GET_ALL_TRANSCRIPT_TYPE_BY_CODE_MAPPING = "/transcripttype/{tranTypeCode}";
+
+    public static final String GET_ALL_PROGRAM_CERTIFICATES_TRANSCRIPTS_MAPPING = "/allprogramcertificates";
+
     public static final String GET_ALL_REPORT_TYPE_MAPPING = "/reporttype";
     public static final String GET_ALL_REPORT_TYPE_BY_CODE_MAPPING = "/reporttype/{reportTypeCode}";
 

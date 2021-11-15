@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificateTranscript;
+import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificateReq;
 import ca.bc.gov.educ.api.grad.report.service.CodeService;
 import ca.bc.gov.educ.api.grad.report.util.ApiResponseModel;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
@@ -233,5 +230,38 @@ public class CodeController {
         logger.debug("getProgramCertificateList : ");
         return response.GET(codeService.getProgramCertificateList(programCertificateReq));
     }
-    
+
+
+    @GetMapping(EducGradReportApiConstants.GET_ALL_TRANSCRIPT_TYPE_MAPPING)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_TRANSCRIPT)
+    @Operation(summary = "Find all Transcript Types", description = "Get all Transcript Types", tags = {"Transcript"})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<TranscriptTypes>> getAllTranscriptTypeCodeList() {
+        logger.debug("getAllTranscriptTypeCodeList : ");
+        return response.GET(codeService.getAllTranscriptTypeCodeList());
+    }
+
+    @GetMapping(EducGradReportApiConstants.GET_ALL_TRANSCRIPT_TYPE_BY_CODE_MAPPING)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_TRANSCRIPT)
+    @Operation(summary = "Find a Transcript Type by code", description = "Get a Transcript Type by Code", tags = {"Transcript"})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "204", description = "NO CONTENT")})
+    public ResponseEntity<TranscriptTypes> getSpecificTranscriptTypeCode(@PathVariable String tranTypeCode) {
+        logger.debug("getSpecificTranscriptTypeCode : ");
+        TranscriptTypes gradResponse = codeService.getSpecificTranscriptTypeCode(tranTypeCode);
+        if (gradResponse != null) {
+            return response.GET(gradResponse);
+        } else {
+            return response.NOT_FOUND();
+        }
+    }
+
+    @GetMapping(EducGradReportApiConstants.GET_ALL_PROGRAM_CERTIFICATES_TRANSCRIPTS_MAPPING)
+    @PreAuthorize(PermissionsConstants.READ_PROGRAM_CERTIFICATE_TRANSCRIPT)
+    @Operation(summary = "Find all Program Certificate Transcript", description = "Get all Program Certificate Transcript", tags = {"Program"})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<ProgramCertificateTranscript>> getAllProgramCertificateTranscriptList() {
+        logger.debug("getAllTranscriptTypeCodeList : ");
+        return response.GET(codeService.getAllProgramCertificateTranscriptList());
+    }
 }

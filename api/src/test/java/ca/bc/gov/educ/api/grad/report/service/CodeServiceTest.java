@@ -1,12 +1,15 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
 import ca.bc.gov.educ.api.grad.report.exception.GradBusinessRuleException;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
+import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.ProgramCertificateTranscriptEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.TranscriptTypesEntity;
 import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
+import ca.bc.gov.educ.api.grad.report.repository.ProgramCertificateTranscriptRepository;
+import ca.bc.gov.educ.api.grad.report.repository.TranscriptTypesRepository;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +39,13 @@ public class CodeServiceTest {
 	private GradCertificateTypesRepository gradCertificateTypesRepository;
 
 	@MockBean
+	private TranscriptTypesRepository transcriptTypesRepository;
+
+	@MockBean
 	private GradReportTypesRepository gradReportTypesRepository;
+
+	@MockBean
+	private ProgramCertificateTranscriptRepository programCertificateTranscriptRepository;
 
 	@Autowired
 	GradValidation validation;
@@ -321,5 +330,109 @@ public class CodeServiceTest {
 		Mockito.when(gradReportTypesRepository.findById(obj.getCode())).thenReturn(Optional.empty());
 		codeService.updateGradReportTypes(obj);
 		
+	}
+
+	@Test
+	public void testGetAllTranscriptTypesCodeList() {
+		List<TranscriptTypesEntity> transcriptTypeList = new ArrayList<>();
+		TranscriptTypesEntity obj = new TranscriptTypesEntity();
+		obj.setCode("E");
+		obj.setDescription("English Dogwood");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		transcriptTypeList.add(obj);
+		obj = new TranscriptTypesEntity();
+		obj.setCode("F");
+		obj.setDescription("French Dogwood");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		transcriptTypeList.add(obj);
+		Mockito.when(transcriptTypesRepository.findAll()).thenReturn(transcriptTypeList);
+		codeService.getAllTranscriptTypeCodeList();
+	}
+
+	@Test
+	public void testGetSpecificTranscriptTypeCode() {
+		String tranTypeCode = "E";
+		TranscriptTypes obj = new TranscriptTypes();
+		obj.setCode("E");
+		obj.setDescription("English Dogwood");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.toString();
+		TranscriptTypesEntity objEntity = new TranscriptTypesEntity();
+		objEntity.setCode("E");
+		objEntity.setDescription("English Dogwood");
+		objEntity.setCreatedBy("GRADUATION");
+		objEntity.setUpdatedBy("GRADUATION");
+		objEntity.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		objEntity.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		Optional<TranscriptTypesEntity> ent = Optional.of(objEntity);
+		Mockito.when(transcriptTypesRepository.findById(tranTypeCode)).thenReturn(ent);
+		codeService.getSpecificTranscriptTypeCode(tranTypeCode);
+	}
+
+	@Test
+	public void testGetSpecificTranscriptTypeCodeReturnsNull() {
+		String tranTypeCode = "E";
+		Mockito.when(transcriptTypesRepository.findById(tranTypeCode)).thenReturn(Optional.empty());
+		codeService.getSpecificTranscriptTypeCode(tranTypeCode);
+	}
+
+	@Test
+	public void testGetAllProgramCertificateTranscriptList() {
+		List<ProgramCertificateTranscriptEntity> pList = new ArrayList<>();
+		ProgramCertificateTranscriptEntity obj = new ProgramCertificateTranscriptEntity();
+		obj.setCertificateTypeCode("E");
+		obj.setTranscriptTypeCode("E");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		pList.add(obj);
+		obj = new ProgramCertificateTranscriptEntity();
+		obj.setCertificateTypeCode("F");
+		obj.setTranscriptTypeCode("T");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		pList.add(obj);
+		Mockito.when(programCertificateTranscriptRepository.findAll()).thenReturn(pList);
+		codeService.getAllProgramCertificateTranscriptList();
+	}
+
+	@Test
+	public void testGetProgramCertificateTranscriptList() {
+		ProgramCertificateReq req = new ProgramCertificateReq();
+		req.setProgramCode("2018-EN");
+		req.setOptionalProgram(null);
+		req.setSchoolCategoryCode("02");
+
+		List<ProgramCertificateTranscriptEntity> pList = new ArrayList<>();
+		ProgramCertificateTranscriptEntity obj = new ProgramCertificateTranscriptEntity();
+		obj.setCertificateTypeCode("E");
+		obj.setTranscriptTypeCode("E");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		pList.add(obj);
+		obj = new ProgramCertificateTranscriptEntity();
+		obj.setCertificateTypeCode("F");
+		obj.setTranscriptTypeCode("T");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		pList.add(obj);
+		Mockito.when(programCertificateTranscriptRepository.findCertificates(req.getProgramCode(),req.getSchoolCategoryCode(),req.getOptionalProgram())).thenReturn(pList);
+		codeService.getProgramCertificateList(req);
 	}
 }

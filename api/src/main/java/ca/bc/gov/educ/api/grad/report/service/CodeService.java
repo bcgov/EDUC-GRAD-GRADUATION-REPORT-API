@@ -6,7 +6,8 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificateTranscript;
+import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.entity.TranscriptTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.ProgramCertificateTranscriptTransformer;
 import ca.bc.gov.educ.api.grad.report.repository.ProgramCertificateTranscriptRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -15,9 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.ProgramCertificateReq;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.GradCertificateTypesTransformer;
@@ -25,6 +23,8 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.GradReportTypesTransform
 import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
 import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import ca.bc.gov.educ.api.grad.report.model.transformer.TranscriptTypesTransformer;
+import ca.bc.gov.educ.api.grad.report.repository.TranscriptTypesRepository;
 
 @Service
 public class CodeService {
@@ -46,6 +46,12 @@ public class CodeService {
 
 	@Autowired
 	private ProgramCertificateTranscriptTransformer programCertificateTranscriptTransformer;
+
+	@Autowired
+	private TranscriptTypesRepository transcriptTypesRepository;
+
+	@Autowired
+	private TranscriptTypesTransformer transcriptTypesTransformer;
 	
 	@Autowired
 	GradValidation validation;
@@ -161,4 +167,25 @@ public class CodeService {
 	public List<ProgramCertificateTranscript> getProgramCertificateList(ProgramCertificateReq programCertificateReq) {
 		return programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findCertificates(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolCategoryCode(),programCertificateReq.getOptionalProgram()));
 	}
+
+	@Transactional
+	public List<TranscriptTypes> getAllTranscriptTypeCodeList() {
+		return transcriptTypesTransformer.transformToDTO(transcriptTypesRepository.findAll());
+	}
+
+	@Transactional
+	public TranscriptTypes getSpecificTranscriptTypeCode(String tranTypeCode) {
+		Optional<TranscriptTypesEntity> entity = transcriptTypesRepository.findById(StringUtils.toRootUpperCase(tranTypeCode));
+		if (entity.isPresent()) {
+			return transcriptTypesTransformer.transformToDTO(entity);
+		} else {
+			return null;
+		}
+	}
+
+	@Transactional
+	public List<ProgramCertificateTranscript> getAllProgramCertificateTranscriptList() {
+		return programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findAll());
+	}
+
 }

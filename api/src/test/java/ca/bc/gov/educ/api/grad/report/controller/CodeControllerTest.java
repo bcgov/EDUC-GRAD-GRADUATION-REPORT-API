@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.grad.report.controller;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
+import ca.bc.gov.educ.api.grad.report.model.dto.TranscriptTypes;
 import ca.bc.gov.educ.api.grad.report.service.CodeService;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import ca.bc.gov.educ.api.grad.report.util.MessageHelper;
@@ -224,5 +225,52 @@ public class CodeControllerTest {
 		Mockito.when(codeService.deleteGradReportTypes(statusCode,null)).thenReturn(1);
 		codeController.deleteGradReportTypes(statusCode);
 		Mockito.verify(codeService).deleteGradReportTypes(statusCode,null);
+	}
+
+	@Test
+	public void testGetAllTranscriptTypesCodeList() {
+		List<TranscriptTypes> tTypesList = new ArrayList<>();
+		TranscriptTypes obj = new TranscriptTypes();
+		obj.setCode("DC");
+		obj.setDescription("Data Correction by School");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		tTypesList.add(obj);
+		obj = new TranscriptTypes();
+		obj.setCode("CC");
+		obj.setDescription("Courses not complete");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		tTypesList.add(obj);
+		Mockito.when(codeService.getAllTranscriptTypeCodeList()).thenReturn(tTypesList);
+		codeController.getAllTranscriptTypeCodeList();
+		Mockito.verify(codeService).getAllTranscriptTypeCodeList();
+	}
+
+	@Test
+	public void testGetSpecificTranscriptTypesCode() {
+		String tranTypeType = "DC";
+		TranscriptTypes obj = new TranscriptTypes();
+		obj.setCode("DC");
+		obj.setDescription("Data Correction by School");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		Mockito.when(codeService.getSpecificTranscriptTypeCode(tranTypeType)).thenReturn(obj);
+		codeController.getSpecificTranscriptTypeCode(tranTypeType);
+		Mockito.verify(codeService).getSpecificTranscriptTypeCode(tranTypeType);
+	}
+
+	@Test
+	public void testGetSpecificTranscriptTypesCode_noContent() {
+		String tranTypeType = "AB";
+		Mockito.when(codeService.getSpecificTranscriptTypeCode(tranTypeType)).thenReturn(null);
+		codeController.getSpecificTranscriptTypeCode(tranTypeType);
+		Mockito.verify(codeService).getSpecificTranscriptTypeCode(tranTypeType);
 	}
 }
