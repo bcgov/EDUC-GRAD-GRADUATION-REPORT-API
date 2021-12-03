@@ -2,14 +2,8 @@ package ca.bc.gov.educ.api.grad.report.service;
 
 import ca.bc.gov.educ.api.grad.report.exception.GradBusinessRuleException;
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.ProgramCertificateTranscriptEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.TranscriptTypesEntity;
-import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.ProgramCertificateTranscriptRepository;
-import ca.bc.gov.educ.api.grad.report.repository.TranscriptTypesRepository;
+import ca.bc.gov.educ.api.grad.report.model.entity.*;
+import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +37,8 @@ public class CodeServiceTest {
 
 	@MockBean
 	private GradReportTypesRepository gradReportTypesRepository;
+
+	@MockBean DocumentStatusCodeRepository documentStatusCodeRepository;
 
 	@MockBean
 	private ProgramCertificateTranscriptRepository programCertificateTranscriptRepository;
@@ -434,5 +430,58 @@ public class CodeServiceTest {
 		pList.add(obj);
 		Mockito.when(programCertificateTranscriptRepository.findCertificates(req.getProgramCode(),req.getSchoolCategoryCode(),req.getOptionalProgram())).thenReturn(pList);
 		codeService.getProgramCertificateList(req);
+	}
+
+	@Test
+	public void testGetAllReportTypesDocumentStatusCodeList() {
+		List<DocumentStatusCodeEntity> documentStatusCodeList = new ArrayList<>();
+		DocumentStatusCodeEntity obj = new DocumentStatusCodeEntity();
+		obj.setCode("TRAN");
+		obj.setDescription("Transcript");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		documentStatusCodeList.add(obj);
+		obj = new DocumentStatusCodeEntity();
+		obj.setCode("ACHV");
+		obj.setDescription("Achievement");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		documentStatusCodeList.add(obj);
+		Mockito.when(documentStatusCodeRepository.findAll()).thenReturn(documentStatusCodeList);
+		codeService.getAllDocumentStatusCodeList();
+	}
+
+	@Test
+	public void testGetSpecificDocumentStatusCode() {
+		String documentStatusCode = "TRAN";
+		DocumentStatusCode obj = new DocumentStatusCode();
+		obj.setCode("TRAN");
+		obj.setDescription("Transcript");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.toString();
+		DocumentStatusCodeEntity objEntity = new DocumentStatusCodeEntity();
+		objEntity.setCode("TRAN");
+		objEntity.setDescription("Transcript");
+		objEntity.setCreatedBy("GRADUATION");
+		objEntity.setUpdatedBy("GRADUATION");
+		objEntity.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		objEntity.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		Optional<DocumentStatusCodeEntity> ent = Optional.of(objEntity);
+		Mockito.when(documentStatusCodeRepository.findById(documentStatusCode)).thenReturn(ent);
+		codeService.getSpecificDocumentStatusCode(documentStatusCode);
+	}
+
+	@Test
+	public void testGetSpecificDocumentStatusCodeReturnsNull() {
+		String documentStatusCode = "TRAN";
+		Mockito.when(documentStatusCodeRepository.findById(documentStatusCode)).thenReturn(Optional.empty());
+		codeService.getSpecificDocumentStatusCode(documentStatusCode);
 	}
 }

@@ -181,7 +181,7 @@ public class CommonService {
 			hasDocuments = true;
 		}
 		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
-		int numberOfCertificateRecords = 0;
+		long numberOfCertificateRecords = 0L;
 		if(!certList.isEmpty()) {
 			numberOfCertificateRecords =certList.size();
 			hasDocuments = true;

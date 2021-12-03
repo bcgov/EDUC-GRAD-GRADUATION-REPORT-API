@@ -172,16 +172,9 @@ public class CodeControllerTest {
 	@Test
 	public void testDeleteGradCertificateTypes() {
 		String statusCode = "DC";
-		Authentication authentication = Mockito.mock(Authentication.class);
-		OAuth2AuthenticationDetails details = Mockito.mock(OAuth2AuthenticationDetails.class);
-		// Mockito.whens() for your authorization object
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-		Mockito.when(authentication.getDetails()).thenReturn(details);
-		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(codeService.deleteGradCertificateTypes(statusCode,null)).thenReturn(1);
+		Mockito.when(codeService.deleteGradCertificateTypes(statusCode)).thenReturn(1);
 		codeController.deleteGradCertificateTypes(statusCode);
-		Mockito.verify(codeService).deleteGradCertificateTypes(statusCode,null);
+		Mockito.verify(codeService).deleteGradCertificateTypes(statusCode);
 	}
 	
 	@Test
@@ -215,16 +208,9 @@ public class CodeControllerTest {
 	@Test
 	public void testDeleteGradReportTypes() {
 		String statusCode = "DC";
-		Authentication authentication = Mockito.mock(Authentication.class);
-		OAuth2AuthenticationDetails details = Mockito.mock(OAuth2AuthenticationDetails.class);
-		// Mockito.whens() for your authorization object
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-		Mockito.when(authentication.getDetails()).thenReturn(details);
-		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(codeService.deleteGradReportTypes(statusCode,null)).thenReturn(1);
+		Mockito.when(codeService.deleteGradReportTypes(statusCode)).thenReturn(1);
 		codeController.deleteGradReportTypes(statusCode);
-		Mockito.verify(codeService).deleteGradReportTypes(statusCode,null);
+		Mockito.verify(codeService).deleteGradReportTypes(statusCode);
 	}
 
 	@Test
