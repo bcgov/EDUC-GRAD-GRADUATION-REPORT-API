@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -348,7 +350,9 @@ public class CodeServiceTest {
 		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
 		transcriptTypeList.add(obj);
 		Mockito.when(transcriptTypesRepository.findAll()).thenReturn(transcriptTypeList);
-		codeService.getAllTranscriptTypeCodeList();
+		List<TranscriptTypes> pcList = codeService.getAllTranscriptTypeCodeList();
+		assertThat(pcList.isEmpty()).isFalse();
+		assertThat(pcList.size()).isEqualTo(2);
 	}
 
 	@Test
@@ -371,14 +375,17 @@ public class CodeServiceTest {
 		objEntity.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
 		Optional<TranscriptTypesEntity> ent = Optional.of(objEntity);
 		Mockito.when(transcriptTypesRepository.findById(tranTypeCode)).thenReturn(ent);
-		codeService.getSpecificTranscriptTypeCode(tranTypeCode);
+		TranscriptTypes docStaCode = codeService.getSpecificTranscriptTypeCode(tranTypeCode);
+		assertThat(docStaCode).isNotNull();
+		assertThat(docStaCode.getCode()).isEqualTo(obj.getCode());
 	}
 
 	@Test
 	public void testGetSpecificTranscriptTypeCodeReturnsNull() {
 		String tranTypeCode = "E";
 		Mockito.when(transcriptTypesRepository.findById(tranTypeCode)).thenReturn(Optional.empty());
-		codeService.getSpecificTranscriptTypeCode(tranTypeCode);
+		TranscriptTypes ttypes =  codeService.getSpecificTranscriptTypeCode(tranTypeCode);
+		assertThat(ttypes).isNull();
 	}
 
 	@Test
@@ -401,7 +408,9 @@ public class CodeServiceTest {
 		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
 		pList.add(obj);
 		Mockito.when(programCertificateTranscriptRepository.findAll()).thenReturn(pList);
-		codeService.getAllProgramCertificateTranscriptList();
+		List<ProgramCertificateTranscript> pcList = codeService.getAllProgramCertificateTranscriptList();
+		assertThat(pcList.isEmpty()).isFalse();
+		assertThat(pcList.size()).isEqualTo(2);
 	}
 
 	@Test
@@ -429,7 +438,9 @@ public class CodeServiceTest {
 		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
 		pList.add(obj);
 		Mockito.when(programCertificateTranscriptRepository.findCertificates(req.getProgramCode(),req.getSchoolCategoryCode(),req.getOptionalProgram())).thenReturn(pList);
-		codeService.getProgramCertificateList(req);
+		List<ProgramCertificateTranscript> pcList = codeService.getProgramCertificateList(req);
+		assertThat(pcList.isEmpty()).isFalse();
+		assertThat(pcList.size()).isEqualTo(2);
 	}
 
 	@Test
@@ -452,7 +463,9 @@ public class CodeServiceTest {
 		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
 		documentStatusCodeList.add(obj);
 		Mockito.when(documentStatusCodeRepository.findAll()).thenReturn(documentStatusCodeList);
-		codeService.getAllDocumentStatusCodeList();
+		List<DocumentStatusCode> docList = codeService.getAllDocumentStatusCodeList();
+		assertThat(docList.isEmpty()).isFalse();
+		assertThat(docList.size()).isEqualTo(2);
 	}
 
 	@Test
@@ -475,13 +488,16 @@ public class CodeServiceTest {
 		objEntity.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
 		Optional<DocumentStatusCodeEntity> ent = Optional.of(objEntity);
 		Mockito.when(documentStatusCodeRepository.findById(documentStatusCode)).thenReturn(ent);
-		codeService.getSpecificDocumentStatusCode(documentStatusCode);
+		DocumentStatusCode docStaCode = codeService.getSpecificDocumentStatusCode(documentStatusCode);
+		assertThat(docStaCode).isNotNull();
+		assertThat(docStaCode.getCode()).isEqualTo(obj.getCode());
 	}
 
 	@Test
 	public void testGetSpecificDocumentStatusCodeReturnsNull() {
 		String documentStatusCode = "TRAN";
 		Mockito.when(documentStatusCodeRepository.findById(documentStatusCode)).thenReturn(Optional.empty());
-		codeService.getSpecificDocumentStatusCode(documentStatusCode);
+		DocumentStatusCode docStaCode = codeService.getSpecificDocumentStatusCode(documentStatusCode);
+		assertThat(docStaCode).isNull();
 	}
 }
