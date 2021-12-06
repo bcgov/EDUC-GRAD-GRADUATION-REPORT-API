@@ -18,31 +18,26 @@ public class GradReportTypesTransformer {
     ModelMapper modelMapper;
 
     public GradReportTypes transformToDTO (GradReportTypesEntity gradReportTypesEntity) {
-    	GradReportTypes gradReportTypes = modelMapper.map(gradReportTypesEntity, GradReportTypes.class);
-        return gradReportTypes;
+    	return modelMapper.map(gradReportTypesEntity, GradReportTypes.class);
     }
 
     public GradReportTypes transformToDTO ( Optional<GradReportTypesEntity> gradReportTypesEntity ) {
     	GradReportTypesEntity cae = new GradReportTypesEntity();
         if (gradReportTypesEntity.isPresent())
             cae = gradReportTypesEntity.get();
-
-        GradReportTypes gradReportTypes = modelMapper.map(cae, GradReportTypes.class);
-        return gradReportTypes;
+        return modelMapper.map(cae, GradReportTypes.class);
     }
 
 	public List<GradReportTypes> transformToDTO (Iterable<GradReportTypesEntity> gradReportTypesEntities ) {
-		List<GradReportTypes> gradReportTypesList = new ArrayList<GradReportTypes>();
+		List<GradReportTypes> gradReportTypesList = new ArrayList<>();
         for (GradReportTypesEntity gradReportTypesEntity : gradReportTypesEntities) {
-        	GradReportTypes gradReportTypes = new GradReportTypes();
-        	gradReportTypes = modelMapper.map(gradReportTypesEntity, GradReportTypes.class);            
+            GradReportTypes gradReportTypes = modelMapper.map(gradReportTypesEntity, GradReportTypes.class);
         	gradReportTypesList.add(gradReportTypes);
         }
         return gradReportTypesList;
     }
 
     public GradReportTypesEntity transformToEntity(GradReportTypes gradReportTypes) {
-        GradReportTypesEntity gradReportTypesEntity = modelMapper.map(gradReportTypes, GradReportTypesEntity.class);
-        return gradReportTypesEntity;
+        return modelMapper.map(gradReportTypes, GradReportTypesEntity.class);
     }
 }

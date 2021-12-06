@@ -11,6 +11,8 @@ import java.util.Date;
 @Setter
 public class EducGradReportApiConstants {
 
+    private EducGradReportApiConstants(){}
+
     //API end-point Mapping constants
     public static final String API_ROOT_MAPPING = "";
     public static final String API_VERSION = "v1";
@@ -26,6 +28,9 @@ public class EducGradReportApiConstants {
 
     public static final String GET_ALL_REPORT_TYPE_MAPPING = "/reporttype";
     public static final String GET_ALL_REPORT_TYPE_BY_CODE_MAPPING = "/reporttype/{reportTypeCode}";
+
+    public static final String GET_ALL_DOCUMENT_STATUS_MAPPING = "/documentstatus";
+    public static final String GET_ALL_DOCUMENT_STATUS_CODE_MAPPING = "/documentstatus/{documentStatusCode}";
 
     public static final String STUDENT_REPORT = "/studentreport";
     public static final String STUDENT_CERTIFICATE = "/studentcertificate";

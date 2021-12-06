@@ -1,9 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.controller;
 
 import java.util.List;
-
 import javax.validation.Valid;
-
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import ca.bc.gov.educ.api.grad.report.service.CodeService;
 import ca.bc.gov.educ.api.grad.report.util.ApiResponseModel;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
@@ -54,11 +51,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class CodeController {
 
     private static Logger logger = LoggerFactory.getLogger(CodeController.class);
-    
-    private static final String REASON_CODE="Reason Code";
-    private static final String STATUS_CODE="Status Code";
+
     private static final String REPORT_TYPE_CODE="Report Type Code";
-    private static final String REQUIREMENT_TYPE_CODE="Requirement Type Code";
     private static final String CERTIFICATE_TYPE_CODE="Certificate Type Code";
 
     @Autowired
@@ -140,10 +134,7 @@ public class CodeController {
             validation.stopOnErrors();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        OAuth2AuthenticationDetails auth =
-                (OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        String accessToken = auth.getTokenValue();
-        return response.DELETE(codeService.deleteGradCertificateTypes(certTypeCode, accessToken));
+        return response.DELETE(codeService.deleteGradCertificateTypes(certTypeCode));
     }
 
     @GetMapping(EducGradReportApiConstants.GET_ALL_REPORT_TYPE_MAPPING)
@@ -216,10 +207,7 @@ public class CodeController {
             validation.stopOnErrors();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        OAuth2AuthenticationDetails auth =
-                (OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        String accessToken = auth.getTokenValue();
-        return response.DELETE(codeService.deleteGradReportTypes(reportTypeCode, accessToken));
+        return response.DELETE(codeService.deleteGradReportTypes(reportTypeCode));
     }
     
     @PostMapping(EducGradReportApiConstants.GET_ALL_PROGRAM_CERTIFICATES_MAPPING)
@@ -263,5 +251,29 @@ public class CodeController {
     public ResponseEntity<List<ProgramCertificateTranscript>> getAllProgramCertificateTranscriptList() {
         logger.debug("getAllTranscriptTypeCodeList : ");
         return response.GET(codeService.getAllProgramCertificateTranscriptList());
+    }
+
+    @GetMapping(EducGradReportApiConstants.GET_ALL_DOCUMENT_STATUS_MAPPING)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_DOCUMENT_STATUS)
+    @Operation(summary = "Find all Document Status Codes", description = "Get all Document Status Codes", tags = {"Document Status"})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<DocumentStatusCode>> getAllDocumentStatusCodeList() {
+        logger.debug("getAllDocumentStatusCodeList : ");
+        return response.GET(codeService.getAllDocumentStatusCodeList());
+    }
+
+    @GetMapping(EducGradReportApiConstants.GET_ALL_DOCUMENT_STATUS_CODE_MAPPING)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_DOCUMENT_STATUS)
+    @Operation(summary = "Find a Document Status Code", description = "Get a Document Status Code", tags = {"Document Status"})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "204", description = "NO CONTENT")})
+    public ResponseEntity<DocumentStatusCode> getSpecificDocumentStatusCode(@PathVariable String documentStatusCode) {
+        logger.debug("getSpecificDocumentStatusCode : ");
+        DocumentStatusCode gradResponse = codeService.getSpecificDocumentStatusCode(documentStatusCode);
+        if (gradResponse != null) {
+            return response.GET(gradResponse);
+        } else {
+            return response.NOT_FOUND();
+        }
     }
 }

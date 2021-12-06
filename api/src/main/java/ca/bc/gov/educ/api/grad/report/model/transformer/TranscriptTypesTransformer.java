@@ -1,8 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.model.transformer;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.TranscriptTypes;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.TranscriptTypesEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,27 +18,23 @@ public class TranscriptTypesTransformer {
     ModelMapper modelMapper;
 
     public TranscriptTypes transformToDTO (TranscriptTypesEntity transcriptEntity) {
-        TranscriptTypes transcriptTypes = modelMapper.map(transcriptEntity, TranscriptTypes.class);
-        return transcriptTypes;
+        return modelMapper.map(transcriptEntity, TranscriptTypes.class);
     }
 
     public TranscriptTypes transformToDTO ( Optional<TranscriptTypesEntity> transcriptEntity ) {
         TranscriptTypesEntity cae = new TranscriptTypesEntity();
         if (transcriptEntity.isPresent())
             cae = transcriptEntity.get();
-
-        TranscriptTypes transcriptTypes = modelMapper.map(cae, TranscriptTypes.class);
-        return transcriptTypes;
+        return modelMapper.map(cae, TranscriptTypes.class);
     }
 
 	public List<TranscriptTypes> transformToDTO (Iterable<TranscriptTypesEntity> transcriptTypesEntity ) {
-		List<TranscriptTypes> trascriptTypesList = new ArrayList<>();
+		List<TranscriptTypes> transcriptTypesList = new ArrayList<>();
         for (TranscriptTypesEntity tTypesEntity : transcriptTypesEntity) {
-            TranscriptTypes tTypes = new TranscriptTypes();
-            tTypes = modelMapper.map(tTypesEntity, TranscriptTypes.class);
-            trascriptTypesList.add(tTypes);
+            TranscriptTypes tTypes = modelMapper.map(tTypesEntity, TranscriptTypes.class);
+            transcriptTypesList.add(tTypes);
         }
-        return trascriptTypesList;
+        return transcriptTypesList;
     }
 
     public TranscriptTypesEntity transformToEntity(TranscriptTypes transcriptTypes) {

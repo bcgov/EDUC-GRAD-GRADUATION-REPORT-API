@@ -25,10 +25,10 @@ public class ResponseHelper {
 	}
 
 	public <T> ResponseEntity<T> NOT_FOUND() {
-		return new ResponseEntity<T>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
-	public <T> ResponseEntity<T> NO_CONTENT() { return new ResponseEntity<T>(HttpStatus.NO_CONTENT); }
+	public <T> ResponseEntity<T> NO_CONTENT() { return new ResponseEntity<>(HttpStatus.NO_CONTENT); }
 
 	//************   GET methods
 
@@ -57,16 +57,14 @@ public class ResponseHelper {
 	/**
 	 * Get Response Entity using a LIST of JPA Entity Sources
 	 * @param <T>
-	 * @param optional - the JPA entity Source LIST
-	 * @param type - The API model type to map to.
 	 * @return
 	 */
 	public <T> ResponseEntity<List<T>> GET(Collection<?> entitySet, Type T) {
 		if (entitySet == null || entitySet.isEmpty()) {
-			return new ResponseEntity<List<T>>(new LinkedList<T>(), HttpStatus.OK);
+			return new ResponseEntity<>(new LinkedList<>(), HttpStatus.OK);
 		} else {
 			List<T> list = modelMapper.map(Arrays.asList(entitySet.toArray()), T);
-			return new ResponseEntity<List<T>>(list, HttpStatus.OK);
+			return new ResponseEntity<>(list, HttpStatus.OK);
 		}
 	}
 	
@@ -75,11 +73,10 @@ public class ResponseHelper {
 	 * should only be used when you need fine-grained control over the model
 	 * mapping and the mapping gets performed within the API.
 	 * @param <T>
-	 * @param optional - the JPA entity Source LIST
 	 * @return
 	 */
 	public <T> ResponseEntity<List<T>> GET(List<T> list) {
-		return new ResponseEntity<List<T>>(list, HttpStatus.OK);
+		return new ResponseEntity<>(list, HttpStatus.OK);
 	}
 
 	/**
@@ -161,9 +158,9 @@ public class ResponseHelper {
 	 * @param converters
 	 */
 	protected void addConverters(Converter<?, ?>... converters) {
-		Stream.of(converters).forEach((converter) -> {
-			modelMapper.addConverter(converter);
-		});
+		Stream.of(converters).forEach(converter ->
+			modelMapper.addConverter(converter)
+		);
 	}
 
 }

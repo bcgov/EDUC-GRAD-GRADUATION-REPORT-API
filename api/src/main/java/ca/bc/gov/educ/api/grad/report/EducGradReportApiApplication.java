@@ -28,9 +28,7 @@ public class EducGradReportApiApplication {
 
     @Bean
     public ModelMapper modelMapper() {
-
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper;
+        return new ModelMapper();
     }
 
     @Configuration
