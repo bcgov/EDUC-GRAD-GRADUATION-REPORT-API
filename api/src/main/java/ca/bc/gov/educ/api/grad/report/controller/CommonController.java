@@ -77,7 +77,7 @@ public class CommonController {
     @Operation(summary = "Save Student Reports", description = "Save Student Reports", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<ApiResponseModel<GradStudentReports>> saveStudentReport(@RequestBody GradStudentReports gradStudentReports,@RequestParam(value = "isGraduated", required = false, defaultValue = "false") boolean isGraduated) {
-        logger.debug("Save student Grad Report for Student ID: " + gradStudentReports.getStudentID());
+        logger.debug("Save student Grad Report for Student ID: {}",gradStudentReports.getStudentID());
         validation.requiredField(gradStudentReports.getStudentID(), "Student ID");
         return response.UPDATED(commonService.saveGradReports(gradStudentReports,isGraduated));
     }
@@ -99,7 +99,7 @@ public class CommonController {
     @Operation(summary = "Save Student Certificate", description = "Save Student Certificate", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<ApiResponseModel<GradStudentCertificates>> saveStudentCertificate(@RequestBody GradStudentCertificates gradStudentCertificates) {
-        logger.debug("Save student Grad Certificate for PEN: " + gradStudentCertificates.getPen());
+        logger.debug("Save student Grad Certificate for PEN: {}", gradStudentCertificates.getPen());
         validation.requiredField(gradStudentCertificates.getPen(), "Pen");
         return response.UPDATED(commonService.saveGradCertificates(gradStudentCertificates));
     }

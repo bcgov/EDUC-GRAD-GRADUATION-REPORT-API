@@ -7,9 +7,10 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.TranscriptTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.transformer.ProgramCertificateTranscriptTransformer;
-import ca.bc.gov.educ.api.grad.report.repository.ProgramCertificateTranscriptRepository;
+import ca.bc.gov.educ.api.grad.report.model.transformer.*;
+import ca.bc.gov.educ.api.grad.report.repository.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.transformer.GradCertificateTypesTransformer;
-import ca.bc.gov.educ.api.grad.report.model.transformer.GradReportTypesTransformer;
-import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
-import ca.bc.gov.educ.api.grad.report.model.transformer.TranscriptTypesTransformer;
-import ca.bc.gov.educ.api.grad.report.repository.TranscriptTypesRepository;
 
 @Service
 public class CodeService {
@@ -52,6 +47,12 @@ public class CodeService {
 
 	@Autowired
 	private TranscriptTypesTransformer transcriptTypesTransformer;
+
+	@Autowired
+	private DocumentStatusCodeRepository documentStatusCodeRepository;
+
+	@Autowired
+	private DocumentStatusCodeTransformer documentStatusCodeTransformer;
 	
 	@Autowired
 	GradValidation validation;
@@ -107,9 +108,9 @@ public class CodeService {
 		}
 	}
 
-	public int deleteGradCertificateTypes(@Valid String certificateType,String accessToken) {
+	public int deleteGradCertificateTypes(@Valid String certificateType) {
 		Optional<GradCertificateTypesEntity> entity = gradCertificateTypesRepository.findById(certificateType);
-		if(entity != null) {
+		if(entity.isPresent()) {
 			gradCertificateTypesRepository.deleteById(certificateType);
 			return 1;
 		}
@@ -155,9 +156,9 @@ public class CodeService {
 		}
 	}
 
-	public int deleteGradReportTypes(@Valid String reportType,String accessToken) {
+	public int deleteGradReportTypes(@Valid String reportType) {
 		Optional<GradReportTypesEntity> entity = gradReportTypesRepository.findById(reportType);
-		if(entity != null) {
+		if(entity.isPresent()) {
 			gradReportTypesRepository.deleteById(reportType);
 			return 1;
 		}
@@ -186,6 +187,21 @@ public class CodeService {
 	@Transactional
 	public List<ProgramCertificateTranscript> getAllProgramCertificateTranscriptList() {
 		return programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findAll());
+	}
+
+	@Transactional
+	public List<DocumentStatusCode> getAllDocumentStatusCodeList() {
+		return documentStatusCodeTransformer.transformToDTO(documentStatusCodeRepository.findAll());
+	}
+
+	@Transactional
+	public DocumentStatusCode getSpecificDocumentStatusCode(String provCode) {
+		Optional<DocumentStatusCodeEntity> entity = documentStatusCodeRepository.findById(StringUtils.toRootUpperCase(provCode));
+		if (entity.isPresent()) {
+			return documentStatusCodeTransformer.transformToDTO(entity);
+		} else {
+			return null;
+		}
 	}
 
 }

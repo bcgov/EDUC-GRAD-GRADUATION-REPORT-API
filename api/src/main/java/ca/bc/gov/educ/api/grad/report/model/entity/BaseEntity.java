@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.model.entity;
 
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,10 +28,10 @@ public class BaseEntity {
 	@PrePersist
 	protected void onCreate() {
 		if (StringUtils.isBlank(createdBy)) {
-			this.createdBy = "API_GRAD_REPORT";
+			this.createdBy = EducGradReportApiConstants.DEFAULT_CREATED_BY;
 		}		
 		if (StringUtils.isBlank(updatedBy)) {
-			this.updatedBy = "API_GRAD_REPORT";
+			this.updatedBy = EducGradReportApiConstants.DEFAULT_UPDATED_BY;
 		}		
 		this.createdTimestamp = new Date(System.currentTimeMillis());
 		this.updatedTimestamp = new Date(System.currentTimeMillis());
@@ -41,10 +42,10 @@ public class BaseEntity {
 	protected void onPersist() {
 		this.updatedTimestamp = new Date(System.currentTimeMillis());
 		if (StringUtils.isBlank(updatedBy)) {
-			this.updatedBy = "API_GRAD_REPORT";
+			this.updatedBy = EducGradReportApiConstants.DEFAULT_UPDATED_BY;
 		}
 		if (StringUtils.isBlank(createdBy)) {
-			this.createdBy = "API_GRAD_REPORT";
+			this.createdBy = EducGradReportApiConstants.DEFAULT_CREATED_BY;
 		}
 		if (this.createdTimestamp == null) {
 			this.createdTimestamp = new Date(System.currentTimeMillis());

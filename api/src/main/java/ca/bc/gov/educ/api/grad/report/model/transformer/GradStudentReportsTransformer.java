@@ -18,31 +18,26 @@ public class GradStudentReportsTransformer {
     ModelMapper modelMapper;
 
     public GradStudentReports transformToDTO (GradStudentReportsEntity gradStudentReportEntity) {
-    	GradStudentReports gradStudentReports = modelMapper.map(gradStudentReportEntity, GradStudentReports.class);
-        return gradStudentReports;
+    	return modelMapper.map(gradStudentReportEntity, GradStudentReports.class);
     }
 
     public GradStudentReports transformToDTO ( Optional<GradStudentReportsEntity> gradStudentReportEntity ) {
     	GradStudentReportsEntity cae = new GradStudentReportsEntity();
         if (gradStudentReportEntity.isPresent())
             cae = gradStudentReportEntity.get();
-
-        GradStudentReports gradStudentReports = modelMapper.map(cae, GradStudentReports.class);
-        return gradStudentReports;
+        return modelMapper.map(cae, GradStudentReports.class);
     }
 
 	public List<GradStudentReports> transformToDTO (Iterable<GradStudentReportsEntity> gradStudentReportsEntities ) {
-		List<GradStudentReports> gradStudentReportsList = new ArrayList<GradStudentReports>();
+		List<GradStudentReports> gradStudentReportsList = new ArrayList<>();
         for (GradStudentReportsEntity gradStudentReportsEntity : gradStudentReportsEntities) {
-        	GradStudentReports gradStudentReports = new GradStudentReports();
-        	gradStudentReports = modelMapper.map(gradStudentReportsEntity, GradStudentReports.class);            
+        	GradStudentReports gradStudentReports = modelMapper.map(gradStudentReportsEntity, GradStudentReports.class);
         	gradStudentReportsList.add(gradStudentReports);
         }
         return gradStudentReportsList;
     }
 
     public GradStudentReportsEntity transformToEntity(GradStudentReports gradStudentReports) {
-        GradStudentReportsEntity gradStudentReportsEntity = modelMapper.map(gradStudentReports, GradStudentReportsEntity.class);
-        return gradStudentReportsEntity;
+        return modelMapper.map(gradStudentReports, GradStudentReportsEntity.class);
     }
 }

@@ -15,8 +15,8 @@ import java.util.function.Consumer;
 @Scope(proxyMode = ScopedProxyMode.DEFAULT)
 public class GradValidation {
 
-	private static final ThreadLocal<List<String>> warningList = ThreadLocal.<List<String>>withInitial(() -> {return new LinkedList<String>();});
-	private static final ThreadLocal<List<String>> errorList = ThreadLocal.<List<String>>withInitial(() -> {return new LinkedList<String>();});
+	private static final ThreadLocal<List<String>> warningList = ThreadLocal.<List<String>>withInitial(LinkedList::new);
+	private static final ThreadLocal<List<String>> errorList = ThreadLocal.<List<String>>withInitial(LinkedList::new);
 
 	@Autowired
 	MessageHelper messagesHelper;
@@ -75,12 +75,10 @@ public class GradValidation {
     		addError(messagesHelper.missingValue(fieldName));
     		return false;
     	}
-    	if (requiredValue instanceof String) {
-        	if (StringUtils.isBlank((String)requiredValue)) {
-        		addError(messagesHelper.missingValue(fieldName));
-        		return false;
-        	}
-    	}
+		if (requiredValue instanceof String && StringUtils.isBlank((String) requiredValue)) {
+			addError(messagesHelper.missingValue(fieldName));
+			return false;
+		}
     	return true;
     }
     
@@ -103,6 +101,8 @@ public class GradValidation {
     public void clear() {
     	errorList.get().clear();
     	warningList.get().clear();
+		errorList.remove();
+		warningList.remove();
     	
     }
 }
