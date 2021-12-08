@@ -36,7 +36,7 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: '${REPO_NAME}:latest'
+          name: '${REPO_NAME}:${VERSION}'
       successfulBuildsHistoryLimit: 2
       failedBuildsHistoryLimit: 2
   - kind: ImageStream
