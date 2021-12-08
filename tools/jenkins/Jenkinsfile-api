@@ -23,7 +23,7 @@ pipeline{
             branchFilter: ".*")      
   }
         TAG = 'dev'
-
+        VERSION = 'latest'
         APP_NAME = 'educ-grad-graduation-report-api'
         APP_DOMAIN = 'apps.silver.devops.gov.bc.ca'
 
@@ -67,7 +67,7 @@ pipeline{
                         openshift.withProject(TOOLS_NAMESPACE) {
                             openshift.apply(
                                         openshift.process("-f", "${SOURCE_REPO_URL_RAW}/${BRANCH}/tools/openshift/api.dc.yaml",
-                                        "REPO_NAME=${REPO_NAME}", "HOST_ROUTE=${DEV_HOST_ROUTE}")
+                                        "REPO_NAME=${REPO_NAME}", "HOST_ROUTE=${DEV_HOST_ROUTE}", "VERSION=${VERSION}")
                                     )
                             openshift.selector("dc", "${REPO_NAME}-dc").rollout().latest()
                             timeout (time: 10, unit: 'MINUTES') {
