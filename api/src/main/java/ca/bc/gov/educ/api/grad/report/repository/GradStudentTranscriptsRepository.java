@@ -5,6 +5,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface GradStudentTranscriptsRepository extends JpaRepository<GradStud
 	Optional<GradStudentTranscriptsEntity> findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(UUID studentID,String transcriptTypeCode,String documentStatusCode);
 	Optional<GradStudentTranscriptsEntity> findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(UUID studentID, String transcriptTypeCode, String documentStatusCode);
    	@Query("select c from GradStudentTranscriptsEntity c where c.transcriptTypeCode=:transcriptType")
-	List<GradStudentTranscriptsEntity> existsByTranscriptTypeCode(String transcriptType);
+	List<GradStudentTranscriptsEntity> existsByTranscriptTypeCode(@Param("transcriptType") String transcriptType);
 
 	long deleteByStudentID(UUID studentID);
 }
