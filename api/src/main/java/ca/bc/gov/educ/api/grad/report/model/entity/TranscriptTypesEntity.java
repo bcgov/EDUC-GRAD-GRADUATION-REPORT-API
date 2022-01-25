@@ -33,5 +33,8 @@ public class TranscriptTypesEntity extends BaseEntity {
 
 	@Column(name = "EXPIRY_DATE", nullable = true)
 	private Date expiryDate;
+
+	@Column(name = "PAPER_TYPE", nullable = true)
+	private String paperType;
 	
 }
