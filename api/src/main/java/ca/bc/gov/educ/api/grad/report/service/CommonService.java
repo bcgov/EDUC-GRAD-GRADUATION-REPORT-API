@@ -9,6 +9,10 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
+import ca.bc.gov.educ.api.grad.report.model.transformer.*;
+import ca.bc.gov.educ.api.grad.report.repository.*;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,61 +23,29 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.DocumentStatusCode;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentReports;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
-import ca.bc.gov.educ.api.grad.report.model.transformer.DocumentStatusCodeTransformer;
-import ca.bc.gov.educ.api.grad.report.model.transformer.GradCertificateTypesTransformer;
-import ca.bc.gov.educ.api.grad.report.model.transformer.GradReportTypesTransformer;
-import ca.bc.gov.educ.api.grad.report.model.transformer.GradStudentCertificatesTransformer;
-import ca.bc.gov.educ.api.grad.report.model.transformer.GradStudentReportsTransformer;
-import ca.bc.gov.educ.api.grad.report.repository.DocumentStatusCodeRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradStudentCertificatesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradStudentReportsRepository;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 
 
 @Service
 public class CommonService {
 
-    @Autowired
-    private GradStudentCertificatesTransformer gradStudentCertificatesTransformer;
-    
-    @Autowired
-    private GradStudentCertificatesRepository gradStudentCertificatesRepository;
-    
-    @Autowired
-    private GradStudentReportsTransformer gradStudentReportsTransformer;
-    
-    @Autowired
-    private GradStudentReportsRepository gradStudentReportsRepository;
-    
-    @Autowired
-	private GradCertificateTypesRepository gradCertificateTypesRepository;
-
-	@Autowired
-	private GradCertificateTypesTransformer gradCertificateTypesTransformer;
-	
-	@Autowired
-	private GradReportTypesRepository gradReportTypesRepository;
-
-	@Autowired
-	private GradReportTypesTransformer gradReportTypesTransformer;
-	
-	@Autowired
-	private DocumentStatusCodeRepository documentStatusCodeRepository;
-
-	@Autowired
-	private DocumentStatusCodeTransformer documentStatusCodeTransformer;
-    
-    @Autowired
-	GradValidation validation;
+    @Autowired GradStudentCertificatesTransformer gradStudentCertificatesTransformer;
+    @Autowired GradStudentCertificatesRepository gradStudentCertificatesRepository;
+    @Autowired GradStudentReportsTransformer gradStudentReportsTransformer;
+    @Autowired GradStudentReportsRepository gradStudentReportsRepository;
+	@Autowired GradStudentTranscriptsTransformer gradStudentTranscriptsTransformer;
+	@Autowired GradStudentTranscriptsRepository gradStudentTranscriptsRepository;
+    @Autowired GradCertificateTypesRepository gradCertificateTypesRepository;
+	@Autowired GradCertificateTypesTransformer gradCertificateTypesTransformer;
+	@Autowired GradReportTypesRepository gradReportTypesRepository;
+	@Autowired GradReportTypesTransformer gradReportTypesTransformer;
+	@Autowired DocumentStatusCodeRepository documentStatusCodeRepository;
+	@Autowired DocumentStatusCodeTransformer documentStatusCodeTransformer;
+	@Autowired TranscriptTypesRepository transcriptTypesRepository;
+	@Autowired TranscriptTypesTransformer transcriptTypesTransformer;
+    @Autowired GradValidation validation;
 
     @SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(CommonService.class);
@@ -94,6 +66,25 @@ public class CommonService {
 			return gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.save(gradEntity));
 		}else {
 			return gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.save(toBeSaved));
+		}
+	}
+
+	@Transactional
+	public GradStudentTranscripts saveGradTranscripts(GradStudentTranscripts gradStudentTranscripts, boolean isGraduated) {
+		GradStudentTranscriptsEntity toBeSaved = gradStudentTranscriptsTransformer.transformToEntity(gradStudentTranscripts);
+		Optional<GradStudentTranscriptsEntity> existingEnity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(gradStudentTranscripts.getStudentID(), gradStudentTranscripts.getTranscriptTypeCode(),"ARCH");
+		if(existingEnity.isPresent()) {
+			GradStudentTranscriptsEntity gradEntity = existingEnity.get();
+			if(isGraduated && gradEntity.getDocumentStatusCode().equals("IP")) {
+				gradEntity.setDocumentStatusCode("COMPL");
+
+			}
+			if(gradStudentTranscripts.getTranscript() != null) {
+				gradEntity.setTranscript(gradStudentTranscripts.getTranscript());
+			}
+			return gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.save(gradEntity));
+		}else {
+			return gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.save(toBeSaved));
 		}
 	}
 	
@@ -165,6 +156,20 @@ public class CommonService {
 				cert.setDocumentStatusLabel(code.getLabel());
 		});
 		return certList;
+	}
+
+	public List<GradStudentTranscripts> getAllStudentTranscriptList(UUID studentID) {
+		List<GradStudentTranscripts> transcriptList =  gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.findByStudentID(studentID));
+		transcriptList.forEach(tran -> {
+			TranscriptTypes types = transcriptTypesTransformer.transformToDTO(transcriptTypesRepository.findById(tran.getTranscriptTypeCode()));
+			if(types != null)
+				tran.setTranscriptTypeLabel(types.getLabel());
+
+			DocumentStatusCode code = documentStatusCodeTransformer.transformToDTO(documentStatusCodeRepository.findById(tran.getDocumentStatusCode()));
+			if(code != null)
+				tran.setDocumentStatusLabel(code.getLabel());
+		});
+		return transcriptList;
 	}
 
 	@Transactional
