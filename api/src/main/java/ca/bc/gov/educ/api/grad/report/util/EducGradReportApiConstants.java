@@ -34,7 +34,9 @@ public class EducGradReportApiConstants {
 
     public static final String STUDENT_REPORT = "/studentreport";
     public static final String STUDENT_CERTIFICATE = "/studentcertificate";
+    public static final String STUDENT_TRANSCRIPT = "/studenttranscript";
     public static final String STUDENT_CERTIFICATE_BY_STUDENTID = "/studentcertificate/{studentID}";
+    public static final String STUDENT_TRANSCRIPT_BY_STUDENTID = "/studenttranscript/{studentID}";
     public static final String STUDENT_REPORTS_BY_STUDENTID = "/studentreport/{studentID}";
 
     public static final String GET_STUDENT_CERTIFICATE_BY_CERTIFICATE_CODE_MAPPING = "/certificate/{certificateTypeCode}";
@@ -43,6 +45,7 @@ public class EducGradReportApiConstants {
     public static final String DELETE_ACHIEVEMENTS_BY_STUDENTID = "/studentachievement/{studentID}";
     
     public static final String GET_ALL_PROGRAM_CERTIFICATES_MAPPING = "/programcertificates";
+    public static final String GET_PROGRAM_TRANSCRIPTS_MAPPING = "/programtranscripts";
 
     //Default Attribute value constants
     public static final String DEFAULT_CREATED_BY = "API_GRAD_REPORT";
