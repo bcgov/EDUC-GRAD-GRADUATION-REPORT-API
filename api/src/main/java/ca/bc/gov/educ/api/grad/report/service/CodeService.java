@@ -166,7 +166,14 @@ public class CodeService {
 	}
 
 	public List<ProgramCertificateTranscript> getProgramCertificateList(ProgramCertificateReq programCertificateReq) {
-		return programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findCertificates(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolCategoryCode(),programCertificateReq.getOptionalProgram()));
+		List<ProgramCertificateTranscript> pcList = programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findCertificates(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolCategoryCode(),programCertificateReq.getOptionalProgram()));
+		pcList.forEach(pc-> {
+			GradCertificateTypes gcType = gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.findById(pc.getCertificateTypeCode()));
+			if(gcType != null) {
+				pc.setCertificatePaperType(gcType.getPaperType());
+			}
+		});
+		return pcList;
 	}
 
 	@Transactional
@@ -204,4 +211,14 @@ public class CodeService {
 		}
 	}
 
+	public ProgramCertificateTranscript getProgramTranscript(ProgramCertificateReq programCertificateReq) {
+		ProgramCertificateTranscript pcObj =  programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findTranscript(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolCategoryCode()));
+		if(pcObj.getTranscriptTypeCode() != null) {
+			TranscriptTypes tTypes =transcriptTypesTransformer.transformToDTO(transcriptTypesRepository.findById(pcObj.getTranscriptTypeCode()));
+			if(tTypes != null) {
+				pcObj.setTranscriptPaperType(tTypes.getPaperType());
+			}
+		}
+		return pcObj;
+	}
 }

@@ -3,6 +3,7 @@ package ca.bc.gov.educ.api.grad.report.controller;
 import java.util.List;
 import java.util.UUID;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentTranscripts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +104,16 @@ public class CommonController {
         validation.requiredField(gradStudentCertificates.getPen(), "Pen");
         return response.UPDATED(commonService.saveGradCertificates(gradStudentCertificates));
     }
+
+    @PostMapping (EducGradReportApiConstants.STUDENT_TRANSCRIPT)
+    @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Save Student Transcript", description = "Save Student Transcript", tags = { "Transcript" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<ApiResponseModel<GradStudentTranscripts>> saveStudentTranscript(@RequestBody GradStudentTranscripts gradStudentTranscripts,@RequestParam(value = "isGraduated", required = false, defaultValue = "false") boolean isGraduated) {
+        logger.debug("Save student Grad Transcript for Student ID: {}", gradStudentTranscripts.getStudentID());
+        validation.requiredField(gradStudentTranscripts.getStudentID(), "Student ID");
+        return response.UPDATED(commonService.saveGradTranscripts(gradStudentTranscripts,isGraduated));
+    }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
@@ -122,6 +133,15 @@ public class CommonController {
     public ResponseEntity<List<GradStudentCertificates>> getAllStudentCertificateList(@PathVariable String studentID) { 
     	logger.debug("getAllStudentCertificateList : ");
         return response.GET(commonService.getAllStudentCertificateList(UUID.fromString(studentID)));
+    }
+
+    @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_BY_STUDENTID)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read All  Student Transcripts by Student ID", description = "Read All Student Certificates by Student ID", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<GradStudentTranscripts>> getAllStudentTranscriptList(@PathVariable String studentID) {
+        logger.debug("getAllStudentTranscriptList : ");
+        return response.GET(commonService.getAllStudentTranscriptList(UUID.fromString(studentID)));
     }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_REPORTS_BY_STUDENTID)

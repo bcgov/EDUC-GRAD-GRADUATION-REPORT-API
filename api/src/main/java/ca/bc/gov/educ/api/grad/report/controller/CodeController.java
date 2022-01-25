@@ -219,6 +219,15 @@ public class CodeController {
         return response.GET(codeService.getProgramCertificateList(programCertificateReq));
     }
 
+    @PostMapping(EducGradReportApiConstants.GET_PROGRAM_TRANSCRIPTS_MAPPING)
+    @PreAuthorize(PermissionsConstants.READ_GRAD_REPORT)
+    @Operation(summary = "Find Program Transcript", description = "Get Program Transcript", tags = {"Program Transcripts"})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<ProgramCertificateTranscript> getProgramTranscript(@RequestBody ProgramCertificateReq programCertificateReq) {
+        logger.debug("getProgramTranscriptList : ");
+        return response.GET(codeService.getProgramTranscript(programCertificateReq));
+    }
+
 
     @GetMapping(EducGradReportApiConstants.GET_ALL_TRANSCRIPT_TYPE_MAPPING)
     @PreAuthorize(PermissionsConstants.READ_GRAD_TRANSCRIPT)
@@ -249,7 +258,7 @@ public class CodeController {
     @Operation(summary = "Find all Program Certificate Transcript", description = "Get all Program Certificate Transcript", tags = {"Program"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<ProgramCertificateTranscript>> getAllProgramCertificateTranscriptList() {
-        logger.debug("getAllTranscriptTypeCodeList : ");
+        logger.debug("getAllProgramCertificateTranscriptList : ");
         return response.GET(codeService.getAllProgramCertificateTranscriptList());
     }
 

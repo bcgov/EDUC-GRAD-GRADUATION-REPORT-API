@@ -1,20 +1,8 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.DocumentStatusCode;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentReports;
-import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
-import ca.bc.gov.educ.api.grad.report.repository.DocumentStatusCodeRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradStudentCertificatesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradStudentReportsRepository;
+import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.entity.*;
+import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import org.junit.After;
 import org.junit.Before;
@@ -41,26 +29,15 @@ import static org.mockito.MockitoAnnotations.openMocks;
 @ActiveProfiles("test")
 public class CommonServiceTest {
 
-    @Autowired
-    EducGradReportApiConstants constants;
-
-    @Autowired
-    private CommonService commonService;
-
-    @MockBean
-    private GradStudentCertificatesRepository gradStudentCertificatesRepository;
-
-    @MockBean
-    private GradStudentReportsRepository gradStudentReportsRepository;
-    
-    @MockBean
-	private GradCertificateTypesRepository gradCertificateTypesRepository;
-
-	@MockBean
-	private GradReportTypesRepository gradReportTypesRepository;
-	
-	@MockBean
-	private DocumentStatusCodeRepository documentStatusCodeRepository;
+    @Autowired EducGradReportApiConstants constants;
+    @Autowired CommonService commonService;
+    @MockBean GradStudentCertificatesRepository gradStudentCertificatesRepository;
+    @MockBean GradStudentReportsRepository gradStudentReportsRepository;
+    @MockBean GradStudentTranscriptsRepository gradStudentTranscriptsRepository;
+    @MockBean GradCertificateTypesRepository gradCertificateTypesRepository;
+	@MockBean GradReportTypesRepository gradReportTypesRepository;
+	@MockBean DocumentStatusCodeRepository documentStatusCodeRepository;
+    @MockBean TranscriptTypesRepository transcriptTypesRepository;
 
     @Before
     public void setUp() {
@@ -451,5 +428,117 @@ public class CommonServiceTest {
     	Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentReportsList);
     	Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentCertificatesList);
     	commonService.getAllStudentAchievement(studentID);
+    }
+
+    @Test
+    public void testSaveGradTranscripts_thenReturnCreateSuccess() {
+        // ID
+        final UUID studentID = UUID.randomUUID();
+        final String pen = "123456789";
+        final String reportTypeCode = "TEST";
+        boolean isGraduated = false;
+        final String documentStatusCode="ARCH";
+        final GradStudentTranscripts gradStudentReport = new GradStudentTranscripts();
+        gradStudentReport.setTranscriptTypeCode(reportTypeCode);
+        gradStudentReport.setStudentID(studentID);
+        gradStudentReport.setTranscript("TEST Report Body");
+
+        final GradStudentTranscriptsEntity gradStudentReportEntity = new GradStudentTranscriptsEntity();
+        gradStudentReportEntity.setTranscriptTypeCode(reportTypeCode);
+
+        gradStudentReportEntity.setStudentID(studentID);
+        gradStudentReportEntity.setTranscript("TEST Report Body");
+
+        final Optional<GradStudentTranscriptsEntity> optionalEmpty = Optional.empty();
+
+        when(this.gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optionalEmpty);
+        when(this.gradStudentTranscriptsRepository.save(gradStudentReportEntity)).thenReturn(gradStudentReportEntity);
+
+        var result = commonService.saveGradTranscripts(gradStudentReport,isGraduated);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getStudentID()).isEqualTo(studentID);
+        assertThat(result.getTranscriptTypeCode()).isEqualTo(gradStudentReport.getTranscriptTypeCode());
+    }
+
+    @Test
+    public void testSaveGradTranscriptWithExistingOne_thenReturnUpdateSuccess() {
+        // ID
+        final UUID reportID = UUID.randomUUID();
+        final UUID studentID = UUID.randomUUID();
+        final String pen = "123456789";
+        final String reportTypeCode = "TEST";
+        boolean isGraduated = false;
+        final String documentStatusCode = "COMPL";
+        final GradStudentTranscripts gradStudentTranscripts = new GradStudentTranscripts();
+        gradStudentTranscripts.setId(reportID);
+        gradStudentTranscripts.setTranscriptTypeCode(reportTypeCode);
+        gradStudentTranscripts.setStudentID(studentID);
+        gradStudentTranscripts.setTranscript("TEST Report Body");
+
+        final GradStudentTranscriptsEntity gradStudentTranscriptsEntity = new GradStudentTranscriptsEntity();
+        gradStudentTranscriptsEntity.setId(reportID);
+        gradStudentTranscriptsEntity.setTranscriptTypeCode(reportTypeCode);
+        gradStudentTranscriptsEntity.setStudentID(studentID);
+        gradStudentTranscriptsEntity.setTranscript("TEST Report Body");
+
+        final Optional<GradStudentTranscriptsEntity> optional = Optional.of(gradStudentTranscriptsEntity);
+
+        when(this.gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optional);
+        when(this.gradStudentTranscriptsRepository.save(gradStudentTranscriptsEntity)).thenReturn(gradStudentTranscriptsEntity);
+
+        var result = commonService.saveGradTranscripts(gradStudentTranscripts,isGraduated);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getStudentID()).isEqualTo(studentID);
+        assertThat(result.getTranscriptTypeCode()).isEqualTo(gradStudentTranscripts.getTranscriptTypeCode());
+    }
+
+    @Test
+    public void testGetAllStudentTranscriptList() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String pen = "123456789";
+        // Certificate Type
+        final TranscriptTypes gradCertificateType = new TranscriptTypes();
+        gradCertificateType.setCode("SC");
+        gradCertificateType.setDescription("School Completion Certificate");
+
+        final DocumentStatusCodeEntity documentStatusCodeEntity = new DocumentStatusCodeEntity();
+        documentStatusCodeEntity.setCode("COMPL");
+        documentStatusCodeEntity.setDescription("School Completion Certificate");
+
+        final DocumentStatusCode documentStatusCode = new DocumentStatusCode();
+        documentStatusCode.setCode("COMPL");
+        documentStatusCode.setDescription("School Completion Certificate");
+
+        // Student Certificate Types
+        final List<GradStudentTranscriptsEntity> gradStudentCertificatesList = new ArrayList<>();
+        final GradStudentTranscriptsEntity studentCertificate1 = new GradStudentTranscriptsEntity();
+        studentCertificate1.setId(UUID.randomUUID());
+        studentCertificate1.setStudentID(studentID);
+        studentCertificate1.setTranscriptTypeCode(gradCertificateType.getCode());
+        gradStudentCertificatesList.add(studentCertificate1);
+
+        final GradStudentTranscriptsEntity studentCertificate2 = new GradStudentTranscriptsEntity();
+        studentCertificate2.setId(UUID.randomUUID());
+        studentCertificate2.setStudentID(studentID);
+        studentCertificate2.setTranscriptTypeCode(gradCertificateType.getCode());
+        gradStudentCertificatesList.add(studentCertificate2);
+        final TranscriptTypesEntity gradCertificateTypesEntity = new TranscriptTypesEntity();
+        gradCertificateTypesEntity.setCode("SC");
+        gradCertificateTypesEntity.setDescription("School Completion Certificate");
+
+        when(gradStudentTranscriptsRepository.findByStudentID(studentID)).thenReturn(gradStudentCertificatesList);
+        when(transcriptTypesRepository.findById(gradCertificateType.getCode())).thenReturn(Optional.of(gradCertificateTypesEntity));
+        when(documentStatusCodeRepository.findById(documentStatusCode.getCode())).thenReturn(Optional.of(documentStatusCodeEntity));
+        var result = commonService.getAllStudentTranscriptList(studentID);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(2);
+        assertThat(result.get(0).getStudentID()).isEqualTo(studentID);
+        assertThat(result.get(0).getTranscriptTypeCode()).isEqualTo(gradCertificateType.getCode());
+        assertThat(result.get(1).getStudentID()).isEqualTo(studentID);
+        assertThat(result.get(1).getTranscriptTypeCode()).isEqualTo(gradCertificateType.getCode());
     }
 }

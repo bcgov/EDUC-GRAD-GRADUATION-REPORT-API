@@ -14,4 +14,6 @@ public class ProgramCertificateTranscript extends BaseModel {
 	private String schoolCategoryCode;
 	private String certificateTypeCode;
 	private String transcriptTypeCode;
+	private String transcriptPaperType;
+	private String certificatePaperType;
 }

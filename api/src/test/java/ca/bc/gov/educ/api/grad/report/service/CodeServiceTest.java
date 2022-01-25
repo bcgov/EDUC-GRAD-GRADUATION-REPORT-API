@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.type;
+import static org.junit.Assert.assertNotNull;
 
 
 @RunWith(SpringRunner.class)
@@ -420,6 +422,10 @@ public class CodeServiceTest {
 		req.setOptionalProgram(null);
 		req.setSchoolCategoryCode("02");
 
+		GradCertificateTypesEntity tTypes = new GradCertificateTypesEntity();
+		tTypes.setCode("E");
+		tTypes.setPaperType("YED2");
+
 		List<ProgramCertificateTranscriptEntity> pList = new ArrayList<>();
 		ProgramCertificateTranscriptEntity obj = new ProgramCertificateTranscriptEntity();
 		obj.setCertificateTypeCode("E");
@@ -438,9 +444,35 @@ public class CodeServiceTest {
 		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
 		pList.add(obj);
 		Mockito.when(programCertificateTranscriptRepository.findCertificates(req.getProgramCode(),req.getSchoolCategoryCode(),req.getOptionalProgram())).thenReturn(pList);
+		Mockito.when(gradCertificateTypesRepository.findById(obj.getCertificateTypeCode())).thenReturn(Optional.of(tTypes));
 		List<ProgramCertificateTranscript> pcList = codeService.getProgramCertificateList(req);
 		assertThat(pcList.isEmpty()).isFalse();
 		assertThat(pcList.size()).isEqualTo(2);
+	}
+
+	@Test
+	public void testGetProgramTranscriptList() {
+		ProgramCertificateReq req = new ProgramCertificateReq();
+		req.setProgramCode("2018-EN");
+		req.setOptionalProgram(null);
+		req.setSchoolCategoryCode("02");
+
+		TranscriptTypesEntity tTypes = new TranscriptTypesEntity();
+		tTypes.setCode("E");
+		tTypes.setPaperType("YED4");
+
+		ProgramCertificateTranscriptEntity obj = new ProgramCertificateTranscriptEntity();
+		obj.setCertificateTypeCode("E");
+		obj.setTranscriptTypeCode("E");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+
+		Mockito.when(programCertificateTranscriptRepository.findTranscript(req.getProgramCode(),req.getSchoolCategoryCode())).thenReturn(obj);
+		Mockito.when(transcriptTypesRepository.findById(obj.getTranscriptTypeCode())).thenReturn(Optional.of(tTypes));
+		ProgramCertificateTranscript pcObj = codeService.getProgramTranscript(req);
+		assertNotNull(pcObj);
 	}
 
 	@Test
