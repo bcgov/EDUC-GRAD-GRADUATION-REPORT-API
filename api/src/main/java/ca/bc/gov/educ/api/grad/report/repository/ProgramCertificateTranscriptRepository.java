@@ -17,7 +17,7 @@ public interface ProgramCertificateTranscriptRepository extends JpaRepository<Pr
     List<ProgramCertificateTranscriptEntity> findAll();
     
     @Query(value="select * from program_certificate_transcript where graduation_program_code = :programCode and school_category_code = :schoolFundingCode and certificate_type_code is not null"
-    		+ "union all select * from program_certificate_transcript where graduation_program_code=:optionalProgramCode and school_category_code is null",nativeQuery=true)
+    		+ " union all select * from program_certificate_transcript where graduation_program_code=:optionalProgramCode and school_category_code is null",nativeQuery=true)
     List<ProgramCertificateTranscriptEntity> findCertificates(@Param("programCode") String programCode,@Param("schoolFundingCode") String schoolFundingCode, @Param("optionalProgramCode") String optionalProgramCode);
 
     @Query(value="select * from program_certificate_transcript where graduation_program_code = :programCode and school_category_code = :schoolFundingCode",nativeQuery = true)
