@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.controller;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
+import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.entity.ProgramCertificateTranscriptEntity;
 import ca.bc.gov.educ.api.grad.report.service.CodeService;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import ca.bc.gov.educ.api.grad.report.util.MessageHelper;
@@ -171,16 +171,9 @@ public class CodeControllerTest {
 	@Test
 	public void testDeleteGradCertificateTypes() {
 		String statusCode = "DC";
-		Authentication authentication = Mockito.mock(Authentication.class);
-		OAuth2AuthenticationDetails details = Mockito.mock(OAuth2AuthenticationDetails.class);
-		// Mockito.whens() for your authorization object
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-		Mockito.when(authentication.getDetails()).thenReturn(details);
-		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(codeService.deleteGradCertificateTypes(statusCode,null)).thenReturn(1);
+		Mockito.when(codeService.deleteGradCertificateTypes(statusCode)).thenReturn(1);
 		codeController.deleteGradCertificateTypes(statusCode);
-		Mockito.verify(codeService).deleteGradCertificateTypes(statusCode,null);
+		Mockito.verify(codeService).deleteGradCertificateTypes(statusCode);
 	}
 	
 	@Test
@@ -214,15 +207,133 @@ public class CodeControllerTest {
 	@Test
 	public void testDeleteGradReportTypes() {
 		String statusCode = "DC";
-		Authentication authentication = Mockito.mock(Authentication.class);
-		OAuth2AuthenticationDetails details = Mockito.mock(OAuth2AuthenticationDetails.class);
-		// Mockito.whens() for your authorization object
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-		Mockito.when(authentication.getDetails()).thenReturn(details);
-		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(codeService.deleteGradReportTypes(statusCode,null)).thenReturn(1);
+		Mockito.when(codeService.deleteGradReportTypes(statusCode)).thenReturn(1);
 		codeController.deleteGradReportTypes(statusCode);
-		Mockito.verify(codeService).deleteGradReportTypes(statusCode,null);
+		Mockito.verify(codeService).deleteGradReportTypes(statusCode);
+	}
+
+	@Test
+	public void testGetAllTranscriptTypesCodeList() {
+		List<TranscriptTypes> tTypesList = new ArrayList<>();
+		TranscriptTypes obj = new TranscriptTypes();
+		obj.setCode("DC");
+		obj.setDescription("Data Correction by School");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		tTypesList.add(obj);
+		obj = new TranscriptTypes();
+		obj.setCode("CC");
+		obj.setDescription("Courses not complete");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		tTypesList.add(obj);
+		Mockito.when(codeService.getAllTranscriptTypeCodeList()).thenReturn(tTypesList);
+		codeController.getAllTranscriptTypeCodeList();
+		Mockito.verify(codeService).getAllTranscriptTypeCodeList();
+	}
+
+	@Test
+	public void testGetSpecificTranscriptTypesCode() {
+		String tranTypeType = "DC";
+		TranscriptTypes obj = new TranscriptTypes();
+		obj.setCode("DC");
+		obj.setDescription("Data Correction by School");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		Mockito.when(codeService.getSpecificTranscriptTypeCode(tranTypeType)).thenReturn(obj);
+		codeController.getSpecificTranscriptTypeCode(tranTypeType);
+		Mockito.verify(codeService).getSpecificTranscriptTypeCode(tranTypeType);
+	}
+
+	@Test
+	public void testGetSpecificTranscriptTypesCode_noContent() {
+		String tranTypeType = "AB";
+		Mockito.when(codeService.getSpecificTranscriptTypeCode(tranTypeType)).thenReturn(null);
+		codeController.getSpecificTranscriptTypeCode(tranTypeType);
+		Mockito.verify(codeService).getSpecificTranscriptTypeCode(tranTypeType);
+	}
+
+	@Test
+	public void testGetAllCertificateList() {
+		ProgramCertificateReq req = new ProgramCertificateReq();
+		req.setProgramCode("2018-EN");
+		req.setOptionalProgram(null);
+		req.setSchoolCategoryCode("02");
+
+		List<ProgramCertificateTranscript> pList = new ArrayList<>();
+		ProgramCertificateTranscript obj = new ProgramCertificateTranscript();
+		obj.setCertificateTypeCode("E");
+		obj.setTranscriptTypeCode("E");
+		obj.setCertificatePaperType("YED4");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		pList.add(obj);
+		obj = new ProgramCertificateTranscript();
+		obj.setCertificateTypeCode("F");
+		obj.setTranscriptTypeCode("T");
+		obj.setCertificatePaperType("YED4");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		pList.add(obj);
+		Mockito.when(codeService.getProgramCertificateList(req)).thenReturn(pList);
+		codeController.getProgramCertificateList(req);
+		Mockito.verify(codeService).getProgramCertificateList(req);
+	}
+
+	@Test
+	public void testGetAllDocuemntStatusCodeList() {
+		List<DocumentStatusCode> tTypesList = new ArrayList<>();
+		DocumentStatusCode obj = new DocumentStatusCode();
+		obj.setCode("DC");
+		obj.setDescription("Data Correction by School");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		tTypesList.add(obj);
+		obj = new DocumentStatusCode();
+		obj.setCode("CC");
+		obj.setDescription("Courses not complete");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		tTypesList.add(obj);
+		Mockito.when(codeService.getAllDocumentStatusCodeList()).thenReturn(tTypesList);
+		codeController.getAllDocumentStatusCodeList();
+		Mockito.verify(codeService).getAllDocumentStatusCodeList();
+	}
+
+	@Test
+	public void testGetSpecificDocumentStatusCode() {
+		String tranTypeType = "DC";
+		DocumentStatusCode obj = new DocumentStatusCode();
+		obj.setCode("DC");
+		obj.setDescription("Data Correction by School");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		Mockito.when(codeService.getSpecificDocumentStatusCode(tranTypeType)).thenReturn(obj);
+		codeController.getSpecificDocumentStatusCode(tranTypeType);
+		Mockito.verify(codeService).getSpecificDocumentStatusCode(tranTypeType);
+	}
+
+	@Test
+	public void testGetSpecificDocumentStatusCode_noContent() {
+		String tranTypeType = "AB";
+		Mockito.when(codeService.getSpecificDocumentStatusCode(tranTypeType)).thenReturn(null);
+		codeController.getSpecificDocumentStatusCode(tranTypeType);
+		Mockito.verify(codeService).getSpecificDocumentStatusCode(tranTypeType);
 	}
 }

@@ -12,11 +12,11 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@Table(name = "CERTIFICATE_TYPE_CODE")
-public class GradCertificateTypesEntity extends BaseEntity {
+@Table(name = "DOCUMENT_STATUS_CODE")
+public class DocumentStatusCodeEntity extends BaseEntity {
    
 	@Id
-	@Column(name = "CERTIFICATE_TYPE_CODE", nullable = false)
+	@Column(name = "DOCUMENT_STATUS_CODE", nullable = false)
     private String code;
 
 	@Column(name = "LABEL", nullable = true)
@@ -33,8 +33,5 @@ public class GradCertificateTypesEntity extends BaseEntity {
 
 	@Column(name = "EXPIRY_DATE", nullable = true)
 	private Date expiryDate;
-
-	@Column(name = "PAPER_TYPE", nullable = true)
-	private String paperType;
 	
 }

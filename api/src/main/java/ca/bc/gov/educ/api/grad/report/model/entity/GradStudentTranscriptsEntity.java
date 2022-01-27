@@ -5,15 +5,14 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-
 import java.util.Date;
 import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@Table(name = "STUDENT_CERTIFICATE")
-public class GradStudentCertificatesEntity extends BaseEntity {
+@Table(name = "STUDENT_TRANSCRIPT")
+public class GradStudentTranscriptsEntity extends BaseEntity {
    
 	@Id
 	@GeneratedValue(generator = "UUID")
@@ -21,20 +20,17 @@ public class GradStudentCertificatesEntity extends BaseEntity {
 		name = "UUID",
 		strategy = "org.hibernate.id.UUIDGenerator"
 	)
-	@Column(name = "STUDENT_CERTIFICATE_ID", nullable = false)
-    private UUID id; 
-	
-	@Transient
-    private String pen; 
+	@Column(name = "STUDENT_TRANSCRIPT_ID", nullable = false)
+    private UUID id;
 	
 	@Lob
-    @Column(name = "CERTIFICATE", columnDefinition="CLOB")
-	private String certificate;
+    @Column(name = "TRANSCRIPT", columnDefinition="CLOB")
+	private String transcript;
 	
-	@Column(name = "CERTIFICATE_TYPE_CODE", nullable = false)
-    private String gradCertificateTypeCode;	
+	@Column(name = "TRANSCRIPT_TYPE_CODE", nullable = false)
+    private String transcriptTypeCode;
 	
-	@Column(name = "GRADUTION_STUDENT_RECORD_ID", nullable = false)
+	@Column(name = "GRADUATION_STUDENT_RECORD_ID", nullable = false)
     private UUID studentID;
 	
 	@Column(name = "DISTRIBUTION_DATE",nullable = true)

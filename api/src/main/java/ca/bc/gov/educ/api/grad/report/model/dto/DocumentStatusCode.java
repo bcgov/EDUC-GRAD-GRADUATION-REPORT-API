@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Component
-public class GradCertificateTypes extends BaseModel {
+public class DocumentStatusCode extends BaseModel {
 
 	private String code;
 	private String label;
@@ -18,11 +18,10 @@ public class GradCertificateTypes extends BaseModel {
 	private Integer displayOrder;
 	private Date effectiveDate;
 	private Date expiryDate;
-	private String paperType;
 	
 	@Override
 	public String toString() {
-		return "GradReportTypes [code=" + code + ", label=" + label + ", description=" + description + ", displayOrder="
+		return "DocumentStatusCode [code=" + code + ", label=" + label + ", description=" + description + ", displayOrder="
 				+ displayOrder + ", effectiveDate=" + effectiveDate + ", expiryDate=" + expiryDate + "]";
 	}
 	

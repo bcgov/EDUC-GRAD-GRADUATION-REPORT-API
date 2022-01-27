@@ -12,11 +12,11 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@Table(name = "CERTIFICATE_TYPE_CODE")
-public class GradCertificateTypesEntity extends BaseEntity {
+@Table(name = "TRANSCRIPT_TYPE_CODE")
+public class TranscriptTypesEntity extends BaseEntity {
    
 	@Id
-	@Column(name = "CERTIFICATE_TYPE_CODE", nullable = false)
+	@Column(name = "TRANSCRIPT_TYPE_CODE", nullable = false)
     private String code;
 
 	@Column(name = "LABEL", nullable = true)

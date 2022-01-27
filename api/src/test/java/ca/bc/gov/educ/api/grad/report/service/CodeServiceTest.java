@@ -1,12 +1,9 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
 import ca.bc.gov.educ.api.grad.report.exception.GradBusinessRuleException;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
-import ca.bc.gov.educ.api.grad.report.repository.GradCertificateTypesRepository;
-import ca.bc.gov.educ.api.grad.report.repository.GradReportTypesRepository;
+import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.entity.*;
+import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.type;
+import static org.junit.Assert.assertNotNull;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,7 +37,15 @@ public class CodeServiceTest {
 	private GradCertificateTypesRepository gradCertificateTypesRepository;
 
 	@MockBean
+	private TranscriptTypesRepository transcriptTypesRepository;
+
+	@MockBean
 	private GradReportTypesRepository gradReportTypesRepository;
+
+	@MockBean DocumentStatusCodeRepository documentStatusCodeRepository;
+
+	@MockBean
+	private ProgramCertificateTranscriptRepository programCertificateTranscriptRepository;
 
 	@Autowired
 	GradValidation validation;
@@ -321,5 +330,206 @@ public class CodeServiceTest {
 		Mockito.when(gradReportTypesRepository.findById(obj.getCode())).thenReturn(Optional.empty());
 		codeService.updateGradReportTypes(obj);
 		
+	}
+
+	@Test
+	public void testGetAllTranscriptTypesCodeList() {
+		List<TranscriptTypesEntity> transcriptTypeList = new ArrayList<>();
+		TranscriptTypesEntity obj = new TranscriptTypesEntity();
+		obj.setCode("E");
+		obj.setDescription("English Dogwood");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		transcriptTypeList.add(obj);
+		obj = new TranscriptTypesEntity();
+		obj.setCode("F");
+		obj.setDescription("French Dogwood");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		transcriptTypeList.add(obj);
+		Mockito.when(transcriptTypesRepository.findAll()).thenReturn(transcriptTypeList);
+		List<TranscriptTypes> pcList = codeService.getAllTranscriptTypeCodeList();
+		assertThat(pcList.isEmpty()).isFalse();
+		assertThat(pcList.size()).isEqualTo(2);
+	}
+
+	@Test
+	public void testGetSpecificTranscriptTypeCode() {
+		String tranTypeCode = "E";
+		TranscriptTypes obj = new TranscriptTypes();
+		obj.setCode("E");
+		obj.setDescription("English Dogwood");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.toString();
+		TranscriptTypesEntity objEntity = new TranscriptTypesEntity();
+		objEntity.setCode("E");
+		objEntity.setDescription("English Dogwood");
+		objEntity.setCreatedBy("GRADUATION");
+		objEntity.setUpdatedBy("GRADUATION");
+		objEntity.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		objEntity.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		Optional<TranscriptTypesEntity> ent = Optional.of(objEntity);
+		Mockito.when(transcriptTypesRepository.findById(tranTypeCode)).thenReturn(ent);
+		TranscriptTypes docStaCode = codeService.getSpecificTranscriptTypeCode(tranTypeCode);
+		assertThat(docStaCode).isNotNull();
+		assertThat(docStaCode.getCode()).isEqualTo(obj.getCode());
+	}
+
+	@Test
+	public void testGetSpecificTranscriptTypeCodeReturnsNull() {
+		String tranTypeCode = "E";
+		Mockito.when(transcriptTypesRepository.findById(tranTypeCode)).thenReturn(Optional.empty());
+		TranscriptTypes ttypes =  codeService.getSpecificTranscriptTypeCode(tranTypeCode);
+		assertThat(ttypes).isNull();
+	}
+
+	@Test
+	public void testGetAllProgramCertificateTranscriptList() {
+		List<ProgramCertificateTranscriptEntity> pList = new ArrayList<>();
+		ProgramCertificateTranscriptEntity obj = new ProgramCertificateTranscriptEntity();
+		obj.setCertificateTypeCode("E");
+		obj.setTranscriptTypeCode("E");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		pList.add(obj);
+		obj = new ProgramCertificateTranscriptEntity();
+		obj.setCertificateTypeCode("F");
+		obj.setTranscriptTypeCode("T");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		pList.add(obj);
+		Mockito.when(programCertificateTranscriptRepository.findAll()).thenReturn(pList);
+		List<ProgramCertificateTranscript> pcList = codeService.getAllProgramCertificateTranscriptList();
+		assertThat(pcList.isEmpty()).isFalse();
+		assertThat(pcList.size()).isEqualTo(2);
+	}
+
+	@Test
+	public void testGetProgramCertificateTranscriptList() {
+		ProgramCertificateReq req = new ProgramCertificateReq();
+		req.setProgramCode("2018-EN");
+		req.setOptionalProgram(null);
+		req.setSchoolCategoryCode("02");
+
+		GradCertificateTypesEntity tTypes = new GradCertificateTypesEntity();
+		tTypes.setCode("E");
+		tTypes.setPaperType("YED2");
+
+		List<ProgramCertificateTranscriptEntity> pList = new ArrayList<>();
+		ProgramCertificateTranscriptEntity obj = new ProgramCertificateTranscriptEntity();
+		obj.setCertificateTypeCode("E");
+		obj.setTranscriptTypeCode("E");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		pList.add(obj);
+		obj = new ProgramCertificateTranscriptEntity();
+		obj.setCertificateTypeCode("F");
+		obj.setTranscriptTypeCode("T");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		pList.add(obj);
+		Mockito.when(programCertificateTranscriptRepository.findCertificates(req.getProgramCode(),req.getSchoolCategoryCode(),req.getOptionalProgram())).thenReturn(pList);
+		Mockito.when(gradCertificateTypesRepository.findById(obj.getCertificateTypeCode())).thenReturn(Optional.of(tTypes));
+		List<ProgramCertificateTranscript> pcList = codeService.getProgramCertificateList(req);
+		assertThat(pcList.isEmpty()).isFalse();
+		assertThat(pcList.size()).isEqualTo(2);
+	}
+
+	@Test
+	public void testGetProgramTranscriptList() {
+		ProgramCertificateReq req = new ProgramCertificateReq();
+		req.setProgramCode("2018-EN");
+		req.setOptionalProgram(null);
+		req.setSchoolCategoryCode("02");
+
+		TranscriptTypesEntity tTypes = new TranscriptTypesEntity();
+		tTypes.setCode("E");
+		tTypes.setPaperType("YED4");
+
+		ProgramCertificateTranscriptEntity obj = new ProgramCertificateTranscriptEntity();
+		obj.setCertificateTypeCode("E");
+		obj.setTranscriptTypeCode("E");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+
+		Mockito.when(programCertificateTranscriptRepository.findTranscript(req.getProgramCode(),req.getSchoolCategoryCode())).thenReturn(obj);
+		Mockito.when(transcriptTypesRepository.findById(obj.getTranscriptTypeCode())).thenReturn(Optional.of(tTypes));
+		ProgramCertificateTranscript pcObj = codeService.getProgramTranscript(req);
+		assertNotNull(pcObj);
+	}
+
+	@Test
+	public void testGetAllReportTypesDocumentStatusCodeList() {
+		List<DocumentStatusCodeEntity> documentStatusCodeList = new ArrayList<>();
+		DocumentStatusCodeEntity obj = new DocumentStatusCodeEntity();
+		obj.setCode("TRAN");
+		obj.setDescription("Transcript");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		documentStatusCodeList.add(obj);
+		obj = new DocumentStatusCodeEntity();
+		obj.setCode("ACHV");
+		obj.setDescription("Achievement");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		documentStatusCodeList.add(obj);
+		Mockito.when(documentStatusCodeRepository.findAll()).thenReturn(documentStatusCodeList);
+		List<DocumentStatusCode> docList = codeService.getAllDocumentStatusCodeList();
+		assertThat(docList.isEmpty()).isFalse();
+		assertThat(docList.size()).isEqualTo(2);
+	}
+
+	@Test
+	public void testGetSpecificDocumentStatusCode() {
+		String documentStatusCode = "TRAN";
+		DocumentStatusCode obj = new DocumentStatusCode();
+		obj.setCode("TRAN");
+		obj.setDescription("Transcript");
+		obj.setCreatedBy("GRADUATION");
+		obj.setUpdatedBy("GRADUATION");
+		obj.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		obj.toString();
+		DocumentStatusCodeEntity objEntity = new DocumentStatusCodeEntity();
+		objEntity.setCode("TRAN");
+		objEntity.setDescription("Transcript");
+		objEntity.setCreatedBy("GRADUATION");
+		objEntity.setUpdatedBy("GRADUATION");
+		objEntity.setCreatedTimestamp(new Date(System.currentTimeMillis()));
+		objEntity.setUpdatedTimestamp(new Date(System.currentTimeMillis()));
+		Optional<DocumentStatusCodeEntity> ent = Optional.of(objEntity);
+		Mockito.when(documentStatusCodeRepository.findById(documentStatusCode)).thenReturn(ent);
+		DocumentStatusCode docStaCode = codeService.getSpecificDocumentStatusCode(documentStatusCode);
+		assertThat(docStaCode).isNotNull();
+		assertThat(docStaCode.getCode()).isEqualTo(obj.getCode());
+	}
+
+	@Test
+	public void testGetSpecificDocumentStatusCodeReturnsNull() {
+		String documentStatusCode = "TRAN";
+		Mockito.when(documentStatusCodeRepository.findById(documentStatusCode)).thenReturn(Optional.empty());
+		DocumentStatusCode docStaCode = codeService.getSpecificDocumentStatusCode(documentStatusCode);
+		assertThat(docStaCode).isNull();
 	}
 }

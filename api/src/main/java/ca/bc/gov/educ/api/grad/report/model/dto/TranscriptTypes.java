@@ -2,15 +2,14 @@ package ca.bc.gov.educ.api.grad.report.model.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
-
-import org.springframework.stereotype.Component;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Component
-public class GradCertificateTypes extends BaseModel {
+public class TranscriptTypes extends BaseModel {
 
 	private String code;
 	private String label;
@@ -22,7 +21,7 @@ public class GradCertificateTypes extends BaseModel {
 	
 	@Override
 	public String toString() {
-		return "GradReportTypes [code=" + code + ", label=" + label + ", description=" + description + ", displayOrder="
+		return "TranscriptTypes [code=" + code + ", label=" + label + ", description=" + description + ", displayOrder="
 				+ displayOrder + ", effectiveDate=" + effectiveDate + ", expiryDate=" + expiryDate + "]";
 	}
 	

@@ -3,6 +3,7 @@ package ca.bc.gov.educ.api.grad.report.controller;
 import java.util.List;
 import java.util.UUID;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentTranscripts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,10 +77,10 @@ public class CommonController {
     @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Save Student Reports", description = "Save Student Reports", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<ApiResponseModel<GradStudentReports>> saveStudentReport(@RequestBody GradStudentReports gradStudentReports) {
-        logger.debug("Save student Grad Report for PEN: " + gradStudentReports.getPen());
-        validation.requiredField(gradStudentReports.getPen(), "Pen");
-        return response.UPDATED(commonService.saveGradReports(gradStudentReports));
+    public ResponseEntity<ApiResponseModel<GradStudentReports>> saveStudentReport(@RequestBody GradStudentReports gradStudentReports,@RequestParam(value = "isGraduated", required = false, defaultValue = "false") boolean isGraduated) {
+        logger.debug("Save student Grad Report for Student ID: {}",gradStudentReports.getStudentID());
+        validation.requiredField(gradStudentReports.getStudentID(), "Student ID");
+        return response.UPDATED(commonService.saveGradReports(gradStudentReports,isGraduated));
     }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_REPORT)
@@ -88,9 +89,10 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<InputStreamResource> getStudentReportByType(
     		@RequestParam(value = "studentID", required = true) String studentID,
-    		@RequestParam(value = "reportType", required = true) String reportType) { 
+    		@RequestParam(value = "reportType", required = true) String reportType,
+    		@RequestParam(value = "documentStatusCode", required = true) String documentStatusCode) { 
     	logger.debug("getStudentReportByType : ");
-    	return commonService.getStudentReportByType(UUID.fromString(studentID),reportType);
+    	return commonService.getStudentReportByType(UUID.fromString(studentID),reportType,documentStatusCode);
     }
     
     @PostMapping (EducGradReportApiConstants.STUDENT_CERTIFICATE)
@@ -98,9 +100,19 @@ public class CommonController {
     @Operation(summary = "Save Student Certificate", description = "Save Student Certificate", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<ApiResponseModel<GradStudentCertificates>> saveStudentCertificate(@RequestBody GradStudentCertificates gradStudentCertificates) {
-        logger.debug("Save student Grad Certificate for PEN: " + gradStudentCertificates.getPen());
+        logger.debug("Save student Grad Certificate for PEN: {}", gradStudentCertificates.getPen());
         validation.requiredField(gradStudentCertificates.getPen(), "Pen");
         return response.UPDATED(commonService.saveGradCertificates(gradStudentCertificates));
+    }
+
+    @PostMapping (EducGradReportApiConstants.STUDENT_TRANSCRIPT)
+    @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Save Student Transcript", description = "Save Student Transcript", tags = { "Transcript" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<ApiResponseModel<GradStudentTranscripts>> saveStudentTranscript(@RequestBody GradStudentTranscripts gradStudentTranscripts,@RequestParam(value = "isGraduated", required = false, defaultValue = "false") boolean isGraduated) {
+        logger.debug("Save student Grad Transcript for Student ID: {}", gradStudentTranscripts.getStudentID());
+        validation.requiredField(gradStudentTranscripts.getStudentID(), "Student ID");
+        return response.UPDATED(commonService.saveGradTranscripts(gradStudentTranscripts,isGraduated));
     }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE)
@@ -109,9 +121,10 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<InputStreamResource> getStudentCertificateByType(
     		@RequestParam(value = "studentID", required = true) String studentID,
-    		@RequestParam(value = "certificateType", required = true) String certificateType) { 
+    		@RequestParam(value = "certificateType", required = true) String certificateType,
+    		@RequestParam(value = "documentStatusCode", required = true) String documentStatusCode) { 
     	logger.debug("getStudentCertificateByType :");
-    	return commonService.getStudentCertificateByType(UUID.fromString(studentID),certificateType);
+    	return commonService.getStudentCertificateByType(UUID.fromString(studentID),certificateType,documentStatusCode);
     }
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE_BY_STUDENTID)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
@@ -120,6 +133,15 @@ public class CommonController {
     public ResponseEntity<List<GradStudentCertificates>> getAllStudentCertificateList(@PathVariable String studentID) { 
     	logger.debug("getAllStudentCertificateList : ");
         return response.GET(commonService.getAllStudentCertificateList(UUID.fromString(studentID)));
+    }
+
+    @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_BY_STUDENTID)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read All  Student Transcripts by Student ID", description = "Read All Student Certificates by Student ID", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<GradStudentTranscripts>> getAllStudentTranscriptList(@PathVariable String studentID) {
+        logger.debug("getAllStudentTranscriptList : ");
+        return response.GET(commonService.getAllStudentTranscriptList(UUID.fromString(studentID)));
     }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_REPORTS_BY_STUDENTID)

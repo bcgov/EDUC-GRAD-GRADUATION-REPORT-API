@@ -8,13 +8,12 @@ import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class GradStudentCertificates extends BaseModel {
+public class GradStudentTranscripts extends BaseModel {
 
-	private UUID id;	
-	private String pen;	
-	private String certificate;
-	private String gradCertificateTypeCode;
-	private String gradCertificateTypeLabel;
+	private UUID id;
+	private String transcript;
+	private String transcriptTypeCode;
+	private String transcriptTypeLabel;
 	private UUID studentID;
 	private Date distributionDate;
 	private String documentStatusCode;
