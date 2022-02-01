@@ -39,10 +39,6 @@ public class GradStudentCertificatesTransformer {
         return gradCertificateTypesList;
     }
 
-    public List<StudentCredentialDistribution> transformToDTOWithOutCert (Iterable<GradStudentCertificatesEntity> gradCertificateTypesEntities ) {
-        return modelMapper.map(gradCertificateTypesEntities, new TypeToken<List<StudentCredentialDistribution>>() {}.getType());
-    }
-
     public GradStudentCertificatesEntity transformToEntity(GradStudentCertificates gradCertificateTypes) {
         return modelMapper.map(gradCertificateTypes, GradStudentCertificatesEntity.class);
     }
