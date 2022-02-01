@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentTranscripts;
+import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,7 +138,7 @@ public class CommonController {
 
     @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_BY_STUDENTID)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
-    @Operation(summary = "Read All  Student Transcripts by Student ID", description = "Read All Student Certificates by Student ID", tags = { "Certificates" })
+    @Operation(summary = "Read All  Student Transcripts by Student ID", description = "Read All Student Transcripts by Student ID", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<GradStudentTranscripts>> getAllStudentTranscriptList(@PathVariable String studentID) {
         logger.debug("getAllStudentTranscriptList : ");
@@ -160,6 +161,36 @@ public class CommonController {
     public ResponseEntity<Void> deleteAllStudentAchievements(@PathVariable String studentID) { 
     	logger.debug("deleteAllStudentAchievements : ");
         return response.DELETE(commonService.getAllStudentAchievement(UUID.fromString(studentID)));
+    }
+
+    @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE_BY_DIST_DATE_N_STATUS)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Read All  Student Certificates For Distribution", description = "Read All Student Certificates For Distribution", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<StudentCredentialDistribution>> getAllStudentCertificateDistribution() {
+        logger.debug("getAllStudentCertificateDistribution : ");
+        return response.GET(commonService.getAllStudentCertificateDistributionList());
+    }
+
+    @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read All Student Transcripts for Distribution", description = "Read All Student Transcripts for Distribution", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<StudentCredentialDistribution>> getAllStudentTranscriptDistribution() {
+        logger.debug("getAllStudentTranscriptDistribution : ");
+        return response.GET(commonService.getAllStudentTranscriptDistributionList());
+    }
+
+    @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read Student Certificate by Student ID and Certificate Type", description = "Read Student Certificate by Student ID and Certificate Type", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<InputStreamResource> getStudentTranscriptByType(
+            @RequestParam(value = "studentID", required = true) String studentID,
+            @RequestParam(value = "transcriptType", required = true) String transcriptType,
+            @RequestParam(value = "documentStatusCode", required = true) String documentStatusCode) {
+        logger.debug("getStudentTranscriptByType :");
+        return commonService.getStudentTranscriptByType(UUID.fromString(studentID),transcriptType,documentStatusCode);
     }
    
 }

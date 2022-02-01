@@ -221,4 +221,28 @@ public class CommonService {
 		});
 		return reportList;
 	}
+
+    public List<StudentCredentialDistribution> getAllStudentCertificateDistributionList() {
+		return gradStudentCertificatesRepository.findByDocumentStatusCodeAndDistributionDate("COMPL");
+    }
+	public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
+		return gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDate("COMPL");
+	}
+
+	@Transactional
+	public ResponseEntity<InputStreamResource> getStudentTranscriptByType(UUID studentID, String transcriptType,String documentStatusCode) {
+		GradStudentTranscripts studentTranscript = gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,transcriptType,documentStatusCode));
+		if(studentTranscript != null && studentTranscript.getTranscript() != null) {
+			byte[] certificateByte = Base64.decodeBase64(studentTranscript.getTranscript().getBytes(StandardCharsets.US_ASCII));
+			ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "inline; filename=student_"+transcriptType+"_transcript.pdf");
+			return ResponseEntity
+					.ok()
+					.headers(headers)
+					.contentType(MediaType.APPLICATION_PDF)
+					.body(new InputStreamResource(bis));
+		}
+		return null;
+	}
 }

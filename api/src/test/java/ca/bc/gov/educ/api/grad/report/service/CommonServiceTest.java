@@ -541,4 +541,72 @@ public class CommonServiceTest {
         assertThat(result.get(1).getStudentID()).isEqualTo(studentID);
         assertThat(result.get(1).getTranscriptTypeCode()).isEqualTo(gradCertificateType.getCode());
     }
+
+    @Test
+    public void testGetStudentTranscriptByType() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        // Certificate Type
+        final TranscriptTypes transcriptTypes = new TranscriptTypes();
+        transcriptTypes.setCode("TEST");
+        transcriptTypes.setDescription("Test Code Name");
+
+        // Student Certificate Types
+        final GradStudentTranscriptsEntity studentTranscript = new GradStudentTranscriptsEntity();
+        studentTranscript.setId(UUID.randomUUID());
+        studentTranscript.setStudentID(studentID);
+        studentTranscript.setTranscript("TEST Certificate Body");
+        studentTranscript.setDocumentStatusCode("COMPL");
+        studentTranscript.setTranscriptTypeCode(transcriptTypes.getCode());
+
+        final DocumentStatusCode documentStatus = new DocumentStatusCode();
+        documentStatus.setCode("COMPL");
+        documentStatus.setDescription("Test Code Name");
+
+        when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID, transcriptTypes.getCode(),documentStatus.getCode())).thenReturn(Optional.of(studentTranscript));
+        var result = commonService.getStudentTranscriptByType(studentID, transcriptTypes.getCode(),documentStatus.getCode());
+        assertThat(result).isNotNull();
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).isEqualTo("[inline; filename=student_TEST_transcript.pdf]");
+        assertThat(result.getBody()).isNotNull();
+    }
+
+    @Test
+    public void testGetAllStudentTranscriptDistributionList() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+
+        // Student Certificate Types
+        final List<StudentCredentialDistribution> list = new ArrayList<>();
+        final StudentCredentialDistribution credentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"BC1996-IND",studentID,"YED4");
+        list.add(credentialDistribution);
+
+
+        when(gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDate("COMPL")).thenReturn(list);
+        var result = commonService.getAllStudentTranscriptDistributionList();
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0).getStudentID()).isEqualTo(studentID);
+
+    }
+
+    @Test
+    public void testGetAllStudentCertificateDistributionList() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+
+        // Student Certificate Types
+        final List<StudentCredentialDistribution> list = new ArrayList<>();
+        final StudentCredentialDistribution credentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2");
+        list.add(credentialDistribution);
+
+
+        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndDistributionDate("COMPL")).thenReturn(list);
+        var result = commonService.getAllStudentCertificateDistributionList();
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0).getStudentID()).isEqualTo(studentID);
+
+    }
 }

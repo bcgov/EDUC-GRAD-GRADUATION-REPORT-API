@@ -1,8 +1,10 @@
 package ca.bc.gov.educ.api.grad.report.model.transformer;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
+import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +37,10 @@ public class GradStudentCertificatesTransformer {
         	gradCertificateTypesList.add(gradCertificateTypes);
         }
         return gradCertificateTypesList;
+    }
+
+    public List<StudentCredentialDistribution> transformToDTOWithOutCert (Iterable<GradStudentCertificatesEntity> gradCertificateTypesEntities ) {
+        return modelMapper.map(gradCertificateTypesEntities, new TypeToken<List<StudentCredentialDistribution>>() {}.getType());
     }
 
     public GradStudentCertificatesEntity transformToEntity(GradStudentCertificates gradCertificateTypes) {
