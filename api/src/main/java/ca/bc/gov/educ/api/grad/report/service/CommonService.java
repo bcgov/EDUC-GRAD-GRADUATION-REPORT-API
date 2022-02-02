@@ -50,6 +50,9 @@ public class CommonService {
     @SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(CommonService.class);
 
+	private static final String CONTENT_DISPOSITION = "Content-Disposition";
+	private static final String PDF_FILE_NAME = "inline; filename=student_%s_%s.pdf";
+
     @Transactional
 	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports,boolean isGraduated) {
 		GradStudentReportsEntity toBeSaved = gradStudentReportsTransformer.transformToEntity(gradStudentReports);
@@ -94,7 +97,7 @@ public class CommonService {
 				byte[] reportByte = Base64.decodeBase64(studentReport.getReport().getBytes(StandardCharsets.US_ASCII));
 				ByteArrayInputStream bis = new ByteArrayInputStream(reportByte);
 			    HttpHeaders headers = new HttpHeaders();
-		        headers.add("Content-Disposition", "inline; filename=student_"+reportType+"_report.pdf");
+		        headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME,reportType,"report"));
 			    return ResponseEntity
 		                .ok()
 		                .headers(headers)
@@ -134,7 +137,7 @@ public class CommonService {
 				byte[] certificateByte = Base64.decodeBase64(studentCertificate.getCertificate().getBytes(StandardCharsets.US_ASCII));
 				ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
 			    HttpHeaders headers = new HttpHeaders();
-		        headers.add("Content-Disposition", "inline; filename=student_"+certificateType+"_certificate.pdf");
+		        headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME,certificateType,"certificate"));
 			    return ResponseEntity
 		                .ok()
 		                .headers(headers)
@@ -220,5 +223,29 @@ public class CommonService {
 				rep.setDocumentStatusLabel(code.getLabel());
 		});
 		return reportList;
+	}
+
+    public List<StudentCredentialDistribution> getAllStudentCertificateDistributionList() {
+		return gradStudentCertificatesRepository.findByDocumentStatusCodeAndDistributionDate("COMPL");
+    }
+	public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
+		return gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDate("COMPL");
+	}
+
+	@Transactional
+	public ResponseEntity<InputStreamResource> getStudentTranscriptByType(UUID studentID, String transcriptType,String documentStatusCode) {
+		GradStudentTranscripts studentTranscript = gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,transcriptType,documentStatusCode));
+		if(studentTranscript != null && studentTranscript.getTranscript() != null) {
+			byte[] certificateByte = Base64.decodeBase64(studentTranscript.getTranscript().getBytes(StandardCharsets.US_ASCII));
+			ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME,transcriptType,"transcript"));
+			return ResponseEntity
+					.ok()
+					.headers(headers)
+					.contentType(MediaType.APPLICATION_PDF)
+					.body(new InputStreamResource(bis));
+		}
+		return null;
 	}
 }

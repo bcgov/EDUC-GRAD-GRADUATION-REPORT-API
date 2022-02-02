@@ -15,9 +15,10 @@
         <sonar.language>java</sonar.language>
         <sonar.exclusions>
             src/main/resources/**,
-            src/main/java/ca/bc/gov/educ/api/gradstudent/config/**,
-            src/main/java/ca/bc/gov/educ/api/gradstudent/dto/**,
-            src/main/java/ca/bc/gov/educ/api/gradstudent/util/**
+            src/main/java/ca/bc/gov/educ/api/grad/report/config/**,
+            src/main/java/ca/bc/gov/educ/api/grad/report/model/**,
+            src/main/java/ca/bc/gov/educ/api/grad/report/util/**
+            src/main/java/ca/bc/gov/educ/api/grad/report/exception/**
         </sonar.exclusions>
         <java.version>11</java.version>
         <maven.compiler.version>3.8.0</maven.compiler.version>
