@@ -254,7 +254,7 @@ public class CommonServiceTest {
         when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(studentID, reportTypeCode,documentStatusCode)).thenReturn(Optional.of(gradStudentReport));
         var result = commonService.getStudentReportByType(studentID, reportTypeCode,documentStatusCode);
         assertThat(result).isNotNull();
-        assertThat(result.getHeaders().get("Content-Disposition").toString()).isEqualTo("[inline; filename=student_TEST_report.pdf]");
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_TEST_report.pdf]");
         assertThat(result.getBody()).isNotNull();
     }
 
@@ -284,7 +284,7 @@ public class CommonServiceTest {
         when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, gradCertificateType.getCode(),documentStatus.getCode())).thenReturn(Optional.of(studentCertificate));
         var result = commonService.getStudentCertificateByType(studentID, gradCertificateType.getCode(),documentStatus.getCode());
         assertThat(result).isNotNull();
-        assertThat(result.getHeaders().get("Content-Disposition").toString()).isEqualTo("[inline; filename=student_TEST_certificate.pdf]");
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_TEST_certificate.pdf]");
         assertThat(result.getBody()).isNotNull();
     }
 
@@ -566,7 +566,7 @@ public class CommonServiceTest {
         when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID, transcriptTypes.getCode(),documentStatus.getCode())).thenReturn(Optional.of(studentTranscript));
         var result = commonService.getStudentTranscriptByType(studentID, transcriptTypes.getCode(),documentStatus.getCode());
         assertThat(result).isNotNull();
-        assertThat(result.getHeaders().get("Content-Disposition").toString()).isEqualTo("[inline; filename=student_TEST_transcript.pdf]");
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_TEST_transcript.pdf]");
         assertThat(result.getBody()).isNotNull();
     }
 

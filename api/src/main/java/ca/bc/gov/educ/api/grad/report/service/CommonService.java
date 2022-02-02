@@ -50,6 +50,9 @@ public class CommonService {
     @SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(CommonService.class);
 
+	private static final String CONTENT_DISPOSITION = "Content-Disposition";
+	private static final String PDF_FILE_NAME = "inline; filename=student_%s_%s.pdf";
+
     @Transactional
 	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports,boolean isGraduated) {
 		GradStudentReportsEntity toBeSaved = gradStudentReportsTransformer.transformToEntity(gradStudentReports);
@@ -94,7 +97,7 @@ public class CommonService {
 				byte[] reportByte = Base64.decodeBase64(studentReport.getReport().getBytes(StandardCharsets.US_ASCII));
 				ByteArrayInputStream bis = new ByteArrayInputStream(reportByte);
 			    HttpHeaders headers = new HttpHeaders();
-		        headers.add("Content-Disposition", "inline; filename=student_"+reportType+"_report.pdf");
+		        headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME,reportType,"report"));
 			    return ResponseEntity
 		                .ok()
 		                .headers(headers)
@@ -134,7 +137,7 @@ public class CommonService {
 				byte[] certificateByte = Base64.decodeBase64(studentCertificate.getCertificate().getBytes(StandardCharsets.US_ASCII));
 				ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
 			    HttpHeaders headers = new HttpHeaders();
-		        headers.add("Content-Disposition", "inline; filename=student_"+certificateType+"_certificate.pdf");
+		        headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME,certificateType,"certificate"));
 			    return ResponseEntity
 		                .ok()
 		                .headers(headers)
@@ -236,7 +239,7 @@ public class CommonService {
 			byte[] certificateByte = Base64.decodeBase64(studentTranscript.getTranscript().getBytes(StandardCharsets.US_ASCII));
 			ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
 			HttpHeaders headers = new HttpHeaders();
-			headers.add("Content-Disposition", "inline; filename=student_"+transcriptType+"_transcript.pdf");
+			headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME,transcriptType,"transcript"));
 			return ResponseEntity
 					.ok()
 					.headers(headers)

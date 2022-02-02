@@ -1,8 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.model.transformer;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentTranscripts;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
