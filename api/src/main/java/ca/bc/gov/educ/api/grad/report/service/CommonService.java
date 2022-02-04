@@ -198,8 +198,18 @@ public class CommonService {
 				gradStudentCertificatesRepository.save(cert);
 			});
 		}
+		List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
+		long numberOfTranscriptRecords = 0L;
+		if(!tranList.isEmpty()) {
+			numberOfTranscriptRecords =tranList.size();
+			hasDocuments = true;
+			tranList.forEach(tran-> {
+				tran.setDocumentStatusCode("ARCH");
+				gradStudentTranscriptsRepository.save(tran);
+			});
+		}
 		if(hasDocuments) {
-			long total = numberOfReportRecords + numberOfCertificateRecords;
+			long total = numberOfReportRecords + numberOfCertificateRecords + numberOfTranscriptRecords;
 			if(total > 0) {
 				return 1;
 			}else {
