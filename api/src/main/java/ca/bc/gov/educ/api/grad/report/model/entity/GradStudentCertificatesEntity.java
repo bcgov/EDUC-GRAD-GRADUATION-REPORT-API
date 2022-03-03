@@ -34,7 +34,7 @@ public class GradStudentCertificatesEntity extends BaseEntity {
 	@Column(name = "CERTIFICATE_TYPE_CODE", nullable = false)
     private String gradCertificateTypeCode;	
 	
-	@Column(name = "GRADUTION_STUDENT_RECORD_ID", nullable = false)
+	@Column(name = "GRADUATION_STUDENT_RECORD_ID", nullable = false)
     private UUID studentID;
 	
 	@Column(name = "DISTRIBUTION_DATE",nullable = true)
