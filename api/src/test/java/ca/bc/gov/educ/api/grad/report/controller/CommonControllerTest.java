@@ -261,4 +261,55 @@ public class CommonControllerTest {
     	Mockito.when(commonService.getAllStudentAchievement(studentID)).thenReturn(1);
     	commonController.deleteAllStudentAchievements(studentID.toString());
     }
+
+    @Test
+    public void testGetStudentTranscriptByType() {
+        final UUID studentID = new UUID(1, 1);
+        final String transcriptTypeCode = "TEST";
+        final String transcriptBody = "Test Certificate Body";
+        final String documentStatusCode = "COMPL";
+        byte[] certificateByte = Base64.decodeBase64(transcriptBody.getBytes(StandardCharsets.US_ASCII));
+        ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=student_"+transcriptTypeCode+"_transcript.pdf");
+
+        Mockito.when(commonService.getStudentTranscriptByType(studentID, transcriptTypeCode,documentStatusCode)).thenReturn(
+                ResponseEntity
+                        .ok()
+                        .headers(headers)
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(new InputStreamResource(bis)));
+        commonController.getStudentTranscriptByType(studentID.toString(), transcriptTypeCode,documentStatusCode);
+        Mockito.verify(commonService).getStudentTranscriptByType(studentID, transcriptTypeCode,documentStatusCode);
+    }
+
+    @Test
+    public void testGetAllStudentTranscriptDistributionList() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+
+        // Student Certificate Types
+        final List<StudentCredentialDistribution> list = new ArrayList<>();
+        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4");
+        list.add(cred);
+
+        Mockito.when(commonService.getAllStudentTranscriptDistributionList()).thenReturn(list);
+        commonController.getAllStudentTranscriptDistribution();
+        Mockito.verify(commonService).getAllStudentTranscriptDistributionList();
+    }
+
+    @Test
+    public void testGetAllStudentCertificateDistributionList() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+
+        // Student Certificate Types
+        final List<StudentCredentialDistribution> list = new ArrayList<>();
+        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4");
+        list.add(cred);
+
+        Mockito.when(commonService.getAllStudentCertificateDistributionList()).thenReturn(list);
+        commonController.getAllStudentCertificateDistribution();
+        Mockito.verify(commonService).getAllStudentCertificateDistributionList();
+    }
 }
