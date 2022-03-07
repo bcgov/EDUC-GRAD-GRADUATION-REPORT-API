@@ -120,10 +120,11 @@ public class CommonService {
 	@Transactional
 	public GradStudentCertificates saveGradCertificates(GradStudentCertificates gradStudentCertificates) {
 		GradStudentCertificatesEntity toBeSaved = gradStudentCertificatesTransformer.transformToEntity(gradStudentCertificates);
-		Optional<GradStudentCertificatesEntity> existingEnity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode(),"COMPL");
-		if(existingEnity.isPresent() && gradStudentCertificates.getCertificate() != null) {
-			GradStudentCertificatesEntity gradEntity = existingEnity.get();
-			gradEntity.setCertificate(gradStudentCertificates.getCertificate());			
+		Optional<GradStudentCertificatesEntity> existingEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode(),"COMPL");
+		if(existingEntity.isPresent()) {
+			GradStudentCertificatesEntity gradEntity = existingEntity.get();
+			if(gradStudentCertificates.getCertificate() != null)
+				gradEntity.setCertificate(gradStudentCertificates.getCertificate());
 			return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.save(gradEntity));
 		}else {
 			return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.save(toBeSaved));
