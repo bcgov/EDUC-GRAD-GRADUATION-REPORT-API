@@ -184,8 +184,7 @@ public class CommonService {
 		if(!repList.isEmpty()) {
 			numberOfReportRecords =repList.size(); 
 			repList.forEach(rep-> {
-				rep.setDocumentStatusCode("ARCH");
-				gradStudentReportsRepository.save(rep);
+				gradStudentReportsRepository.delete(rep);
 			});
 			hasDocuments = true;
 		}
@@ -205,8 +204,7 @@ public class CommonService {
 			numberOfTranscriptRecords =tranList.size();
 			hasDocuments = true;
 			tranList.forEach(tran-> {
-				tran.setDocumentStatusCode("ARCH");
-				gradStudentTranscriptsRepository.save(tran);
+				gradStudentTranscriptsRepository.delete(tran);
 			});
 		}
 		if(hasDocuments) {
