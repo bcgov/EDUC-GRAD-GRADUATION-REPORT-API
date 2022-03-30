@@ -120,10 +120,11 @@ public class CommonService {
 	@Transactional
 	public GradStudentCertificates saveGradCertificates(GradStudentCertificates gradStudentCertificates) {
 		GradStudentCertificatesEntity toBeSaved = gradStudentCertificatesTransformer.transformToEntity(gradStudentCertificates);
-		Optional<GradStudentCertificatesEntity> existingEnity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode(),"COMPL");
-		if(existingEnity.isPresent() && gradStudentCertificates.getCertificate() != null) {
-			GradStudentCertificatesEntity gradEntity = existingEnity.get();
-			gradEntity.setCertificate(gradStudentCertificates.getCertificate());			
+		Optional<GradStudentCertificatesEntity> existingEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode(),"COMPL");
+		if(existingEntity.isPresent()) {
+			GradStudentCertificatesEntity gradEntity = existingEntity.get();
+			if(gradStudentCertificates.getCertificate() != null)
+				gradEntity.setCertificate(gradStudentCertificates.getCertificate());
 			return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.save(gradEntity));
 		}else {
 			return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.save(toBeSaved));
@@ -183,8 +184,7 @@ public class CommonService {
 		if(!repList.isEmpty()) {
 			numberOfReportRecords =repList.size(); 
 			repList.forEach(rep-> {
-				rep.setDocumentStatusCode("ARCH");
-				gradStudentReportsRepository.save(rep);
+				gradStudentReportsRepository.delete(rep);
 			});
 			hasDocuments = true;
 		}
@@ -204,8 +204,7 @@ public class CommonService {
 			numberOfTranscriptRecords =tranList.size();
 			hasDocuments = true;
 			tranList.forEach(tran-> {
-				tran.setDocumentStatusCode("ARCH");
-				gradStudentTranscriptsRepository.save(tran);
+				gradStudentTranscriptsRepository.delete(tran);
 			});
 		}
 		if(hasDocuments) {
