@@ -3,6 +3,7 @@ package ca.bc.gov.educ.api.grad.report.service;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -261,9 +262,9 @@ public class CommonService {
 	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType) {
 		try {
 			if (paperType.equalsIgnoreCase("YED4")) {
-				gradStudentTranscriptsRepository.updateStudentCredential(studentID, credentialTypeCode);
+				gradStudentTranscriptsRepository.updateStudentCredential(studentID, credentialTypeCode, LocalDateTime.now());
 			} else {
-				gradStudentCertificatesRepository.updateStudentCredential(studentID, credentialTypeCode);
+				gradStudentCertificatesRepository.updateStudentCredential(studentID, credentialTypeCode,LocalDateTime.now());
 			}
 		}catch (Exception e) {
 			return false;

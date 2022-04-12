@@ -3,10 +3,12 @@ package ca.bc.gov.educ.api.grad.report.repository;
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +29,9 @@ public interface GradStudentTranscriptsRepository extends JpaRepository<GradStud
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,tran.paperType) from GradStudentTranscriptsEntity c inner join TranscriptTypesEntity tran on tran.code = c.transcriptTypeCode  where c.documentStatusCode=:documentStatusCode and c.distributionDate is null")
 	List<StudentCredentialDistribution>  findByDocumentStatusCodeAndDistributionDate(@Param("documentStatusCode") String documentStatusCode);
 
-	@Query(value="update STUDENT_TRANSCRIPT set DISTRIBUTION_DATE=sysdate WHERE GRADUATION_STUDENT_RECORD_ID=:studentID and TRANSCRIPT_TYPE_CODE=:credentialTypeCode",nativeQuery = true)
-    void updateStudentCredential(UUID studentID, String credentialTypeCode);
+	@Modifying
+	@Query(value="update STUDENT_TRANSCRIPT\n"
+			+ "set DISTRIBUTION_DATE = :currentTime\n"
+			+ "where GRADUATION_STUDENT_RECORD_ID = :studentID and TRANSCRIPT_TYPE_CODE=:credentialTypeCode", nativeQuery=true)
+    void updateStudentCredential(UUID studentID, String credentialTypeCode, LocalDateTime currentTime);
 }
