@@ -1,11 +1,13 @@
 package ca.bc.gov.educ.api.grad.report.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -27,4 +29,10 @@ public interface GradStudentCertificatesRepository extends JpaRepository<GradStu
 
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType) from GradStudentCertificatesEntity c inner join GradCertificateTypesEntity cert on cert.code = c.gradCertificateTypeCode where c.documentStatusCode=:documentStatusCode and c.distributionDate is null")
 	List<StudentCredentialDistribution> findByDocumentStatusCodeAndDistributionDate(@Param("documentStatusCode") String documentStatusCode);
+
+	@Modifying
+	@Query(value="update STUDENT_CERTIFICATE\n"
+			+ "set DISTRIBUTION_DATE = :currentTime\n"
+			+ "where GRADUATION_STUDENT_RECORD_ID = :studentID and CERTIFICATE_TYPE_CODE=:credentialTypeCode", nativeQuery=true)
+	void updateStudentCredential(UUID studentID, String credentialTypeCode, LocalDateTime currentTime);
 }

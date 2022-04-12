@@ -219,6 +219,12 @@ public class CodeService {
 				pcObj.setTranscriptPaperType(tTypes.getPaperType());
 			}
 		}
+		if(pcObj.getCertificateTypeCode() != null) {
+			GradCertificateTypes cTypes =gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.findById(pcObj.getCertificateTypeCode()));
+			if(cTypes != null) {
+				pcObj.setCertificatePaperType(cTypes.getPaperType());
+			}
+		}
 		return pcObj;
 	}
 }
