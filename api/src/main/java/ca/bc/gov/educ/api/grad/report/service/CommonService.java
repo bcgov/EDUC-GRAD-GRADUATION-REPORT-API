@@ -257,4 +257,17 @@ public class CommonService {
 		}
 		return null;
 	}
+
+	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType) {
+		try {
+			if (paperType.equalsIgnoreCase("YED4")) {
+				gradStudentTranscriptsRepository.updateStudentCredential(studentID, credentialTypeCode);
+			} else {
+				gradStudentCertificatesRepository.updateStudentCredential(studentID, credentialTypeCode);
+			}
+		}catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
 }
