@@ -22,6 +22,9 @@ public class GradCertificateTypesEntity extends BaseEntity {
 	@Column(name = "LABEL", nullable = true)
 	private String label;
 
+	@Column(name = "LANGUAGE", nullable = true)
+	private String language;
+
 	@Column(name = "DESCRIPTION", nullable = true)
     private String description;
 
