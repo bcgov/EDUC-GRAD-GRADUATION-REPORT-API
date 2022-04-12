@@ -34,5 +34,5 @@ public interface GradStudentCertificatesRepository extends JpaRepository<GradStu
 	@Query(value="update STUDENT_CERTIFICATE\n"
 			+ "set DISTRIBUTION_DATE = :currentTime\n"
 			+ "where GRADUATION_STUDENT_RECORD_ID = :studentID and CERTIFICATE_TYPE_CODE=:credentialTypeCode", nativeQuery=true)
-	void updateStudentCredential(UUID studentID, String credentialTypeCode, LocalDateTime now);
+	void updateStudentCredential(UUID studentID, String credentialTypeCode, LocalDateTime currentTime);
 }
