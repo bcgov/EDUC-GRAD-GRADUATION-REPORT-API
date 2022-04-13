@@ -263,7 +263,6 @@ public class CommonService {
 	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType) {
 		try {
 			if (paperType.equalsIgnoreCase("YED4")) {
-				logger.info("updateStudentCredential : {} {} {}",studentID,credentialTypeCode,paperType);
 				Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,"COMPL");
 				if(optEntity.isPresent()) {
 					GradStudentTranscriptsEntity ent = optEntity.get();
