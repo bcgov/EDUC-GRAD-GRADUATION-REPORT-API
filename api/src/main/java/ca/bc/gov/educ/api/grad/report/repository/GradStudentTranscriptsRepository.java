@@ -29,9 +29,4 @@ public interface GradStudentTranscriptsRepository extends JpaRepository<GradStud
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,tran.paperType) from GradStudentTranscriptsEntity c inner join TranscriptTypesEntity tran on tran.code = c.transcriptTypeCode  where c.documentStatusCode=:documentStatusCode and c.distributionDate is null")
 	List<StudentCredentialDistribution>  findByDocumentStatusCodeAndDistributionDate(@Param("documentStatusCode") String documentStatusCode);
 
-	@Modifying
-	@Query(value="update STUDENT_TRANSCRIPT\n"
-			+ "set DISTRIBUTION_DATE = :currentTime\n"
-			+ "where GRADUATION_STUDENT_RECORD_ID = :studentID and TRANSCRIPT_TYPE_CODE=:credentialTypeCode", nativeQuery=true)
-    void updateStudentCredential(UUID studentID, String credentialTypeCode, LocalDateTime currentTime);
 }
