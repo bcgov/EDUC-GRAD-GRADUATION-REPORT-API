@@ -262,6 +262,7 @@ public class CommonService {
 	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType) {
 		try {
 			if (paperType.equalsIgnoreCase("YED4")) {
+				logger.info("updateStudentCredential : {} {} {}",studentID,credentialTypeCode,paperType);
 				gradStudentTranscriptsRepository.updateStudentCredential(studentID, credentialTypeCode, LocalDateTime.now());
 			} else {
 				gradStudentCertificatesRepository.updateStudentCredential(studentID, credentialTypeCode,LocalDateTime.now());

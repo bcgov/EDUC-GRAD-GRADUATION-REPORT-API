@@ -33,5 +33,5 @@ public interface GradStudentTranscriptsRepository extends JpaRepository<GradStud
 	@Query(value="update STUDENT_TRANSCRIPT\n"
 			+ "set DISTRIBUTION_DATE = :currentTime\n"
 			+ "where GRADUATION_STUDENT_RECORD_ID = :studentID and TRANSCRIPT_TYPE_CODE=:credentialTypeCode", nativeQuery=true)
-    void updateStudentCredential(UUID studentID, String credentialTypeCode, LocalDateTime currentTime);
+    void updateStudentCredential(@Param("studentID") UUID studentID, @Param("credentialTypeCode") String credentialTypeCode, @Param("currentTime") LocalDateTime currentTime);
 }
