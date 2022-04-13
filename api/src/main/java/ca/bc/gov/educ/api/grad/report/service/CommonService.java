@@ -4,6 +4,7 @@ package ca.bc.gov.educ.api.grad.report.service;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -263,9 +264,19 @@ public class CommonService {
 		try {
 			if (paperType.equalsIgnoreCase("YED4")) {
 				logger.info("updateStudentCredential : {} {} {}",studentID,credentialTypeCode,paperType);
-				gradStudentTranscriptsRepository.updateStudentCredential(studentID, credentialTypeCode, LocalDateTime.now());
+				Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,"COMPL");
+				if(optEntity.isPresent()) {
+					GradStudentTranscriptsEntity ent = optEntity.get();
+					ent.setDistributionDate(new Date());
+					gradStudentTranscriptsRepository.save(ent);
+				}
 			} else {
-				gradStudentCertificatesRepository.updateStudentCredential(studentID, credentialTypeCode,LocalDateTime.now());
+				Optional<GradStudentCertificatesEntity> optEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,"COMPL");
+				if(optEntity.isPresent()) {
+					GradStudentCertificatesEntity ent = optEntity.get();
+					ent.setDistributionDate(new Date());
+					gradStudentCertificatesRepository.save(ent);
+				}
 			}
 		}catch (Exception e) {
 			return false;
