@@ -196,8 +196,7 @@ public class CommonService {
 			numberOfCertificateRecords =certList.size();
 			hasDocuments = true;
 			certList.forEach(cert-> {
-				cert.setDocumentStatusCode("ARCH");
-				gradStudentCertificatesRepository.save(cert);
+				gradStudentCertificatesRepository.delete(cert);
 			});
 		}
 		List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
