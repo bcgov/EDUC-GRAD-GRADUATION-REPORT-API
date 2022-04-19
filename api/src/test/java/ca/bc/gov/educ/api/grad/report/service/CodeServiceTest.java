@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -46,6 +47,9 @@ public class CodeServiceTest {
 
 	@MockBean
 	private ProgramCertificateTranscriptRepository programCertificateTranscriptRepository;
+
+	@MockBean
+	WebClient webClient;
 
 	@Autowired
 	GradValidation validation;

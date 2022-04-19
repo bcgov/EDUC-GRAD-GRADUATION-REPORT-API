@@ -8,19 +8,22 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -38,6 +41,14 @@ public class CommonServiceTest {
 	@MockBean GradReportTypesRepository gradReportTypesRepository;
 	@MockBean DocumentStatusCodeRepository documentStatusCodeRepository;
     @MockBean TranscriptTypesRepository transcriptTypesRepository;
+    @MockBean WebClient webClient;
+
+    @Mock
+    WebClient.RequestHeadersSpec requestHeadersMock;
+    @Mock WebClient.RequestHeadersUriSpec requestHeadersUriMock;
+    @Mock WebClient.ResponseSpec responseMock;
+    @Mock WebClient.RequestBodySpec requestBodyMock;
+    @Mock WebClient.RequestBodyUriSpec requestBodyUriMock;
 
     @Before
     public void setUp() {
@@ -608,5 +619,72 @@ public class CommonServiceTest {
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).getStudentID()).isEqualTo(studentID);
 
+    }
+
+    @Test
+    public void testGetAllStudentTranscriptYearlyDistributionList() {
+        List<StudentCredentialDistribution> scdList = new ArrayList<>();
+        StudentCredentialDistribution scd = new StudentCredentialDistribution(new UUID(2,2),"E",new UUID(1,1),"YED4");
+        scdList.add(scd);
+
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4");
+        scdSubList.add(scdSub);
+
+        ParameterizedTypeReference<List<UUID>> studentidres = new ParameterizedTypeReference<>() {
+        };
+
+        List<UUID> studentList = new ArrayList<>();
+        studentList.add(new UUID(3,3));
+
+        when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
+        when(this.requestHeadersUriMock.uri(constants.getStudentsForYearlyDistribution())).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(studentidres)).thenReturn(Mono.just(studentList));
+
+
+        when(gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDateYearly("COMPL")).thenReturn(scdList);
+        when(gradStudentTranscriptsRepository.findByReportsForYearly(studentList)).thenReturn(scdSubList);
+
+        List<StudentCredentialDistribution> res = commonService.getAllStudentTranscriptYearlyDistributionList(null);
+        assertThat(res.size()).isEqualTo(2);
+
+
+
+    }
+
+    @Test
+    public void testUpdateStudentCredential() {
+        UUID studentId = new UUID(1,1);
+        String credentialTypeCode = "E";
+        String paperType="YED4";
+        GradStudentTranscriptsEntity ent = new GradStudentTranscriptsEntity();
+        ent.setStudentID(studentId);
+        ent.setTranscript("dfd");
+        ent.setId(new UUID(1,2));
+        ent.setTranscriptTypeCode("E");
+        ent.setDocumentStatusCode("COMPL");
+
+        when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
+        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType);
+        assertThat(res).isTrue();
+    }
+
+    @Test
+    public void testUpdateStudentCredential_CERT() {
+        UUID studentId = new UUID(1,1);
+        String credentialTypeCode = "E";
+        String paperType="YED2";
+        GradStudentCertificatesEntity ent = new GradStudentCertificatesEntity();
+        ent.setStudentID(studentId);
+        ent.setCertificate("dfd");
+        ent.setId(new UUID(1,2));
+        ent.setGradCertificateTypeCode("E");
+        ent.setDocumentStatusCode("COMPL");
+
+        when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
+        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType);
+        assertThat(res).isTrue();
     }
 }

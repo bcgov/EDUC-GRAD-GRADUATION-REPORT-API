@@ -4,10 +4,7 @@ package ca.bc.gov.educ.api.grad.report.service;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import javax.transaction.Transactional;
 
@@ -15,10 +12,12 @@ import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,6 +27,7 @@ import org.springframework.stereotype.Service;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import org.springframework.web.reactive.function.client.WebClient;
 
 
 @Service
@@ -48,6 +48,8 @@ public class CommonService {
 	@Autowired TranscriptTypesRepository transcriptTypesRepository;
 	@Autowired TranscriptTypesTransformer transcriptTypesTransformer;
     @Autowired GradValidation validation;
+	@Autowired WebClient webClient;
+	@Autowired EducGradReportApiConstants constants;
 
     @SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(CommonService.class);
@@ -241,6 +243,26 @@ public class CommonService {
 	public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
 		return gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDate("COMPL");
 	}
+
+	public List<StudentCredentialDistribution> getAllStudentTranscriptYearlyDistributionList(String accessToken) {
+		List<StudentCredentialDistribution> scdList = gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDateYearly("COMPL");
+		List<UUID> studentList =  webClient.get().uri(constants.getStudentsForYearlyDistribution()).headers(h -> h.setBearerAuth(accessToken)).retrieve().bodyToMono(new ParameterizedTypeReference<List<UUID>>() {}).block();
+		int partitionSize = 1000;
+		List<List<UUID>> partitions = new LinkedList<>();
+		for (int i = 0; i < studentList.size(); i += partitionSize) {
+			partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
+		}
+		for (int i = 0; i < partitions.size(); i++) {
+			List<UUID> subList = partitions.get(i);
+			List<StudentCredentialDistribution> scdSubList = gradStudentTranscriptsRepository.findByReportsForYearly(subList);
+			if (!scdSubList.isEmpty()) {
+				scdList.addAll(scdSubList);
+			}
+		}
+		return scdList;
+
+	}
+
 
 	@Transactional
 	public ResponseEntity<InputStreamResource> getStudentTranscriptByType(UUID studentID, String transcriptType,String documentStatusCode) {

@@ -74,3 +74,6 @@ springdoc:
     operationsSorter: alpha
 
 #Endpoint
+endpoint:
+  grad-student-api:
+    get-students-for-yearly-run: ${GRAD_STUDENT_API}api/v1/student/yearlydistribution

@@ -55,3 +55,6 @@ springdoc:
     operationsSorter: alpha
 
 #Endpoint
+endpoint:
+  grad-student-api:
+    get-students-for-yearly-run: http://localhost:9994/api/v1/student/yearlydistribution
