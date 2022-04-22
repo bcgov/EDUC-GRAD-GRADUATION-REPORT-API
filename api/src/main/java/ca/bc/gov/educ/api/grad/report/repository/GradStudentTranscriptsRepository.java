@@ -32,6 +32,6 @@ public interface GradStudentTranscriptsRepository extends JpaRepository<GradStud
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,tran.paperType) from GradStudentTranscriptsEntity c inner join TranscriptTypesEntity tran on tran.code = c.transcriptTypeCode  where (c.documentStatusCode=:documentStatusCode and c.distributionDate is null) or (c.documentStatusCode=:documentStatusCode and c.distributionDate < c.updatedTimestamp)")
 	List<StudentCredentialDistribution>  findByDocumentStatusCodeAndDistributionDateYearly(@Param("documentStatusCode") String documentStatusCode);
 
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,tran.paperType) from GradStudentTranscriptsEntity c inner join TranscriptTypesEntity tran on tran.code = c.transcriptTypeCode  where c.studentID in (:subList)")
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,tran.paperType) from GradStudentTranscriptsEntity c inner join TranscriptTypesEntity tran on tran.code = c.transcriptTypeCode  where c.studentID in (:subList) and c.distributionDate is null")
 	List<StudentCredentialDistribution> findByReportsForYearly(List<UUID> subList);
 }
