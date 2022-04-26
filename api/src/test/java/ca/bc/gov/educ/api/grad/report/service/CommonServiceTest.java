@@ -588,7 +588,7 @@ public class CommonServiceTest {
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution credentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"BC1996-IND",studentID,"YED4");
+        final StudentCredentialDistribution credentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"BC1996-IND",studentID,"YED4","COMPL");
         list.add(credentialDistribution);
 
 
@@ -608,7 +608,7 @@ public class CommonServiceTest {
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution credentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2");
+        final StudentCredentialDistribution credentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2","COMPL");
         list.add(credentialDistribution);
 
 
@@ -624,11 +624,11 @@ public class CommonServiceTest {
     @Test
     public void testGetAllStudentTranscriptYearlyDistributionList() {
         List<StudentCredentialDistribution> scdList = new ArrayList<>();
-        StudentCredentialDistribution scd = new StudentCredentialDistribution(new UUID(2,2),"E",new UUID(1,1),"YED4");
+        StudentCredentialDistribution scd = new StudentCredentialDistribution(new UUID(2,2),"E",new UUID(1,1),"YED4","COMPL");
         scdList.add(scd);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
-        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4");
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
         scdSubList.add(scdSub);
 
         ParameterizedTypeReference<List<UUID>> studentidres = new ParameterizedTypeReference<>() {
@@ -667,7 +667,7 @@ public class CommonServiceTest {
         ent.setDocumentStatusCode("COMPL");
 
         when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
-        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType);
+        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL");
         assertThat(res).isTrue();
     }
 
@@ -684,7 +684,7 @@ public class CommonServiceTest {
         ent.setDocumentStatusCode("COMPL");
 
         when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
-        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType);
+        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL");
         assertThat(res).isTrue();
     }
 }
