@@ -33,7 +33,7 @@ public class EducGradReportApiConstants {
     public static final String GET_ALL_DOCUMENT_STATUS_MAPPING = "/documentstatus";
     public static final String GET_ALL_DOCUMENT_STATUS_CODE_MAPPING = "/documentstatus/{documentStatusCode}";
 
-    public static final String UPDATE_STUDENT_CREDENTIAL = "/studentcredential/{studentID}/{credentialTypeCode}/{paperType}";
+    public static final String UPDATE_STUDENT_CREDENTIAL = "/studentcredential";
 
     public static final String STUDENT_REPORT = "/studentreport";
     public static final String STUDENT_CERTIFICATE = "/studentcertificate";

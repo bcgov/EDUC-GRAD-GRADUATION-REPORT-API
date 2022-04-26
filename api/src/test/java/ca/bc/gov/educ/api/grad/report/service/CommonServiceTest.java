@@ -667,7 +667,7 @@ public class CommonServiceTest {
         ent.setDocumentStatusCode("COMPL");
 
         when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
-        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType);
+        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL");
         assertThat(res).isTrue();
     }
 
@@ -684,7 +684,7 @@ public class CommonServiceTest {
         ent.setDocumentStatusCode("COMPL");
 
         when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
-        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType);
+        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL");
         assertThat(res).isTrue();
     }
 }

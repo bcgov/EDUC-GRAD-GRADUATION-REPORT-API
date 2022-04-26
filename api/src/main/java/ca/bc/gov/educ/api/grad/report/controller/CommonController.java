@@ -210,9 +210,9 @@ public class CommonController {
     @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<Boolean> updateStudentCredential(@PathVariable String studentID,@PathVariable String credentialTypeCode,@PathVariable String paperType) {
+    public ResponseEntity<Boolean> updateStudentCredential(@RequestParam String studentID,@RequestParam String credentialTypeCode,@RequestParam String paperType,@RequestParam String documentStatusCode) {
         logger.debug("updateStudentCredential : {} {} {}",studentID,credentialTypeCode,paperType);
-        return response.GET(commonService.updateStudentCredential(UUID.fromString(studentID),credentialTypeCode,paperType));
+        return response.GET(commonService.updateStudentCredential(UUID.fromString(studentID),credentialTypeCode,paperType,documentStatusCode));
     }
    
 }

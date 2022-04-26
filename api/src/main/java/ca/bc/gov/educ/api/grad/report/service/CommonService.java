@@ -281,17 +281,17 @@ public class CommonService {
 		return null;
 	}
 
-	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType) {
+	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType,String documentStatusCode) {
 		try {
 			if (paperType.equalsIgnoreCase("YED4")) {
-				Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,"COMPL");
+				Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,documentStatusCode);
 				if(optEntity.isPresent()) {
 					GradStudentTranscriptsEntity ent = optEntity.get();
 					ent.setDistributionDate(new Date());
 					gradStudentTranscriptsRepository.save(ent);
 				}
 			} else {
-				Optional<GradStudentCertificatesEntity> optEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,"COMPL");
+				Optional<GradStudentCertificatesEntity> optEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,documentStatusCode);
 				if(optEntity.isPresent()) {
 					GradStudentCertificatesEntity ent = optEntity.get();
 					ent.setDistributionDate(new Date());
