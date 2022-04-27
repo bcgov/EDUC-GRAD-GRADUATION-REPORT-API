@@ -3,8 +3,7 @@ package ca.bc.gov.educ.api.grad.report.controller;
 import java.util.List;
 import java.util.UUID;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentTranscripts;
-import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
+import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentCertificates;
-import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentReports;
 import ca.bc.gov.educ.api.grad.report.service.CommonService;
 import ca.bc.gov.educ.api.grad.report.util.ApiResponseModel;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
@@ -213,6 +210,17 @@ public class CommonController {
     public ResponseEntity<Boolean> updateStudentCredential(@RequestParam String studentID,@RequestParam String credentialTypeCode,@RequestParam String paperType,@RequestParam String documentStatusCode) {
         logger.debug("updateStudentCredential : {} {} {}",studentID,credentialTypeCode,paperType);
         return response.GET(commonService.updateStudentCredential(UUID.fromString(studentID),credentialTypeCode,paperType,documentStatusCode));
+    }
+
+    @GetMapping(EducGradReportApiConstants.USER_REQUEST_DIS_RUN)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Read All Student Transcripts/Certificates for  User Req Distribution", description = "Read All Student Transcripts for Distribution", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<StudentCredentialDistribution>> getStudentCredentialsForUserRequestDisRun(@PathVariable String credentialType,@RequestBody StudentSearchRequest studentSearchRequest) {
+        logger.debug("getStudentCredentialsForUserRequestDisRun : ");
+        OAuth2AuthenticationDetails auth = (OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String accessToken = auth.getTokenValue();
+        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,accessToken));
     }
    
 }

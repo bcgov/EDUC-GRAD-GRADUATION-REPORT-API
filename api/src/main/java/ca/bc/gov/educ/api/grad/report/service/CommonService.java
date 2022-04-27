@@ -3,8 +3,8 @@ package ca.bc.gov.educ.api.grad.report.service;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
@@ -302,5 +303,52 @@ public class CommonService {
 			return false;
 		}
 		return true;
+	}
+
+	public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, String accessToken) {
+		List<StudentCredentialDistribution> scdList = new ArrayList<>();
+		List<UUID> studentList =  getStudentsForSpecialGradRun(studentSearchRequest,accessToken);
+		if(!studentList.isEmpty()) {
+			int partitionSize = 1000;
+			List<List<UUID>> partitions = new LinkedList<>();
+			for (int i = 0; i < studentList.size(); i += partitionSize) {
+				partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
+			}
+			if (credentialType.equalsIgnoreCase("OC")) {
+				for (int i = 0; i < partitions.size(); i++) {
+					List<UUID> subList = partitions.get(i);
+
+					List<StudentCredentialDistribution> scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
+					if (!scdSubList.isEmpty()) {
+						scdList.addAll(scdSubList);
+					}
+				}
+			} else if (credentialType.equalsIgnoreCase("OT")) {
+				for (int i = 0; i < partitions.size(); i++) {
+					List<UUID> subList = partitions.get(i);
+
+					List<StudentCredentialDistribution> scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
+					if (!scdSubList.isEmpty()) {
+						scdList.addAll(scdSubList);
+					}
+				}
+			}
+		}
+		return scdList;
+	}
+
+	private List<UUID> getStudentsForSpecialGradRun(StudentSearchRequest req, String accessToken) {
+		final ParameterizedTypeReference<List<GraduationStudentRecord>> responseType = new ParameterizedTypeReference<>() {
+		};
+		GraduationStudentRecordSearchResult res = this.webClient.post()
+				.uri(constants.getGradStudentApiStudentForSpcGradListUrl())
+				.headers(h -> h.setBearerAuth(accessToken))
+				.body(BodyInserters.fromValue(req))
+				.retrieve()
+				.bodyToMono(GraduationStudentRecordSearchResult.class)
+				.block();
+		if(!res.getGraduationStudentRecords().isEmpty())
+			return res.getGraduationStudentRecords().stream().map(GraduationStudentRecord::getStudentID).collect(Collectors.toList());
+		return new ArrayList<>();
 	}
 }
