@@ -212,7 +212,7 @@ public class CommonController {
         return response.GET(commonService.updateStudentCredential(UUID.fromString(studentID),credentialTypeCode,paperType,documentStatusCode));
     }
 
-    @GetMapping(EducGradReportApiConstants.USER_REQUEST_DIS_RUN)
+    @PostMapping(EducGradReportApiConstants.USER_REQUEST_DIS_RUN)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Read All Student Transcripts/Certificates for  User Req Distribution", description = "Read All Student Transcripts for Distribution", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
