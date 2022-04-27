@@ -14,6 +14,7 @@ public class GradCertificateTypes extends BaseModel {
 
 	private String code;
 	private String label;
+	private String language;
 	private String description;
 	private Integer displayOrder;
 	private Date effectiveDate;
@@ -22,7 +23,7 @@ public class GradCertificateTypes extends BaseModel {
 	
 	@Override
 	public String toString() {
-		return "GradReportTypes [code=" + code + ", label=" + label + ", description=" + description + ", displayOrder="
+		return "GradReportTypes [code=" + code + ", label=" + label + ", language=" + language + ", description=" + description + ", displayOrder="
 				+ displayOrder + ", effectiveDate=" + effectiveDate + ", expiryDate=" + expiryDate + "]";
 	}
 	

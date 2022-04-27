@@ -290,7 +290,7 @@ public class CommonControllerTest {
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4");
+        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL");
         list.add(cred);
 
         Mockito.when(commonService.getAllStudentTranscriptDistributionList()).thenReturn(list);
@@ -305,7 +305,7 @@ public class CommonControllerTest {
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4");
+        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL");
         list.add(cred);
 
         Mockito.when(commonService.getAllStudentCertificateDistributionList()).thenReturn(list);
