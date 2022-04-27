@@ -58,3 +58,4 @@ springdoc:
 endpoint:
   grad-student-api:
     get-students-for-yearly-run: http://localhost:9994/api/v1/student/yearlydistribution
+    student-for-special-grad-run-list:  http://localhost:9994/api/v1/student/studentlistsearch

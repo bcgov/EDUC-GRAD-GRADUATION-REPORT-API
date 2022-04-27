@@ -16,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -686,5 +687,81 @@ public class CommonServiceTest {
         when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
         boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL");
         assertThat(res).isTrue();
+    }
+
+    @Test
+    public void testGetStudentCredentialsForUserRequestDisRun_OC() {
+
+        String credentialType = "OC";
+        GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
+
+        List<GraduationStudentRecord> studList= new ArrayList<>();
+        GraduationStudentRecord rec = new GraduationStudentRecord();
+        rec.setLegalFirstName("asda");
+        rec.setStudentID(new UUID(1,1));
+        studList.add(rec);
+        res.setGraduationStudentRecords(studList);
+
+        List<StudentCredentialDistribution> scdList = new ArrayList<>();
+        StudentCredentialDistribution scd = new StudentCredentialDistribution(new UUID(2,2),"E",new UUID(1,1),"YED4","COMPL");
+        scdList.add(scd);
+
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
+        scdSubList.add(scdSub);
+
+        List<UUID> studentList = new ArrayList<>();
+        studentList.add(new UUID(1,1));
+
+        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+
+        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
+
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),null);
+        assertThat(result.size()).isEqualTo(1);
+
+    }
+
+    @Test
+    public void testGetStudentCredentialsForUserRequestDisRun_OT() {
+
+        String credentialType = "OT";
+        GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
+
+        List<GraduationStudentRecord> studList= new ArrayList<>();
+        GraduationStudentRecord rec = new GraduationStudentRecord();
+        rec.setLegalFirstName("asda");
+        rec.setStudentID(new UUID(1,1));
+        studList.add(rec);
+        res.setGraduationStudentRecords(studList);
+
+        List<StudentCredentialDistribution> scdList = new ArrayList<>();
+        StudentCredentialDistribution scd = new StudentCredentialDistribution(new UUID(2,2),"E",new UUID(1,1),"YED4","COMPL");
+        scdList.add(scd);
+
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
+        scdSubList.add(scdSub);
+
+        List<UUID> studentList = new ArrayList<>();
+        studentList.add(new UUID(1,1));
+
+        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+
+        Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
+
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),null);
+        assertThat(result.size()).isEqualTo(1);
+
     }
 }

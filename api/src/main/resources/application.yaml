@@ -77,3 +77,4 @@ springdoc:
 endpoint:
   grad-student-api:
     get-students-for-yearly-run: ${GRAD_STUDENT_API}api/v1/student/yearlydistribution
+    student-for-special-grad-run-list: ${GRAD_STUDENT_API}api/v1/student/studentlistsearch
