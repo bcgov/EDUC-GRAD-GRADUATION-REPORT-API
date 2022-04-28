@@ -12,10 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -39,12 +35,6 @@ public class CodeControllerTest {
 	
 	@Mock
 	MessageHelper messagesHelper;
-	
-	@Mock
-	OAuth2AuthenticationDetails oAuth2AuthenticationDetails;
-	
-	@Mock
-	SecurityContextHolder securityContextHolder;
 	
 	@Test
 	public void testGetAllCertificateTypesCodeList() {
