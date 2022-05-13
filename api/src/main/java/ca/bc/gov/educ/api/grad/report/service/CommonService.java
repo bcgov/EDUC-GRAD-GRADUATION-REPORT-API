@@ -1,18 +1,14 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +19,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
-import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import javax.transaction.Transactional;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -95,9 +93,15 @@ public class CommonService {
 			return gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.save(toBeSaved));
 		}
 	}
-	
+
+	@Transactional
+	public GradStudentReports getStudentReportObjectByType(UUID studentID, String reportType,String documentStatusCode) {
+		return gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(studentID,reportType,documentStatusCode));
+	}
+
+	@Transactional
 	public ResponseEntity<InputStreamResource> getStudentReportByType(UUID studentID, String reportType,String documentStatusCode) {
-		GradStudentReports studentReport = gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(studentID,reportType,documentStatusCode));
+		GradStudentReports studentReport = getStudentReportObjectByType(studentID,reportType,documentStatusCode);
 		if(studentReport != null && studentReport.getReport() != null) {
 				byte[] reportByte = Base64.decodeBase64(studentReport.getReport().getBytes(StandardCharsets.US_ASCII));
 				ByteArrayInputStream bis = new ByteArrayInputStream(reportByte);
@@ -137,8 +141,13 @@ public class CommonService {
 	}
 
 	@Transactional
+	public GradStudentCertificates getStudentCertificateObjectByType(UUID studentID, String certificateType,String documentStatusCode) {
+		return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID,certificateType,documentStatusCode));
+	}
+
+	@Transactional
 	public ResponseEntity<InputStreamResource> getStudentCertificateByType(UUID studentID, String certificateType,String documentStatusCode) {
-		GradStudentCertificates studentCertificate = gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID,certificateType,documentStatusCode));
+		GradStudentCertificates studentCertificate = getStudentCertificateObjectByType(studentID,certificateType,documentStatusCode);
 		if(studentCertificate != null && studentCertificate.getCertificate() != null) {
 				byte[] certificateByte = Base64.decodeBase64(studentCertificate.getCertificate().getBytes(StandardCharsets.US_ASCII));
 				ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);

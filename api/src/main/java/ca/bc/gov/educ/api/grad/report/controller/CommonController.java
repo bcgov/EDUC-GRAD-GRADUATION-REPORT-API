@@ -1,9 +1,14 @@
 package ca.bc.gov.educ.api.grad.report.controller;
 
-import java.util.List;
-import java.util.UUID;
-
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.service.CommonService;
+import ca.bc.gov.educ.api.grad.report.util.*;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import ca.bc.gov.educ.api.grad.report.service.CommonService;
-import ca.bc.gov.educ.api.grad.report.util.ApiResponseModel;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
-import ca.bc.gov.educ.api.grad.report.util.GradValidation;
-import ca.bc.gov.educ.api.grad.report.util.PermissionsConstants;
-import ca.bc.gov.educ.api.grad.report.util.ResponseHelper;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.util.List;
+import java.util.UUID;
 
 @CrossOrigin
 @RestController
@@ -81,6 +76,16 @@ public class CommonController {
     		@RequestParam(value = "documentStatusCode", required = true) String documentStatusCode) { 
     	logger.debug("getStudentReportByType : ");
     	return commonService.getStudentReportByType(UUID.fromString(studentID),reportType,documentStatusCode);
+    }
+
+    @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATES)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Read Student Certificates by Student ID", description = "Read Student Certificates by Student ID", tags = { "Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public List<GradStudentCertificates> getStudentCertificates(
+            @RequestParam(value = "studentID", required = true) String studentID) {
+        logger.debug("getStudentCertificates : ");
+        return commonService.getAllStudentCertificateList(UUID.fromString(studentID));
     }
     
     @PostMapping (EducGradReportApiConstants.STUDENT_CERTIFICATE)
