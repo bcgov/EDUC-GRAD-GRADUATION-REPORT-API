@@ -222,5 +222,14 @@ public class CommonController {
         String accessToken = auth.getTokenValue();
         return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,accessToken));
     }
+
+    @DeleteMapping(EducGradReportApiConstants.ARCH_ACHIEVEMENTS_BY_STUDENTID)
+    @PreAuthorize(PermissionsConstants.DELETE_STUDENT_ACHIEVEMENT_DATA)
+    @Operation(summary = "Archive All  Student Achievements by Student ID", description = "Archive All Student Certificates by Student ID", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO_CONTENT")})
+    public ResponseEntity<Void> archiveAllStudentAchievements(@PathVariable String studentID) {
+        logger.debug("deleteAllStudentAchievements : ");
+        return response.DELETE(commonService.archiveAllStudentAchievements(UUID.fromString(studentID)));
+    }
    
 }

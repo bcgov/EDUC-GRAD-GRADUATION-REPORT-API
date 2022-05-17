@@ -181,6 +181,51 @@ public class CommonService {
 		return transcriptList;
 	}
 
+
+	@Transactional
+	public int archiveAllStudentAchievements(UUID studentID) {
+		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
+		boolean hasDocuments  = false;
+		int numberOfReportRecords = 0;
+		if(!repList.isEmpty()) {
+			numberOfReportRecords =repList.size();
+			repList.forEach(rep-> {
+				gradStudentReportsRepository.delete(rep);
+			});
+			hasDocuments = true;
+		}
+		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
+		long numberOfCertificateRecords = 0L;
+		if(!certList.isEmpty()) {
+			numberOfCertificateRecords =certList.size();
+			hasDocuments = true;
+			certList.forEach(cert-> {
+				cert.setDocumentStatusCode("ARCH");
+				gradStudentCertificatesRepository.save(cert);
+			});
+		}
+		List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
+		long numberOfTranscriptRecords = 0L;
+		if(!tranList.isEmpty()) {
+			numberOfTranscriptRecords =tranList.size();
+			hasDocuments = true;
+			tranList.forEach(tran-> {
+				gradStudentTranscriptsRepository.delete(tran);
+			});
+		}
+		if(hasDocuments) {
+			long total = numberOfReportRecords + numberOfCertificateRecords + numberOfTranscriptRecords;
+			if(total > 0) {
+				return 1;
+			}else {
+				return 0;
+			}
+		}else {
+			return 1;
+		}
+
+	}
+
 	@Transactional
 	public int getAllStudentAchievement(UUID studentID) {
 		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
