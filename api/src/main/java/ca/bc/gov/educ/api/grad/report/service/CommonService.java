@@ -189,9 +189,7 @@ public class CommonService {
 		int numberOfReportRecords = 0;
 		if(!repList.isEmpty()) {
 			numberOfReportRecords =repList.size();
-			repList.forEach(rep-> {
-				gradStudentReportsRepository.delete(rep);
-			});
+			repList.forEach(rep-> gradStudentReportsRepository.delete(rep));
 			hasDocuments = true;
 		}
 		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
@@ -209,9 +207,7 @@ public class CommonService {
 		if(!tranList.isEmpty()) {
 			numberOfTranscriptRecords =tranList.size();
 			hasDocuments = true;
-			tranList.forEach(tran-> {
-				gradStudentTranscriptsRepository.delete(tran);
-			});
+			tranList.forEach(tran->	gradStudentTranscriptsRepository.delete(tran));
 		}
 		if(hasDocuments) {
 			long total = numberOfReportRecords + numberOfCertificateRecords + numberOfTranscriptRecords;
