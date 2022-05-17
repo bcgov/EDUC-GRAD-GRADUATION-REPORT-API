@@ -61,10 +61,6 @@ objects:
                     name: educ-grad-graduation-report-api-config-map
                 - secretRef:
                     name: api-grad-report-db-secret
-                - secretRef:
-                    name: grad-cdogs-secret
-                - secretRef:
-                    name: grad-keycloak-pk-secret
               resources: {}
       test: false
   - apiVersion: v1
