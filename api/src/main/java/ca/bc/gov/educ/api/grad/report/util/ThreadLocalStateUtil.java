@@ -4,6 +4,9 @@ public class ThreadLocalStateUtil {
     private static ThreadLocal<String> transaction = new ThreadLocal<>();
     private static ThreadLocal<String> user = new ThreadLocal<>();
 
+    private ThreadLocalStateUtil() {
+    }
+
     /**
      * Set the current correlationID for this thread
      *
