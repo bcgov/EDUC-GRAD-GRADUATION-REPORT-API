@@ -308,4 +308,12 @@ public class CommonControllerTest {
         commonController.getAllStudentCertificateDistribution();
         Mockito.verify(commonService).getAllStudentCertificateDistributionList();
     }
+
+    @Test
+    public void testArchiveAllStudentAchievements() {
+        UUID studentID = new UUID(1, 1);
+        Mockito.when(commonService.archiveAllStudentAchievements(studentID)).thenReturn(1);
+        commonController.archiveAllStudentAchievements(studentID.toString());
+        Mockito.verify(commonService).archiveAllStudentAchievements(studentID);
+    }
 }

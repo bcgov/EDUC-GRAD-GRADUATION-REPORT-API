@@ -54,6 +54,7 @@ public class EducGradReportApiConstants {
     public static final String GET_STUDENT_REPORT_BY_REPORT_CODE_MAPPING = "/report/{reportTypeCode}";
     
     public static final String DELETE_ACHIEVEMENTS_BY_STUDENTID = "/studentachievement/{studentID}";
+    public static final String ARCH_ACHIEVEMENTS_BY_STUDENTID = "/archiveachievement/{studentID}";
     
     public static final String GET_ALL_PROGRAM_CERTIFICATES_MAPPING = "/programcertificates";
     public static final String GET_PROGRAM_TRANSCRIPTS_MAPPING = "/programtranscripts";

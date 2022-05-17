@@ -764,4 +764,43 @@ public class CommonServiceTest {
         assertThat(result.size()).isEqualTo(1);
 
     }
+
+    @Test
+    public void testArchiveAllStudentAchievement() {
+        UUID studentID = new UUID(1, 1);
+
+        final GradReportTypes gradReportTypes = new GradReportTypes();
+        gradReportTypes.setCode("SC");
+        gradReportTypes.setDescription("School Completion Certificate");
+
+        final DocumentStatusCode documentStatusCode = new DocumentStatusCode();
+        documentStatusCode.setCode("COMPL");
+        documentStatusCode.setDescription("School Completion Certificate");
+
+        final GradCertificateTypes gradCertificateType = new GradCertificateTypes();
+        gradCertificateType.setCode("SC");
+        gradCertificateType.setDescription("School Completion Certificate");
+
+        final List<GradStudentReportsEntity> gradStudentReportsList = new ArrayList<>();
+        final GradStudentReportsEntity studentReport1 = new GradStudentReportsEntity();
+        studentReport1.setId(UUID.randomUUID());
+        studentReport1.setStudentID(studentID);
+        studentReport1.setGradReportTypeCode(gradReportTypes.getCode());
+        studentReport1.setDocumentStatusCode("COMP");
+        gradStudentReportsList.add(studentReport1);
+
+        final List<GradStudentCertificatesEntity> gradStudentCertificatesList = new ArrayList<>();
+        final GradStudentCertificatesEntity studentCertificate1 = new GradStudentCertificatesEntity();
+        studentCertificate1.setId(UUID.randomUUID());
+        studentCertificate1.setStudentID(studentID);
+        studentCertificate1.setGradCertificateTypeCode(gradCertificateType.getCode());
+        studentCertificate1.setDocumentStatusCode("COMP");
+        gradStudentCertificatesList.add(studentCertificate1);
+
+
+        Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentReportsList);
+        Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentCertificatesList);
+        int res = commonService.archiveAllStudentAchievements(studentID);
+        assertThat(res).isEqualTo(1);
+    }
 }
