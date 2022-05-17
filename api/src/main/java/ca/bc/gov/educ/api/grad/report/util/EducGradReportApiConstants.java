@@ -14,6 +14,8 @@ public class EducGradReportApiConstants {
 
     private EducGradReportApiConstants(){}
 
+    public static final String CORRELATION_ID = "correlationID";
+
     //API end-point Mapping constants
     public static final String API_ROOT_MAPPING = "";
     public static final String API_VERSION = "v1";
@@ -72,5 +74,9 @@ public class EducGradReportApiConstants {
 
     @Value("${endpoint.grad-student-api.student-for-special-grad-run-list}")
     private String gradStudentApiStudentForSpcGradListUrl;
+
+    // Splunk LogHelper Enabled
+    @Value("${splunk.log-helper.enabled}")
+    private boolean splunkLogHelperEnabled;
 
 }

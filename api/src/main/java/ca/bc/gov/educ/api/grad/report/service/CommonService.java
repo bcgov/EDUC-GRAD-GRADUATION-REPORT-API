@@ -13,6 +13,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -247,7 +248,11 @@ public class CommonService {
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptYearlyDistributionList(String accessToken) {
 		List<StudentCredentialDistribution> scdList = gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDateYearly("COMPL");
-		List<UUID> studentList =  webClient.get().uri(constants.getStudentsForYearlyDistribution()).headers(h -> h.setBearerAuth(accessToken)).retrieve().bodyToMono(new ParameterizedTypeReference<List<UUID>>() {}).block();
+		List<UUID> studentList =  webClient.get().uri(constants.getStudentsForYearlyDistribution())
+				.headers(h -> {
+					h.setBearerAuth(accessToken);
+					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
+				}).retrieve().bodyToMono(new ParameterizedTypeReference<List<UUID>>() {}).block();
 		int partitionSize = 1000;
 		List<List<UUID>> partitions = new LinkedList<>();
 		for (int i = 0; i < studentList.size(); i += partitionSize) {
@@ -342,7 +347,10 @@ public class CommonService {
 		};
 		GraduationStudentRecordSearchResult res = this.webClient.post()
 				.uri(constants.getGradStudentApiStudentForSpcGradListUrl())
-				.headers(h -> h.setBearerAuth(accessToken))
+				.headers(h -> {
+					h.setBearerAuth(accessToken);
+					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
+				})
 				.body(BodyInserters.fromValue(req))
 				.retrieve()
 				.bodyToMono(GraduationStudentRecordSearchResult.class)
