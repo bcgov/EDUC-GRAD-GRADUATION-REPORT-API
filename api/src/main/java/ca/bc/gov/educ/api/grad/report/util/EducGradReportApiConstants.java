@@ -14,6 +14,8 @@ public class EducGradReportApiConstants {
 
     private EducGradReportApiConstants(){}
 
+    public static final String CORRELATION_ID = "correlationID";
+
     //API end-point Mapping constants
     public static final String API_ROOT_MAPPING = "";
     public static final String API_VERSION = "v1";
@@ -53,6 +55,7 @@ public class EducGradReportApiConstants {
     public static final String GET_STUDENT_REPORT_BY_REPORT_CODE_MAPPING = "/report/{reportTypeCode}";
     
     public static final String DELETE_ACHIEVEMENTS_BY_STUDENTID = "/studentachievement/{studentID}";
+    public static final String ARCH_ACHIEVEMENTS_BY_STUDENTID = "/archiveachievement/{studentID}";
     
     public static final String GET_ALL_PROGRAM_CERTIFICATES_MAPPING = "/programcertificates";
     public static final String GET_PROGRAM_TRANSCRIPTS_MAPPING = "/programtranscripts";
@@ -73,5 +76,9 @@ public class EducGradReportApiConstants {
 
     @Value("${endpoint.grad-student-api.student-for-special-grad-run-list}")
     private String gradStudentApiStudentForSpcGradListUrl;
+
+    // Splunk LogHelper Enabled
+    @Value("${splunk.log-helper.enabled}")
+    private boolean splunkLogHelperEnabled;
 
 }
