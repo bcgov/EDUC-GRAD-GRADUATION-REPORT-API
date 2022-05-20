@@ -9,6 +9,7 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,6 +191,47 @@ public class CommonService {
 		return transcriptList;
 	}
 
+
+	@Transactional
+	public int archiveAllStudentAchievements(UUID studentID) {
+		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
+		boolean hasDocuments  = false;
+		int numberOfReportRecords = 0;
+		if(!repList.isEmpty()) {
+			numberOfReportRecords =repList.size();
+			repList.forEach(rep-> gradStudentReportsRepository.delete(rep));
+			hasDocuments = true;
+		}
+		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
+		long numberOfCertificateRecords = 0L;
+		if(!certList.isEmpty()) {
+			numberOfCertificateRecords =certList.size();
+			hasDocuments = true;
+			certList.forEach(cert-> {
+				cert.setDocumentStatusCode("ARCH");
+				gradStudentCertificatesRepository.save(cert);
+			});
+		}
+		List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
+		long numberOfTranscriptRecords = 0L;
+		if(!tranList.isEmpty()) {
+			numberOfTranscriptRecords =tranList.size();
+			hasDocuments = true;
+			tranList.forEach(tran->	gradStudentTranscriptsRepository.delete(tran));
+		}
+		if(hasDocuments) {
+			long total = numberOfReportRecords + numberOfCertificateRecords + numberOfTranscriptRecords;
+			if(total > 0) {
+				return 1;
+			}else {
+				return 0;
+			}
+		}else {
+			return 1;
+		}
+
+	}
+
 	@Transactional
 	public int getAllStudentAchievement(UUID studentID) {
 		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
@@ -256,7 +298,11 @@ public class CommonService {
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptYearlyDistributionList(String accessToken) {
 		List<StudentCredentialDistribution> scdList = gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDateYearly("COMPL");
-		List<UUID> studentList =  webClient.get().uri(constants.getStudentsForYearlyDistribution()).headers(h -> h.setBearerAuth(accessToken)).retrieve().bodyToMono(new ParameterizedTypeReference<List<UUID>>() {}).block();
+		List<UUID> studentList =  webClient.get().uri(constants.getStudentsForYearlyDistribution())
+				.headers(h -> {
+					h.setBearerAuth(accessToken);
+					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
+				}).retrieve().bodyToMono(new ParameterizedTypeReference<List<UUID>>() {}).block();
 		int partitionSize = 1000;
 		List<List<UUID>> partitions = new LinkedList<>();
 		for (int i = 0; i < studentList.size(); i += partitionSize) {
@@ -351,7 +397,10 @@ public class CommonService {
 		};
 		GraduationStudentRecordSearchResult res = this.webClient.post()
 				.uri(constants.getGradStudentApiStudentForSpcGradListUrl())
-				.headers(h -> h.setBearerAuth(accessToken))
+				.headers(h -> {
+					h.setBearerAuth(accessToken);
+					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
+				})
 				.body(BodyInserters.fromValue(req))
 				.retrieve()
 				.bodyToMono(GraduationStudentRecordSearchResult.class)
