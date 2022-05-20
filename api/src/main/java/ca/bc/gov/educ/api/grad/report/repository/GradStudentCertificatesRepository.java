@@ -1,18 +1,15 @@
 package ca.bc.gov.educ.api.grad.report.repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface GradStudentCertificatesRepository extends JpaRepository<GradStudentCertificatesEntity, UUID> {
@@ -30,6 +27,6 @@ public interface GradStudentCertificatesRepository extends JpaRepository<GradStu
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode) from GradStudentCertificatesEntity c inner join GradCertificateTypesEntity cert on cert.code = c.gradCertificateTypeCode where c.documentStatusCode=:documentStatusCode and c.distributionDate is null")
 	List<StudentCredentialDistribution> findByDocumentStatusCodeAndDistributionDate(@Param("documentStatusCode") String documentStatusCode);
 
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode) from GradStudentCertificatesEntity c inner join GradCertificateTypesEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList)")
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode) from GradStudentCertificatesEntity c inner join GradCertificateTypesEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList) and c.documentStatusCode='COMPL'")
 	List<StudentCredentialDistribution> findRecordsForUserRequest(List<UUID> subList);
 }
