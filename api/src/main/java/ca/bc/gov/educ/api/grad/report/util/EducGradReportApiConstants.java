@@ -39,6 +39,7 @@ public class EducGradReportApiConstants {
 
     public static final String STUDENT_REPORT = "/studentreport";
     public static final String STUDENT_CERTIFICATE = "/studentcertificate";
+    public static final String STUDENT_CERTIFICATES = "/studentcertificates";
     public static final String STUDENT_TRANSCRIPT = "/studenttranscript";
     public static final String STUDENT_CERTIFICATE_BY_STUDENTID = "/studentcertificate/{studentID}";
     public static final String STUDENT_TRANSCRIPT_BY_STUDENTID = "/studenttranscript/{studentID}";
