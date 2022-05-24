@@ -42,6 +42,7 @@ public class CommonServiceTest {
 	@MockBean GradReportTypesRepository gradReportTypesRepository;
 	@MockBean DocumentStatusCodeRepository documentStatusCodeRepository;
     @MockBean TranscriptTypesRepository transcriptTypesRepository;
+    @MockBean SchoolReportsRepository schoolReportsRepository;
     @MockBean WebClient webClient;
 
     @Mock
@@ -439,14 +440,14 @@ public class CommonServiceTest {
         
     	Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentReportsList);
     	Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentCertificatesList);
-    	commonService.getAllStudentAchievement(studentID);
+    	int res = commonService.getAllStudentAchievement(studentID);
+        assertThat(res).isEqualTo(1);
     }
 
     @Test
     public void testSaveGradTranscripts_thenReturnCreateSuccess() {
         // ID
         final UUID studentID = UUID.randomUUID();
-        final String pen = "123456789";
         final String reportTypeCode = "TEST";
         boolean isGraduated = false;
         final String documentStatusCode="ARCH";
@@ -478,7 +479,6 @@ public class CommonServiceTest {
         // ID
         final UUID reportID = UUID.randomUUID();
         final UUID studentID = UUID.randomUUID();
-        final String pen = "123456789";
         final String reportTypeCode = "TEST";
         boolean isGraduated = false;
         final String documentStatusCode = "COMPL";
@@ -510,7 +510,6 @@ public class CommonServiceTest {
     public void testGetAllStudentTranscriptList() {
         // UUID
         final UUID studentID = UUID.randomUUID();
-        final String pen = "123456789";
         // Certificate Type
         final TranscriptTypes gradCertificateType = new TranscriptTypes();
         gradCertificateType.setCode("SC");
@@ -702,10 +701,6 @@ public class CommonServiceTest {
         studList.add(rec);
         res.setGraduationStudentRecords(studList);
 
-        List<StudentCredentialDistribution> scdList = new ArrayList<>();
-        StudentCredentialDistribution scd = new StudentCredentialDistribution(new UUID(2,2),"E",new UUID(1,1),"YED4","COMPL");
-        scdList.add(scd);
-
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
         StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
         scdSubList.add(scdSub);
@@ -739,10 +734,6 @@ public class CommonServiceTest {
         rec.setStudentID(new UUID(1,1));
         studList.add(rec);
         res.setGraduationStudentRecords(studList);
-
-        List<StudentCredentialDistribution> scdList = new ArrayList<>();
-        StudentCredentialDistribution scd = new StudentCredentialDistribution(new UUID(2,2),"E",new UUID(1,1),"YED4","COMPL");
-        scdList.add(scd);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
         StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
@@ -802,5 +793,60 @@ public class CommonServiceTest {
         Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentCertificatesList);
         int res = commonService.archiveAllStudentAchievements(studentID);
         assertThat(res).isEqualTo(1);
+    }
+
+    @Test
+    public void testSaveSchoolReports_thenReturnCreateSuccess() {
+        // ID
+        final String schoolOfRecord = "123123112";
+        final String reportTypeCode = "NONGRADPRJ";
+        final SchoolReports schoolReports = new SchoolReports();
+        schoolReports.setReportTypeCode(reportTypeCode);
+        schoolReports.setSchoolOfRecord(schoolOfRecord);
+        schoolReports.setReport("TEST Report Body");
+
+        final SchoolReportsEntity schoolReportsEntity = new SchoolReportsEntity();
+        schoolReportsEntity.setReportTypeCode(reportTypeCode);
+        schoolReportsEntity.setSchoolOfRecord(schoolOfRecord);
+        schoolReportsEntity.setReport("TEST Report Body");
+
+        final Optional<SchoolReportsEntity> optionalEmpty = Optional.empty();
+
+        when(this.schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(schoolOfRecord, reportTypeCode)).thenReturn(optionalEmpty);
+        when(this.schoolReportsRepository.save(schoolReportsEntity)).thenReturn(schoolReportsEntity);
+
+        var result = commonService.saveSchoolReports(schoolReports);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getSchoolOfRecord()).isEqualTo(schoolOfRecord);
+        assertThat(result.getReportTypeCode()).isEqualTo(schoolReports.getReportTypeCode());
+    }
+
+    @Test
+    public void testSaveSchoolReportsWithExistingOne_thenReturnUpdateSuccess() {
+
+        final String schoolOfRecord = "123123112";
+        final String reportTypeCode = "NONGRADPRJ";
+
+        final SchoolReports schoolReports = new SchoolReports();
+        schoolReports.setReportTypeCode(reportTypeCode);
+        schoolReports.setSchoolOfRecord(schoolOfRecord);
+        schoolReports.setReport("TEST Report Body");
+
+        final SchoolReportsEntity schoolReportsEntity = new SchoolReportsEntity();
+        schoolReportsEntity.setReportTypeCode(reportTypeCode);
+        schoolReportsEntity.setSchoolOfRecord(schoolOfRecord);
+        schoolReportsEntity.setReport("TEST Report Body");
+
+        final Optional<SchoolReportsEntity> optional = Optional.of(schoolReportsEntity);
+
+        when(this.schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(schoolOfRecord, reportTypeCode)).thenReturn(optional);
+        when(this.schoolReportsRepository.save(schoolReportsEntity)).thenReturn(schoolReportsEntity);
+
+        var result = commonService.saveSchoolReports(schoolReports);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getSchoolOfRecord()).isEqualTo(schoolOfRecord);
+        assertThat(result.getReportTypeCode()).isEqualTo(schoolReports.getReportTypeCode());
     }
 }
