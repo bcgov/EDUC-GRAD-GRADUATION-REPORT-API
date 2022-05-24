@@ -5,6 +5,7 @@ import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
@@ -47,6 +48,8 @@ public class CommonService {
 	@Autowired DocumentStatusCodeTransformer documentStatusCodeTransformer;
 	@Autowired TranscriptTypesRepository transcriptTypesRepository;
 	@Autowired TranscriptTypesTransformer transcriptTypesTransformer;
+	@Autowired SchoolReportsTransformer schoolReportsTransformer;
+	@Autowired SchoolReportsRepository schoolReportsRepository;
     @Autowired GradValidation validation;
 	@Autowired WebClient webClient;
 	@Autowired EducGradReportApiConstants constants;
@@ -408,5 +411,22 @@ public class CommonService {
 		if(!res.getGraduationStudentRecords().isEmpty())
 			return res.getGraduationStudentRecords().stream().map(GraduationStudentRecord::getStudentID).collect(Collectors.toList());
 		return new ArrayList<>();
+	}
+
+	@Transactional
+	public SchoolReports saveSchoolReports(SchoolReports schoolReports) {
+		SchoolReportsEntity toBeSaved = schoolReportsTransformer.transformToEntity(schoolReports);
+		Optional<SchoolReportsEntity> existingEnity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(schoolReports.getSchoolOfRecord(), schoolReports.getReportTypeCode());
+		if(existingEnity.isPresent()) {
+			SchoolReportsEntity gradEntity = existingEnity.get();
+			gradEntity.setUpdateDate(null);
+			gradEntity.setUpdateUser(null);
+			if(schoolReports.getReport() != null) {
+				gradEntity.setReport(schoolReports.getReport());
+			}
+			return schoolReportsTransformer.transformToDTO(schoolReportsRepository.save(gradEntity));
+		}else {
+			return schoolReportsTransformer.transformToDTO(schoolReportsRepository.save(toBeSaved));
+		}
 	}
 }
