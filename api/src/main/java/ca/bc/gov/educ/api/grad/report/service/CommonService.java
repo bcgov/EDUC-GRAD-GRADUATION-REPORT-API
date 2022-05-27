@@ -372,7 +372,7 @@ public class CommonService {
 			for (int i = 0; i < studentList.size(); i += partitionSize) {
 				partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
 			}
-			if (credentialType.equalsIgnoreCase("OC")) {
+			if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
 				for (int i = 0; i < partitions.size(); i++) {
 					List<UUID> subList = partitions.get(i);
 
@@ -381,7 +381,7 @@ public class CommonService {
 						scdList.addAll(scdSubList);
 					}
 				}
-			} else if (credentialType.equalsIgnoreCase("OT")) {
+			} else if (credentialType.equalsIgnoreCase("OT") || credentialType.equalsIgnoreCase("RT")) {
 				for (int i = 0; i < partitions.size(); i++) {
 					List<UUID> subList = partitions.get(i);
 
