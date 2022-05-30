@@ -1,18 +1,16 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +21,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
-import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import javax.transaction.Transactional;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -48,6 +48,8 @@ public class CommonService {
 	@Autowired DocumentStatusCodeTransformer documentStatusCodeTransformer;
 	@Autowired TranscriptTypesRepository transcriptTypesRepository;
 	@Autowired TranscriptTypesTransformer transcriptTypesTransformer;
+	@Autowired SchoolReportsTransformer schoolReportsTransformer;
+	@Autowired SchoolReportsRepository schoolReportsRepository;
     @Autowired GradValidation validation;
 	@Autowired WebClient webClient;
 	@Autowired EducGradReportApiConstants constants;
@@ -95,9 +97,15 @@ public class CommonService {
 			return gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.save(toBeSaved));
 		}
 	}
-	
+
+	@Transactional
+	public GradStudentReports getStudentReportObjectByType(UUID studentID, String reportType,String documentStatusCode) {
+		return gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(studentID,reportType,documentStatusCode));
+	}
+
+	@Transactional
 	public ResponseEntity<InputStreamResource> getStudentReportByType(UUID studentID, String reportType,String documentStatusCode) {
-		GradStudentReports studentReport = gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(studentID,reportType,documentStatusCode));
+		GradStudentReports studentReport = getStudentReportObjectByType(studentID,reportType,documentStatusCode);
 		if(studentReport != null && studentReport.getReport() != null) {
 				byte[] reportByte = Base64.decodeBase64(studentReport.getReport().getBytes(StandardCharsets.US_ASCII));
 				ByteArrayInputStream bis = new ByteArrayInputStream(reportByte);
@@ -137,8 +145,13 @@ public class CommonService {
 	}
 
 	@Transactional
+	public GradStudentCertificates getStudentCertificateObjectByType(UUID studentID, String certificateType,String documentStatusCode) {
+		return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID,certificateType,documentStatusCode));
+	}
+
+	@Transactional
 	public ResponseEntity<InputStreamResource> getStudentCertificateByType(UUID studentID, String certificateType,String documentStatusCode) {
-		GradStudentCertificates studentCertificate = gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID,certificateType,documentStatusCode));
+		GradStudentCertificates studentCertificate = getStudentCertificateObjectByType(studentID,certificateType,documentStatusCode);
 		if(studentCertificate != null && studentCertificate.getCertificate() != null) {
 				byte[] certificateByte = Base64.decodeBase64(studentCertificate.getCertificate().getBytes(StandardCharsets.US_ASCII));
 				ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
@@ -179,6 +192,47 @@ public class CommonService {
 				tran.setDocumentStatusLabel(code.getLabel());
 		});
 		return transcriptList;
+	}
+
+
+	@Transactional
+	public int archiveAllStudentAchievements(UUID studentID) {
+		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
+		boolean hasDocuments  = false;
+		int numberOfReportRecords = 0;
+		if(!repList.isEmpty()) {
+			numberOfReportRecords =repList.size();
+			repList.forEach(rep-> gradStudentReportsRepository.delete(rep));
+			hasDocuments = true;
+		}
+		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
+		long numberOfCertificateRecords = 0L;
+		if(!certList.isEmpty()) {
+			numberOfCertificateRecords =certList.size();
+			hasDocuments = true;
+			certList.forEach(cert-> {
+				cert.setDocumentStatusCode("ARCH");
+				gradStudentCertificatesRepository.save(cert);
+			});
+		}
+		List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
+		long numberOfTranscriptRecords = 0L;
+		if(!tranList.isEmpty()) {
+			numberOfTranscriptRecords =tranList.size();
+			hasDocuments = true;
+			tranList.forEach(tran->	gradStudentTranscriptsRepository.delete(tran));
+		}
+		if(hasDocuments) {
+			long total = numberOfReportRecords + numberOfCertificateRecords + numberOfTranscriptRecords;
+			if(total > 0) {
+				return 1;
+			}else {
+				return 0;
+			}
+		}else {
+			return 1;
+		}
+
 	}
 
 	@Transactional
@@ -247,7 +301,11 @@ public class CommonService {
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptYearlyDistributionList(String accessToken) {
 		List<StudentCredentialDistribution> scdList = gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDateYearly("COMPL");
-		List<UUID> studentList =  webClient.get().uri(constants.getStudentsForYearlyDistribution()).headers(h -> h.setBearerAuth(accessToken)).retrieve().bodyToMono(new ParameterizedTypeReference<List<UUID>>() {}).block();
+		List<UUID> studentList =  webClient.get().uri(constants.getStudentsForYearlyDistribution())
+				.headers(h -> {
+					h.setBearerAuth(accessToken);
+					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
+				}).retrieve().bodyToMono(new ParameterizedTypeReference<List<UUID>>() {}).block();
 		int partitionSize = 1000;
 		List<List<UUID>> partitions = new LinkedList<>();
 		for (int i = 0; i < studentList.size(); i += partitionSize) {
@@ -314,7 +372,7 @@ public class CommonService {
 			for (int i = 0; i < studentList.size(); i += partitionSize) {
 				partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
 			}
-			if (credentialType.equalsIgnoreCase("OC")) {
+			if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
 				for (int i = 0; i < partitions.size(); i++) {
 					List<UUID> subList = partitions.get(i);
 
@@ -323,7 +381,7 @@ public class CommonService {
 						scdList.addAll(scdSubList);
 					}
 				}
-			} else if (credentialType.equalsIgnoreCase("OT")) {
+			} else if (credentialType.equalsIgnoreCase("OT") || credentialType.equalsIgnoreCase("RT")) {
 				for (int i = 0; i < partitions.size(); i++) {
 					List<UUID> subList = partitions.get(i);
 
@@ -342,7 +400,10 @@ public class CommonService {
 		};
 		GraduationStudentRecordSearchResult res = this.webClient.post()
 				.uri(constants.getGradStudentApiStudentForSpcGradListUrl())
-				.headers(h -> h.setBearerAuth(accessToken))
+				.headers(h -> {
+					h.setBearerAuth(accessToken);
+					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
+				})
 				.body(BodyInserters.fromValue(req))
 				.retrieve()
 				.bodyToMono(GraduationStudentRecordSearchResult.class)
@@ -350,5 +411,22 @@ public class CommonService {
 		if(!res.getGraduationStudentRecords().isEmpty())
 			return res.getGraduationStudentRecords().stream().map(GraduationStudentRecord::getStudentID).collect(Collectors.toList());
 		return new ArrayList<>();
+	}
+
+	@Transactional
+	public SchoolReports saveSchoolReports(SchoolReports schoolReports) {
+		SchoolReportsEntity toBeSaved = schoolReportsTransformer.transformToEntity(schoolReports);
+		Optional<SchoolReportsEntity> existingEnity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(schoolReports.getSchoolOfRecord(), schoolReports.getReportTypeCode());
+		if(existingEnity.isPresent()) {
+			SchoolReportsEntity gradEntity = existingEnity.get();
+			gradEntity.setUpdateDate(null);
+			gradEntity.setUpdateUser(null);
+			if(schoolReports.getReport() != null) {
+				gradEntity.setReport(schoolReports.getReport());
+			}
+			return schoolReportsTransformer.transformToDTO(schoolReportsRepository.save(gradEntity));
+		}else {
+			return schoolReportsTransformer.transformToDTO(schoolReportsRepository.save(toBeSaved));
+		}
 	}
 }

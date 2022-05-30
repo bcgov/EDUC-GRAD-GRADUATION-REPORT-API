@@ -308,4 +308,27 @@ public class CommonControllerTest {
         commonController.getAllStudentCertificateDistribution();
         Mockito.verify(commonService).getAllStudentCertificateDistributionList();
     }
+
+    @Test
+    public void testArchiveAllStudentAchievements() {
+        UUID studentID = new UUID(1, 1);
+        Mockito.when(commonService.archiveAllStudentAchievements(studentID)).thenReturn(1);
+        commonController.archiveAllStudentAchievements(studentID.toString());
+        Mockito.verify(commonService).archiveAllStudentAchievements(studentID);
+    }
+
+    @Test
+    public void testSaveSchoolReport() {
+
+        final String schoolOfRecord = "123456789";
+        final String reportTypeCode = "TEST";
+        final SchoolReports schoolReports = new SchoolReports();
+        schoolReports.setReportTypeCode(reportTypeCode);
+        schoolReports.setSchoolOfRecord(schoolOfRecord);
+        schoolReports.setReport("TEST Report Body");
+
+        Mockito.when(commonService.saveSchoolReports(schoolReports)).thenReturn(schoolReports);
+        commonController.saveSchoolReport(schoolReports);
+        Mockito.verify(commonService).saveSchoolReports(schoolReports);
+    }
 }

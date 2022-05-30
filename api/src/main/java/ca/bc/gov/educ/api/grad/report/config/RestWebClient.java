@@ -1,9 +1,13 @@
 package ca.bc.gov.educ.api.grad.report.config;
 
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.LogHelper;
 import io.netty.handler.logging.LogLevel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -15,6 +19,9 @@ import java.time.Duration;
 @Configuration
 @Profile("!test")
 public class RestWebClient {
+    @Autowired
+    EducGradReportApiConstants constants;
+
     private final HttpClient httpClient;
 
     public RestWebClient() {
@@ -30,8 +37,20 @@ public class RestWebClient {
         return WebClient.builder().uriBuilderFactory(defaultUriBuilderFactory).exchangeStrategies(ExchangeStrategies.builder()
                 .codecs(configurer -> configurer
                         .defaultCodecs()
-                        .maxInMemorySize(40 * 1024 * 1024))
+                        .maxInMemorySize(40 * 1024 * 1024)) // 40 MB
                       .build())
                 .build();
+    }
+
+    private ExchangeFilterFunction log() {
+        return (clientRequest, next) -> next
+                .exchange(clientRequest)
+                .doOnNext((clientResponse -> LogHelper.logClientHttpReqResponseDetails(
+                        clientRequest.method(),
+                        clientRequest.url().toString(),
+                        clientResponse.rawStatusCode(),
+                        clientRequest.headers().get(EducGradReportApiConstants.CORRELATION_ID),
+                        constants.isSplunkLogHelperEnabled())
+                ));
     }
 }

@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.model.entity;
 
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,41 +15,52 @@ import java.util.Date;
 @MappedSuperclass
 public class BaseEntity {
 	@Column(name = "CREATE_USER", nullable = true)
-    private String createdBy;
+    private String createUser;
 	
 	@Column(name = "CREATE_DATE", nullable = true)
-    private Date createdTimestamp;
+    private Date createDate;
 	
 	@Column(name = "UPDATE_USER", nullable = true)
-    private String updatedBy;
+    private String updateUser;
 	
 	@Column(name = "UPDATE_DATE", nullable = true)
-    private Date updatedTimestamp;
+    private Date updateDate;
 	
 	@PrePersist
 	protected void onCreate() {
-		if (StringUtils.isBlank(createdBy)) {
-			this.createdBy = EducGradReportApiConstants.DEFAULT_CREATED_BY;
-		}		
-		if (StringUtils.isBlank(updatedBy)) {
-			this.updatedBy = EducGradReportApiConstants.DEFAULT_UPDATED_BY;
-		}		
-		this.createdTimestamp = new Date(System.currentTimeMillis());
-		this.updatedTimestamp = new Date(System.currentTimeMillis());
-
+		if (StringUtils.isBlank(createUser)) {
+			this.createUser = ThreadLocalStateUtil.getCurrentUser();
+			if (StringUtils.isBlank(createUser)) {
+				this.createUser = EducGradReportApiConstants.DEFAULT_CREATED_BY;
+			}
+		}
+		if (StringUtils.isBlank(updateUser)) {
+			this.updateUser = ThreadLocalStateUtil.getCurrentUser();
+			if (StringUtils.isBlank(updateUser)) {
+				this.updateUser = EducGradReportApiConstants.DEFAULT_UPDATED_BY;
+			}
+		}
+		this.createDate = new Date(System.currentTimeMillis());
+		this.updateDate = new Date(System.currentTimeMillis());
 	}
 
 	@PreUpdate
 	protected void onPersist() {
-		this.updatedTimestamp = new Date(System.currentTimeMillis());
-		if (StringUtils.isBlank(updatedBy)) {
-			this.updatedBy = EducGradReportApiConstants.DEFAULT_UPDATED_BY;
+		this.updateDate = new Date();
+		if (StringUtils.isBlank(updateUser)) {
+			this.updateUser = ThreadLocalStateUtil.getCurrentUser();
+			if (StringUtils.isBlank(updateUser)) {
+				this.updateUser = EducGradReportApiConstants.DEFAULT_UPDATED_BY;
+			}
 		}
-		if (StringUtils.isBlank(createdBy)) {
-			this.createdBy = EducGradReportApiConstants.DEFAULT_CREATED_BY;
+		if (StringUtils.isBlank(createUser)) {
+			this.createUser = ThreadLocalStateUtil.getCurrentUser();
+			if (StringUtils.isBlank(createUser)) {
+				this.createUser = EducGradReportApiConstants.DEFAULT_CREATED_BY;
+			}
 		}
-		if (this.createdTimestamp == null) {
-			this.createdTimestamp = new Date(System.currentTimeMillis());
+		if (this.createDate == null) {
+			this.createDate = new Date();
 		}
 	}
 }

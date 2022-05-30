@@ -17,7 +17,7 @@ public class GradReportConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(requestInterceptor);
+		registry.addInterceptor(requestInterceptor).addPathPatterns("/**");;
 	}
 
 	@Bean
