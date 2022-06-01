@@ -884,8 +884,7 @@ public class CommonServiceTest {
 
         var result = commonService.getAllSchoolReportList(mincode);
 
-        assertThat(result).isNotNull();
-        assertThat(result).hasSize(2);
+        assertThat(result).isNotNull().hasSize(2);
         assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode);
         assertThat(result.get(0).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
         assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode);
