@@ -27,6 +27,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,7 @@ public class CommonService {
 
 	private static final String CONTENT_DISPOSITION = "Content-Disposition";
 	private static final String PDF_FILE_NAME = "inline; filename=student_%s_%s.pdf";
+	private static final String PDF_FILE_NAME_SCHOOL = "inline; filename=%s_%s00_%s.pdf";
 
     @Transactional
 	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports,boolean isGraduated) {
@@ -101,6 +103,25 @@ public class CommonService {
 	@Transactional
 	public GradStudentReports getStudentReportObjectByType(UUID studentID, String reportType,String documentStatusCode) {
 		return gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(studentID,reportType,documentStatusCode));
+	}
+
+
+
+	@Transactional
+	public ResponseEntity<InputStreamResource> getSchoolReportByType(String mincode, String reportType) {
+		SchoolReports studentReport = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode,reportType));
+		if(studentReport != null && studentReport.getReport() != null) {
+			byte[] reportByte = Base64.decodeBase64(studentReport.getReport().getBytes(StandardCharsets.US_ASCII));
+			ByteArrayInputStream bis = new ByteArrayInputStream(reportByte);
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME_SCHOOL,mincode, LocalDate.now().getYear(),reportType));
+			return ResponseEntity
+					.ok()
+					.headers(headers)
+					.contentType(MediaType.APPLICATION_PDF)
+					.body(new InputStreamResource(bis));
+		}
+		return null;
 	}
 
 	@Transactional
@@ -291,6 +312,17 @@ public class CommonService {
 		});
 		return reportList;
 	}
+
+	public List<SchoolReports> getAllSchoolReportList(String mincode) {
+		List<SchoolReports> reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecord(mincode));
+		reportList.forEach(rep -> {
+			GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getReportTypeCode()));
+			if(types != null)
+				rep.setReportTypeLabel(types.getLabel());
+		});
+		return reportList;
+	}
+
 
     public List<StudentCredentialDistribution> getAllStudentCertificateDistributionList() {
 		return gradStudentCertificatesRepository.findByDocumentStatusCodeAndDistributionDate("COMPL");
