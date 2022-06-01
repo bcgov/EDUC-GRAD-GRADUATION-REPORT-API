@@ -233,5 +233,25 @@ public class CommonController {
         validation.requiredField(schoolReports.getSchoolOfRecord(), "School of Record");
         return response.UPDATED(commonService.saveSchoolReports(schoolReports));
     }
+
+    @GetMapping(EducGradReportApiConstants.SCHOOL_REPORTS_BY_MINCODE)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read All  School Reports by Mincode", description = "Read All School Reports by Mincode", tags = { "Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<SchoolReports>> getAllSchoolReportsList(@PathVariable String mincode) {
+        logger.debug("getAllSchoolReportsList : ");
+        return response.GET(commonService.getAllSchoolReportList(mincode));
+    }
+
+    @GetMapping(EducGradReportApiConstants.SCHOOL_REPORT)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read Student Reports by Student ID and Report Type", description = "Read Student Reports by Student ID and Report Type", tags = { "Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<InputStreamResource> getSchoolReportByType(
+            @RequestParam(value = "mincode", required = true) String mincode,
+            @RequestParam(value = "reportType", required = true) String reportType) {
+        logger.debug("getSchoolReportByType : ");
+        return commonService.getSchoolReportByType(mincode,reportType);
+    }
    
 }

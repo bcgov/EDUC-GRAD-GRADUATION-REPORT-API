@@ -20,6 +20,7 @@ import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -848,5 +849,66 @@ public class CommonServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getSchoolOfRecord()).isEqualTo(schoolOfRecord);
         assertThat(result.getReportTypeCode()).isEqualTo(schoolReports.getReportTypeCode());
+    }
+
+    @Test
+    public void testGetAllSchoolReportList() {
+        final String mincode = "123456789";
+        // Certificate Type
+        final GradReportTypes gradReportTypes = new GradReportTypes();
+        gradReportTypes.setCode("NONGRADPRJ");
+        gradReportTypes.setDescription("non grad projected");
+
+
+        // Student Certificate Types
+        final List<SchoolReportsEntity> schoolReportsEntityList = new ArrayList<>();
+        final SchoolReportsEntity schoolReports = new SchoolReportsEntity();
+        schoolReports.setId(UUID.randomUUID());
+        schoolReports.setSchoolOfRecord(mincode);
+        schoolReports.setReportTypeCode(gradReportTypes.getCode());
+        schoolReportsEntityList.add(schoolReports);
+
+        final SchoolReportsEntity schoolReports2 = new SchoolReportsEntity();
+        schoolReports2.setId(UUID.randomUUID());
+        schoolReports2.setSchoolOfRecord(mincode);
+        schoolReports2.setReportTypeCode(gradReportTypes.getCode());
+
+        schoolReportsEntityList.add(schoolReports2);
+
+        final GradReportTypesEntity gradReportTypesEntity = new GradReportTypesEntity();
+        gradReportTypesEntity.setCode("NONGRADPRJ");
+        gradReportTypesEntity.setDescription("non grad projected");
+
+        when(schoolReportsRepository.findBySchoolOfRecord(mincode)).thenReturn(schoolReportsEntityList);
+        when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
+
+        var result = commonService.getAllSchoolReportList(mincode);
+
+        assertThat(result).isNotNull().hasSize(2);
+        assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode);
+        assertThat(result.get(0).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
+        assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode);
+        assertThat(result.get(1).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
+    }
+
+    @Test
+    public void testGetSchoolReportByType() {
+
+        final String mincode = "123456789";
+        final String reportTypeCode = "TEST";
+        int currentYear = LocalDate.now().getYear();
+
+        final SchoolReportsEntity schoolReports = new SchoolReportsEntity();
+        schoolReports.setId(new UUID(1,1));
+        schoolReports.setReportTypeCode(reportTypeCode);
+        schoolReports.setSchoolOfRecord(mincode);
+        schoolReports.setReport("TEST Report Body");
+
+        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode, reportTypeCode)).thenReturn(Optional.of(schoolReports));
+        var result = commonService.getSchoolReportByType(mincode, reportTypeCode);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=123456789_"+currentYear+"00_"+reportTypeCode+".pdf]");
+        assertThat(result.getBody()).isNotNull();
     }
 }
