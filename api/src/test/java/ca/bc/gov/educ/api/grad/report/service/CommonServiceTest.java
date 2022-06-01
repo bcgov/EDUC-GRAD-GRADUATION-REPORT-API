@@ -20,6 +20,7 @@ import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -896,6 +897,7 @@ public class CommonServiceTest {
 
         final String mincode = "123456789";
         final String reportTypeCode = "TEST";
+        int currentYear = LocalDate.now().getYear();
 
         final SchoolReportsEntity schoolReports = new SchoolReportsEntity();
         schoolReports.setId(new UUID(1,1));
@@ -907,7 +909,7 @@ public class CommonServiceTest {
         var result = commonService.getSchoolReportByType(mincode, reportTypeCode);
 
         assertThat(result).isNotNull();
-        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_TEST_report.pdf]");
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=123456789_"+currentYear+"00_"+reportTypeCode+".pdf]");
         assertThat(result.getBody()).isNotNull();
     }
 }
