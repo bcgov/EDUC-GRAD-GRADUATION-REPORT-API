@@ -9,7 +9,6 @@ import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
-import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -51,16 +50,16 @@ public class CommonService {
 	@Autowired TranscriptTypesTransformer transcriptTypesTransformer;
 	@Autowired SchoolReportsTransformer schoolReportsTransformer;
 	@Autowired SchoolReportsRepository schoolReportsRepository;
-    @Autowired GradValidation validation;
 	@Autowired WebClient webClient;
 	@Autowired EducGradReportApiConstants constants;
 
     @SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(CommonService.class);
+	private static final Logger logger = LoggerFactory.getLogger(CommonService.class);
 
 	private static final String CONTENT_DISPOSITION = "Content-Disposition";
 	private static final String PDF_FILE_NAME = "inline; filename=student_%s_%s.pdf";
 	private static final String PDF_FILE_NAME_SCHOOL = "inline; filename=%s_%s00_%s.pdf";
+	private static final String COMPLETED = "COMPL";
 
     @Transactional
 	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports,boolean isGraduated) {
@@ -69,7 +68,7 @@ public class CommonService {
 		if(existingEnity.isPresent()) {
 			GradStudentReportsEntity gradEntity = existingEnity.get();
 			if(isGraduated && gradEntity.getDocumentStatusCode().equals("IP")) {
-				gradEntity.setDocumentStatusCode("COMPL");
+				gradEntity.setDocumentStatusCode(COMPLETED);
 				
 			}
 			if(gradStudentReports.getReport() != null) {
@@ -88,7 +87,7 @@ public class CommonService {
 		if(existingEnity.isPresent()) {
 			GradStudentTranscriptsEntity gradEntity = existingEnity.get();
 			if(isGraduated && gradEntity.getDocumentStatusCode().equals("IP")) {
-				gradEntity.setDocumentStatusCode("COMPL");
+				gradEntity.setDocumentStatusCode(COMPLETED);
 
 			}
 			if(gradStudentTranscripts.getTranscript() != null) {
@@ -154,7 +153,7 @@ public class CommonService {
 	@Transactional
 	public GradStudentCertificates saveGradCertificates(GradStudentCertificates gradStudentCertificates) {
 		GradStudentCertificatesEntity toBeSaved = gradStudentCertificatesTransformer.transformToEntity(gradStudentCertificates);
-		Optional<GradStudentCertificatesEntity> existingEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode(),"COMPL");
+		Optional<GradStudentCertificatesEntity> existingEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode(),COMPLETED);
 		if(existingEntity.isPresent()) {
 			GradStudentCertificatesEntity gradEntity = existingEntity.get();
 			if(gradStudentCertificates.getCertificate() != null)
@@ -263,9 +262,7 @@ public class CommonService {
 		int numberOfReportRecords = 0;
 		if(!repList.isEmpty()) {
 			numberOfReportRecords =repList.size(); 
-			repList.forEach(rep-> {
-				gradStudentReportsRepository.delete(rep);
-			});
+			repList.forEach(rep-> gradStudentReportsRepository.delete(rep));
 			hasDocuments = true;
 		}
 		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
@@ -273,18 +270,14 @@ public class CommonService {
 		if(!certList.isEmpty()) {
 			numberOfCertificateRecords =certList.size();
 			hasDocuments = true;
-			certList.forEach(cert-> {
-				gradStudentCertificatesRepository.delete(cert);
-			});
+			certList.forEach(cert->gradStudentCertificatesRepository.delete(cert));
 		}
 		List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
 		long numberOfTranscriptRecords = 0L;
 		if(!tranList.isEmpty()) {
 			numberOfTranscriptRecords =tranList.size();
 			hasDocuments = true;
-			tranList.forEach(tran-> {
-				gradStudentTranscriptsRepository.delete(tran);
-			});
+			tranList.forEach(tran->gradStudentTranscriptsRepository.delete(tran));
 		}
 		if(hasDocuments) {
 			long total = numberOfReportRecords + numberOfCertificateRecords + numberOfTranscriptRecords;
@@ -325,29 +318,30 @@ public class CommonService {
 
 
     public List<StudentCredentialDistribution> getAllStudentCertificateDistributionList() {
-		return gradStudentCertificatesRepository.findByDocumentStatusCodeAndDistributionDate("COMPL");
+		return gradStudentCertificatesRepository.findByDocumentStatusCodeAndDistributionDate(COMPLETED);
     }
 	public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
-		return gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDate("COMPL");
+		return gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDate(COMPLETED);
 	}
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptYearlyDistributionList(String accessToken) {
-		List<StudentCredentialDistribution> scdList = gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDateYearly("COMPL");
+		List<StudentCredentialDistribution> scdList = gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDateYearly(COMPLETED);
 		List<UUID> studentList =  webClient.get().uri(constants.getStudentsForYearlyDistribution())
 				.headers(h -> {
 					h.setBearerAuth(accessToken);
 					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
 				}).retrieve().bodyToMono(new ParameterizedTypeReference<List<UUID>>() {}).block();
-		int partitionSize = 1000;
-		List<List<UUID>> partitions = new LinkedList<>();
-		for (int i = 0; i < studentList.size(); i += partitionSize) {
-			partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
-		}
-		for (int i = 0; i < partitions.size(); i++) {
-			List<UUID> subList = partitions.get(i);
-			List<StudentCredentialDistribution> scdSubList = gradStudentTranscriptsRepository.findByReportsForYearly(subList);
-			if (!scdSubList.isEmpty()) {
-				scdList.addAll(scdSubList);
+		if(studentList != null && !studentList.isEmpty()) {
+			int partitionSize = 1000;
+			List<List<UUID>> partitions = new LinkedList<>();
+			for (int i = 0; i < studentList.size(); i += partitionSize) {
+				partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
+			}
+			for (List<UUID> subList : partitions) {
+				List<StudentCredentialDistribution> scdSubList = gradStudentTranscriptsRepository.findByReportsForYearly(subList);
+				if (!scdSubList.isEmpty()) {
+					scdList.addAll(scdSubList);
+				}
 			}
 		}
 		return scdList;
@@ -405,19 +399,20 @@ public class CommonService {
 				partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
 			}
 			if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
-				for (int i = 0; i < partitions.size(); i++) {
-					List<UUID> subList = partitions.get(i);
-
+				for (List<UUID> subList : partitions) {
 					List<StudentCredentialDistribution> scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
 					if (!scdSubList.isEmpty()) {
 						scdList.addAll(scdSubList);
 					}
 				}
 			} else if (credentialType.equalsIgnoreCase("OT") || credentialType.equalsIgnoreCase("RT")) {
-				for (int i = 0; i < partitions.size(); i++) {
-					List<UUID> subList = partitions.get(i);
-
-					List<StudentCredentialDistribution> scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
+				for (List<UUID> subList : partitions) {
+					List<StudentCredentialDistribution> scdSubList;
+					if (!studentSearchRequest.getPens().isEmpty()) {
+						scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequestPenOnly(subList);
+					} else {
+						scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
+					}
 					if (!scdSubList.isEmpty()) {
 						scdList.addAll(scdSubList);
 					}
@@ -428,8 +423,6 @@ public class CommonService {
 	}
 
 	private List<UUID> getStudentsForSpecialGradRun(StudentSearchRequest req, String accessToken) {
-		final ParameterizedTypeReference<List<GraduationStudentRecord>> responseType = new ParameterizedTypeReference<>() {
-		};
 		GraduationStudentRecordSearchResult res = this.webClient.post()
 				.uri(constants.getGradStudentApiStudentForSpcGradListUrl())
 				.headers(h -> {
@@ -440,7 +433,7 @@ public class CommonService {
 				.retrieve()
 				.bodyToMono(GraduationStudentRecordSearchResult.class)
 				.block();
-		if(!res.getGraduationStudentRecords().isEmpty())
+		if(res != null && !res.getGraduationStudentRecords().isEmpty())
 			return res.getGraduationStudentRecords().stream().map(GraduationStudentRecord::getStudentID).collect(Collectors.toList());
 		return new ArrayList<>();
 	}
