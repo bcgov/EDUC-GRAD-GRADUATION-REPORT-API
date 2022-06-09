@@ -308,4 +308,77 @@ public class CommonControllerTest {
         commonController.getAllStudentCertificateDistribution();
         Mockito.verify(commonService).getAllStudentCertificateDistributionList();
     }
+
+    @Test
+    public void testArchiveAllStudentAchievements() {
+        UUID studentID = new UUID(1, 1);
+        Mockito.when(commonService.archiveAllStudentAchievements(studentID)).thenReturn(1);
+        commonController.archiveAllStudentAchievements(studentID.toString());
+        Mockito.verify(commonService).archiveAllStudentAchievements(studentID);
+    }
+
+    @Test
+    public void testSaveSchoolReport() {
+
+        final String schoolOfRecord = "123456789";
+        final String reportTypeCode = "TEST";
+        final SchoolReports schoolReports = new SchoolReports();
+        schoolReports.setReportTypeCode(reportTypeCode);
+        schoolReports.setSchoolOfRecord(schoolOfRecord);
+        schoolReports.setReport("TEST Report Body");
+
+        Mockito.when(commonService.saveSchoolReports(schoolReports)).thenReturn(schoolReports);
+        commonController.saveSchoolReport(schoolReports);
+        Mockito.verify(commonService).saveSchoolReports(schoolReports);
+    }
+
+    @Test
+    public void testGetSchoolReportByType() {
+        // ID
+        final String mincode = "123213211";
+        final String reportTypeCode = "TEST";
+        final String reportBody = "Test Report Body";
+        byte[] certificateByte = Base64.decodeBase64(reportBody.getBytes(StandardCharsets.US_ASCII));
+        ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=student_"+reportTypeCode+"_report.pdf");
+
+        Mockito.when(commonService.getSchoolReportByType(mincode, reportTypeCode)).thenReturn(
+                ResponseEntity
+                        .ok()
+                        .headers(headers)
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(new InputStreamResource(bis)));
+        commonController.getSchoolReportByType(mincode, reportTypeCode);
+        Mockito.verify(commonService).getSchoolReportByType(mincode, reportTypeCode);
+
+    }
+
+    @Test
+    public void testGetAllSchoolReportList() {
+        // UUID
+        final String mincode = "123123123";
+        final String pen = "123456789";// Certificate Type
+        final GradReportTypes gradCertificateType = new GradReportTypes();
+        gradCertificateType.setCode("TEST");
+        gradCertificateType.setDescription("Test Code Name");
+
+        // Student Certificate Types
+        final List<SchoolReports> gradStudentReportList = new ArrayList<>();
+        final SchoolReports studentCertificate1 = new SchoolReports();
+        studentCertificate1.setId(UUID.randomUUID());
+        studentCertificate1.setSchoolOfRecord(mincode);
+        studentCertificate1.setReportTypeCode(gradCertificateType.getCode());
+        gradStudentReportList.add(studentCertificate1);
+
+        final SchoolReports studentCertificate2 = new SchoolReports();
+        studentCertificate2.setId(UUID.randomUUID());
+        studentCertificate2.setSchoolOfRecord(mincode);
+        studentCertificate2.setReportTypeCode(gradCertificateType.getCode());
+        gradStudentReportList.add(studentCertificate2);
+
+        Mockito.when(commonService.getAllSchoolReportList(mincode)).thenReturn(gradStudentReportList);
+        commonController.getAllSchoolReportsList(mincode);
+        Mockito.verify(commonService).getAllSchoolReportList(mincode);
+    }
 }

@@ -14,6 +14,8 @@ public class EducGradReportApiConstants {
 
     private EducGradReportApiConstants(){}
 
+    public static final String CORRELATION_ID = "correlationID";
+
     //API end-point Mapping constants
     public static final String API_ROOT_MAPPING = "";
     public static final String API_VERSION = "v1";
@@ -36,11 +38,15 @@ public class EducGradReportApiConstants {
     public static final String UPDATE_STUDENT_CREDENTIAL = "/studentcredential";
 
     public static final String STUDENT_REPORT = "/studentreport";
+    public static final String SCHOOL_REPORT = "/schoolreport";
     public static final String STUDENT_CERTIFICATE = "/studentcertificate";
+    public static final String STUDENT_CERTIFICATES = "/studentcertificates";
     public static final String STUDENT_TRANSCRIPT = "/studenttranscript";
     public static final String STUDENT_CERTIFICATE_BY_STUDENTID = "/studentcertificate/{studentID}";
     public static final String STUDENT_TRANSCRIPT_BY_STUDENTID = "/studenttranscript/{studentID}";
     public static final String STUDENT_REPORTS_BY_STUDENTID = "/studentreport/{studentID}";
+
+    public static final String SCHOOL_REPORTS_BY_MINCODE = "/schoolreport/{mincode}";
 
     public static final String STUDENT_CERTIFICATE_BY_DIST_DATE_N_STATUS = "/getcertificatesfordistribution";
     public static final String STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS = "/gettranscriptsfordistribution";
@@ -52,6 +58,7 @@ public class EducGradReportApiConstants {
     public static final String GET_STUDENT_REPORT_BY_REPORT_CODE_MAPPING = "/report/{reportTypeCode}";
     
     public static final String DELETE_ACHIEVEMENTS_BY_STUDENTID = "/studentachievement/{studentID}";
+    public static final String ARCH_ACHIEVEMENTS_BY_STUDENTID = "/archiveachievement/{studentID}";
     
     public static final String GET_ALL_PROGRAM_CERTIFICATES_MAPPING = "/programcertificates";
     public static final String GET_PROGRAM_TRANSCRIPTS_MAPPING = "/programtranscripts";
@@ -72,5 +79,9 @@ public class EducGradReportApiConstants {
 
     @Value("${endpoint.grad-student-api.student-for-special-grad-run-list}")
     private String gradStudentApiStudentForSpcGradListUrl;
+
+    // Splunk LogHelper Enabled
+    @Value("${splunk.log-helper.enabled}")
+    private boolean splunkLogHelperEnabled;
 
 }
