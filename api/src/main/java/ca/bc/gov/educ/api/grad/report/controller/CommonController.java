@@ -171,7 +171,7 @@ public class CommonController {
     public ResponseEntity<List<StudentCredentialDistribution>> getAllStudentTranscriptYearlyDistribution(
             @RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getAllStudentTranscriptYearlyDistribution : ");
-        return response.GET(commonService.getAllStudentTranscriptYearlyDistributionList(accessToken.replaceAll("Bearer ", "")));
+        return response.GET(commonService.getAllStudentTranscriptYearlyDistributionList(accessToken.replace("Bearer ", "")));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS)
@@ -212,7 +212,7 @@ public class CommonController {
             @PathVariable String credentialType, @RequestBody StudentSearchRequest studentSearchRequest,
             @RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getStudentCredentialsForUserRequestDisRun : ");
-        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,accessToken.replaceAll("Bearer ", "")));
+        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,accessToken.replace("Bearer ", "")));
     }
 
     @DeleteMapping(EducGradReportApiConstants.ARCH_ACHIEVEMENTS_BY_STUDENTID)
@@ -252,6 +252,15 @@ public class CommonController {
             @RequestParam(value = "reportType", required = true) String reportType) {
         logger.debug("getSchoolReportByType : ");
         return commonService.getSchoolReportByType(mincode,reportType);
+    }
+
+    @GetMapping(EducGradReportApiConstants.UPDATE_SCHOOL_REPORTS)
+    @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Boolean> updateSchoolReport(@RequestParam String mincode,@RequestParam String reportTypeCode) {
+        logger.debug("updateSchoolReport : {} {}",mincode,reportTypeCode);
+        return response.GET(commonService.updateSchoolReports(mincode,reportTypeCode));
     }
    
 }

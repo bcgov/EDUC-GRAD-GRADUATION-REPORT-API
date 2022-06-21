@@ -956,4 +956,19 @@ public class CommonServiceTest {
         assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=123456789_"+currentYear+"00_"+reportTypeCode+".pdf]");
         assertThat(result.getBody()).isNotNull();
     }
+
+    @Test
+    public void testUpdateSchoolReport() {
+        String mincode = "123123123";
+        String reportTypeCode = "NONGRADPRJ";
+        SchoolReportsEntity ent = new SchoolReportsEntity();
+        ent.setSchoolOfRecord(mincode);
+        ent.setReport("dfd");
+        ent.setId(new UUID(1,2));
+        ent.setReportTypeCode(reportTypeCode);
+
+        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode,reportTypeCode)).thenReturn(Optional.of(ent));
+        boolean res = commonService.updateSchoolReports(mincode,reportTypeCode);
+        assertThat(res).isTrue();
+    }
 }
