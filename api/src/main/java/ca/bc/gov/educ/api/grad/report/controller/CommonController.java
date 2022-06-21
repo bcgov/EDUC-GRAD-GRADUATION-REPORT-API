@@ -259,7 +259,7 @@ public class CommonController {
     @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Boolean> updateSchoolReport(@RequestParam String mincode,@RequestParam String reportTypeCode) {
-        logger.debug("updateSchoolReport : {} {}",mincode,reportTypeCode);
+        logger.debug("updateSchoolReport ");
         return response.GET(commonService.updateSchoolReports(mincode,reportTypeCode));
     }
    
