@@ -36,6 +36,7 @@ public class EducGradReportApiConstants {
     public static final String GET_ALL_DOCUMENT_STATUS_CODE_MAPPING = "/documentstatus/{documentStatusCode}";
 
     public static final String UPDATE_STUDENT_CREDENTIAL = "/studentcredential";
+    public static final String UPDATE_SCHOOL_REPORTS = "/updateschoolreport";
 
     public static final String STUDENT_REPORT = "/studentreport";
     public static final String SCHOOL_REPORT = "/schoolreport";
@@ -65,9 +66,9 @@ public class EducGradReportApiConstants {
 
     //Default Attribute value constants
     public static final String DEFAULT_CREATED_BY = "API_GRAD_REPORT";
-    public static final Date DEFAULT_CREATED_TIMESTAMP = new Date();
+    protected static final Date DEFAULT_CREATED_TIMESTAMP = new Date();
     public static final String DEFAULT_UPDATED_BY = "API_GRAD_REPORT";
-    public static final Date DEFAULT_UPDATED_TIMESTAMP = new Date();
+    protected static final Date DEFAULT_UPDATED_TIMESTAMP = new Date();
 
     //Default Date format constants
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";

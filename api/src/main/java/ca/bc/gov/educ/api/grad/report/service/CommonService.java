@@ -219,16 +219,12 @@ public class CommonService {
 	public int archiveAllStudentAchievements(UUID studentID) {
 		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
 		boolean hasDocuments  = false;
-		int numberOfReportRecords = 0;
 		if(!repList.isEmpty()) {
-			numberOfReportRecords =repList.size();
 			repList.forEach(rep-> gradStudentReportsRepository.delete(rep));
 			hasDocuments = true;
 		}
 		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
-		long numberOfCertificateRecords = 0L;
 		if(!certList.isEmpty()) {
-			numberOfCertificateRecords =certList.size();
 			hasDocuments = true;
 			certList.forEach(cert-> {
 				cert.setDocumentStatusCode("ARCH");
@@ -236,21 +232,14 @@ public class CommonService {
 			});
 		}
 		List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
-		long numberOfTranscriptRecords = 0L;
 		if(!tranList.isEmpty()) {
-			numberOfTranscriptRecords =tranList.size();
 			hasDocuments = true;
 			tranList.forEach(tran->	gradStudentTranscriptsRepository.delete(tran));
 		}
 		if(hasDocuments) {
-			long total = numberOfReportRecords + numberOfCertificateRecords + numberOfTranscriptRecords;
-			if(total > 0) {
-				return 1;
-			}else {
-				return 0;
-			}
-		}else {
 			return 1;
+		}else {
+			return 0;
 		}
 
 	}
@@ -259,35 +248,24 @@ public class CommonService {
 	public int getAllStudentAchievement(UUID studentID) {
 		List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
 		boolean hasDocuments  = false;
-		int numberOfReportRecords = 0;
 		if(!repList.isEmpty()) {
-			numberOfReportRecords =repList.size(); 
 			repList.forEach(rep-> gradStudentReportsRepository.delete(rep));
 			hasDocuments = true;
 		}
 		List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
-		long numberOfCertificateRecords = 0L;
 		if(!certList.isEmpty()) {
-			numberOfCertificateRecords =certList.size();
 			hasDocuments = true;
 			certList.forEach(cert->gradStudentCertificatesRepository.delete(cert));
 		}
 		List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH");
-		long numberOfTranscriptRecords = 0L;
 		if(!tranList.isEmpty()) {
-			numberOfTranscriptRecords =tranList.size();
 			hasDocuments = true;
 			tranList.forEach(tran->gradStudentTranscriptsRepository.delete(tran));
 		}
 		if(hasDocuments) {
-			long total = numberOfReportRecords + numberOfCertificateRecords + numberOfTranscriptRecords;
-			if(total > 0) {
-				return 1;
-			}else {
-				return 0;
-			}
-		}else {
 			return 1;
+		}else {
+			return 0;
 		}
 		
 	}
@@ -367,26 +345,28 @@ public class CommonService {
 	}
 
 	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType,String documentStatusCode) {
-		try {
-			if (paperType.equalsIgnoreCase("YED4")) {
-				Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,documentStatusCode);
-				if(optEntity.isPresent()) {
-					GradStudentTranscriptsEntity ent = optEntity.get();
-					ent.setDistributionDate(new Date());
-					gradStudentTranscriptsRepository.save(ent);
-				}
-			} else {
-				Optional<GradStudentCertificatesEntity> optEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,documentStatusCode);
-				if(optEntity.isPresent()) {
-					GradStudentCertificatesEntity ent = optEntity.get();
-					ent.setDistributionDate(new Date());
-					gradStudentCertificatesRepository.save(ent);
-				}
+		if (paperType.equalsIgnoreCase("YED4")) {
+			Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,documentStatusCode);
+			if(optEntity.isPresent()) {
+				GradStudentTranscriptsEntity ent = optEntity.get();
+				ent.setUpdateDate(null);
+				ent.setUpdateUser(null);
+				ent.setDistributionDate(new Date());
+				gradStudentTranscriptsRepository.save(ent);
+				return true;
 			}
-		}catch (Exception e) {
-			return false;
+		} else {
+			Optional<GradStudentCertificatesEntity> optEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,documentStatusCode);
+			if(optEntity.isPresent()) {
+				GradStudentCertificatesEntity ent = optEntity.get();
+				ent.setUpdateDate(null);
+				ent.setUpdateUser(null);
+				ent.setDistributionDate(new Date());
+				gradStudentCertificatesRepository.save(ent);
+				return true;
+			}
 		}
-		return true;
+		return false;
 	}
 
 	public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, String accessToken) {
@@ -399,29 +379,35 @@ public class CommonService {
 				partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
 			}
 			if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
-				for (List<UUID> subList : partitions) {
-					List<StudentCredentialDistribution> scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
-					if (!scdSubList.isEmpty()) {
-						scdList.addAll(scdSubList);
-					}
-				}
+				processCertificate(partitions,scdList);
 			} else if (credentialType.equalsIgnoreCase("OT") || credentialType.equalsIgnoreCase("RT")) {
-				for (List<UUID> subList : partitions) {
-					List<StudentCredentialDistribution> scdSubList;
-					if (!studentSearchRequest.getPens().isEmpty()) {
-						scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequestPenOnly(subList);
-					} else {
-						scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
-					}
-					if (!scdSubList.isEmpty()) {
-						scdList.addAll(scdSubList);
-					}
-				}
+				processTranscript(partitions,studentSearchRequest,scdList);
 			}
 		}
 		return scdList;
 	}
 
+	private void processCertificate(List<List<UUID>> partitions, List<StudentCredentialDistribution> scdList) {
+		for (List<UUID> subList : partitions) {
+			List<StudentCredentialDistribution> scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
+			if (!scdSubList.isEmpty()) {
+				scdList.addAll(scdSubList);
+			}
+		}
+	}
+	private void processTranscript(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList) {
+		for (List<UUID> subList : partitions) {
+			List<StudentCredentialDistribution> scdSubList;
+			if (!studentSearchRequest.getPens().isEmpty()) {
+				scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequestPenOnly(subList);
+			} else {
+				scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
+			}
+			if (!scdSubList.isEmpty()) {
+				scdList.addAll(scdSubList);
+			}
+		}
+	}
 	private List<UUID> getStudentsForSpecialGradRun(StudentSearchRequest req, String accessToken) {
 		GraduationStudentRecordSearchResult res = this.webClient.post()
 				.uri(constants.getGradStudentApiStudentForSpcGradListUrl())
@@ -453,5 +439,18 @@ public class CommonService {
 		}else {
 			return schoolReportsTransformer.transformToDTO(schoolReportsRepository.save(toBeSaved));
 		}
+	}
+
+	public boolean updateSchoolReports(String minCode, String reportTypeCode) {
+		Optional<SchoolReportsEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(minCode,reportTypeCode);
+		if(optEntity.isPresent()) {
+			SchoolReportsEntity ent = optEntity.get();
+			ent.setUpdateDate(null);
+			ent.setUpdateUser(null);
+			ent.setDistributionDate(new Date());
+			schoolReportsRepository.save(ent);
+			return true;
+		}
+		return false;
 	}
 }
