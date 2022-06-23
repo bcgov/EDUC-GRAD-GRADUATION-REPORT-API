@@ -971,4 +971,21 @@ public class CommonServiceTest {
         boolean res = commonService.updateSchoolReports(mincode,reportTypeCode);
         assertThat(res).isTrue();
     }
+
+    @Test
+    public void testGetAllSchoolReportDistributionList() {
+
+        String mincode = "12313131";
+        // Student Certificate Types
+        final List<SchoolReportDistribution> list = new ArrayList<>();
+        final SchoolReportDistribution credentialDistribution = new SchoolReportDistribution(UUID.randomUUID(),"GRAD",mincode);
+        list.add(credentialDistribution);
+
+
+        when(schoolReportsRepository.findSchoolReportsForPosting()).thenReturn(list);
+        var result = commonService.getAllSchoolReportDistributionList();
+
+        assertThat(result).isNotNull().hasSize(1);
+        assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode);
+    }
 }

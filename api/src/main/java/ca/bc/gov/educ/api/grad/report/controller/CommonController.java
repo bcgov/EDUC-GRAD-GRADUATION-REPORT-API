@@ -262,5 +262,14 @@ public class CommonController {
         logger.debug("updateSchoolReport ");
         return response.GET(commonService.updateSchoolReports(mincode,reportTypeCode));
     }
+
+    @GetMapping(EducGradReportApiConstants.SCHOOL_REPORT_FOR_POSTING)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read All Student Transcripts for Distribution", description = "Read All School Reports for Distribution", tags = { "Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<SchoolReportDistribution>> getAllSchoolReportDistribution() {
+        logger.debug("getAllSchoolReportDistribution : ");
+        return response.GET(commonService.getAllSchoolReportDistributionList());
+    }
    
 }
