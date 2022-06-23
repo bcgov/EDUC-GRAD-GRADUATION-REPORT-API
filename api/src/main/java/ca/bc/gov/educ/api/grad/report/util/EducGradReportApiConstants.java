@@ -52,6 +52,8 @@ public class EducGradReportApiConstants {
     public static final String STUDENT_CERTIFICATE_BY_DIST_DATE_N_STATUS = "/getcertificatesfordistribution";
     public static final String STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS = "/gettranscriptsfordistribution";
 
+    public static final String SCHOOL_REPORT_FOR_POSTING = "/schoolreportdistribution";
+
     public static final String STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS_YEARLY = "/gettranscriptsfordistributionyearly";
     public static final String USER_REQUEST_DIS_RUN = "/userrequest/{credentialType}";
 

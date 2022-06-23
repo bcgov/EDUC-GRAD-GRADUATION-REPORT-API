@@ -453,4 +453,8 @@ public class CommonService {
 		}
 		return false;
 	}
+
+	public List<SchoolReportDistribution> getAllSchoolReportDistributionList() {
+		return schoolReportsRepository.findSchoolReportsForPosting();
+	}
 }
