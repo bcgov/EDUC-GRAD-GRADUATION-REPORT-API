@@ -28,6 +28,7 @@ public class CommonController {
 
     private static Logger logger = LoggerFactory.getLogger(CommonController.class);
 
+    private static final String BEARER = "Bearer ";
     @Autowired
     CommonService commonService;
     
@@ -171,7 +172,7 @@ public class CommonController {
     public ResponseEntity<List<StudentCredentialDistribution>> getAllStudentTranscriptYearlyDistribution(
             @RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getAllStudentTranscriptYearlyDistribution : ");
-        return response.GET(commonService.getAllStudentTranscriptYearlyDistributionList(accessToken.replace("Bearer ", "")));
+        return response.GET(commonService.getAllStudentTranscriptYearlyDistributionList(accessToken.replace(BEARER, "")));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS)
@@ -212,7 +213,7 @@ public class CommonController {
             @PathVariable String credentialType, @RequestBody StudentSearchRequest studentSearchRequest,
             @RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getStudentCredentialsForUserRequestDisRun : ");
-        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,accessToken.replace("Bearer ", "")));
+        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,accessToken.replace(BEARER, "")));
     }
 
     @DeleteMapping(EducGradReportApiConstants.ARCH_ACHIEVEMENTS_BY_STUDENTID)
@@ -238,9 +239,9 @@ public class CommonController {
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Read All  School Reports by Mincode", description = "Read All School Reports by Mincode", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<SchoolReports>> getAllSchoolReportsList(@PathVariable String mincode) {
+    public ResponseEntity<List<SchoolReports>> getAllSchoolReportsList(@PathVariable String mincode,@RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getAllSchoolReportsList : ");
-        return response.GET(commonService.getAllSchoolReportList(mincode));
+        return response.GET(commonService.getAllSchoolReportList(mincode, accessToken.replace(BEARER,"")));
     }
 
     @GetMapping(EducGradReportApiConstants.SCHOOL_REPORT)

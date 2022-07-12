@@ -83,6 +83,9 @@ public class EducGradReportApiConstants {
     @Value("${endpoint.grad-student-api.student-for-special-grad-run-list}")
     private String gradStudentApiStudentForSpcGradListUrl;
 
+    @Value("${endpoint.grad-trax-api.school-by-min-code.url}")
+    private String schoolByMincodeUrl;
+
     // Splunk LogHelper Enabled
     @Value("${splunk.log-helper.enabled}")
     private boolean splunkLogHelperEnabled;

@@ -284,12 +284,17 @@ public class CommonService {
 		return reportList;
 	}
 
-	public List<SchoolReports> getAllSchoolReportList(String mincode) {
-		List<SchoolReports> reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecord(mincode));
+	public List<SchoolReports> getAllSchoolReportList(String mincode,String accessToken) {
+		List<SchoolReports> reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordStartsWith(mincode));
 		reportList.forEach(rep -> {
 			GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getReportTypeCode()));
 			if(types != null)
 				rep.setReportTypeLabel(types.getLabel());
+
+			School schObj = getSchool(rep.getSchoolOfRecord(),accessToken);
+			if(schObj != null) {
+				rep.setSchoolOfRecordName(schObj.getSchoolName());
+			}
 		});
 		return reportList;
 	}
@@ -456,5 +461,17 @@ public class CommonService {
 
 	public List<SchoolReportDistribution> getAllSchoolReportDistributionList() {
 		return schoolReportsRepository.findSchoolReportsForPosting();
+	}
+
+	private School getSchool(String minCode, String accessToken) {
+		return webClient.get()
+				.uri(String.format(constants.getSchoolByMincodeUrl(), minCode))
+				.headers(h -> {
+					h.setBearerAuth(accessToken);
+					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
+				})
+				.retrieve()
+				.bodyToMono(School.class)
+				.block();
 	}
 }

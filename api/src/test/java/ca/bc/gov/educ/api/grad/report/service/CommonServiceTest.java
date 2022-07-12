@@ -920,14 +920,24 @@ public class CommonServiceTest {
 
         schoolReportsEntityList.add(schoolReports2);
 
+        School schObj = new School();
+        schObj.setMinCode(mincode);
+        schObj.setSchoolName("aadada");
+
         final GradReportTypesEntity gradReportTypesEntity = new GradReportTypesEntity();
         gradReportTypesEntity.setCode("NONGRADPRJ");
         gradReportTypesEntity.setDescription("non grad projected");
 
-        when(schoolReportsRepository.findBySchoolOfRecord(mincode)).thenReturn(schoolReportsEntityList);
+        when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
+        when(this.requestHeadersUriMock.uri(String.format(constants.getSchoolByMincodeUrl(),mincode))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
+
+        when(schoolReportsRepository.findBySchoolOfRecordStartsWith(mincode)).thenReturn(schoolReportsEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
-        var result = commonService.getAllSchoolReportList(mincode);
+        var result = commonService.getAllSchoolReportList(mincode,"accessToken");
 
         assertThat(result).isNotNull().hasSize(2);
         assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode);
