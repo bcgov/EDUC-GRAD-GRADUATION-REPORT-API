@@ -382,9 +382,9 @@ public class CommonControllerTest {
         studentCertificate2.setReportTypeCode(gradCertificateType.getCode());
         gradStudentReportList.add(studentCertificate2);
 
-        Mockito.when(commonService.getAllSchoolReportList(mincode)).thenReturn(gradStudentReportList);
-        commonController.getAllSchoolReportsList(mincode);
-        Mockito.verify(commonService).getAllSchoolReportList(mincode);
+        Mockito.when(commonService.getAllSchoolReportList(mincode,"accessToken")).thenReturn(gradStudentReportList);
+        commonController.getAllSchoolReportsList(mincode,"accessToken");
+        Mockito.verify(commonService).getAllSchoolReportList(mincode,"accessToken");
     }
 
     @Test
@@ -426,7 +426,7 @@ public class CommonControllerTest {
         final UUID studentID = UUID.randomUUID();
         final String credentialType = "E";
         final StudentSearchRequest req = new StudentSearchRequest();
-        req.setPens(Arrays.asList("2131231213"));
+        req.setPens(List.of("2131231213"));
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
