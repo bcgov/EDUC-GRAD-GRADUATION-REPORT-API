@@ -1017,8 +1017,7 @@ public class CommonServiceTest {
         when(gradStudentTranscriptsRepository.findByPostingDate()).thenReturn(list2);
         var result = commonService.getAllStudentTranscriptAndReportsPosting();
 
-        assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(2);
+        assertThat(result).isNotNull().hasSize(2);
         assertThat(result.get(0).getStudentID()).isEqualTo(studentID);
 
     }

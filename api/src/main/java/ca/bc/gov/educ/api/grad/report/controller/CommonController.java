@@ -210,7 +210,7 @@ public class CommonController {
     @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Boolean> updateStudentCredential(@RequestParam String studentID,@RequestParam String credentialTypeCode,@RequestParam String paperType,@RequestParam String documentStatusCode) {
-        logger.debug("updateStudentCredential : {} {} {}",studentID,credentialTypeCode,paperType);
+        logger.debug("updateStudentCredential : {} {}",credentialTypeCode,paperType);
         return response.GET(commonService.updateStudentCredential(UUID.fromString(studentID),credentialTypeCode,paperType,documentStatusCode));
     }
 
@@ -219,7 +219,7 @@ public class CommonController {
     @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Boolean> updateStudentCredentialPosting(@RequestParam String studentID,@RequestParam String credentialTypeCode) {
-        logger.debug("updateStudentCredential : {} {}",studentID,credentialTypeCode);
+        logger.debug("updateStudentCredential : {}",credentialTypeCode);
         return response.GET(commonService.updateStudentCredentialPosting(UUID.fromString(studentID),credentialTypeCode));
     }
 
