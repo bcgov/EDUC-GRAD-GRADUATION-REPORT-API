@@ -3,6 +3,7 @@ package ca.bc.gov.educ.api.grad.report.model.dto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -14,4 +15,6 @@ public class SchoolReports extends BaseModel {
 	private String reportTypeCode;
 	private String reportTypeLabel;
 	private String schoolOfRecord;
+	private String schoolOfRecordName;
+	private Date distributionDate;
 }
