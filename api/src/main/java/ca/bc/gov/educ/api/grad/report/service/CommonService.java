@@ -374,6 +374,31 @@ public class CommonService {
 		return false;
 	}
 
+	public boolean updateStudentCredentialPosting(UUID studentID, String credentialTypeCode) {
+		if (credentialTypeCode.equalsIgnoreCase("ACHV")) {
+			Optional<GradStudentReportsEntity> optEntity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentID,credentialTypeCode);
+			if(optEntity.isPresent()) {
+				GradStudentReportsEntity ent = optEntity.get();
+				ent.setUpdateDate(null);
+				ent.setUpdateUser(null);
+				ent.setPostingDate(new Date());
+				gradStudentReportsRepository.save(ent);
+				return true;
+			}
+		} else {
+			Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCode(studentID,credentialTypeCode);
+			if(optEntity.isPresent()) {
+				GradStudentTranscriptsEntity ent = optEntity.get();
+				ent.setUpdateDate(null);
+				ent.setUpdateUser(null);
+				ent.setPostingDate(new Date());
+				gradStudentTranscriptsRepository.save(ent);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, String accessToken) {
 		List<StudentCredentialDistribution> scdList = new ArrayList<>();
 		List<UUID> studentList =  getStudentsForSpecialGradRun(studentSearchRequest,accessToken);
@@ -473,5 +498,12 @@ public class CommonService {
 				.retrieve()
 				.bodyToMono(School.class)
 				.block();
+	}
+
+	public List<SchoolStudentCredentialDistribution> getAllStudentTranscriptAndReportsPosting() {
+		List<SchoolStudentCredentialDistribution> postingList = new ArrayList<>();
+		postingList.addAll(gradStudentReportsRepository.findByPostingDate());
+		postingList.addAll(gradStudentTranscriptsRepository.findByPostingDate());
+		return postingList;
 	}
 }

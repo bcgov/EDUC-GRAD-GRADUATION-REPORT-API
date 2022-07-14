@@ -998,4 +998,57 @@ public class CommonServiceTest {
         assertThat(result).isNotNull().hasSize(1);
         assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode);
     }
+
+    @Test
+    public void testGetAllSchoolStudentCertificatePostingList() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+
+        // Student Certificate Types
+        final List<SchoolStudentCredentialDistribution> list = new ArrayList<>();
+        final SchoolStudentCredentialDistribution credentialDistribution = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"E",studentID);
+        list.add(credentialDistribution);
+
+        final List<SchoolStudentCredentialDistribution> list2 = new ArrayList<>();
+        final SchoolStudentCredentialDistribution credentialDistribution2 = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"ACHV",studentID);
+        list2.add(credentialDistribution2);
+
+        when(gradStudentReportsRepository.findByPostingDate()).thenReturn(list);
+        when(gradStudentTranscriptsRepository.findByPostingDate()).thenReturn(list2);
+        var result = commonService.getAllStudentTranscriptAndReportsPosting();
+
+        assertThat(result).isNotNull().hasSize(2);
+        assertThat(result.get(0).getStudentID()).isEqualTo(studentID);
+
+    }
+
+    @Test
+    public void testUpdateStudentCredentialPosting() {
+        UUID studentId = new UUID(1,1);
+        String credentialTypeCode = "E";
+        GradStudentTranscriptsEntity ent = new GradStudentTranscriptsEntity();
+        ent.setStudentID(studentId);
+        ent.setTranscript("dfd");
+        ent.setId(new UUID(1,2));
+        ent.setTranscriptTypeCode("E");
+
+        when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCode(studentId,credentialTypeCode)).thenReturn(Optional.of(ent));
+        boolean res = commonService.updateStudentCredentialPosting(studentId,credentialTypeCode);
+        assertThat(res).isTrue();
+    }
+
+    @Test
+    public void testUpdateStudentCredentialPosting_CERT() {
+        UUID studentId = new UUID(1,1);
+        String credentialTypeCode = "ACHV";
+        GradStudentReportsEntity ent = new GradStudentReportsEntity();
+        ent.setStudentID(studentId);
+        ent.setReport("dfd");
+        ent.setId(new UUID(1,2));
+        ent.setGradReportTypeCode("ACHV");
+
+        when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentId,credentialTypeCode)).thenReturn(Optional.of(ent));
+        boolean res = commonService.updateStudentCredentialPosting(studentId,credentialTypeCode);
+        assertThat(res).isTrue();
+    }
 }

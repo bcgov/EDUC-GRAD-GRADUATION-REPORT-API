@@ -72,9 +72,9 @@ public class CommonController {
     @Operation(summary = "Read Student Reports by Student ID and Report Type", description = "Read Student Reports by Student ID and Report Type", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<InputStreamResource> getStudentReportByType(
-    		@RequestParam(value = "studentID", required = true) String studentID,
-    		@RequestParam(value = "reportType", required = true) String reportType,
-    		@RequestParam(value = "documentStatusCode", required = true) String documentStatusCode) { 
+    		@RequestParam(value = "studentID") String studentID,
+    		@RequestParam(value = "reportType") String reportType,
+    		@RequestParam(value = "documentStatusCode") String documentStatusCode) {
     	logger.debug("getStudentReportByType : ");
     	return commonService.getStudentReportByType(UUID.fromString(studentID),reportType,documentStatusCode);
     }
@@ -84,7 +84,7 @@ public class CommonController {
     @Operation(summary = "Read Student Certificates by Student ID", description = "Read Student Certificates by Student ID", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public List<GradStudentCertificates> getStudentCertificates(
-            @RequestParam(value = "studentID", required = true) String studentID) {
+            @RequestParam(value = "studentID") String studentID) {
         logger.debug("getStudentCertificates : ");
         return commonService.getAllStudentCertificateList(UUID.fromString(studentID));
     }
@@ -114,9 +114,9 @@ public class CommonController {
     @Operation(summary = "Read Student Certificate by Student ID and Certificate Type", description = "Read Student Certificate by Student ID and Certificate Type", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<InputStreamResource> getStudentCertificateByType(
-    		@RequestParam(value = "studentID", required = true) String studentID,
-    		@RequestParam(value = "certificateType", required = true) String certificateType,
-    		@RequestParam(value = "documentStatusCode", required = true) String documentStatusCode) { 
+    		@RequestParam(value = "studentID") String studentID,
+    		@RequestParam(value = "certificateType") String certificateType,
+    		@RequestParam(value = "documentStatusCode") String documentStatusCode) {
     	logger.debug("getStudentCertificateByType :");
     	return commonService.getStudentCertificateByType(UUID.fromString(studentID),certificateType,documentStatusCode);
     }
@@ -184,14 +184,23 @@ public class CommonController {
         return response.GET(commonService.getAllStudentTranscriptDistributionList());
     }
 
+    @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_N_REPORTS_POSTING)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read All Student Transcripts for Distribution", description = "Read All Student Transcripts for Distribution", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<SchoolStudentCredentialDistribution>> getAllStudentTranscriptAndReportsPosting() {
+        logger.debug("getAllStudentTranscriptAndReportsPosting : ");
+        return response.GET(commonService.getAllStudentTranscriptAndReportsPosting());
+    }
+
     @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Read Student Certificate by Student ID and Certificate Type", description = "Read Student Certificate by Student ID and Certificate Type", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<InputStreamResource> getStudentTranscriptByType(
-            @RequestParam(value = "studentID", required = true) String studentID,
-            @RequestParam(value = "transcriptType", required = true) String transcriptType,
-            @RequestParam(value = "documentStatusCode", required = true) String documentStatusCode) {
+            @RequestParam(value = "studentID") String studentID,
+            @RequestParam(value = "transcriptType") String transcriptType,
+            @RequestParam(value = "documentStatusCode") String documentStatusCode) {
         logger.debug("getStudentTranscriptByType :");
         return commonService.getStudentTranscriptByType(UUID.fromString(studentID),transcriptType,documentStatusCode);
     }
@@ -201,8 +210,17 @@ public class CommonController {
     @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Boolean> updateStudentCredential(@RequestParam String studentID,@RequestParam String credentialTypeCode,@RequestParam String paperType,@RequestParam String documentStatusCode) {
-        logger.debug("updateStudentCredential : {} {} {}",studentID,credentialTypeCode,paperType);
+        logger.debug("updateStudentCredential");
         return response.GET(commonService.updateStudentCredential(UUID.fromString(studentID),credentialTypeCode,paperType,documentStatusCode));
+    }
+
+    @GetMapping(EducGradReportApiConstants.UPDATE_STUDENT_CREDENTIAL_POSTING)
+    @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Boolean> updateStudentCredentialPosting(@RequestParam String studentID,@RequestParam String credentialTypeCode) {
+        logger.debug("updateStudentCredential");
+        return response.GET(commonService.updateStudentCredentialPosting(UUID.fromString(studentID),credentialTypeCode));
     }
 
     @PostMapping(EducGradReportApiConstants.USER_REQUEST_DIS_RUN)
@@ -249,8 +267,8 @@ public class CommonController {
     @Operation(summary = "Read Student Reports by Student ID and Report Type", description = "Read Student Reports by Student ID and Report Type", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<InputStreamResource> getSchoolReportByType(
-            @RequestParam(value = "mincode", required = true) String mincode,
-            @RequestParam(value = "reportType", required = true) String reportType) {
+            @RequestParam(value = "mincode") String mincode,
+            @RequestParam(value = "reportType") String reportType) {
         logger.debug("getSchoolReportByType : ");
         return commonService.getSchoolReportByType(mincode,reportType);
     }
