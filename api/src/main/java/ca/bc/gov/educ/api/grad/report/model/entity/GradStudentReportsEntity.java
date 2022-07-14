@@ -37,10 +37,13 @@ public class GradStudentReportsEntity extends BaseEntity {
 	@Column(name = "GRADUATION_STUDENT_RECORD_ID", nullable = false)
     private UUID studentID;
 	
-	@Column(name = "DISTRIBUTION_DATE",nullable = true)
+	@Column(name = "DISTRIBUTION_DATE")
 	private Date distributionDate;
 	
 	@Column(name="DOCUMENT_STATUS_CODE",nullable=false)
 	private String documentStatusCode;
+
+	@Column(name = "POSTING_DATE")
+	private Date postingDate;
 	
 }
