@@ -898,7 +898,8 @@ public class CommonServiceTest {
 
     @Test
     public void testGetAllSchoolReportList() {
-        final String mincode = "123456789";
+        final String mincode = "123456*";
+        final String mincode2 = "12345631231";
         // Certificate Type
         final GradReportTypes gradReportTypes = new GradReportTypes();
         gradReportTypes.setCode("NONGRADPRJ");
@@ -909,19 +910,19 @@ public class CommonServiceTest {
         final List<SchoolReportsEntity> schoolReportsEntityList = new ArrayList<>();
         final SchoolReportsEntity schoolReports = new SchoolReportsEntity();
         schoolReports.setId(UUID.randomUUID());
-        schoolReports.setSchoolOfRecord(mincode);
+        schoolReports.setSchoolOfRecord(mincode2);
         schoolReports.setReportTypeCode(gradReportTypes.getCode());
         schoolReportsEntityList.add(schoolReports);
 
         final SchoolReportsEntity schoolReports2 = new SchoolReportsEntity();
         schoolReports2.setId(UUID.randomUUID());
-        schoolReports2.setSchoolOfRecord(mincode);
+        schoolReports2.setSchoolOfRecord(mincode2);
         schoolReports2.setReportTypeCode(gradReportTypes.getCode());
 
         schoolReportsEntityList.add(schoolReports2);
 
         School schObj = new School();
-        schObj.setMinCode(mincode);
+        schObj.setMinCode(mincode2);
         schObj.setSchoolName("aadada");
 
         final GradReportTypesEntity gradReportTypesEntity = new GradReportTypesEntity();
@@ -929,20 +930,71 @@ public class CommonServiceTest {
         gradReportTypesEntity.setDescription("non grad projected");
 
         when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
-        when(this.requestHeadersUriMock.uri(String.format(constants.getSchoolByMincodeUrl(),mincode))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersUriMock.uri(String.format(constants.getSchoolByMincodeUrl(),mincode2))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
 
-        when(schoolReportsRepository.findBySchoolOfRecordStartsWith(mincode)).thenReturn(schoolReportsEntityList);
+        when(schoolReportsRepository.findBySchoolOfRecordLike("123456")).thenReturn(schoolReportsEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
         var result = commonService.getAllSchoolReportList(mincode,"accessToken");
 
         assertThat(result).isNotNull().hasSize(2);
-        assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode);
+        assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode2);
         assertThat(result.get(0).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
-        assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode);
+        assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode2);
+        assertThat(result.get(1).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
+    }
+
+    @Test
+    public void testGetAllSchoolReportList_withoutwildcard() {
+        final String mincode = "12345631231";
+        final String mincode2 = "12345631231";
+        // Certificate Type
+        final GradReportTypes gradReportTypes = new GradReportTypes();
+        gradReportTypes.setCode("NONGRADPRJ");
+        gradReportTypes.setDescription("non grad projected");
+
+
+        // Student Certificate Types
+        final List<SchoolReportsEntity> schoolReportsEntityList = new ArrayList<>();
+        final SchoolReportsEntity schoolReports = new SchoolReportsEntity();
+        schoolReports.setId(UUID.randomUUID());
+        schoolReports.setSchoolOfRecord(mincode2);
+        schoolReports.setReportTypeCode(gradReportTypes.getCode());
+        schoolReportsEntityList.add(schoolReports);
+
+        final SchoolReportsEntity schoolReports2 = new SchoolReportsEntity();
+        schoolReports2.setId(UUID.randomUUID());
+        schoolReports2.setSchoolOfRecord(mincode2);
+        schoolReports2.setReportTypeCode(gradReportTypes.getCode());
+
+        schoolReportsEntityList.add(schoolReports2);
+
+        School schObj = new School();
+        schObj.setMinCode(mincode2);
+        schObj.setSchoolName("aadada");
+
+        final GradReportTypesEntity gradReportTypesEntity = new GradReportTypesEntity();
+        gradReportTypesEntity.setCode("NONGRADPRJ");
+        gradReportTypesEntity.setDescription("non grad projected");
+
+        when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
+        when(this.requestHeadersUriMock.uri(String.format(constants.getSchoolByMincodeUrl(),mincode2))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
+
+        when(schoolReportsRepository.findBySchoolOfRecord("12345631231")).thenReturn(schoolReportsEntityList);
+        when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
+
+        var result = commonService.getAllSchoolReportList(mincode,"accessToken");
+
+        assertThat(result).isNotNull().hasSize(2);
+        assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode2);
+        assertThat(result.get(0).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
+        assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode2);
         assertThat(result.get(1).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
     }
 

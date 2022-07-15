@@ -11,6 +11,7 @@ import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -285,7 +286,14 @@ public class CommonService {
 	}
 
 	public List<SchoolReports> getAllSchoolReportList(String mincode,String accessToken) {
-		List<SchoolReports> reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordStartsWith(mincode));
+		List<SchoolReports> reportList = new ArrayList<>();
+		if(StringUtils.isNotBlank(mincode)) {
+			if(StringUtils.contains(mincode,"*")) {
+				reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordLike(StringUtils.strip(mincode,"*")));
+			}else {
+				reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecord(mincode));
+			}
+		}
 		reportList.forEach(rep -> {
 			GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getReportTypeCode()));
 			if(types != null)
