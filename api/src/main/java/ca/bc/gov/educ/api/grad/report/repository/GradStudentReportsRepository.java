@@ -28,6 +28,6 @@ public interface GradStudentReportsRepository extends JpaRepository<GradStudentR
 	
 	Optional<GradStudentReportsEntity> findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(UUID studentID,String gradReportTypeCode,String documentStatusCode);
 
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.SchoolStudentCredentialDistribution(c.id,c.gradReportTypeCode,c.studentID) from GradStudentReportsEntity c where c.postingDate is null or c.postingDate < c.updateDate")
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.SchoolStudentCredentialDistribution(c.id,c.gradReportTypeCode,c.studentID,c.documentStatusCode) from GradStudentReportsEntity c where c.postingDate is null or c.postingDate < c.updateDate")
 	List<SchoolStudentCredentialDistribution>  findByPostingDate();
 }

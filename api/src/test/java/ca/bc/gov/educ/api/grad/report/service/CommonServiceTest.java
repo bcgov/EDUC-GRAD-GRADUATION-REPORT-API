@@ -1058,11 +1058,11 @@ public class CommonServiceTest {
 
         // Student Certificate Types
         final List<SchoolStudentCredentialDistribution> list = new ArrayList<>();
-        final SchoolStudentCredentialDistribution credentialDistribution = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"E",studentID);
+        final SchoolStudentCredentialDistribution credentialDistribution = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"IP");
         list.add(credentialDistribution);
 
         final List<SchoolStudentCredentialDistribution> list2 = new ArrayList<>();
-        final SchoolStudentCredentialDistribution credentialDistribution2 = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"ACHV",studentID);
+        final SchoolStudentCredentialDistribution credentialDistribution2 = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"ACHV",studentID,"COMPL");
         list2.add(credentialDistribution2);
 
         when(gradStudentReportsRepository.findByPostingDate()).thenReturn(list);
