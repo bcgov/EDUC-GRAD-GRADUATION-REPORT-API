@@ -188,9 +188,9 @@ public class CommonController {
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Read All Student Transcripts for Distribution", description = "Read All Student Transcripts for Distribution", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<SchoolStudentCredentialDistribution>> getAllStudentTranscriptAndReportsPosting() {
+    public ResponseEntity<List<SchoolStudentCredentialDistribution>> getAllStudentTranscriptAndReportsPosting(@RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getAllStudentTranscriptAndReportsPosting : ");
-        return response.GET(commonService.getAllStudentTranscriptAndReportsPosting());
+        return response.GET(commonService.getAllStudentTranscriptAndReportsPosting(accessToken.replace(BEARER, "")));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT)

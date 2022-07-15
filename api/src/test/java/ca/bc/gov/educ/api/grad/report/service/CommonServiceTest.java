@@ -1055,6 +1055,7 @@ public class CommonServiceTest {
     public void testGetAllSchoolStudentCertificatePostingList() {
         // UUID
         final UUID studentID = UUID.randomUUID();
+        final UUID studentID2 = UUID.randomUUID();
 
         // Student Certificate Types
         final List<SchoolStudentCredentialDistribution> list = new ArrayList<>();
@@ -1062,12 +1063,25 @@ public class CommonServiceTest {
         list.add(credentialDistribution);
 
         final List<SchoolStudentCredentialDistribution> list2 = new ArrayList<>();
-        final SchoolStudentCredentialDistribution credentialDistribution2 = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"ACHV",studentID,"COMPL");
+        final SchoolStudentCredentialDistribution credentialDistribution2 = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"ACHV",studentID2,"COMPL");
         list2.add(credentialDistribution2);
 
-        when(gradStudentReportsRepository.findByPostingDate()).thenReturn(list);
-        when(gradStudentTranscriptsRepository.findByPostingDate()).thenReturn(list2);
-        var result = commonService.getAllStudentTranscriptAndReportsPosting();
+        List<UUID> studentList = new ArrayList<>();
+        studentList.add(new UUID(3,3));
+
+        ParameterizedTypeReference<List<UUID>> studentidres = new ParameterizedTypeReference<>() {
+        };
+
+        when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
+        when(this.requestHeadersUriMock.uri(constants.getStudentsForYearlyDistribution())).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(studentidres)).thenReturn(Mono.just(studentList));
+
+
+        when(gradStudentReportsRepository.findByPostingDate(studentList)).thenReturn(list);
+        when(gradStudentTranscriptsRepository.findByPostingDate(studentList)).thenReturn(list2);
+        var result = commonService.getAllStudentTranscriptAndReportsPosting("accessToken");
 
         assertThat(result).isNotNull().hasSize(2);
         assertThat(result.get(0).getStudentID()).isEqualTo(studentID);
