@@ -508,30 +508,10 @@ public class CommonService {
 				.block();
 	}
 
-	public List<SchoolStudentCredentialDistribution> getAllStudentTranscriptAndReportsPosting(String accessToken) {
+	public List<SchoolStudentCredentialDistribution> getAllStudentTranscriptAndReportsPosting() {
 		List<SchoolStudentCredentialDistribution> postingList = new ArrayList<>();
-		List<UUID> studentList =  webClient.get().uri(constants.getStudentsForYearlyDistribution())
-				.headers(h -> {
-					h.setBearerAuth(accessToken);
-					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
-				}).retrieve().bodyToMono(new ParameterizedTypeReference<List<UUID>>() {}).block();
-		if(studentList != null && !studentList.isEmpty()) {
-			int partitionSize = 1000;
-			List<List<UUID>> partitions = new LinkedList<>();
-			for (int i = 0; i < studentList.size(); i += partitionSize) {
-				partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
-			}
-			for (List<UUID> subList : partitions) {
-				List<SchoolStudentCredentialDistribution> scdSubListAchv = gradStudentReportsRepository.findByPostingDate(subList);
-				List<SchoolStudentCredentialDistribution> scdSubListTran = gradStudentTranscriptsRepository.findByPostingDate(subList);
-				if (!scdSubListAchv.isEmpty()) {
-					postingList.addAll(scdSubListAchv);
-				}
-				if(!scdSubListTran.isEmpty()) {
-					postingList.addAll(scdSubListTran);
-				}
-			}
-		}
+		postingList.addAll(gradStudentReportsRepository.findByPostingDate());
+		postingList.addAll(gradStudentTranscriptsRepository.findByPostingDate());
 		return postingList;
 	}
 }
