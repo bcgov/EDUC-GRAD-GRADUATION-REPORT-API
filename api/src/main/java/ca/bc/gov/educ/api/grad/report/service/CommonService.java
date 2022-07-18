@@ -289,7 +289,7 @@ public class CommonService {
 		List<SchoolReports> reportList = new ArrayList<>();
 		if(StringUtils.isNotBlank(mincode)) {
 			if(StringUtils.contains(mincode,"*")) {
-				reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordLike(StringUtils.strip(mincode,"*")));
+				reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordContains(StringUtils.strip(mincode,"*")));
 			}else {
 				reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecord(mincode));
 			}

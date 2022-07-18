@@ -935,7 +935,7 @@ public class CommonServiceTest {
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
 
-        when(schoolReportsRepository.findBySchoolOfRecordLike("123456")).thenReturn(schoolReportsEntityList);
+        when(schoolReportsRepository.findBySchoolOfRecordContains("123456")).thenReturn(schoolReportsEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
         var result = commonService.getAllSchoolReportList(mincode,"accessToken");
@@ -1058,11 +1058,11 @@ public class CommonServiceTest {
 
         // Student Certificate Types
         final List<SchoolStudentCredentialDistribution> list = new ArrayList<>();
-        final SchoolStudentCredentialDistribution credentialDistribution = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"E",studentID);
+        final SchoolStudentCredentialDistribution credentialDistribution = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"IP");
         list.add(credentialDistribution);
 
         final List<SchoolStudentCredentialDistribution> list2 = new ArrayList<>();
-        final SchoolStudentCredentialDistribution credentialDistribution2 = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"ACHV",studentID);
+        final SchoolStudentCredentialDistribution credentialDistribution2 = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"ACHV",studentID,"COMPL");
         list2.add(credentialDistribution2);
 
         when(gradStudentReportsRepository.findByPostingDate()).thenReturn(list);

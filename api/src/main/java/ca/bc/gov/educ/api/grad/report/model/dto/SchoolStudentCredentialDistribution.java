@@ -10,10 +10,12 @@ public class SchoolStudentCredentialDistribution {
 	private UUID id;
 	private String credentialTypeCode;
 	private UUID studentID;
+	private String documentStatusCode;
 
-	public SchoolStudentCredentialDistribution(UUID id, String credentialTypeCode, UUID studentID) {
+	public SchoolStudentCredentialDistribution(UUID id, String credentialTypeCode, UUID studentID,String documentStatusCode) {
 		this.id = id;
 		this.credentialTypeCode = credentialTypeCode;
 		this.studentID = studentID;
+		this.documentStatusCode=documentStatusCode;
 	}
 }
