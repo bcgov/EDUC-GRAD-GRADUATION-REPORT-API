@@ -1103,4 +1103,57 @@ public class CommonServiceTest {
         boolean res = commonService.updateStudentCredentialPosting(studentId,credentialTypeCode);
         assertThat(res).isTrue();
     }
+
+    @Test
+    public void testGetStudentCredentialByType_TRAN() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String type = "TRAN";
+
+        // Student Certificate Types
+        final GradStudentTranscriptsEntity studentTranscript = new GradStudentTranscriptsEntity();
+        studentTranscript.setId(UUID.randomUUID());
+        studentTranscript.setStudentID(studentID);
+        studentTranscript.setTranscript("TEST Certificate Body");
+        studentTranscript.setDocumentStatusCode("COMPL");
+        studentTranscript.setTranscriptTypeCode("BC1996-PUB");
+
+
+        when(gradStudentTranscriptsRepository.findByStudentID(studentID)).thenReturn(List.of(studentTranscript));
+        var result = commonService.getStudentCredentialByType(studentID, type);
+        assertThat(result).isNotNull();
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_TRAN_transcript.pdf]");
+        assertThat(result.getBody()).isNotNull();
+    }
+
+    @Test
+    public void testGetStudentCredentialByType_ACHV() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String type = "ACHV";
+
+        // Student Certificate Types
+        final GradStudentReportsEntity studentReport = new GradStudentReportsEntity();
+        studentReport.setId(UUID.randomUUID());
+        studentReport.setStudentID(studentID);
+        studentReport.setReport("TEST Certificate Body");
+        studentReport.setDocumentStatusCode("COMPL");
+        studentReport.setGradReportTypeCode("ACHV");
+
+
+        when(gradStudentReportsRepository.findByStudentID(studentID)).thenReturn(List.of(studentReport));
+        var result = commonService.getStudentCredentialByType(studentID, type);
+        assertThat(result).isNotNull();
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_ACHV_achievement.pdf]");
+        assertThat(result.getBody()).isNotNull();
+    }
+
+    @Test
+    public void testGetStudentCredentialByType_GRAD() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String type = "GRAD";
+        var result = commonService.getStudentCredentialByType(studentID, type);
+        assertThat(result).isNull();
+    }
 }
