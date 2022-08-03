@@ -1,7 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.controller;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
-import ca.bc.gov.educ.api.grad.report.model.entity.ProgramCertificateTranscriptEntity;
 import ca.bc.gov.educ.api.grad.report.service.CodeService;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import ca.bc.gov.educ.api.grad.report.util.MessageHelper;
