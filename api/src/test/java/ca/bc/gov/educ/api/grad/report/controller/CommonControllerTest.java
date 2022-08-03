@@ -21,8 +21,11 @@ import org.springframework.http.ResponseEntity;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 @ExtendWith(MockitoExtension.class)
@@ -254,8 +257,10 @@ public class CommonControllerTest {
     @Test
     public void testDeleteAllStudentAchievements() {
     	UUID studentID = new UUID(1, 1);
-    	Mockito.when(commonService.getAllStudentAchievement(studentID)).thenReturn(1);
+        int returnValue = 1;
+    	Mockito.when(commonService.getAllStudentAchievement(studentID)).thenReturn(returnValue);
     	commonController.deleteAllStudentAchievements(studentID.toString());
+        assertEquals(1,returnValue);
     }
 
     @Test
@@ -377,8 +382,107 @@ public class CommonControllerTest {
         studentCertificate2.setReportTypeCode(gradCertificateType.getCode());
         gradStudentReportList.add(studentCertificate2);
 
-        Mockito.when(commonService.getAllSchoolReportList(mincode)).thenReturn(gradStudentReportList);
-        commonController.getAllSchoolReportsList(mincode);
-        Mockito.verify(commonService).getAllSchoolReportList(mincode);
+        Mockito.when(commonService.getAllSchoolReportList(mincode,"accessToken")).thenReturn(gradStudentReportList);
+        commonController.getAllSchoolReportsList(mincode,"accessToken");
+        Mockito.verify(commonService).getAllSchoolReportList(mincode,"accessToken");
+    }
+
+    @Test
+    public void testUpdateSchoolReport() {
+        final String schoolOfRecord = "123456789";
+        final String reportTypeCode = "TEST";
+        Mockito.when(commonService.updateSchoolReports(schoolOfRecord,reportTypeCode)).thenReturn(true);
+        commonController.updateSchoolReport(schoolOfRecord,reportTypeCode);
+        Mockito.verify(commonService).updateSchoolReports(schoolOfRecord,reportTypeCode);
+    }
+
+    @Test
+    public void testUpdateStudentCredential() {
+        final UUID studentID = new UUID(1,1);
+        final String schoolOfRecord = "123456789";
+        final String credentialTypeCode = "TEST";
+        final String paperType = "YED4";
+        final String documentStatusCode = "TEST";
+        Mockito.when(commonService.updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode)).thenReturn(true);
+        commonController.updateStudentCredential(studentID.toString(),credentialTypeCode,paperType,documentStatusCode);
+        Mockito.verify(commonService).updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode);
+    }
+
+    @Test
+    public void testUpdateStudentCredential_YED2() {
+        final UUID studentID = new UUID(1,1);
+        final String schoolOfRecord = "123456789";
+        final String credentialTypeCode = "TEST";
+        final String paperType = "YED2";
+        final String documentStatusCode = "TEST";
+        Mockito.when(commonService.updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode)).thenReturn(true);
+        commonController.updateStudentCredential(studentID.toString(),credentialTypeCode,paperType,documentStatusCode);
+        Mockito.verify(commonService).updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode);
+    }
+
+    @Test
+    public void testGetAllStudentCredentialDistributionList() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String credentialType = "E";
+        final StudentSearchRequest req = new StudentSearchRequest();
+        req.setPens(List.of("2131231213"));
+
+        // Student Certificate Types
+        final List<StudentCredentialDistribution> list = new ArrayList<>();
+        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL");
+        list.add(cred);
+
+        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,"accessToken")).thenReturn(list);
+        commonController.getStudentCredentialsForUserRequestDisRun(credentialType,req,"accessToken");
+        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,"accessToken");
+    }
+
+    @Test
+    public void testGetAllStudentTranscriptDistributionYearlyList() {
+        // Student Certificate Types
+        final UUID studentID = new UUID(1,1);
+        final List<StudentCredentialDistribution> list = new ArrayList<>();
+        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL");
+        list.add(cred);
+
+        Mockito.when(commonService.getAllStudentTranscriptYearlyDistributionList("accessToken")).thenReturn(list);
+        commonController.getAllStudentTranscriptYearlyDistribution("accessToken");
+        Mockito.verify(commonService).getAllStudentTranscriptYearlyDistributionList("accessToken");
+    }
+
+    @Test
+    public void testGetAllSchoolReportDistributionList() {
+
+        final String mincode = "123131123";
+
+        // Student Certificate Types
+        final List<SchoolReportDistribution> list = new ArrayList<>();
+        final SchoolReportDistribution cred = new SchoolReportDistribution(UUID.randomUUID(),"GRAD",mincode);
+        list.add(cred);
+
+        Mockito.when(commonService.getAllSchoolReportDistributionList()).thenReturn(list);
+        commonController.getAllSchoolReportDistribution();
+        Mockito.verify(commonService).getAllSchoolReportDistributionList();
+    }
+
+    @Test
+    public void testGetStudentCredentialByType() {
+        final UUID studentID = new UUID(1, 1);
+        final String type = "TRAN";
+        final String transcriptBody = "Test Certificate Body";
+        byte[] certificateByte = Base64.decodeBase64(transcriptBody.getBytes(StandardCharsets.US_ASCII));
+        ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=student_"+type+"_transcript.pdf");
+
+        Mockito.when(commonService.getStudentCredentialByType(studentID,type)).thenReturn(
+                ResponseEntity
+                        .ok()
+                        .headers(headers)
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(new InputStreamResource(bis)));
+        commonController.getStudentCredentialByType(studentID.toString(), type);
+        Mockito.verify(commonService).getStudentCredentialByType(studentID, type);
     }
 }

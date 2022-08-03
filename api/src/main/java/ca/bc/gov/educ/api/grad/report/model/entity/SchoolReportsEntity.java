@@ -32,5 +32,8 @@ public class SchoolReportsEntity extends BaseEntity {
 	
 	@Column(name = "SCHOOL_OF_RECORD", nullable = false)
     private String schoolOfRecord;
+
+	@Column(name = "DISTRIBUTION_DATE",nullable = true)
+	private Date distributionDate;
 	
 }

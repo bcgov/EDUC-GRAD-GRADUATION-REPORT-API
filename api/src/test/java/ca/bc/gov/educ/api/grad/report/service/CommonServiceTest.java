@@ -898,7 +898,8 @@ public class CommonServiceTest {
 
     @Test
     public void testGetAllSchoolReportList() {
-        final String mincode = "123456789";
+        final String mincode = "123456*";
+        final String mincode2 = "12345631231";
         // Certificate Type
         final GradReportTypes gradReportTypes = new GradReportTypes();
         gradReportTypes.setCode("NONGRADPRJ");
@@ -909,30 +910,91 @@ public class CommonServiceTest {
         final List<SchoolReportsEntity> schoolReportsEntityList = new ArrayList<>();
         final SchoolReportsEntity schoolReports = new SchoolReportsEntity();
         schoolReports.setId(UUID.randomUUID());
-        schoolReports.setSchoolOfRecord(mincode);
+        schoolReports.setSchoolOfRecord(mincode2);
         schoolReports.setReportTypeCode(gradReportTypes.getCode());
         schoolReportsEntityList.add(schoolReports);
 
         final SchoolReportsEntity schoolReports2 = new SchoolReportsEntity();
         schoolReports2.setId(UUID.randomUUID());
-        schoolReports2.setSchoolOfRecord(mincode);
+        schoolReports2.setSchoolOfRecord(mincode2);
         schoolReports2.setReportTypeCode(gradReportTypes.getCode());
 
         schoolReportsEntityList.add(schoolReports2);
+
+        School schObj = new School();
+        schObj.setMinCode(mincode2);
+        schObj.setSchoolName("aadada");
 
         final GradReportTypesEntity gradReportTypesEntity = new GradReportTypesEntity();
         gradReportTypesEntity.setCode("NONGRADPRJ");
         gradReportTypesEntity.setDescription("non grad projected");
 
-        when(schoolReportsRepository.findBySchoolOfRecord(mincode)).thenReturn(schoolReportsEntityList);
+        when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
+        when(this.requestHeadersUriMock.uri(String.format(constants.getSchoolByMincodeUrl(),mincode2))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
+
+        when(schoolReportsRepository.findBySchoolOfRecordContains("123456")).thenReturn(schoolReportsEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
-        var result = commonService.getAllSchoolReportList(mincode);
+        var result = commonService.getAllSchoolReportList(mincode,"accessToken");
 
         assertThat(result).isNotNull().hasSize(2);
-        assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode);
+        assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode2);
         assertThat(result.get(0).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
-        assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode);
+        assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode2);
+        assertThat(result.get(1).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
+    }
+
+    @Test
+    public void testGetAllSchoolReportList_withoutwildcard() {
+        final String mincode = "12345631231";
+        final String mincode2 = "12345631231";
+        // Certificate Type
+        final GradReportTypes gradReportTypes = new GradReportTypes();
+        gradReportTypes.setCode("NONGRADPRJ");
+        gradReportTypes.setDescription("non grad projected");
+
+
+        // Student Certificate Types
+        final List<SchoolReportsEntity> schoolReportsEntityList = new ArrayList<>();
+        final SchoolReportsEntity schoolReports = new SchoolReportsEntity();
+        schoolReports.setId(UUID.randomUUID());
+        schoolReports.setSchoolOfRecord(mincode2);
+        schoolReports.setReportTypeCode(gradReportTypes.getCode());
+        schoolReportsEntityList.add(schoolReports);
+
+        final SchoolReportsEntity schoolReports2 = new SchoolReportsEntity();
+        schoolReports2.setId(UUID.randomUUID());
+        schoolReports2.setSchoolOfRecord(mincode2);
+        schoolReports2.setReportTypeCode(gradReportTypes.getCode());
+
+        schoolReportsEntityList.add(schoolReports2);
+
+        School schObj = new School();
+        schObj.setMinCode(mincode2);
+        schObj.setSchoolName("aadada");
+
+        final GradReportTypesEntity gradReportTypesEntity = new GradReportTypesEntity();
+        gradReportTypesEntity.setCode("NONGRADPRJ");
+        gradReportTypesEntity.setDescription("non grad projected");
+
+        when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
+        when(this.requestHeadersUriMock.uri(String.format(constants.getSchoolByMincodeUrl(),mincode2))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
+
+        when(schoolReportsRepository.findBySchoolOfRecord("12345631231")).thenReturn(schoolReportsEntityList);
+        when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
+
+        var result = commonService.getAllSchoolReportList(mincode,"accessToken");
+
+        assertThat(result).isNotNull().hasSize(2);
+        assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode2);
+        assertThat(result.get(0).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
+        assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode2);
         assertThat(result.get(1).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
     }
 
@@ -955,5 +1017,143 @@ public class CommonServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=123456789_"+currentYear+"00_"+reportTypeCode+".pdf]");
         assertThat(result.getBody()).isNotNull();
+    }
+
+    @Test
+    public void testUpdateSchoolReport() {
+        String mincode = "123123123";
+        String reportTypeCode = "NONGRADPRJ";
+        SchoolReportsEntity ent = new SchoolReportsEntity();
+        ent.setSchoolOfRecord(mincode);
+        ent.setReport("dfd");
+        ent.setId(new UUID(1,2));
+        ent.setReportTypeCode(reportTypeCode);
+
+        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode,reportTypeCode)).thenReturn(Optional.of(ent));
+        boolean res = commonService.updateSchoolReports(mincode,reportTypeCode);
+        assertThat(res).isTrue();
+    }
+
+    @Test
+    public void testGetAllSchoolReportDistributionList() {
+
+        String mincode = "12313131";
+        // Student Certificate Types
+        final List<SchoolReportDistribution> list = new ArrayList<>();
+        final SchoolReportDistribution credentialDistribution = new SchoolReportDistribution(UUID.randomUUID(),"GRAD",mincode);
+        list.add(credentialDistribution);
+
+
+        when(schoolReportsRepository.findSchoolReportsForPosting()).thenReturn(list);
+        var result = commonService.getAllSchoolReportDistributionList();
+
+        assertThat(result).isNotNull().hasSize(1);
+        assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode);
+    }
+
+    @Test
+    public void testGetAllSchoolStudentCertificatePostingList() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+
+        // Student Certificate Types
+        final List<SchoolStudentCredentialDistribution> list = new ArrayList<>();
+        final SchoolStudentCredentialDistribution credentialDistribution = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"IP");
+        list.add(credentialDistribution);
+
+        final List<SchoolStudentCredentialDistribution> list2 = new ArrayList<>();
+        final SchoolStudentCredentialDistribution credentialDistribution2 = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"ACHV",studentID,"COMPL");
+        list2.add(credentialDistribution2);
+
+        when(gradStudentReportsRepository.findByPostingDate()).thenReturn(list);
+        when(gradStudentTranscriptsRepository.findByPostingDate()).thenReturn(list2);
+        var result = commonService.getAllStudentTranscriptAndReportsPosting();
+
+        assertThat(result).isNotNull().hasSize(2);
+        assertThat(result.get(0).getStudentID()).isEqualTo(studentID);
+
+    }
+
+    @Test
+    public void testUpdateStudentCredentialPosting() {
+        UUID studentId = new UUID(1,1);
+        String credentialTypeCode = "E";
+        GradStudentTranscriptsEntity ent = new GradStudentTranscriptsEntity();
+        ent.setStudentID(studentId);
+        ent.setTranscript("dfd");
+        ent.setId(new UUID(1,2));
+        ent.setTranscriptTypeCode("E");
+
+        when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCode(studentId,credentialTypeCode)).thenReturn(Optional.of(ent));
+        boolean res = commonService.updateStudentCredentialPosting(studentId,credentialTypeCode);
+        assertThat(res).isTrue();
+    }
+
+    @Test
+    public void testUpdateStudentCredentialPosting_CERT() {
+        UUID studentId = new UUID(1,1);
+        String credentialTypeCode = "ACHV";
+        GradStudentReportsEntity ent = new GradStudentReportsEntity();
+        ent.setStudentID(studentId);
+        ent.setReport("dfd");
+        ent.setId(new UUID(1,2));
+        ent.setGradReportTypeCode("ACHV");
+
+        when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentId,credentialTypeCode)).thenReturn(Optional.of(ent));
+        boolean res = commonService.updateStudentCredentialPosting(studentId,credentialTypeCode);
+        assertThat(res).isTrue();
+    }
+
+    @Test
+    public void testGetStudentCredentialByType_TRAN() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String type = "TRAN";
+
+        // Student Certificate Types
+        final GradStudentTranscriptsEntity studentTranscript = new GradStudentTranscriptsEntity();
+        studentTranscript.setId(UUID.randomUUID());
+        studentTranscript.setStudentID(studentID);
+        studentTranscript.setTranscript("TEST Certificate Body");
+        studentTranscript.setDocumentStatusCode("COMPL");
+        studentTranscript.setTranscriptTypeCode("BC1996-PUB");
+
+
+        when(gradStudentTranscriptsRepository.findByStudentID(studentID)).thenReturn(List.of(studentTranscript));
+        var result = commonService.getStudentCredentialByType(studentID, type);
+        assertThat(result).isNotNull();
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_TRAN_transcript.pdf]");
+        assertThat(result.getBody()).isNotNull();
+    }
+
+    @Test
+    public void testGetStudentCredentialByType_ACHV() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String type = "ACHV";
+
+        // Student Certificate Types
+        final GradStudentReportsEntity studentReport = new GradStudentReportsEntity();
+        studentReport.setId(UUID.randomUUID());
+        studentReport.setStudentID(studentID);
+        studentReport.setReport("TEST Certificate Body");
+        studentReport.setDocumentStatusCode("COMPL");
+        studentReport.setGradReportTypeCode("ACHV");
+
+
+        when(gradStudentReportsRepository.findByStudentID(studentID)).thenReturn(List.of(studentReport));
+        var result = commonService.getStudentCredentialByType(studentID, type);
+        assertThat(result).isNotNull();
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_ACHV_achievement.pdf]");
+        assertThat(result.getBody()).isNotNull();
+    }
+
+    @Test
+    public void testGetStudentCredentialByType_GRAD() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String type = "GRAD";
+        var result = commonService.getStudentCredentialByType(studentID, type);
+        assertThat(result).isNull();
     }
 }

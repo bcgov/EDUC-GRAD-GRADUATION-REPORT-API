@@ -57,6 +57,7 @@ public class CodeControllerTest {
 		Mockito.when(codeService.getAllCertificateTypeCodeList()).thenReturn(gradCertificateTypesList);
 		codeController.getAllCertificateTypeCodeList();
 		Mockito.verify(codeService).getAllCertificateTypeCodeList();
+
 	}
 	
 	@Test

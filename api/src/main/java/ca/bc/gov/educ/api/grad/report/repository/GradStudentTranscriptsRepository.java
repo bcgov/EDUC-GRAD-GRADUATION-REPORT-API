@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.repository;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.SchoolStudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +17,7 @@ public interface GradStudentTranscriptsRepository extends JpaRepository<GradStud
 
 	List<GradStudentTranscriptsEntity> findByStudentID(UUID studentID);
 	List<GradStudentTranscriptsEntity> findByStudentIDAndDocumentStatusCodeNot(UUID studentID,String documentStatusCode);
+	Optional<GradStudentTranscriptsEntity> findByStudentIDAndTranscriptTypeCode(UUID studentID,String transcriptTypeCode);
 
 	Optional<GradStudentTranscriptsEntity> findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(UUID studentID,String transcriptTypeCode,String documentStatusCode);
 	Optional<GradStudentTranscriptsEntity> findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(UUID studentID, String transcriptTypeCode, String documentStatusCode);
@@ -39,5 +41,7 @@ public interface GradStudentTranscriptsRepository extends JpaRepository<GradStud
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,tran.paperType,c.documentStatusCode) from GradStudentTranscriptsEntity c inner join TranscriptTypesEntity tran on tran.code = c.transcriptTypeCode  where c.studentID in (:subList)")
 	List<StudentCredentialDistribution> findRecordsForUserRequestPenOnly(List<UUID> subList);
 
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.SchoolStudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,c.documentStatusCode) from GradStudentTranscriptsEntity c where c.postingDate is null or c.postingDate < c.updateDate")
+	List<SchoolStudentCredentialDistribution>  findByPostingDate();
 
 }
