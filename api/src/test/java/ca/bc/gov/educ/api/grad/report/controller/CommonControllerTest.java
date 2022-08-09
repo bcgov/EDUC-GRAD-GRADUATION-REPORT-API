@@ -465,4 +465,24 @@ public class CommonControllerTest {
         commonController.getAllSchoolReportDistribution();
         Mockito.verify(commonService).getAllSchoolReportDistributionList();
     }
+
+    @Test
+    public void testGetStudentCredentialByType() {
+        final UUID studentID = new UUID(1, 1);
+        final String type = "TRAN";
+        final String transcriptBody = "Test Certificate Body";
+        byte[] certificateByte = Base64.decodeBase64(transcriptBody.getBytes(StandardCharsets.US_ASCII));
+        ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=student_"+type+"_transcript.pdf");
+
+        Mockito.when(commonService.getStudentCredentialByType(studentID,type)).thenReturn(
+                ResponseEntity
+                        .ok()
+                        .headers(headers)
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(new InputStreamResource(bis)));
+        commonController.getStudentCredentialByType(studentID.toString(), type);
+        Mockito.verify(commonService).getStudentCredentialByType(studentID, type);
+    }
 }

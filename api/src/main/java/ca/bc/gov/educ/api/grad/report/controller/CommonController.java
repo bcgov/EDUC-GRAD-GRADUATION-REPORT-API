@@ -290,5 +290,15 @@ public class CommonController {
         logger.debug("getAllSchoolReportDistribution : ");
         return response.GET(commonService.getAllSchoolReportDistributionList());
     }
-   
+
+    @GetMapping(EducGradReportApiConstants.STUDENT_CREDENTIAL_BUSINESS)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read Student Credentials by Student ID and Type of Credential", description = "Read Student Credentials by Student ID and Type of Credential", tags = { "Credentials" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<InputStreamResource> getStudentCredentialByType(@PathVariable String studentID,@PathVariable String type) {
+        logger.debug("getStudentCredentialByType :");
+        return commonService.getStudentCredentialByType(UUID.fromString(studentID),type);
+    }
+
+
 }

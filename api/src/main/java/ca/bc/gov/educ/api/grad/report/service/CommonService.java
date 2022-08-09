@@ -514,4 +514,36 @@ public class CommonService {
 		postingList.addAll(gradStudentTranscriptsRepository.findByPostingDate());
 		return postingList;
 	}
+
+	@Transactional
+	public ResponseEntity<InputStreamResource> getStudentCredentialByType(UUID studentID, String type) {
+		if(type.equalsIgnoreCase("TRAN")) {
+			List<GradStudentTranscripts> studentTranscript = gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.findByStudentID(studentID));
+			if (studentTranscript != null && !studentTranscript.isEmpty() && studentTranscript.get(0).getTranscript() != null) {
+				byte[] credentialByte = Base64.decodeBase64(studentTranscript.get(0).getTranscript().getBytes(StandardCharsets.US_ASCII));
+				ByteArrayInputStream bis = new ByteArrayInputStream(credentialByte);
+				HttpHeaders headers = new HttpHeaders();
+				headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME, type, "transcript"));
+				return ResponseEntity
+						.ok()
+						.headers(headers)
+						.contentType(MediaType.APPLICATION_PDF)
+						.body(new InputStreamResource(bis));
+			}
+		}else if(type.equalsIgnoreCase("ACHV")) {
+			List<GradStudentReports> studentReport = gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.findByStudentID(studentID));
+			if (studentReport != null && !studentReport.isEmpty() && studentReport.get(0).getReport() != null) {
+				byte[] credentialByte = Base64.decodeBase64(studentReport.get(0).getReport().getBytes(StandardCharsets.US_ASCII));
+				ByteArrayInputStream bis = new ByteArrayInputStream(credentialByte);
+				HttpHeaders headers = new HttpHeaders();
+				headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME, type, "achievement"));
+				return ResponseEntity
+						.ok()
+						.headers(headers)
+						.contentType(MediaType.APPLICATION_PDF)
+						.body(new InputStreamResource(bis));
+			}
+		}
+		return null;
+	}
 }
