@@ -285,6 +285,26 @@ public class CommonControllerTest {
     }
 
     @Test
+    public void testGetStudentTranscriptByStudentID() {
+        final UUID studentID = new UUID(1, 1);
+        final String transcriptTypeCode = "TRAN";
+        final String transcriptBody = "Test Certificate Body";
+        byte[] certificateByte = Base64.decodeBase64(transcriptBody.getBytes(StandardCharsets.US_ASCII));
+        ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=student_"+transcriptTypeCode+"_transcript.pdf");
+
+        Mockito.when(commonService.getStudentTranscriptByStudentID(studentID)).thenReturn(
+                ResponseEntity
+                        .ok()
+                        .headers(headers)
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(new InputStreamResource(bis)));
+        commonController.getStudentTranscriptByTypeID(studentID.toString());
+        Mockito.verify(commonService).getStudentTranscriptByStudentID(studentID);
+    }
+
+    @Test
     public void testGetAllStudentTranscriptDistributionList() {
         // UUID
         final UUID studentID = UUID.randomUUID();

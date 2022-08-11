@@ -205,6 +205,15 @@ public class CommonController {
         return commonService.getStudentTranscriptByType(UUID.fromString(studentID),transcriptType,documentStatusCode);
     }
 
+    @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_PSI)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read Student Certificate by Student ID and Certificate Type", description = "Read Student Certificate by Student ID and Certificate Type", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<InputStreamResource> getStudentTranscriptByTypeID(@PathVariable String studentID) {
+        logger.debug("getStudentTranscriptByType :");
+        return commonService.getStudentTranscriptByStudentID(UUID.fromString(studentID));
+    }
+
     @GetMapping(EducGradReportApiConstants.UPDATE_STUDENT_CREDENTIAL)
     @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
