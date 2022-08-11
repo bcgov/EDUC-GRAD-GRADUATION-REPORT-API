@@ -345,7 +345,7 @@ public class CommonService {
 	@Transactional
 	public ResponseEntity<InputStreamResource> getStudentTranscriptByStudentID(UUID studentID) {
 		List<GradStudentTranscripts> studentTranscript = gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.findByStudentID(studentID));
-		if(studentTranscript != null && studentTranscript.get(0).getTranscript() != null) {
+		if(studentTranscript != null && !studentTranscript.isEmpty() && studentTranscript.get(0).getTranscript() != null) {
 			byte[] certificateByte = Base64.decodeBase64(studentTranscript.get(0).getTranscript().getBytes(StandardCharsets.US_ASCII));
 			ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
 			HttpHeaders headers = new HttpHeaders();
