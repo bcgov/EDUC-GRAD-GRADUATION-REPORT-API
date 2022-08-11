@@ -583,6 +583,34 @@ public class CommonServiceTest {
     }
 
     @Test
+    public void testGetStudentTranscriptByStudentID() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        // Certificate Type
+        final TranscriptTypes transcriptTypes = new TranscriptTypes();
+        transcriptTypes.setCode("TEST");
+        transcriptTypes.setDescription("Test Code Name");
+
+        // Student Certificate Types
+        final GradStudentTranscriptsEntity studentTranscript = new GradStudentTranscriptsEntity();
+        studentTranscript.setId(UUID.randomUUID());
+        studentTranscript.setStudentID(studentID);
+        studentTranscript.setTranscript("TEST Certificate Body");
+        studentTranscript.setDocumentStatusCode("COMPL");
+        studentTranscript.setTranscriptTypeCode(transcriptTypes.getCode());
+
+        final DocumentStatusCode documentStatus = new DocumentStatusCode();
+        documentStatus.setCode("COMPL");
+        documentStatus.setDescription("Test Code Name");
+
+        when(gradStudentTranscriptsRepository.findByStudentID(studentID)).thenReturn(List.of(studentTranscript));
+        var result = commonService.getStudentTranscriptByStudentID(studentID);
+        assertThat(result).isNotNull();
+        assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_TRAN_transcript.pdf]");
+        assertThat(result.getBody()).isNotNull();
+    }
+
+    @Test
     public void testGetAllStudentTranscriptDistributionList() {
         // UUID
         final UUID studentID = UUID.randomUUID();
