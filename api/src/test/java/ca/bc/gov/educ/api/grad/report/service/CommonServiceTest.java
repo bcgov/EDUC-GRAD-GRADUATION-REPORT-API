@@ -21,7 +21,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -1060,23 +1063,6 @@ public class CommonServiceTest {
         when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode,reportTypeCode)).thenReturn(Optional.of(ent));
         boolean res = commonService.updateSchoolReports(mincode,reportTypeCode);
         assertThat(res).isTrue();
-    }
-
-    @Test
-    public void testGetAllSchoolReportDistributionList() {
-
-        String mincode = "12313131";
-        // Student Certificate Types
-        final List<SchoolReportDistribution> list = new ArrayList<>();
-        final SchoolReportDistribution credentialDistribution = new SchoolReportDistribution(UUID.randomUUID(),"GRAD",mincode);
-        list.add(credentialDistribution);
-
-
-        when(schoolReportsRepository.findSchoolReportsForPosting()).thenReturn(list);
-        var result = commonService.getAllSchoolReportDistributionList();
-
-        assertThat(result).isNotNull().hasSize(1);
-        assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode);
     }
 
     @Test
