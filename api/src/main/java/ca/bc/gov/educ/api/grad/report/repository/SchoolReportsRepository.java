@@ -1,6 +1,5 @@
 package ca.bc.gov.educ.api.grad.report.repository;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.SchoolReportDistribution;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,6 +22,4 @@ public interface SchoolReportsRepository extends JpaRepository<SchoolReportsEnti
 
 	Optional<SchoolReportsEntity> findBySchoolOfRecordAndReportTypeCode(String schoolOfRecord,String reportTypeCode);
 
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.SchoolReportDistribution(c.id,c.reportTypeCode,c.schoolOfRecord) from SchoolReportsEntity c where c.distributionDate is null or c.distributionDate < c.updateDate")
-	List<SchoolReportDistribution>  findSchoolReportsForPosting();
 }

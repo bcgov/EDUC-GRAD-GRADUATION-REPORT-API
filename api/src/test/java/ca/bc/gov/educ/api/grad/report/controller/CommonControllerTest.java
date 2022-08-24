@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -469,21 +468,6 @@ public class CommonControllerTest {
         Mockito.when(commonService.getAllStudentTranscriptYearlyDistributionList("accessToken")).thenReturn(list);
         commonController.getAllStudentTranscriptYearlyDistribution("accessToken");
         Mockito.verify(commonService).getAllStudentTranscriptYearlyDistributionList("accessToken");
-    }
-
-    @Test
-    public void testGetAllSchoolReportDistributionList() {
-
-        final String mincode = "123131123";
-
-        // Student Certificate Types
-        final List<SchoolReportDistribution> list = new ArrayList<>();
-        final SchoolReportDistribution cred = new SchoolReportDistribution(UUID.randomUUID(),"GRAD",mincode);
-        list.add(cred);
-
-        Mockito.when(commonService.getAllSchoolReportDistributionList()).thenReturn(list);
-        commonController.getAllSchoolReportDistribution();
-        Mockito.verify(commonService).getAllSchoolReportDistributionList();
     }
 
     @Test

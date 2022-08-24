@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -32,8 +31,5 @@ public class SchoolReportsEntity extends BaseEntity {
 	
 	@Column(name = "SCHOOL_OF_RECORD", nullable = false)
     private String schoolOfRecord;
-
-	@Column(name = "DISTRIBUTION_DATE",nullable = true)
-	private Date distributionDate;
 	
 }

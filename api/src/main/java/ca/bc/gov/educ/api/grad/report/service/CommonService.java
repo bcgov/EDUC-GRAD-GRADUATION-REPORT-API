@@ -503,15 +503,10 @@ public class CommonService {
 			SchoolReportsEntity ent = optEntity.get();
 			ent.setUpdateDate(null);
 			ent.setUpdateUser(null);
-			ent.setDistributionDate(new Date());
 			schoolReportsRepository.save(ent);
 			return true;
 		}
 		return false;
-	}
-
-	public List<SchoolReportDistribution> getAllSchoolReportDistributionList() {
-		return schoolReportsRepository.findSchoolReportsForPosting();
 	}
 
 	private School getSchool(String minCode, String accessToken) {
