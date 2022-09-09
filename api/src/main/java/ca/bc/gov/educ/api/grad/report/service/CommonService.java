@@ -61,6 +61,7 @@ public class CommonService {
 	private static final String PDF_FILE_NAME = "inline; filename=student_%s_%s.pdf";
 	private static final String PDF_FILE_NAME_SCHOOL = "inline; filename=%s_%s00_%s.pdf";
 	private static final String COMPLETED = "COMPL";
+	private static final String TRAN = "transcript";
 
     @Transactional
 	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports,boolean isGraduated) {
@@ -340,6 +341,23 @@ public class CommonService {
 	}
 
 
+
+	@Transactional
+	public ResponseEntity<InputStreamResource> getStudentTranscriptByStudentID(UUID studentID) {
+		List<GradStudentTranscripts> studentTranscript = gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.findByStudentID(studentID));
+		if(studentTranscript != null && !studentTranscript.isEmpty() && studentTranscript.get(0).getTranscript() != null) {
+			byte[] certificateByte = Base64.decodeBase64(studentTranscript.get(0).getTranscript().getBytes(StandardCharsets.US_ASCII));
+			ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME,"TRAN",TRAN));
+			return ResponseEntity
+					.ok()
+					.headers(headers)
+					.contentType(MediaType.APPLICATION_PDF)
+					.body(new InputStreamResource(bis));
+		}
+		return null;
+	}
 	@Transactional
 	public ResponseEntity<InputStreamResource> getStudentTranscriptByType(UUID studentID, String transcriptType,String documentStatusCode) {
 		GradStudentTranscripts studentTranscript = gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,transcriptType,documentStatusCode));
@@ -347,7 +365,7 @@ public class CommonService {
 			byte[] certificateByte = Base64.decodeBase64(studentTranscript.getTranscript().getBytes(StandardCharsets.US_ASCII));
 			ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
 			HttpHeaders headers = new HttpHeaders();
-			headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME,transcriptType,"transcript"));
+			headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME,transcriptType,TRAN));
 			return ResponseEntity
 					.ok()
 					.headers(headers)
@@ -485,15 +503,10 @@ public class CommonService {
 			SchoolReportsEntity ent = optEntity.get();
 			ent.setUpdateDate(null);
 			ent.setUpdateUser(null);
-			ent.setDistributionDate(new Date());
 			schoolReportsRepository.save(ent);
 			return true;
 		}
 		return false;
-	}
-
-	public List<SchoolReportDistribution> getAllSchoolReportDistributionList() {
-		return schoolReportsRepository.findSchoolReportsForPosting();
 	}
 
 	private School getSchool(String minCode, String accessToken) {
@@ -523,7 +536,7 @@ public class CommonService {
 				byte[] credentialByte = Base64.decodeBase64(studentTranscript.get(0).getTranscript().getBytes(StandardCharsets.US_ASCII));
 				ByteArrayInputStream bis = new ByteArrayInputStream(credentialByte);
 				HttpHeaders headers = new HttpHeaders();
-				headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME, type, "transcript"));
+				headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME, type, TRAN));
 				return ResponseEntity
 						.ok()
 						.headers(headers)

@@ -205,6 +205,15 @@ public class CommonController {
         return commonService.getStudentTranscriptByType(UUID.fromString(studentID),transcriptType,documentStatusCode);
     }
 
+    @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_PSI)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read Student Certificate by Student ID and Certificate Type", description = "Read Student Certificate by Student ID and Certificate Type", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<InputStreamResource> getStudentTranscriptByTypeID(@PathVariable String studentID) {
+        logger.debug("getStudentTranscriptByType :");
+        return commonService.getStudentTranscriptByStudentID(UUID.fromString(studentID));
+    }
+
     @GetMapping(EducGradReportApiConstants.UPDATE_STUDENT_CREDENTIAL)
     @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
@@ -280,15 +289,6 @@ public class CommonController {
     public ResponseEntity<Boolean> updateSchoolReport(@RequestParam String mincode,@RequestParam String reportTypeCode) {
         logger.debug("updateSchoolReport ");
         return response.GET(commonService.updateSchoolReports(mincode,reportTypeCode));
-    }
-
-    @GetMapping(EducGradReportApiConstants.SCHOOL_REPORT_FOR_POSTING)
-    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
-    @Operation(summary = "Read All Student Transcripts for Distribution", description = "Read All School Reports for Distribution", tags = { "Reports" })
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<SchoolReportDistribution>> getAllSchoolReportDistribution() {
-        logger.debug("getAllSchoolReportDistribution : ");
-        return response.GET(commonService.getAllSchoolReportDistributionList());
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_CREDENTIAL_BUSINESS)
