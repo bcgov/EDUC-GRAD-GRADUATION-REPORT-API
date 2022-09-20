@@ -1,29 +1,23 @@
 package ca.bc.gov.educ.api.grad.report.config;
 
-import ca.bc.gov.educ.api.grad.report.util.MessageHelper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@PropertySource("classpath:messages.properties")
-public class GradReportConfig implements WebMvcConfigurer {
+public class GradReportConfig {
 
-	@Autowired
-	RequestInterceptor requestInterceptor;
+	@Bean
+	public ModelMapper modelMapper() {
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(requestInterceptor);
+		ModelMapper modelMapper = new ModelMapper();
+		return modelMapper;
 	}
 
 	@Bean
-	public MessageHelper messageHelper() {
-		return new MessageHelper();
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
 	}
-
-	
 }

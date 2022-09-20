@@ -78,3 +78,11 @@ endpoint:
   grad-student-api:
     get-students-for-yearly-run: ${GRAD_STUDENT_API}api/v1/student/yearlydistribution
     student-for-special-grad-run-list: ${GRAD_STUDENT_API}api/v1/student/studentlistsearch
+  grad-trax-api:
+    school-by-min-code:
+      url: ${GRAD_TRAX_API}api/v1/trax/school/%s
+
+#Splunk LogHelper
+splunk:
+  log-helper:
+    enabled: ${ENABLE_SPLUNK_LOG_HELPER}

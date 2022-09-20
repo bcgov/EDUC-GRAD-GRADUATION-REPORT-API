@@ -6,8 +6,8 @@ import java.util.Date;
 
 @Data
 public class BaseModel {
-	private String createdBy;	
-	private Date createdTimestamp;	
-	private String updatedBy;	
-	private Date updatedTimestamp;
+	private String createUser;
+	private Date createDate;
+	private String updateUser;
+	private Date updateDate;
 }
