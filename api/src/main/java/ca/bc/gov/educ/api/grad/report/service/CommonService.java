@@ -382,7 +382,9 @@ public class CommonService {
 				GradStudentTranscriptsEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				ent.setDistributionDate(new Date());
+				if(ent.getDistributionDate() == null) {
+					ent.setDistributionDate(new Date());
+				}
 				gradStudentTranscriptsRepository.save(ent);
 				return true;
 			}
@@ -392,7 +394,9 @@ public class CommonService {
 				GradStudentCertificatesEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				ent.setDistributionDate(new Date());
+				if(ent.getDistributionDate() == null) {
+					ent.setDistributionDate(new Date());
+				}
 				gradStudentCertificatesRepository.save(ent);
 				return true;
 			}
