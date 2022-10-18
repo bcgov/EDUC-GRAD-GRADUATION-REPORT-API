@@ -420,11 +420,12 @@ public class CommonControllerTest {
         final UUID studentID = new UUID(1,1);
         final String schoolOfRecord = "123456789";
         final String credentialTypeCode = "TEST";
+        final String activityCode="USERDISTOC";
         final String paperType = "YED4";
         final String documentStatusCode = "TEST";
-        Mockito.when(commonService.updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode)).thenReturn(true);
-        commonController.updateStudentCredential(studentID.toString(),credentialTypeCode,paperType,documentStatusCode);
-        Mockito.verify(commonService).updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode);
+        Mockito.when(commonService.updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode, activityCode)).thenReturn(true);
+        commonController.updateStudentCredential(studentID.toString(),credentialTypeCode,paperType,documentStatusCode, activityCode);
+        Mockito.verify(commonService).updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode, activityCode);
     }
 
     @Test
@@ -432,11 +433,12 @@ public class CommonControllerTest {
         final UUID studentID = new UUID(1,1);
         final String schoolOfRecord = "123456789";
         final String credentialTypeCode = "TEST";
+        final String activityCode="USERDISTOC";
         final String paperType = "YED2";
         final String documentStatusCode = "TEST";
-        Mockito.when(commonService.updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode)).thenReturn(true);
-        commonController.updateStudentCredential(studentID.toString(),credentialTypeCode,paperType,documentStatusCode);
-        Mockito.verify(commonService).updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode);
+        Mockito.when(commonService.updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode, activityCode)).thenReturn(true);
+        commonController.updateStudentCredential(studentID.toString(),credentialTypeCode,paperType,documentStatusCode,activityCode);
+        Mockito.verify(commonService).updateStudentCredential(studentID,credentialTypeCode,paperType,documentStatusCode, activityCode);
     }
 
     @Test

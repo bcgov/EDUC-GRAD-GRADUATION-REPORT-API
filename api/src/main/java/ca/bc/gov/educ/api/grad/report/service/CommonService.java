@@ -375,7 +375,7 @@ public class CommonService {
 		return null;
 	}
 
-	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType,String documentStatusCode) {
+	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType, String documentStatusCode, String activityCode) {
 		if (paperType.equalsIgnoreCase("YED4")) {
 			Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,documentStatusCode);
 			if(optEntity.isPresent()) {
@@ -394,7 +394,7 @@ public class CommonService {
 				GradStudentCertificatesEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				if(ent.getDistributionDate() == null) {
+				if("USERDISTOC".equalsIgnoreCase(activityCode)) {
 					ent.setDistributionDate(new Date());
 				}
 				gradStudentCertificatesRepository.save(ent);
