@@ -690,6 +690,7 @@ public class CommonServiceTest {
     public void testUpdateStudentCredential() {
         UUID studentId = new UUID(1,1);
         String credentialTypeCode = "E";
+        String activityCode="USERDISTOC";
         String paperType="YED4";
         GradStudentTranscriptsEntity ent = new GradStudentTranscriptsEntity();
         ent.setStudentID(studentId);
@@ -699,7 +700,7 @@ public class CommonServiceTest {
         ent.setDocumentStatusCode("COMPL");
 
         when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
-        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL");
+        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL", activityCode);
         assertThat(res).isTrue();
     }
 
@@ -707,6 +708,7 @@ public class CommonServiceTest {
     public void testUpdateStudentCredential_CERT() {
         UUID studentId = new UUID(1,1);
         String credentialTypeCode = "E";
+        String activityCode="USERDISTOC";
         String paperType="YED2";
         GradStudentCertificatesEntity ent = new GradStudentCertificatesEntity();
         ent.setStudentID(studentId);
@@ -716,7 +718,7 @@ public class CommonServiceTest {
         ent.setDocumentStatusCode("COMPL");
 
         when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
-        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL");
+        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL", activityCode);
         assertThat(res).isTrue();
     }
 
