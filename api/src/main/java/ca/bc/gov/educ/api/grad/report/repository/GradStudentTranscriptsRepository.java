@@ -39,7 +39,7 @@ public interface GradStudentTranscriptsRepository extends JpaRepository<GradStud
 	List<StudentCredentialDistribution> findRecordsForUserRequest(List<UUID> subList);
 
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,tran.paperType,c.documentStatusCode) from GradStudentTranscriptsEntity c inner join TranscriptTypesEntity tran on tran.code = c.transcriptTypeCode  where c.studentID in (:subList)")
-	List<StudentCredentialDistribution> findRecordsForUserRequestPenOnly(List<UUID> subList);
+	List<StudentCredentialDistribution> findRecordsForUserRequestByStudentIdOnly(List<UUID> subList);
 
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.SchoolStudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,c.documentStatusCode) from GradStudentTranscriptsEntity c where c.postingDate is null or c.postingDate < c.updateDate")
 	List<SchoolStudentCredentialDistribution>  findByPostingDate();
