@@ -619,12 +619,18 @@ public class CommonServiceTest {
         final UUID studentID = UUID.randomUUID();
 
         // Student Certificate Types
-        final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution credentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"BC1996-IND",studentID,"YED4","COMPL");
-        list.add(credentialDistribution);
+        final List<StudentCredentialDistribution> certificates = new ArrayList<>();
+        final StudentCredentialDistribution certificateCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2","COMPL");
+        certificates.add(certificateCredentialDistribution);
 
+        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(certificates);
 
-        when(gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDate("COMPL")).thenReturn(list);
+        // Student Certificate Types
+        final List<StudentCredentialDistribution> transcripts = new ArrayList<>();
+        final StudentCredentialDistribution transcriptCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"BC1996-IND",studentID,"YED4","COMPL");
+        transcripts.add(transcriptCredentialDistribution);
+
+        when(gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(List.of(studentID))).thenReturn(transcripts);
         var result = commonService.getAllStudentTranscriptDistributionList();
 
         assertThat(result).isNotNull();
