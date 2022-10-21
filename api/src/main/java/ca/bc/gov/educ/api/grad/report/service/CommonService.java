@@ -314,7 +314,12 @@ public class CommonService {
     }
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
-		return gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDate(COMPLETED);
+		List<StudentCredentialDistribution> certificates = getAllStudentCertificateDistributionList();
+		List<UUID> studentIds = new ArrayList<>();
+		for(StudentCredentialDistribution c: certificates) {
+			studentIds.add(c.getStudentID());
+		}
+		return gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(studentIds);
 	}
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptYearlyDistributionList(String accessToken) {
