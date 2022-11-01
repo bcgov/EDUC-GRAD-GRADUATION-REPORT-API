@@ -310,10 +310,16 @@ public class CommonService {
 
 
     public List<StudentCredentialDistribution> getAllStudentCertificateDistributionList() {
-		return gradStudentCertificatesRepository.findByDocumentStatusCodeAndDistributionDate(COMPLETED);
+		return gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate(COMPLETED);
     }
+
 	public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
-		return gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDate(COMPLETED);
+		List<StudentCredentialDistribution> certificates = getAllStudentCertificateDistributionList();
+		List<UUID> studentIds = new ArrayList<>();
+		for(StudentCredentialDistribution c: certificates) {
+			studentIds.add(c.getStudentID());
+		}
+		return gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(studentIds);
 	}
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptYearlyDistributionList(String accessToken) {
@@ -375,14 +381,16 @@ public class CommonService {
 		return null;
 	}
 
-	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType,String documentStatusCode) {
+	public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType, String documentStatusCode, String activityCode) {
 		if (paperType.equalsIgnoreCase("YED4")) {
 			Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID,credentialTypeCode,documentStatusCode);
 			if(optEntity.isPresent()) {
 				GradStudentTranscriptsEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				ent.setDistributionDate(new Date());
+				if(ent.getDistributionDate() == null) {
+					ent.setDistributionDate(new Date());
+				}
 				gradStudentTranscriptsRepository.save(ent);
 				return true;
 			}
@@ -392,7 +400,9 @@ public class CommonService {
 				GradStudentCertificatesEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				ent.setDistributionDate(new Date());
+				if("USERDISTOC".equalsIgnoreCase(activityCode) || ent.getDistributionDate() == null) {
+					ent.setDistributionDate(new Date());
+				}
 				gradStudentCertificatesRepository.save(ent);
 				return true;
 			}
@@ -455,7 +465,7 @@ public class CommonService {
 		for (List<UUID> subList : partitions) {
 			List<StudentCredentialDistribution> scdSubList;
 			if (!studentSearchRequest.getPens().isEmpty()) {
-				scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequestPenOnly(subList);
+				scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(subList);
 			} else {
 				scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
 			}

@@ -619,12 +619,18 @@ public class CommonServiceTest {
         final UUID studentID = UUID.randomUUID();
 
         // Student Certificate Types
-        final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution credentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"BC1996-IND",studentID,"YED4","COMPL");
-        list.add(credentialDistribution);
+        final List<StudentCredentialDistribution> certificates = new ArrayList<>();
+        final StudentCredentialDistribution certificateCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2","COMPL");
+        certificates.add(certificateCredentialDistribution);
 
+        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(certificates);
 
-        when(gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDate("COMPL")).thenReturn(list);
+        // Student Certificate Types
+        final List<StudentCredentialDistribution> transcripts = new ArrayList<>();
+        final StudentCredentialDistribution transcriptCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"BC1996-IND",studentID,"YED4","COMPL");
+        transcripts.add(transcriptCredentialDistribution);
+
+        when(gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(List.of(studentID))).thenReturn(transcripts);
         var result = commonService.getAllStudentTranscriptDistributionList();
 
         assertThat(result).isNotNull();
@@ -644,7 +650,7 @@ public class CommonServiceTest {
         list.add(credentialDistribution);
 
 
-        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndDistributionDate("COMPL")).thenReturn(list);
+        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(list);
         var result = commonService.getAllStudentCertificateDistributionList();
 
         assertThat(result).isNotNull();
@@ -690,6 +696,7 @@ public class CommonServiceTest {
     public void testUpdateStudentCredential() {
         UUID studentId = new UUID(1,1);
         String credentialTypeCode = "E";
+        String activityCode="USERDISTOC";
         String paperType="YED4";
         GradStudentTranscriptsEntity ent = new GradStudentTranscriptsEntity();
         ent.setStudentID(studentId);
@@ -699,7 +706,7 @@ public class CommonServiceTest {
         ent.setDocumentStatusCode("COMPL");
 
         when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
-        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL");
+        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL", activityCode);
         assertThat(res).isTrue();
     }
 
@@ -707,6 +714,7 @@ public class CommonServiceTest {
     public void testUpdateStudentCredential_CERT() {
         UUID studentId = new UUID(1,1);
         String credentialTypeCode = "E";
+        String activityCode="USERDISTOC";
         String paperType="YED2";
         GradStudentCertificatesEntity ent = new GradStudentCertificatesEntity();
         ent.setStudentID(studentId);
@@ -716,7 +724,7 @@ public class CommonServiceTest {
         ent.setDocumentStatusCode("COMPL");
 
         when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
-        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL");
+        boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL", activityCode);
         assertThat(res).isTrue();
     }
 
@@ -786,7 +794,7 @@ public class CommonServiceTest {
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
 
-        Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequestPenOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
 
         List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,null);
         assertThat(result.size()).isEqualTo(1);
