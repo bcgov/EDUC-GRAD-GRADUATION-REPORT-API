@@ -241,7 +241,43 @@ public class CommonServiceTest {
 
         final Optional<GradStudentReportsEntity> optional = Optional.of(gradStudentReportEntity);
 
-        when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optional);
+        when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,"ARCH")).thenReturn(optional);
+        when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
+
+        var result = commonService.saveGradReports(gradStudentReport,isGraduated);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getStudentID()).isEqualTo(studentID);
+        assertThat(result.getGradReportTypeCode()).isEqualTo(gradStudentReport.getGradReportTypeCode());
+    }
+
+    @Test
+    public void testSaveGradReportsWithExistingOne_whenReportClobIsChanged_thenReturnUpdateSuccess() {
+        // ID
+        final UUID reportID = UUID.randomUUID();
+        final UUID studentID = UUID.randomUUID();
+        final String pen = "123456789";
+        final String reportTypeCode = "TEST";
+        boolean isGraduated = false;
+        final String documentStatusCode = "COMPL";
+        final GradStudentReports gradStudentReport = new GradStudentReports();
+        gradStudentReport.setId(reportID);
+        gradStudentReport.setGradReportTypeCode(reportTypeCode);
+        gradStudentReport.setPen(pen);
+        gradStudentReport.setStudentID(studentID);
+        gradStudentReport.setReport("TEST Report Body");
+
+        final GradStudentReportsEntity gradStudentReportEntity = new GradStudentReportsEntity();
+        gradStudentReportEntity.setId(reportID);
+        gradStudentReportEntity.setGradReportTypeCode(reportTypeCode);
+        gradStudentReportEntity.setPen(pen);
+        gradStudentReportEntity.setStudentID(studentID);
+        gradStudentReportEntity.setReport("TEST Report Body 123");
+        gradStudentReportEntity.setReportUpdateDate(new Date());
+
+        final Optional<GradStudentReportsEntity> optional = Optional.of(gradStudentReportEntity);
+
+        when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,"ARCH")).thenReturn(optional);
         when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
         var result = commonService.saveGradReports(gradStudentReport,isGraduated);
@@ -490,18 +526,18 @@ public class CommonServiceTest {
         gradStudentTranscripts.setId(reportID);
         gradStudentTranscripts.setTranscriptTypeCode(reportTypeCode);
         gradStudentTranscripts.setStudentID(studentID);
-        gradStudentTranscripts.setTranscript("TEST Report Body");
+        gradStudentTranscripts.setTranscript("TEST Report Body 123");
 
         final GradStudentTranscriptsEntity gradStudentTranscriptsEntity = new GradStudentTranscriptsEntity();
         gradStudentTranscriptsEntity.setId(reportID);
         gradStudentTranscriptsEntity.setTranscriptTypeCode(reportTypeCode);
         gradStudentTranscriptsEntity.setStudentID(studentID);
-        gradStudentTranscriptsEntity.setTranscript("TEST Report Body");
+        gradStudentTranscriptsEntity.setTranscript("TEST Report Body 456");
         gradStudentTranscriptsEntity.setTranscriptUpdateDate(new Date());
 
         final Optional<GradStudentTranscriptsEntity> optional = Optional.of(gradStudentTranscriptsEntity);
 
-        when(this.gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optional);
+        when(this.gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,"ARCH")).thenReturn(optional);
         when(this.gradStudentTranscriptsRepository.save(any(GradStudentTranscriptsEntity.class))).thenReturn(gradStudentTranscriptsEntity);
 
         var result = commonService.saveGradTranscripts(gradStudentTranscripts,isGraduated);

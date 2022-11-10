@@ -66,9 +66,9 @@ public class CommonService {
     @Transactional
 	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports,boolean isGraduated) {
 		GradStudentReportsEntity toBeSaved = gradStudentReportsTransformer.transformToEntity(gradStudentReports);
-		Optional<GradStudentReportsEntity> existingEnity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(gradStudentReports.getStudentID(), gradStudentReports.getGradReportTypeCode(),"ARCH");
-		if(existingEnity.isPresent()) {
-			GradStudentReportsEntity gradEntity = existingEnity.get();
+		Optional<GradStudentReportsEntity> existingEntity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(gradStudentReports.getStudentID(), gradStudentReports.getGradReportTypeCode(),"ARCH");
+		if(existingEntity.isPresent()) {
+			GradStudentReportsEntity gradEntity = existingEntity.get();
 			if(isGraduated && gradEntity.getDocumentStatusCode().equals("IP")) {
 				gradEntity.setDocumentStatusCode(COMPLETED);
 				
@@ -576,11 +576,11 @@ public class CommonService {
 
 	private boolean isClobDataChanged(String currentBase64, String newBase64) {
 		if (currentBase64 == null || newBase64 == null) {
-			return false;
+			return true;
 		}
 		if (currentBase64.length() != newBase64.length()) {
-			return false;
+			return true;
 		}
-		return currentBase64.equals(newBase64);
+		return !currentBase64.equals(newBase64);
 	}
 }
