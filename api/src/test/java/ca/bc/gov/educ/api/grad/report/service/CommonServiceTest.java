@@ -21,10 +21,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -204,11 +201,12 @@ public class CommonServiceTest {
         gradStudentReportEntity.setPen(pen);
         gradStudentReportEntity.setStudentID(studentID);
         gradStudentReportEntity.setReport("TEST Report Body");
+        gradStudentReportEntity.setReportUpdateDate(new Date());
 
         final Optional<GradStudentReportsEntity> optionalEmpty = Optional.empty();
 
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optionalEmpty);
-        when(this.gradStudentReportsRepository.save(gradStudentReportEntity)).thenReturn(gradStudentReportEntity);
+        when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
         var result = commonService.saveGradReports(gradStudentReport,isGraduated);
 
@@ -239,11 +237,12 @@ public class CommonServiceTest {
         gradStudentReportEntity.setPen(pen);
         gradStudentReportEntity.setStudentID(studentID);
         gradStudentReportEntity.setReport("TEST Report Body");
+        gradStudentReportEntity.setReportUpdateDate(new Date());
 
         final Optional<GradStudentReportsEntity> optional = Optional.of(gradStudentReportEntity);
 
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optional);
-        when(this.gradStudentReportsRepository.save(gradStudentReportEntity)).thenReturn(gradStudentReportEntity);
+        when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
         var result = commonService.saveGradReports(gradStudentReport,isGraduated);
 
@@ -455,27 +454,28 @@ public class CommonServiceTest {
         final String reportTypeCode = "TEST";
         boolean isGraduated = false;
         final String documentStatusCode="ARCH";
-        final GradStudentTranscripts gradStudentReport = new GradStudentTranscripts();
-        gradStudentReport.setTranscriptTypeCode(reportTypeCode);
-        gradStudentReport.setStudentID(studentID);
-        gradStudentReport.setTranscript("TEST Report Body");
+        final GradStudentTranscripts gradStudentTranscripts = new GradStudentTranscripts();
+        gradStudentTranscripts.setTranscriptTypeCode(reportTypeCode);
+        gradStudentTranscripts.setStudentID(studentID);
+        gradStudentTranscripts.setTranscript("TEST Report Body");
 
-        final GradStudentTranscriptsEntity gradStudentReportEntity = new GradStudentTranscriptsEntity();
-        gradStudentReportEntity.setTranscriptTypeCode(reportTypeCode);
+        final GradStudentTranscriptsEntity gradStudentTranscriptsEntity = new GradStudentTranscriptsEntity();
+        gradStudentTranscriptsEntity.setTranscriptTypeCode(reportTypeCode);
 
-        gradStudentReportEntity.setStudentID(studentID);
-        gradStudentReportEntity.setTranscript("TEST Report Body");
+        gradStudentTranscriptsEntity.setStudentID(studentID);
+        gradStudentTranscriptsEntity.setTranscript("TEST Report Body");
+        gradStudentTranscriptsEntity.setTranscriptUpdateDate(new Date());
 
         final Optional<GradStudentTranscriptsEntity> optionalEmpty = Optional.empty();
 
         when(this.gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optionalEmpty);
-        when(this.gradStudentTranscriptsRepository.save(gradStudentReportEntity)).thenReturn(gradStudentReportEntity);
+        when(this.gradStudentTranscriptsRepository.save(any(GradStudentTranscriptsEntity.class))).thenReturn(gradStudentTranscriptsEntity);
 
-        var result = commonService.saveGradTranscripts(gradStudentReport,isGraduated);
+        var result = commonService.saveGradTranscripts(gradStudentTranscripts,isGraduated);
 
         assertThat(result).isNotNull();
         assertThat(result.getStudentID()).isEqualTo(studentID);
-        assertThat(result.getTranscriptTypeCode()).isEqualTo(gradStudentReport.getTranscriptTypeCode());
+        assertThat(result.getTranscriptTypeCode()).isEqualTo(gradStudentTranscripts.getTranscriptTypeCode());
     }
 
     @Test
@@ -497,11 +497,12 @@ public class CommonServiceTest {
         gradStudentTranscriptsEntity.setTranscriptTypeCode(reportTypeCode);
         gradStudentTranscriptsEntity.setStudentID(studentID);
         gradStudentTranscriptsEntity.setTranscript("TEST Report Body");
+        gradStudentTranscriptsEntity.setTranscriptUpdateDate(new Date());
 
         final Optional<GradStudentTranscriptsEntity> optional = Optional.of(gradStudentTranscriptsEntity);
 
         when(this.gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optional);
-        when(this.gradStudentTranscriptsRepository.save(gradStudentTranscriptsEntity)).thenReturn(gradStudentTranscriptsEntity);
+        when(this.gradStudentTranscriptsRepository.save(any(GradStudentTranscriptsEntity.class))).thenReturn(gradStudentTranscriptsEntity);
 
         var result = commonService.saveGradTranscripts(gradStudentTranscripts,isGraduated);
 
@@ -1087,8 +1088,8 @@ public class CommonServiceTest {
         final SchoolStudentCredentialDistribution credentialDistribution2 = new SchoolStudentCredentialDistribution(UUID.randomUUID(),"ACHV",studentID,"COMPL");
         list2.add(credentialDistribution2);
 
-        when(gradStudentReportsRepository.findByPostingDate()).thenReturn(list);
-        when(gradStudentTranscriptsRepository.findByPostingDate()).thenReturn(list2);
+        when(gradStudentReportsRepository.findByReportUpdateDate()).thenReturn(list);
+        when(gradStudentTranscriptsRepository.findByTranscriptUpdateDate()).thenReturn(list2);
         var result = commonService.getAllStudentTranscriptAndReportsPosting();
 
         assertThat(result).isNotNull().hasSize(2);
