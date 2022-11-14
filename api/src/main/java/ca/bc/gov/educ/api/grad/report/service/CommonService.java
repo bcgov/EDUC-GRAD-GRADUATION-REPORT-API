@@ -489,8 +489,8 @@ public class CommonService {
 				.retrieve()
 				.bodyToMono(GraduationStudentRecordSearchResult.class)
 				.block();
-		if(res != null && !res.getGraduationStudentRecords().isEmpty())
-			return res.getGraduationStudentRecords().stream().map(GraduationStudentRecord::getStudentID).collect(Collectors.toList());
+		if(res != null && !res.getStudentIDs().isEmpty())
+			return res.getStudentIDs();
 		return new ArrayList<>();
 	}
 

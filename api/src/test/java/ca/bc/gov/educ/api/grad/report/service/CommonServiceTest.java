@@ -771,12 +771,12 @@ public class CommonServiceTest {
         String credentialType = "OC";
         GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
 
-        List<GraduationStudentRecord> studList= new ArrayList<>();
+        List<UUID> studList= new ArrayList<>();
         GraduationStudentRecord rec = new GraduationStudentRecord();
         rec.setLegalFirstName("asda");
         rec.setStudentID(new UUID(1,1));
-        studList.add(rec);
-        res.setGraduationStudentRecords(studList);
+        studList.add(rec.getStudentID());
+        res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
         StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
@@ -805,12 +805,12 @@ public class CommonServiceTest {
         String credentialType = "OT";
         GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
 
-        List<GraduationStudentRecord> studList= new ArrayList<>();
+        List<UUID> studList= new ArrayList<>();
         GraduationStudentRecord rec = new GraduationStudentRecord();
         rec.setLegalFirstName("asda");
         rec.setStudentID(new UUID(1,1));
-        studList.add(rec);
-        res.setGraduationStudentRecords(studList);
+        studList.add(rec.getStudentID());
+        res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
         StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
@@ -844,12 +844,12 @@ public class CommonServiceTest {
         String credentialType = "OT";
         GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
 
-        List<GraduationStudentRecord> studList= new ArrayList<>();
+        List<UUID> studList= new ArrayList<>();
         GraduationStudentRecord rec = new GraduationStudentRecord();
         rec.setLegalFirstName("asda");
         rec.setStudentID(new UUID(1,1));
-        studList.add(rec);
-        res.setGraduationStudentRecords(studList);
+        studList.add(rec.getStudentID());
+        res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
         StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
