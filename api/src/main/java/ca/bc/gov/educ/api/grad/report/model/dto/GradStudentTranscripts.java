@@ -18,6 +18,6 @@ public class GradStudentTranscripts extends BaseModel {
 	private Date distributionDate;
 	private String documentStatusCode;
 	private String documentStatusLabel;
-	private Date postingDate;
+	private Date transcriptUpdateDate;
 	private boolean overwrite = false;
 }

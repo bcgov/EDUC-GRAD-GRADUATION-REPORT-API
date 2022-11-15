@@ -19,5 +19,5 @@ public class GradStudentReports extends BaseModel {
 	private Date distributionDate;
 	private String documentStatusCode;
 	private String documentStatusLabel;
-	private Date postingDate;
+	private Date reportUpdateDate;
 }
