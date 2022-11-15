@@ -17,21 +17,21 @@ public class GradStudentTranscriptsTransformer {
     @Autowired
     ModelMapper modelMapper;
 
-    public GradStudentTranscripts transformToDTO (GradStudentTranscriptsEntity gradStudentReportEntity) {
-    	return modelMapper.map(gradStudentReportEntity, GradStudentTranscripts.class);
+    public GradStudentTranscripts transformToDTO (GradStudentTranscriptsEntity gradStudentTranscriptsEntity) {
+    	return modelMapper.map(gradStudentTranscriptsEntity, GradStudentTranscripts.class);
     }
 
-    public GradStudentTranscripts transformToDTO ( Optional<GradStudentTranscriptsEntity> gradStudentReportEntity ) {
+    public GradStudentTranscripts transformToDTO ( Optional<GradStudentTranscriptsEntity> gradStudentTranscriptsEntity ) {
     	GradStudentTranscriptsEntity cae = new GradStudentTranscriptsEntity();
-        if (gradStudentReportEntity.isPresent())
-            cae = gradStudentReportEntity.get();
+        if (gradStudentTranscriptsEntity.isPresent())
+            cae = gradStudentTranscriptsEntity.get();
         return modelMapper.map(cae, GradStudentTranscripts.class);
     }
 
-	public List<GradStudentTranscripts> transformToDTO (Iterable<GradStudentTranscriptsEntity> gradCertificateTypesEntities ) {
+	public List<GradStudentTranscripts> transformToDTO (Iterable<GradStudentTranscriptsEntity> gradStudentTranscriptsEntities ) {
 		List<GradStudentTranscripts> gradCertificateTypesList = new ArrayList<>();
-        for (GradStudentTranscriptsEntity gradCertificateTypesEntity : gradCertificateTypesEntities) {
-        	GradStudentTranscripts gradCertificateTypes = modelMapper.map(gradCertificateTypesEntity, GradStudentTranscripts.class);
+        for (GradStudentTranscriptsEntity gradTranscriptsEntity : gradStudentTranscriptsEntities) {
+        	GradStudentTranscripts gradCertificateTypes = modelMapper.map(gradTranscriptsEntity, GradStudentTranscripts.class);
         	gradCertificateTypesList.add(gradCertificateTypes);
         }
         return gradCertificateTypesList;

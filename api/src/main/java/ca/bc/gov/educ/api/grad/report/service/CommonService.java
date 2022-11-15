@@ -66,18 +66,20 @@ public class CommonService {
     @Transactional
 	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports,boolean isGraduated) {
 		GradStudentReportsEntity toBeSaved = gradStudentReportsTransformer.transformToEntity(gradStudentReports);
-		Optional<GradStudentReportsEntity> existingEnity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(gradStudentReports.getStudentID(), gradStudentReports.getGradReportTypeCode(),"ARCH");
-		if(existingEnity.isPresent()) {
-			GradStudentReportsEntity gradEntity = existingEnity.get();
+		Optional<GradStudentReportsEntity> existingEntity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(gradStudentReports.getStudentID(), gradStudentReports.getGradReportTypeCode(),"ARCH");
+		if(existingEntity.isPresent()) {
+			GradStudentReportsEntity gradEntity = existingEntity.get();
 			if(isGraduated && gradEntity.getDocumentStatusCode().equals("IP")) {
 				gradEntity.setDocumentStatusCode(COMPLETED);
 				
 			}
-			if(gradStudentReports.getReport() != null) {
+			if(gradStudentReports.getReport() != null && isClobDataChanged(gradEntity.getReport(), gradStudentReports.getReport())) {
+				gradEntity.setReportUpdateDate(new Date());
 				gradEntity.setReport(gradStudentReports.getReport());
 			}
 			return gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.save(gradEntity));
 		}else {
+			toBeSaved.setReportUpdateDate(new Date());
 			return gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.save(toBeSaved));
 		}
 	}
@@ -85,18 +87,20 @@ public class CommonService {
 	@Transactional
 	public GradStudentTranscripts saveGradTranscripts(GradStudentTranscripts gradStudentTranscripts, boolean isGraduated) {
 		GradStudentTranscriptsEntity toBeSaved = gradStudentTranscriptsTransformer.transformToEntity(gradStudentTranscripts);
-		Optional<GradStudentTranscriptsEntity> existingEnity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(gradStudentTranscripts.getStudentID(), gradStudentTranscripts.getTranscriptTypeCode(),"ARCH");
-		if(existingEnity.isPresent()) {
-			GradStudentTranscriptsEntity gradEntity = existingEnity.get();
+		Optional<GradStudentTranscriptsEntity> existingEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(gradStudentTranscripts.getStudentID(), gradStudentTranscripts.getTranscriptTypeCode(),"ARCH");
+		if(existingEntity.isPresent()) {
+			GradStudentTranscriptsEntity gradEntity = existingEntity.get();
 			if(isGraduated && gradEntity.getDocumentStatusCode().equals("IP")) {
 				gradEntity.setDocumentStatusCode(COMPLETED);
 
 			}
-			if(gradStudentTranscripts.getTranscript() != null) {
+			if(gradStudentTranscripts.getTranscript() != null && isClobDataChanged(gradEntity.getTranscript(), gradStudentTranscripts.getTranscript())) {
+				gradEntity.setTranscriptUpdateDate(new Date());
 				gradEntity.setTranscript(gradStudentTranscripts.getTranscript());
 			}
 			return gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.save(gradEntity));
 		}else {
+			toBeSaved.setTranscriptUpdateDate(new Date());
 			return gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.save(toBeSaved));
 		}
 	}
@@ -417,7 +421,7 @@ public class CommonService {
 				GradStudentReportsEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				ent.setPostingDate(new Date());
+				ent.setReportUpdateDate(new Date());
 				gradStudentReportsRepository.save(ent);
 				return true;
 			}
@@ -427,7 +431,7 @@ public class CommonService {
 				GradStudentTranscriptsEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				ent.setPostingDate(new Date());
+				ent.setTranscriptUpdateDate(new Date());
 				gradStudentTranscriptsRepository.save(ent);
 				return true;
 			}
@@ -485,8 +489,8 @@ public class CommonService {
 				.retrieve()
 				.bodyToMono(GraduationStudentRecordSearchResult.class)
 				.block();
-		if(res != null && !res.getGraduationStudentRecords().isEmpty())
-			return res.getGraduationStudentRecords().stream().map(GraduationStudentRecord::getStudentID).collect(Collectors.toList());
+		if(res != null && !res.getStudentIDs().isEmpty())
+			return res.getStudentIDs();
 		return new ArrayList<>();
 	}
 
@@ -533,8 +537,8 @@ public class CommonService {
 
 	public List<SchoolStudentCredentialDistribution> getAllStudentTranscriptAndReportsPosting() {
 		List<SchoolStudentCredentialDistribution> postingList = new ArrayList<>();
-		postingList.addAll(gradStudentReportsRepository.findByPostingDate());
-		postingList.addAll(gradStudentTranscriptsRepository.findByPostingDate());
+		postingList.addAll(gradStudentReportsRepository.findByReportUpdateDate());
+		postingList.addAll(gradStudentTranscriptsRepository.findByTranscriptUpdateDate());
 		return postingList;
 	}
 
@@ -568,5 +572,15 @@ public class CommonService {
 			}
 		}
 		return null;
+	}
+
+	private boolean isClobDataChanged(String currentBase64, String newBase64) {
+		if (currentBase64 == null || newBase64 == null) {
+			return true;
+		}
+		if (currentBase64.length() != newBase64.length()) {
+			return true;
+		}
+		return !currentBase64.equals(newBase64);
 	}
 }
