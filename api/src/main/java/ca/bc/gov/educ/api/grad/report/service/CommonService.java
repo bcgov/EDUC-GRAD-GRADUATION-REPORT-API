@@ -86,6 +86,9 @@ public class CommonService {
 
 	@Transactional
 	public GradStudentTranscripts saveGradTranscripts(GradStudentTranscripts gradStudentTranscripts, boolean isGraduated) {
+    	if(gradStudentTranscripts.isOverwrite()) {
+			gradStudentTranscriptsRepository.deleteByStudentID(gradStudentTranscripts.getStudentID());
+		}
 		GradStudentTranscriptsEntity toBeSaved = gradStudentTranscriptsTransformer.transformToEntity(gradStudentTranscripts);
 		Optional<GradStudentTranscriptsEntity> existingEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(gradStudentTranscripts.getStudentID(), gradStudentTranscripts.getTranscriptTypeCode(),"ARCH");
 		if(existingEntity.isPresent()) {
