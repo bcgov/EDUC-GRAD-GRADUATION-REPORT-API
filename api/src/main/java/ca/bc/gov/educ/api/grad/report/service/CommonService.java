@@ -29,7 +29,6 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -395,9 +394,7 @@ public class CommonService {
 				GradStudentTranscriptsEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				if(ent.getDistributionDate() == null) {
-					ent.setDistributionDate(new Date());
-				}
+				ent.setDistributionDate(new Date());
 				gradStudentTranscriptsRepository.save(ent);
 				return true;
 			}
@@ -407,9 +404,7 @@ public class CommonService {
 				GradStudentCertificatesEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				if("USERDISTOC".equalsIgnoreCase(activityCode) || ent.getDistributionDate() == null) {
-					ent.setDistributionDate(new Date());
-				}
+				ent.setDistributionDate(new Date());
 				gradStudentCertificatesRepository.save(ent);
 				return true;
 			}
