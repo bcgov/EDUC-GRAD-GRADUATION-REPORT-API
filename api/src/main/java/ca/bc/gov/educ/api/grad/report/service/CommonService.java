@@ -404,7 +404,7 @@ public class CommonService {
 				GradStudentCertificatesEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				if("USERDISTOC".equalsIgnoreCase(activityCode) || ent.getDistributionDate() == null) {
+				if(ent.getDistributionDate() == null) {
 					ent.setDistributionDate(new Date());
 				}
 				gradStudentCertificatesRepository.save(ent);
