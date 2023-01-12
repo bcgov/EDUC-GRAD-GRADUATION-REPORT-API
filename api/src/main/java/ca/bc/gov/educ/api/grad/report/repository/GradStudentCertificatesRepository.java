@@ -16,6 +16,7 @@ public interface GradStudentCertificatesRepository extends JpaRepository<GradStu
 
 	List<GradStudentCertificatesEntity> findByStudentID(UUID studentID);
 	List<GradStudentCertificatesEntity> findByStudentIDAndDocumentStatusCodeNot(UUID studentID,String documentStatusCode);
+	List<GradStudentCertificatesEntity> findByStudentIDAndGradCertificateTypeCodeIn(UUID studentID, List<String> gradCertificateTypeCodes);
 
 	Optional<GradStudentCertificatesEntity> findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(UUID studentID,String certificateTypeCode,String documentStatusCode);
    	
