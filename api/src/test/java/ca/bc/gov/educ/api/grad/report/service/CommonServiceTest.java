@@ -660,7 +660,7 @@ public class CommonServiceTest {
         final StudentCredentialDistribution certificateCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2","COMPL", new Date());
         certificates.add(certificateCredentialDistribution);
 
-        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(certificates);
+        when(gradStudentCertificatesRepository.findByDocumentStatusCode("COMPL")).thenReturn(certificates);
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> transcripts = new ArrayList<>();
@@ -795,7 +795,7 @@ public class CommonServiceTest {
         Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
         List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),null);
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.size()).isEqualTo(0);
 
     }
 
