@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -310,7 +311,7 @@ public class CommonControllerTest {
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL");
+        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
         Mockito.when(commonService.getAllStudentTranscriptDistributionList()).thenReturn(list);
@@ -325,7 +326,7 @@ public class CommonControllerTest {
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL");
+        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
         Mockito.when(commonService.getAllStudentCertificateDistributionList()).thenReturn(list);
@@ -451,7 +452,7 @@ public class CommonControllerTest {
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL");
+        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
         Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,"accessToken")).thenReturn(list);
@@ -464,7 +465,7 @@ public class CommonControllerTest {
         // Student Certificate Types
         final UUID studentID = new UUID(1,1);
         final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL");
+        final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
         Mockito.when(commonService.getAllStudentTranscriptYearlyDistributionList("accessToken")).thenReturn(list);
