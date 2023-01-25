@@ -48,6 +48,7 @@ public class EducGradReportApiConstants {
     public static final String STUDENT_TRANSCRIPT_BY_STUDENTID = "/studenttranscript/{studentID}";
     public static final String STUDENT_REPORTS_BY_STUDENTID = "/studentreport/{studentID}";
     public static final String STUDENT_TRANSCRIPT_PSI = "psi/studenttranscript/{studentID}";
+    public static final String CHECK_SCCP_CERTIFICATE_EXISTS = "/check-sccp-certificate-exists";
 
     public static final String STUDENT_CREDENTIAL_BUSINESS = "business/studentcredential/{studentID}/{type}";
 

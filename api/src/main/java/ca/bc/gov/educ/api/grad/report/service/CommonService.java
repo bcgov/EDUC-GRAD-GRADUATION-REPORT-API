@@ -61,6 +61,7 @@ public class CommonService {
 	private static final String PDF_FILE_NAME_SCHOOL = "inline; filename=%s_%s00_%s.pdf";
 	private static final String COMPLETED = "COMPL";
 	private static final String TRAN = "transcript";
+	private static final List<String> SCCP_CERT_TYPES = Arrays.asList("SC", "SCF", "SCI");
 
     @Transactional
 	public GradStudentReports saveGradReports(GradStudentReports gradStudentReports,boolean isGraduated) {
@@ -156,6 +157,11 @@ public class CommonService {
 	public boolean getStudentReport(String reportType) {
 		List<GradStudentReportsEntity> gradList = gradStudentReportsRepository.existsByReportTypeCode(reportType);
 		return !gradList.isEmpty();
+	}
+
+	public boolean checkStudentCertificateExistsForSCCP(UUID studentID) {
+    	List<GradStudentCertificatesEntity> gradList = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeIn(studentID, SCCP_CERT_TYPES);
+    	return !gradList.isEmpty();
 	}
 
 	@Transactional

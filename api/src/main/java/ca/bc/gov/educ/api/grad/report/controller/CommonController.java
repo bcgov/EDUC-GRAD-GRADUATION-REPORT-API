@@ -88,6 +88,15 @@ public class CommonController {
         logger.debug("getStudentCertificates : ");
         return commonService.getAllStudentCertificateList(UUID.fromString(studentID));
     }
+
+    @GetMapping(EducGradReportApiConstants.CHECK_SCCP_CERTIFICATE_EXISTS)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Check if SCCP Student Certificate exists or not", description = "Check if SCCP Student Certificate exists or not", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Boolean> existsStudentCertificateForSCCP(@RequestParam(value = "studentID") String studentID) {
+        logger.debug("existsStudentCertificateForSCCP : ");
+        return response.GET(commonService.checkStudentCertificateExistsForSCCP(UUID.fromString(studentID)));
+    }
     
     @PostMapping (EducGradReportApiConstants.STUDENT_CERTIFICATE)
     @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_CERTIFICATES)

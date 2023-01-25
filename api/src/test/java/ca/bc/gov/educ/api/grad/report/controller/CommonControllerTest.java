@@ -492,4 +492,12 @@ public class CommonControllerTest {
         commonController.getStudentCredentialByType(studentID.toString(), type);
         Mockito.verify(commonService).getStudentCredentialByType(studentID, type);
     }
+
+    @Test
+    public void testExistsStudentCertificateForSCCP() {
+        final UUID studentID = new UUID(1, 1);
+        Mockito.when(commonService.checkStudentCertificateExistsForSCCP(studentID)).thenReturn(Boolean.TRUE);
+        commonController.existsStudentCertificateForSCCP(studentID.toString());
+        Mockito.verify(commonService).checkStudentCertificateExistsForSCCP(studentID);
+    }
 }

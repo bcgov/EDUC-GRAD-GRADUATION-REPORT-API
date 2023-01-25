@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -1214,5 +1215,33 @@ public class CommonServiceTest {
         final String type = "GRAD";
         var result = commonService.getStudentCredentialByType(studentID, type);
         assertThat(result).isNull();
+    }
+
+    @Test
+    public void testCheckStudentCertificateExistsForSCCP_without_SCCP_Certificate() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String type = "GRAD";
+
+        when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeIn(eq(studentID), any())).thenReturn(new ArrayList<>());
+
+        var result = commonService.checkStudentCertificateExistsForSCCP(studentID);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void testCheckStudentCertificateExistsForSCCP_with_SCCP_Certificate() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+
+        GradStudentCertificatesEntity gradStudentCertificates = new GradStudentCertificatesEntity();
+        gradStudentCertificates.setId(UUID.randomUUID());
+        gradStudentCertificates.setStudentID(studentID);
+        gradStudentCertificates.setGradCertificateTypeCode("SC");
+
+        when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeIn(eq(studentID), any())).thenReturn(Arrays.asList(gradStudentCertificates));
+
+        var result = commonService.checkStudentCertificateExistsForSCCP(studentID);
+        assertThat(result).isTrue();
     }
 }
