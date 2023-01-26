@@ -455,7 +455,7 @@ public class CommonService {
 			if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
 				processCertificate(partitions,scdList,credentialType);
 			} else if (credentialType.equalsIgnoreCase("OT") || credentialType.equalsIgnoreCase("RT")) {
-				processTranscript(partitions,studentSearchRequest,scdList,credentialType);
+				processTranscript(partitions,studentSearchRequest,scdList);
 			}
 		}
 		return scdList;
@@ -471,7 +471,7 @@ public class CommonService {
 			}
 		}
 	}
-	private void processTranscript(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList, String credentialType) {
+	private void processTranscript(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList) {
 		for (List<UUID> subList : partitions) {
 			List<StudentCredentialDistribution> scdSubList;
 			if (!studentSearchRequest.getPens().isEmpty()) {
