@@ -484,7 +484,8 @@ public class CommonService {
 			}
 		}
 	}
-	private List<UUID> getStudentsForSpecialGradRun(StudentSearchRequest req, String accessToken) {
+
+	public  List<UUID> getStudentsForSpecialGradRun(StudentSearchRequest req, String accessToken) {
 		GraduationStudentRecordSearchResult res = this.webClient.post()
 				.uri(constants.getGradStudentApiStudentForSpcGradListUrl())
 				.headers(h -> {

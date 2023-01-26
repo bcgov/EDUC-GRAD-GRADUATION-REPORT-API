@@ -801,6 +801,36 @@ public class CommonServiceTest {
     }
 
     @Test
+    public void testGetStudentCredentialsForSpecialGradRun() {
+
+        List<UUID> studentList = new ArrayList<>();
+
+        GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
+
+        StudentSearchRequest req = new StudentSearchRequest();
+        List<String> penList = new ArrayList<>();
+        penList.add("13123111");
+        req.setPens(penList);
+
+        GraduationStudentRecord rec = new GraduationStudentRecord();
+        rec.setLegalFirstName("asda");
+        rec.setStudentID(new UUID(1,1));
+        studentList.add(rec.getStudentID());
+        res.setStudentIDs(studentList);
+
+        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+
+        List<UUID> result = commonService.getStudentsForSpecialGradRun(req,"accessToken");
+        assertThat(result.size()).isEqualTo(1);
+
+    }
+
+    @Test
     public void testGetStudentCredentialsForUserRequestDisRun_OT() {
 
         String credentialType = "OT";
