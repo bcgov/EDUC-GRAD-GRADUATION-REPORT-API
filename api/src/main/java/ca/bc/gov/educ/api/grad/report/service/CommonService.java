@@ -326,7 +326,7 @@ public class CommonService {
     }
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
-		List<StudentCredentialDistribution> certificates = getAllStudentCertificateDistributionList();
+		List<StudentCredentialDistribution> certificates = gradStudentCertificatesRepository.findByDocumentStatusCode(COMPLETED);
 		List<UUID> studentIds = new ArrayList<>();
 		for(StudentCredentialDistribution c: certificates) {
 			studentIds.add(c.getStudentID());
@@ -357,8 +357,6 @@ public class CommonService {
 		return scdList;
 
 	}
-
-
 
 	@Transactional
 	public ResponseEntity<InputStreamResource> getStudentTranscriptByStudentID(UUID studentID) {
@@ -410,7 +408,7 @@ public class CommonService {
 				GradStudentCertificatesEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				if(ent.getDistributionDate() == null) {
+				if(ent.getDistributionDate() == null || "OC".equalsIgnoreCase(credentialTypeCode)) {
 					ent.setDistributionDate(new Date());
 				}
 				gradStudentCertificatesRepository.save(ent);
@@ -455,7 +453,7 @@ public class CommonService {
 				partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
 			}
 			if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
-				processCertificate(partitions,scdList);
+				processCertificate(partitions,scdList,credentialType);
 			} else if (credentialType.equalsIgnoreCase("OT") || credentialType.equalsIgnoreCase("RT")) {
 				processTranscript(partitions,studentSearchRequest,scdList);
 			}
@@ -463,10 +461,12 @@ public class CommonService {
 		return scdList;
 	}
 
-	private void processCertificate(List<List<UUID>> partitions, List<StudentCredentialDistribution> scdList) {
+	private void processCertificate(List<List<UUID>> partitions, List<StudentCredentialDistribution> scdList, String credentialType) {
 		for (List<UUID> subList : partitions) {
 			List<StudentCredentialDistribution> scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
 			if (!scdSubList.isEmpty()) {
+				scdSubList.removeIf(p->"RC".equalsIgnoreCase(credentialType) && p.getDistributionDate() == null);
+				scdSubList.removeIf(p->"OC".equalsIgnoreCase(credentialType) && p.getDistributionDate() != null);
 				scdList.addAll(scdSubList);
 			}
 		}
@@ -484,7 +484,8 @@ public class CommonService {
 			}
 		}
 	}
-	private List<UUID> getStudentsForSpecialGradRun(StudentSearchRequest req, String accessToken) {
+
+	public  List<UUID> getStudentsForSpecialGradRun(StudentSearchRequest req, String accessToken) {
 		GraduationStudentRecordSearchResult res = this.webClient.post()
 				.uri(constants.getGradStudentApiStudentForSpcGradListUrl())
 				.headers(h -> {
