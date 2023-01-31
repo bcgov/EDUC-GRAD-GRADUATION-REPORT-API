@@ -322,7 +322,7 @@ public class CommonService {
 
 
     public List<StudentCredentialDistribution> getAllStudentCertificateDistributionList() {
-		return gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate(COMPLETED);
+		return gradStudentCertificatesRepository.findByDocumentStatusCode(COMPLETED);
     }
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
