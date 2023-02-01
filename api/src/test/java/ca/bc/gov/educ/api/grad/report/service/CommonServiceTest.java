@@ -688,7 +688,7 @@ public class CommonServiceTest {
         list.add(credentialDistribution);
 
 
-        when(gradStudentCertificatesRepository.findByDocumentStatusCode("COMPL")).thenReturn(list);
+        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(list);
         var result = commonService.getAllStudentCertificateDistributionList();
 
         assertThat(result).isNotNull();
@@ -796,7 +796,7 @@ public class CommonServiceTest {
         Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
         List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),null);
-        assertThat(result).isEmpty();
+        assertThat(result).isNotEmpty();
 
     }
 
