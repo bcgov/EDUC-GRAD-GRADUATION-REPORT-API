@@ -688,7 +688,7 @@ public class CommonServiceTest {
         list.add(credentialDistribution);
 
 
-        when(gradStudentCertificatesRepository.findByDocumentStatusCode("COMPL")).thenReturn(list);
+        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(list);
         var result = commonService.getAllStudentCertificateDistributionList();
 
         assertThat(result).isNotNull();

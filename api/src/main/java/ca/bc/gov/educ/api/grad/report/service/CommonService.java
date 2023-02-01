@@ -322,7 +322,7 @@ public class CommonService {
 
 
     public List<StudentCredentialDistribution> getAllStudentCertificateDistributionList() {
-		return gradStudentCertificatesRepository.findByDocumentStatusCode(COMPLETED);
+		return gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate(COMPLETED);
     }
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
@@ -465,8 +465,6 @@ public class CommonService {
 		for (List<UUID> subList : partitions) {
 			List<StudentCredentialDistribution> scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
 			if (!scdSubList.isEmpty()) {
-				scdSubList.removeIf(p->"RC".equalsIgnoreCase(credentialType) && p.getDistributionDate() == null);
-				scdSubList.removeIf(p->"OC".equalsIgnoreCase(credentialType) && p.getDistributionDate() != null);
 				scdList.addAll(scdSubList);
 			}
 		}
