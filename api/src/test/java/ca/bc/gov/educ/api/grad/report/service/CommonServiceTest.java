@@ -658,14 +658,14 @@ public class CommonServiceTest {
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> certificates = new ArrayList<>();
-        final StudentCredentialDistribution certificateCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2","COMPL");
+        final StudentCredentialDistribution certificateCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2","COMPL", new Date());
         certificates.add(certificateCredentialDistribution);
 
-        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(certificates);
+        when(gradStudentCertificatesRepository.findByDocumentStatusCode("COMPL")).thenReturn(certificates);
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> transcripts = new ArrayList<>();
-        final StudentCredentialDistribution transcriptCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"BC1996-IND",studentID,"YED4","COMPL");
+        final StudentCredentialDistribution transcriptCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"BC1996-IND",studentID,"YED4","COMPL", new Date());
         transcripts.add(transcriptCredentialDistribution);
 
         when(gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(List.of(studentID))).thenReturn(transcripts);
@@ -684,7 +684,7 @@ public class CommonServiceTest {
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
-        final StudentCredentialDistribution credentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2","COMPL");
+        final StudentCredentialDistribution credentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2","COMPL", new Date());
         list.add(credentialDistribution);
 
 
@@ -700,11 +700,11 @@ public class CommonServiceTest {
     @Test
     public void testGetAllStudentTranscriptYearlyDistributionList() {
         List<StudentCredentialDistribution> scdList = new ArrayList<>();
-        StudentCredentialDistribution scd = new StudentCredentialDistribution(new UUID(2,2),"E",new UUID(1,1),"YED4","COMPL");
+        StudentCredentialDistribution scd = new StudentCredentialDistribution(new UUID(2,2),"E",new UUID(1,1),"YED4","COMPL", new Date());
         scdList.add(scd);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
-        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date());
         scdSubList.add(scdSub);
 
         ParameterizedTypeReference<List<UUID>> studentidres = new ParameterizedTypeReference<>() {
@@ -780,7 +780,7 @@ public class CommonServiceTest {
         res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
-        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date());
         scdSubList.add(scdSub);
 
         List<UUID> studentList = new ArrayList<>();
@@ -796,6 +796,36 @@ public class CommonServiceTest {
         Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
         List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),null);
+        assertThat(result).isNotEmpty();
+
+    }
+
+    @Test
+    public void testGetStudentCredentialsForSpecialGradRun() {
+
+        List<UUID> studentList = new ArrayList<>();
+
+        GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
+
+        StudentSearchRequest req = new StudentSearchRequest();
+        List<String> penList = new ArrayList<>();
+        penList.add("13123111");
+        req.setPens(penList);
+
+        GraduationStudentRecord rec = new GraduationStudentRecord();
+        rec.setLegalFirstName("asda");
+        rec.setStudentID(new UUID(1,1));
+        studentList.add(rec.getStudentID());
+        res.setStudentIDs(studentList);
+
+        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+
+        List<UUID> result = commonService.getStudentsForSpecialGradRun(req,"accessToken");
         assertThat(result.size()).isEqualTo(1);
 
     }
@@ -814,7 +844,7 @@ public class CommonServiceTest {
         res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
-        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date());
         scdSubList.add(scdSub);
 
         List<UUID> studentList = new ArrayList<>();
@@ -853,7 +883,7 @@ public class CommonServiceTest {
         res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
-        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL");
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date());
         scdSubList.add(scdSub);
 
         List<UUID> studentList = new ArrayList<>();
