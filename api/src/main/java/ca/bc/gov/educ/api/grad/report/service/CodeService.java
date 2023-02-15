@@ -3,8 +3,8 @@ package ca.bc.gov.educ.api.grad.report.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-import javax.validation.Valid;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;

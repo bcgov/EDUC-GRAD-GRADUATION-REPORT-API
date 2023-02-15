@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.controller;
 
 import java.util.List;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
