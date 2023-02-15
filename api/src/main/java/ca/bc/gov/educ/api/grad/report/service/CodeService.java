@@ -1,5 +1,11 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
@@ -14,11 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
+import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 
 @Service
 public class CodeService {
