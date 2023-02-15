@@ -259,7 +259,9 @@ public class CodeControllerTest {
 		List<ProgramCertificateTranscript> pList = new ArrayList<>();
 		ProgramCertificateTranscript obj = new ProgramCertificateTranscript();
 		obj.setCertificateTypeCode("E");
-		obj.setTranscriptTypeCode("E");
+		obj.setCertificateTypeLabel("Dogwood (Public)");
+		obj.setTranscriptTypeCode("BC2004-IND");
+		obj.setTranscriptTypeLabel("Graduation Program 2004");
 		obj.setCertificatePaperType("YED4");
 		obj.setCreateUser("GRADUATION");
 		obj.setUpdateUser("GRADUATION");
