@@ -1,25 +1,24 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.TranscriptTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
+import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
-import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CodeService {
@@ -171,6 +170,7 @@ public class CodeService {
 			GradCertificateTypes gcType = gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.findById(pc.getCertificateTypeCode()));
 			if(gcType != null) {
 				pc.setCertificatePaperType(gcType.getPaperType());
+				pc.setCertificateTypeLabel(gcType.getLabel());
 			}
 		});
 		return pcList;
@@ -212,17 +212,19 @@ public class CodeService {
 	}
 
 	public ProgramCertificateTranscript getProgramTranscript(ProgramCertificateReq programCertificateReq) {
-		ProgramCertificateTranscript pcObj =  programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findTranscript(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolCategoryCode()));
+		ProgramCertificateTranscript pcObj = programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findTranscript(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolCategoryCode()));
 		if(pcObj.getTranscriptTypeCode() != null) {
-			TranscriptTypes tTypes =transcriptTypesTransformer.transformToDTO(transcriptTypesRepository.findById(pcObj.getTranscriptTypeCode()));
+			TranscriptTypes tTypes = transcriptTypesTransformer.transformToDTO(transcriptTypesRepository.findById(pcObj.getTranscriptTypeCode()));
 			if(tTypes != null) {
 				pcObj.setTranscriptPaperType(tTypes.getPaperType());
+				pcObj.setTranscriptTypeLabel(tTypes.getLabel());
 			}
 		}
 		if(pcObj.getCertificateTypeCode() != null) {
-			GradCertificateTypes cTypes =gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.findById(pcObj.getCertificateTypeCode()));
+			GradCertificateTypes cTypes = gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.findById(pcObj.getCertificateTypeCode()));
 			if(cTypes != null) {
 				pcObj.setCertificatePaperType(cTypes.getPaperType());
+				pcObj.setCertificateTypeLabel(cTypes.getLabel());
 			}
 		}
 		return pcObj;
