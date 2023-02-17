@@ -33,4 +33,9 @@ public interface GradStudentCertificatesRepository extends JpaRepository<GradStu
 
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from GradStudentCertificatesEntity c inner join GradCertificateTypesEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList) and c.documentStatusCode='COMPL'")
 	List<StudentCredentialDistribution> findRecordsForUserRequest(List<UUID> subList);
+
+	@Query(
+		value="select CAST(c.GRADUATION_STUDENT_RECORD_ID AS VARCHAR2(100)) as GRADUATION_STUDENT_RECORD_ID from student_certificate c where c.document_status_code='COMPL' and c.distribution_date is null union select CAST(t.GRADUATION_STUDENT_RECORD_ID AS VARCHAR2(100)) as GRADUATION_STUDENT_RECORD_ID from student_transcript t where ((t.document_status_code='COMPL' and t.distribution_date is null) or (t.document_status_code='COMPL' and t.distribution_date < t.update_date)) and exists ( select 'x' from student_certificate where GRADUATION_STUDENT_RECORD_ID = t.GRADUATION_STUDENT_RECORD_ID and document_status_code='COMPL' and distribution_date is null )", nativeQuery = true
+	)
+	List<String> findStudentIdForSchoolYearEndReport();
 }
