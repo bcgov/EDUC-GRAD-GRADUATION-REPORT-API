@@ -1274,4 +1274,15 @@ public class CommonServiceTest {
         var result = commonService.checkStudentCertificateExistsForSCCP(studentID);
         assertThat(result).isTrue();
     }
+
+    @Test
+    public void testGetAllStudentIdForSchoolYearEndDistribution() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+
+        when(gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport()).thenReturn(List.of(studentID.toString()));
+
+        var result = commonService.getAllStudentIdForSchoolYearEndDistribution();
+        assertThat(result).isNotEmpty();
+    }
 }

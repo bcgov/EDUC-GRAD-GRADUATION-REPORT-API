@@ -174,6 +174,15 @@ public class CommonController {
         return response.GET(commonService.getAllStudentCertificateDistributionList());
     }
 
+    @GetMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_YEAREND_REPORT)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<String>> getAllStudentIdForSchoolYearEndDistribution() {
+        logger.debug("getAllStudentSchoolYearEndDistribution : ");
+        return response.GET(commonService.getAllStudentIdForSchoolYearEndDistribution());
+    }
+
     @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS_YEARLY)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Read All Student Transcripts for Distribution", description = "Read All Student Transcripts for Distribution", tags = { "Certificates" })
