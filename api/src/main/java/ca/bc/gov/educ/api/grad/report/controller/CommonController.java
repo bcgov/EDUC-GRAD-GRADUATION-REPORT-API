@@ -178,9 +178,9 @@ public class CommonController {
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<String>> getAllStudentIdForSchoolYearEndDistribution() {
+    public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData(@RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getAllStudentSchoolYearEndDistribution : ");
-        return response.GET(commonService.getAllStudentIdForSchoolYearEndDistribution());
+        return response.GET(commonService.getSchoolYearEndReportGradStudentData(accessToken));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS_YEARLY)

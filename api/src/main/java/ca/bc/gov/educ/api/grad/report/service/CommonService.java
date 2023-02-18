@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -320,10 +321,6 @@ public class CommonService {
 		return reportList;
 	}
 
-	public List<String> getAllStudentIdForSchoolYearEndDistribution() {
-		return gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport();
-	}
-
     public List<StudentCredentialDistribution> getAllStudentCertificateDistributionList() {
 		return gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate(COMPLETED);
     }
@@ -580,6 +577,23 @@ public class CommonService {
 			}
 		}
 		return null;
+	}
+
+	public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(String accessToken) {
+		List<String> studentGuids = gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport();
+    	List<UUID> guids = studentGuids.stream().filter(Objects::nonNull).map(UUID::fromString).collect(Collectors.toList());
+		List<ReportGradStudentData> reportGradStudentDataList = this.webClient.post()
+				.uri(constants.getStudentsForSchoolYearlyDistribution())
+				.headers(h -> {
+					h.setBearerAuth(accessToken);
+					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
+				})
+				.body(BodyInserters.fromValue(guids))
+				.retrieve()
+				.bodyToMono(new ParameterizedTypeReference<List<ReportGradStudentData>>() {})
+				.block();
+		reportGradStudentDataList.removeIf(d -> (d.getCertificateTypes() == null || d.getCertificateTypes().isEmpty()) && StringUtils.isBlank(d.getTranscriptTypeCode()));
+		return reportGradStudentDataList;
 	}
 
 	private boolean isClobDataChanged(String currentBase64, String newBase64) {

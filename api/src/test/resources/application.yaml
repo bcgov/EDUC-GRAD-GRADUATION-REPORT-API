@@ -64,8 +64,9 @@ springdoc:
 #Endpoint
 endpoint:
   grad-student-api:
-    get-students-for-yearly-run: http://localhost:9994/api/v1/student/yearlydistribution
-    student-for-special-grad-run-list:  http://localhost:9994/api/v1/student/studentlistsearch
+    get-students-for-yearly-run: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/yearlydistribution
+    get-students-for-school-yearly-run: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentschoolreportdata
+    student-for-special-grad-run-list:  https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentlistsearch
   grad-trax-api:
     school-by-min-code:
       url: https://educ-grad-trax-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/trax/school/%s

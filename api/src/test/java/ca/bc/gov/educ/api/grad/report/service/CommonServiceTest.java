@@ -1276,13 +1276,41 @@ public class CommonServiceTest {
     }
 
     @Test
-    public void testGetAllStudentIdForSchoolYearEndDistribution() {
-        // UUID
-        final UUID studentID = UUID.randomUUID();
+    public void testGetSchoolYearEndReportGradStudentData() {
+        final UUID studentId = new UUID(1, 1);
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
+        ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
 
-        when(gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport()).thenReturn(List.of(studentID.toString()));
+        GradCertificateTypes certificateTypes = new GradCertificateTypes();
+        certificateTypes.setCode("E");
+        certificateTypes.setDescription("Dogwood");
+        reportGradStudentData.setCertificateTypes(List.of(certificateTypes));
 
-        var result = commonService.getAllStudentIdForSchoolYearEndDistribution();
+        reportGradStudentDataList.add(reportGradStudentData);
+
+        reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+
+        reportGradStudentDataList.add(reportGradStudentData);
+
+        reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        reportGradStudentData.setTranscriptTypeCode("BC2004-IND");
+
+        reportGradStudentDataList.add(reportGradStudentData);
+
+        when(gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport()).thenReturn(List.of(studentId.toString()));
+
+        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getStudentsForSchoolYearlyDistribution())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(new ParameterizedTypeReference<List<ReportGradStudentData>>() {})).thenReturn(Mono.just(reportGradStudentDataList));
+
+        var result = commonService.getSchoolYearEndReportGradStudentData("accessToken");
         assertThat(result).isNotEmpty();
     }
 }

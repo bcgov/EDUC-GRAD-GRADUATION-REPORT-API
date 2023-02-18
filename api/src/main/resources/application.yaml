@@ -79,6 +79,7 @@ springdoc:
 endpoint:
   grad-student-api:
     get-students-for-yearly-run: ${GRAD_STUDENT_API}api/v1/student/yearlydistribution
+    get-students-for-school-yearly-run: ${GRAD_STUDENT_API}api/v1/student/studentschoolreportdata
     student-for-special-grad-run-list: ${GRAD_STUDENT_API}api/v1/student/studentlistsearch
   grad-trax-api:
     school-by-min-code:
