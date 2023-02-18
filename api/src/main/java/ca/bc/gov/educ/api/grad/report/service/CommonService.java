@@ -29,7 +29,6 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -581,7 +580,7 @@ public class CommonService {
 
 	public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(String accessToken) {
 		List<String> studentGuids = gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport();
-    	List<UUID> guids = studentGuids.stream().filter(Objects::nonNull).map(UUID::fromString).collect(Collectors.toList());
+    	List<UUID> guids = studentGuids.stream().filter(Objects::nonNull).map(UUID::fromString).toList();
 		List<ReportGradStudentData> reportGradStudentDataList = this.webClient.post()
 				.uri(constants.getStudentsForSchoolYearlyDistribution())
 				.headers(h -> {
@@ -592,7 +591,9 @@ public class CommonService {
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<List<ReportGradStudentData>>() {})
 				.block();
-		reportGradStudentDataList.removeIf(d -> (d.getCertificateTypes() == null || d.getCertificateTypes().isEmpty()) && StringUtils.isBlank(d.getTranscriptTypeCode()));
+		if(reportGradStudentDataList != null) {
+			reportGradStudentDataList.removeIf(d -> (d.getCertificateTypes() == null || d.getCertificateTypes().isEmpty()) && StringUtils.isBlank(d.getTranscriptTypeCode()));
+		}
 		return reportGradStudentDataList;
 	}
 
