@@ -86,6 +86,9 @@ public class EducGradReportApiConstants {
     @Value("${endpoint.grad-student-api.get-students-for-yearly-run}")
     private String studentsForYearlyDistribution;
 
+    @Value("${endpoint.grad-student-api.get-students-for-school-yearly-run}")
+    private String studentsForSchoolYearlyDistribution;
+
     @Value("${endpoint.grad-student-api.student-for-special-grad-run-list}")
     private String gradStudentApiStudentForSpcGradListUrl;
 

@@ -503,10 +503,12 @@ public class CommonControllerTest {
 
     @Test
     public void testGetAllStudentIdForSchoolYearEndDistribution() {
-        // UUID
-        final UUID studentID = UUID.randomUUID();
-        Mockito.when(commonService.getAllStudentIdForSchoolYearEndDistribution()).thenReturn(List.of(studentID.toString()));
-        commonController.getAllStudentIdForSchoolYearEndDistribution();
-        Mockito.verify(commonService).getAllStudentIdForSchoolYearEndDistribution();
+        final UUID studentId = new UUID(1, 1);
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
+        ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        Mockito.when(commonService.getSchoolYearEndReportGradStudentData("accessToken")).thenReturn(reportGradStudentDataList);
+        commonController.getSchoolYearEndReportGradStudentData("accessToken");
+        Mockito.verify(commonService).getSchoolYearEndReportGradStudentData("accessToken");
     }
 }
