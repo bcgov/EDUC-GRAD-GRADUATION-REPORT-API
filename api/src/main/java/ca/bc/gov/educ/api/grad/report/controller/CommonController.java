@@ -180,7 +180,7 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData(@RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getAllStudentSchoolYearEndDistribution : ");
-        return response.GET(commonService.getSchoolYearEndReportGradStudentData(accessToken));
+        return response.GET(commonService.getSchoolYearEndReportGradStudentData(accessToken.replace(BEARER, "")));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS_YEARLY)
