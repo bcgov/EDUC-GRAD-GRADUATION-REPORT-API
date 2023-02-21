@@ -11,7 +11,9 @@ import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
+import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.ByteArrayInputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
@@ -578,9 +581,17 @@ public class CommonService {
 		return null;
 	}
 
+	@SneakyThrows
 	public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(String accessToken) {
 		List<String> studentGuids = gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport();
-    	List<UUID> guids = studentGuids.stream().filter(Objects::nonNull).map(UUID::fromString).toList();
+    	List<UUID> guids = new ArrayList<>();
+		for(String studentGuid: studentGuids) {
+			byte[] data = Hex.decodeHex(studentGuid.toCharArray());
+			UUID guid = new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong());
+			guids.add(guid);
+		}
+		final ParameterizedTypeReference<List<ReportGradStudentData>> responseType = new ParameterizedTypeReference<>() {
+		};
 		List<ReportGradStudentData> reportGradStudentDataList = this.webClient.post()
 				.uri(constants.getStudentsForSchoolYearlyDistribution())
 				.headers(h -> {
@@ -589,7 +600,7 @@ public class CommonService {
 				})
 				.body(BodyInserters.fromValue(guids))
 				.retrieve()
-				.bodyToMono(new ParameterizedTypeReference<List<ReportGradStudentData>>() {})
+				.bodyToMono(responseType)
 				.block();
 		if(reportGradStudentDataList != null) {
 			reportGradStudentDataList.removeIf(d -> (d.getCertificateTypes() == null || d.getCertificateTypes().isEmpty()) && StringUtils.isBlank(d.getTranscriptTypeCode()));

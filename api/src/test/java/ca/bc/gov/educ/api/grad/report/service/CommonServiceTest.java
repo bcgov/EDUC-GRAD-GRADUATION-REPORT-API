@@ -4,6 +4,8 @@ import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import ca.bc.gov.educ.api.grad.report.model.entity.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import lombok.SneakyThrows;
+import org.apache.commons.codec.binary.Hex;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +22,7 @@ import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
@@ -1276,8 +1279,12 @@ public class CommonServiceTest {
     }
 
     @Test
+    @SneakyThrows
     public void testGetSchoolYearEndReportGradStudentData() {
-        final UUID studentId = new UUID(1, 1);
+        String guid = "AC339D7076491A2E81764A336D860B19";
+        byte[] data = Hex.decodeHex(guid.toCharArray());
+        UUID studentId = new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong());
+
         List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
@@ -1301,7 +1308,7 @@ public class CommonServiceTest {
 
         reportGradStudentDataList.add(reportGradStudentData);
 
-        when(gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport()).thenReturn(List.of(studentId.toString()));
+        when(gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport()).thenReturn(List.of(guid));
 
         when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
         when(this.requestBodyUriMock.uri(constants.getStudentsForSchoolYearlyDistribution())).thenReturn(this.requestBodyUriMock);
