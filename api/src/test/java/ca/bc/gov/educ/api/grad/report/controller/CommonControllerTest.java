@@ -500,4 +500,15 @@ public class CommonControllerTest {
         commonController.existsStudentCertificateForSCCP(studentID.toString());
         Mockito.verify(commonService).checkStudentCertificateExistsForSCCP(studentID);
     }
+
+    @Test
+    public void testGetAllStudentIdForSchoolYearEndDistribution() {
+        final UUID studentId = new UUID(1, 1);
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
+        ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        Mockito.when(commonService.getSchoolYearEndReportGradStudentData("accessToken")).thenReturn(reportGradStudentDataList);
+        commonController.getSchoolYearEndReportGradStudentData("accessToken");
+        Mockito.verify(commonService).getSchoolYearEndReportGradStudentData("accessToken");
+    }
 }

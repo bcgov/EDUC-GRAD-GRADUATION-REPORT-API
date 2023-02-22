@@ -6,7 +6,7 @@
 
     <groupId>ca.bc.gov.educ</groupId>
 	<artifactId>educ-grad-graduation-report-api</artifactId>
-	<version>1.8.10</version>
+	<version>1.8.14</version>
 	<name>educ-grad-graduation-report-api</name>
 	<description>Grad Graduation Report API for GRAD team</description>
    
@@ -17,16 +17,18 @@
             src/main/resources/**,
             src/main/java/ca/bc/gov/educ/api/grad/report/config/**,
             src/main/java/ca/bc/gov/educ/api/grad/report/model/**,
-            src/main/java/ca/bc/gov/educ/api/grad/report/util/**
-            src/main/java/ca/bc/gov/educ/api/grad/report/exception/**
+            src/main/java/ca/bc/gov/educ/api/grad/report/util/**,
+            src/main/java/ca/bc/gov/educ/api/grad/report/repository/**,
+            src/main/java/ca/bc/gov/educ/api/grad/report/exception/**,
             src/test/java/ca/bc/gov/educ/api/grad/report/**
         </sonar.exclusions>
         <sonar.coverage.exclusions>
             src/main/resources/**,
             src/main/java/ca/bc/gov/educ/api/grad/report/config/**,
             src/main/java/ca/bc/gov/educ/api/grad/report/model/**,
-            src/main/java/ca/bc/gov/educ/api/grad/report/util/**
-            src/main/java/ca/bc/gov/educ/api/grad/report/exception/**
+            src/main/java/ca/bc/gov/educ/api/grad/report/util/**,
+            src/main/java/ca/bc/gov/educ/api/grad/report/repository/**,
+            src/main/java/ca/bc/gov/educ/api/grad/report/exception/**,
             src/test/java/ca/bc/gov/educ/api/grad/report/**
         </sonar.coverage.exclusions>
         <java.version>18</java.version>

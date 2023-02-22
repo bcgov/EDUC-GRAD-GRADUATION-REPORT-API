@@ -14,7 +14,7 @@ spring:
     driver-class: oracle.jdbc.driver.OracleDriver
   jpa:
     show-sql: ${SHOW_SQL_LOGS}
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: none
   mvc:
@@ -79,6 +79,7 @@ springdoc:
 endpoint:
   grad-student-api:
     get-students-for-yearly-run: ${GRAD_STUDENT_API}api/v1/student/yearlydistribution
+    get-students-for-school-yearly-run: ${GRAD_STUDENT_API}api/v1/student/studentschoolreportdata
     student-for-special-grad-run-list: ${GRAD_STUDENT_API}api/v1/student/studentlistsearch
   grad-trax-api:
     school-by-min-code:
