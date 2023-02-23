@@ -410,7 +410,7 @@ public class CommonService {
 				GradStudentCertificatesEntity ent = optEntity.get();
 				ent.setUpdateDate(null);
 				ent.setUpdateUser(null);
-				if(!"USERDISTRC".equalsIgnoreCase(activityCode) && ent.getDistributionDate() == null) {
+				if(!"USERDISTOC".equalsIgnoreCase(activityCode) && ent.getDistributionDate() == null) {
 					ent.setDistributionDate(new Date());
 				}
 				gradStudentCertificatesRepository.save(ent);
