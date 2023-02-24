@@ -25,6 +25,7 @@ public class School {
 	private String independentAffiliation;
 	private String openFlag;
 	private String signatureDistrict;
+	private String schoolCategory;
     
 	public String getSchoolName() {
 		return  schoolName != null ? schoolName.trim(): null;

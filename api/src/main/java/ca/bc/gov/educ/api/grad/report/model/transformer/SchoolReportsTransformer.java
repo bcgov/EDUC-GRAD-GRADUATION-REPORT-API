@@ -28,10 +28,13 @@ public class SchoolReportsTransformer {
         return modelMapper.map(cae, SchoolReports.class);
     }
 
-	public List<SchoolReports> transformToDTO (Iterable<SchoolReportsEntity> schoolReportssEntities ) {
+	public List<SchoolReports> transformToDTO (Iterable<SchoolReportsEntity> schoolReportssEntities, boolean... skipBody ) {
 		List<SchoolReports> schoolReportssList = new ArrayList<>();
         for (SchoolReportsEntity schoolReportssEntity : schoolReportssEntities) {
         	SchoolReports schoolReportss = modelMapper.map(schoolReportssEntity, SchoolReports.class);
+        	if(skipBody != null && skipBody.length > 0 && skipBody[0]) {
+                schoolReportss.setReport(null);
+            }
         	schoolReportssList.add(schoolReportss);
         }
         return schoolReportssList;
