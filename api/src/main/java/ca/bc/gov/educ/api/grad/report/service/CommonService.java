@@ -116,10 +116,8 @@ public class CommonService {
 		return gradStudentReportsTransformer.transformToDTO(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(studentID,reportType,documentStatusCode));
 	}
 
-
-
 	@Transactional
-	public ResponseEntity<InputStreamResource> getSchoolReportByType(String mincode, String reportType) {
+	public ResponseEntity<InputStreamResource> getSchoolReportByMincodeAndReportType(String mincode, String reportType) {
 		SchoolReports studentReport = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode,reportType));
 		if(studentReport != null && studentReport.getReport() != null) {
 			byte[] reportByte = Base64.decodeBase64(studentReport.getReport().getBytes(StandardCharsets.US_ASCII));
@@ -293,7 +291,7 @@ public class CommonService {
 			GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getGradReportTypeCode()));
 			if(types != null)
 				rep.setGradReportTypeLabel(types.getLabel());
-			
+
 			DocumentStatusCode code = documentStatusCodeTransformer.transformToDTO(documentStatusCodeRepository.findById(rep.getDocumentStatusCode()));
 			if(code != null)
 				rep.setDocumentStatusLabel(code.getLabel());
@@ -301,15 +299,26 @@ public class CommonService {
 		return reportList;
 	}
 
-	public List<SchoolReports> getAllSchoolReportList(String mincode,String accessToken) {
+	public List<SchoolReports> getAllSchoolReportListByMincode(String mincode, String accessToken) {
 		List<SchoolReports> reportList = new ArrayList<>();
 		if(StringUtils.isNotBlank(mincode)) {
 			if(StringUtils.contains(mincode,"*")) {
 				reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordContains(StringUtils.strip(mincode,"*")));
-			}else {
+			} else {
 				reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecord(mincode));
 			}
 		}
+		populateSchoolRepors(reportList, accessToken);
+		return reportList;
+	}
+
+	public List<SchoolReports> getAllSchoolReportListByReportType(String reportType, boolean skipBody, String accessToken) {
+		List<SchoolReports> reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findByReportTypeCode(reportType), skipBody);
+		populateSchoolRepors(reportList, accessToken);
+		return reportList;
+	}
+
+	private void populateSchoolRepors(List<SchoolReports> reportList, String accessToken) {
 		reportList.forEach(rep -> {
 			GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getReportTypeCode()));
 			if(types != null)
@@ -318,9 +327,9 @@ public class CommonService {
 			School schObj = getSchool(rep.getSchoolOfRecord(),accessToken);
 			if(schObj != null) {
 				rep.setSchoolOfRecordName(schObj.getSchoolName());
+				rep.setSchoolCategory(schObj.getSchoolCategory());
 			}
 		});
-		return reportList;
 	}
 
     public List<StudentCredentialDistribution> getAllStudentCertificateDistributionList() {

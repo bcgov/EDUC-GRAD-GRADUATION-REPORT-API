@@ -286,18 +286,30 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<SchoolReports>> getAllSchoolReportsList(@PathVariable String mincode,@RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getAllSchoolReportsList : ");
-        return response.GET(commonService.getAllSchoolReportList(mincode, accessToken.replace(BEARER,"")));
+        return response.GET(commonService.getAllSchoolReportListByMincode(mincode, accessToken.replace(BEARER,"")));
+    }
+
+    @GetMapping(EducGradReportApiConstants.SCHOOL_REPORTS_BY_REPORT_TYPE)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read All School Reports by Report Type", description = "Read All School Reports by Report Type", tags = { "Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<SchoolReports>> getSchoolReportsListByReportType(
+            @PathVariable String reportType,
+            @RequestParam(value = "skipBody", required = false, defaultValue = "false") boolean skipBody,
+            @RequestHeader(name="Authorization") String accessToken) {
+        logger.debug("getAllSchoolReportsList : ");
+        return response.GET(commonService.getAllSchoolReportListByReportType(reportType, skipBody, accessToken.replace(BEARER,"")));
     }
 
     @GetMapping(EducGradReportApiConstants.SCHOOL_REPORT)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Read Student Reports by Student ID and Report Type", description = "Read Student Reports by Student ID and Report Type", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<InputStreamResource> getSchoolReportByType(
+    public ResponseEntity<InputStreamResource> getSchoolReportByMincodeAndReportType(
             @RequestParam(value = "mincode") String mincode,
             @RequestParam(value = "reportType") String reportType) {
         logger.debug("getSchoolReportByType : ");
-        return commonService.getSchoolReportByType(mincode,reportType);
+        return commonService.getSchoolReportByMincodeAndReportType(mincode,reportType);
     }
 
     @GetMapping(EducGradReportApiConstants.UPDATE_SCHOOL_REPORTS)
