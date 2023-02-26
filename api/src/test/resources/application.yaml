@@ -5,6 +5,7 @@ spring:
   datasource:
     hikari:
       pool-name: grad-report-api-cp
+      pool-name: grad-report-api-cp
       maximum-pool-size: 1
       connection-timeout: 6000
       max-lifetime: 600000
