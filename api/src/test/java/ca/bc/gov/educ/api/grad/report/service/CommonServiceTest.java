@@ -664,7 +664,7 @@ public class CommonServiceTest {
         final StudentCredentialDistribution certificateCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2","COMPL", new Date());
         certificates.add(certificateCredentialDistribution);
 
-        when(gradStudentCertificatesRepository.findByDocumentStatusCode("COMPL")).thenReturn(certificates);
+        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(certificates);
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> transcripts = new ArrayList<>();

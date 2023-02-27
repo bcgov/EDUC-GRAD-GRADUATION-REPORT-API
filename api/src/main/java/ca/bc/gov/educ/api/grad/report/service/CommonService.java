@@ -337,7 +337,7 @@ public class CommonService {
     }
 
 	public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
-		List<StudentCredentialDistribution> certificates = gradStudentCertificatesRepository.findByDocumentStatusCode(COMPLETED);
+		List<StudentCredentialDistribution> certificates = gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate(COMPLETED);
 		List<UUID> studentIds = new ArrayList<>();
 		for(StudentCredentialDistribution c: certificates) {
 			studentIds.add(c.getStudentID());
