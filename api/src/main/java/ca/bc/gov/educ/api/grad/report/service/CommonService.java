@@ -324,10 +324,17 @@ public class CommonService {
 			if(types != null)
 				rep.setReportTypeLabel(types.getLabel());
 
-			School schObj = getSchool(rep.getSchoolOfRecord(),accessToken);
-			if(schObj != null) {
-				rep.setSchoolOfRecordName(schObj.getSchoolName());
-				rep.setSchoolCategory(schObj.getSchoolCategory());
+			if(rep.getSchoolOfRecord() != null && rep.getSchoolOfRecord().length() > 3) {
+				School schObj = getSchool(rep.getSchoolOfRecord(), accessToken);
+				if (schObj != null) {
+					rep.setSchoolOfRecordName(schObj.getSchoolName());
+					rep.setSchoolCategory(schObj.getSchoolCategory());
+				}
+			} else if(rep.getSchoolOfRecord() != null) {
+				District distObj = getDistrict(rep.getSchoolOfRecord(), accessToken);
+				if (distObj != null) {
+					rep.setSchoolOfRecordName(distObj.getDistrictName());
+				}
 			}
 		});
 	}
@@ -540,15 +547,34 @@ public class CommonService {
 	}
 
 	private School getSchool(String minCode, String accessToken) {
+    	try {
+			return webClient.get()
+					.uri(String.format(constants.getSchoolByMincodeUrl(), minCode))
+					.headers(h -> {
+						h.setBearerAuth(accessToken);
+						h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
+					})
+					.retrieve()
+					.bodyToMono(School.class)
+					.block();
+		} catch (Exception e) {
+			logger.warn("Trax School with mincode {} error {}", minCode, e.getMessage());
+			return null;
+		}
+	}
+
+	private District getDistrict(String districtCode, String accessToken) {
+		try {
 		return webClient.get()
-				.uri(String.format(constants.getSchoolByMincodeUrl(), minCode))
-				.headers(h -> {
-					h.setBearerAuth(accessToken);
-					h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
-				})
+				.uri(String.format(constants.getDistrictByMincodeUrl(), districtCode))
+				.headers(h -> h.setBearerAuth(accessToken))
 				.retrieve()
-				.bodyToMono(School.class)
+				.bodyToMono(District.class)
 				.block();
+		} catch (Exception e) {
+			logger.warn("Trax District with districtCode {} error {}", districtCode, e.getMessage());
+			return null;
+		}
 	}
 
 	public List<SchoolStudentCredentialDistribution> getAllStudentTranscriptAndReportsPosting() {
