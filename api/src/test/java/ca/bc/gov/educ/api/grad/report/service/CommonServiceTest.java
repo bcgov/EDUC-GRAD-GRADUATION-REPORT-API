@@ -640,6 +640,11 @@ public class CommonServiceTest {
         assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_TEST_transcript.pdf]");
         assertThat(result.getBody()).isNotNull();
 
+        studentTranscript.setTranscript(null);
+        when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID, transcriptTypes.getCode(),documentStatus.getCode())).thenReturn(Optional.of(studentTranscript));
+        result = commonService.getStudentTranscriptByType(studentID, transcriptTypes.getCode(),documentStatus.getCode());
+        assertThat(result).isNull();
+
 
     }
 
@@ -1245,6 +1250,14 @@ public class CommonServiceTest {
         when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCode(studentId,credentialTypeCode)).thenReturn(Optional.of(ent));
         boolean res = commonService.updateStudentCredentialPosting(studentId,credentialTypeCode);
         assertThat(res).isTrue();
+    }
+
+    @Test
+    public void testUpdateStudentCredentialPosting_false() {
+        UUID studentId = new UUID(1,1);
+        String credentialTypeCode = "E";
+        boolean res = commonService.updateStudentCredentialPosting(studentId,credentialTypeCode);
+        assertThat(res).isFalse();
     }
 
     @Test
