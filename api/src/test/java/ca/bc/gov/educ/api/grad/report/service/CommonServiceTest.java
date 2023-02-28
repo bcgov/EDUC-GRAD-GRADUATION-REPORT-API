@@ -954,7 +954,7 @@ public class CommonServiceTest {
         Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
         Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
         res = commonService.archiveAllStudentAchievements(studentID);
-        assertThat(res).isEqualTo(0);
+        assertThat(res).isZero();
     }
 
     @Test
