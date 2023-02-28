@@ -1051,7 +1051,7 @@ public class CommonServiceTest {
         district.setDistrictName("SOOKE");
 
         when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
-        when(this.requestHeadersUriMock.uri(String.format(constants.getDistrictByMincodeUrl(),mincode2))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersUriMock.uri(String.format(constants.getDistrictByMincodeUrl(),district.getDistrictNumber()))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(District.class)).thenReturn(Mono.just(district));
@@ -1076,6 +1076,19 @@ public class CommonServiceTest {
         assertThat(result).isNotNull().isNotEmpty();
         assertThat(result.get(0).getReport()).isNotNull();
 
+        schoolReports.setSchoolOfRecord(district.getDistrictNumber());
+        when(schoolReportsRepository.findByReportTypeCode(gradReportTypes.getCode())).thenReturn(List.of(schoolReports));
+
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),true,"accessToken");
+        assertThat(result).isNotNull().isNotEmpty();
+        assertThat(result.get(0).getSchoolOfRecord()).isNotNull();
+
+        schoolReports.setSchoolOfRecord(null);
+        when(schoolReportsRepository.findByReportTypeCode(gradReportTypes.getCode())).thenReturn(List.of(schoolReports));
+
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),true,"accessToken");
+        assertThat(result).isNotNull().isNotEmpty();
+        assertThat(result.get(0).getSchoolOfRecord()).isNull();
     }
 
     @Test
