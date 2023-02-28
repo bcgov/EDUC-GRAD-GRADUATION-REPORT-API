@@ -96,6 +96,9 @@ public class EducGradReportApiConstants {
     @Value("${endpoint.grad-trax-api.school-by-min-code.url}")
     private String schoolByMincodeUrl;
 
+    @Value("${endpoint.grad-trax-api.district-by-min-code.url}")
+    private String districtByMincodeUrl;
+
     // Splunk LogHelper Enabled
     @Value("${splunk.log-helper.enabled}")
     private boolean splunkLogHelperEnabled;
