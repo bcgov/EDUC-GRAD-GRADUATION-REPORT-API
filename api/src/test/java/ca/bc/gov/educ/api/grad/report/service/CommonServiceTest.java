@@ -479,12 +479,16 @@ public class CommonServiceTest {
         studentCertificate1.setGradCertificateTypeCode(gradCertificateType.getCode());
         studentCertificate1.setDocumentStatusCode("COMP");
         gradStudentCertificatesList.add(studentCertificate1);  
-       
-        
+
     	Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentReportsList);
     	Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentCertificatesList);
     	int res = commonService.getAllStudentAchievement(studentID);
         assertThat(res).isEqualTo(1);
+
+        Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
+        Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
+        res = commonService.getAllStudentAchievement(studentID);
+        assertThat(res).isZero();
     }
 
     @Test
