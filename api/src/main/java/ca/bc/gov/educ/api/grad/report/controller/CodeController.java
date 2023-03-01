@@ -108,7 +108,7 @@ public class CodeController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST")})
     public ResponseEntity<ApiResponseModel<GradCertificateTypes>> updateGradCertificateTypes(
             @Valid @RequestBody GradCertificateTypes gradCertificateTypes) {
-        logger.info("updateGradCertificateTypes : ");
+        logger.debug("updateGradCertificateTypes : ");
         validation.requiredField(gradCertificateTypes.getCode(), CERTIFICATE_TYPE_CODE);
         validation.requiredField(gradCertificateTypes.getDescription(), "Certificate Type Description");
         if (validation.hasErrors()) {
@@ -181,7 +181,7 @@ public class CodeController {
             @ApiResponse(responseCode = "400", description = "BAD REQUEST")})
     public ResponseEntity<ApiResponseModel<GradReportTypes>> updateGradReportTypes(
             @Valid @RequestBody GradReportTypes gradReportTypes) {
-        logger.info("updateGradReportTypes : ");
+        logger.debug("updateGradReportTypes : ");
         validation.requiredField(gradReportTypes.getCode(), REPORT_TYPE_CODE);
         validation.requiredField(gradReportTypes.getDescription(), "Report Type Description");
         if (validation.hasErrors()) {

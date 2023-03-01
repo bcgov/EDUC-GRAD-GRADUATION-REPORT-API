@@ -368,14 +368,14 @@ public class CommonControllerTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=student_"+reportTypeCode+"_report.pdf");
 
-        Mockito.when(commonService.getSchoolReportByType(mincode, reportTypeCode)).thenReturn(
+        Mockito.when(commonService.getSchoolReportByMincodeAndReportType(mincode, reportTypeCode)).thenReturn(
                 ResponseEntity
                         .ok()
                         .headers(headers)
                         .contentType(MediaType.APPLICATION_PDF)
                         .body(new InputStreamResource(bis)));
-        commonController.getSchoolReportByType(mincode, reportTypeCode);
-        Mockito.verify(commonService).getSchoolReportByType(mincode, reportTypeCode);
+        commonController.getSchoolReportByMincodeAndReportType(mincode, reportTypeCode);
+        Mockito.verify(commonService).getSchoolReportByMincodeAndReportType(mincode, reportTypeCode);
 
     }
 
@@ -402,9 +402,17 @@ public class CommonControllerTest {
         studentCertificate2.setReportTypeCode(gradCertificateType.getCode());
         gradStudentReportList.add(studentCertificate2);
 
-        Mockito.when(commonService.getAllSchoolReportList(mincode,"accessToken")).thenReturn(gradStudentReportList);
+        Mockito.when(commonService.getAllSchoolReportListByMincode(mincode,"accessToken")).thenReturn(gradStudentReportList);
         commonController.getAllSchoolReportsList(mincode,"accessToken");
-        Mockito.verify(commonService).getAllSchoolReportList(mincode,"accessToken");
+        Mockito.verify(commonService).getAllSchoolReportListByMincode(mincode,"accessToken");
+
+        Mockito.when(commonService.getAllSchoolReportListByReportType(gradCertificateType.getCode(), false, "accessToken")).thenReturn(gradStudentReportList);
+        commonController.getSchoolReportsListByReportType(gradCertificateType.getCode(),false, "accessToken");
+        Mockito.verify(commonService).getAllSchoolReportListByReportType(gradCertificateType.getCode(), false,"accessToken");
+
+        Mockito.when(commonService.getAllSchoolReportListByReportType(gradCertificateType.getCode(), true, "accessToken")).thenReturn(gradStudentReportList);
+        commonController.getSchoolReportsListByReportType(gradCertificateType.getCode(),true, "accessToken");
+        Mockito.verify(commonService).getAllSchoolReportListByReportType(gradCertificateType.getCode(), true,"accessToken");
     }
 
     @Test

@@ -19,7 +19,9 @@ public interface SchoolReportsRepository extends JpaRepository<SchoolReportsEnti
 
 	List<SchoolReportsEntity> findBySchoolOfRecordContains(String schoolOfRecord);
 	List<SchoolReportsEntity> findBySchoolOfRecord(String schoolOfRecord);
+	List<SchoolReportsEntity> findByReportTypeCode(String reportTypeCode);
 
 	Optional<SchoolReportsEntity> findBySchoolOfRecordAndReportTypeCode(String schoolOfRecord,String reportTypeCode);
+
 
 }
