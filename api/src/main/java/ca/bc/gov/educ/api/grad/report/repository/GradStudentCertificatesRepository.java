@@ -40,7 +40,7 @@ public interface GradStudentCertificatesRepository extends JpaRepository<GradStu
 				"union\n" +
 				"select\n" +
 				"    CAST(t.GRADUATION_STUDENT_RECORD_ID AS VARCHAR2(100)) as GRADUATION_STUDENT_RECORD_ID from student_transcript t where exists (\n" +
-				"        select 'x' from student_certificate where GRADUATION_STUDENT_RECORD_ID = t.GRADUATION_STUDENT_RECORD_ID )\n" +
+				"        select 'x' from student_certificate where GRADUATION_STUDENT_RECORD_ID = t.GRADUATION_STUDENT_RECORD_ID and document_status_code='COMPL' and distribution_date is null )\n" +
 				"union\n" +
 				"select\n" +
 				"    CAST(t.GRADUATION_STUDENT_RECORD_ID AS VARCHAR2(100)) as GRADUATION_STUDENT_RECORD_ID from student_transcript t where (t.document_status_code='COMPL' and t.distribution_date < t.update_date)\n", nativeQuery = true
@@ -53,7 +53,7 @@ public interface GradStudentCertificatesRepository extends JpaRepository<GradStu
 					"union\n" +
 					"select\n" +
 					"    CAST(t.GRADUATION_STUDENT_RECORD_ID AS VARCHAR2(100)) as GRADUATION_STUDENT_RECORD_ID from student_transcript t where exists (\n" +
-					"        select 'x' from student_certificate where GRADUATION_STUDENT_RECORD_ID = t.GRADUATION_STUDENT_RECORD_ID )", nativeQuery = true
+					"        select 'x' from student_certificate where GRADUATION_STUDENT_RECORD_ID = t.GRADUATION_STUDENT_RECORD_ID and document_status_code='COMPL' and distribution_date is null)", nativeQuery = true
 	)
 	List<String> findStudentIdForSchoolReport();
 }
