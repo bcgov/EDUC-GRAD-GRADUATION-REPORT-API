@@ -1389,7 +1389,7 @@ public class CommonServiceTest {
         when(gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport()).thenReturn(List.of(guid));
 
         when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.uri(constants.getStudentsForSchoolYearlyDistribution())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getStudentsForSchoolDistribution())).thenReturn(this.requestBodyUriMock);
         when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
         when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);

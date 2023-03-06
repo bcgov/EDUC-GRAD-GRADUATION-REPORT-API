@@ -519,4 +519,15 @@ public class CommonControllerTest {
         commonController.getSchoolYearEndReportGradStudentData("accessToken");
         Mockito.verify(commonService).getSchoolYearEndReportGradStudentData("accessToken");
     }
+
+    @Test
+    public void testGetAllStudentIdForSchoolDistribution() {
+        final UUID studentId = new UUID(1, 1);
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
+        ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        Mockito.when(commonService.getSchoolReportGradStudentData("accessToken")).thenReturn(reportGradStudentDataList);
+        commonController.getSchoolReportGradStudentData("accessToken");
+        Mockito.verify(commonService).getSchoolReportGradStudentData("accessToken");
+    }
 }
