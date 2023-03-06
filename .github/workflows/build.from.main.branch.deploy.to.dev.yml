@@ -21,8 +21,9 @@ env:
   REPO_NAME: "educ-grad-graduation-report-api"
   APP_DOMAIN: ${{ secrets.APP_DOMAIN }}
   TAG: "latest"
+  #GRAD2-1947 Resource optmization
   MIN_CPU: "20m"
-  MAX_CPU: "250m"
+  MAX_CPU: "100m"
   MIN_MEM: "256Mi"
   MAX_MEM: "1024Mi"
   MIN_REPLICAS: "3"
