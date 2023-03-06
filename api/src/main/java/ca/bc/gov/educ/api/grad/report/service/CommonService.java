@@ -12,6 +12,7 @@ import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
@@ -640,6 +641,16 @@ public class CommonService {
     @SneakyThrows
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(String accessToken) {
         List<String> studentGuids = gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport();
+        return getReportGradStudentData(accessToken, studentGuids);
+    }
+
+    @SneakyThrows
+    public List<ReportGradStudentData> getSchoolReportGradStudentData(String accessToken) {
+        List<String> studentGuids = gradStudentCertificatesRepository.findStudentIdForSchoolReport();
+        return getReportGradStudentData(accessToken, studentGuids);
+    }
+
+    private List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<String> studentGuids) throws DecoderException {
         List<UUID> guids = new ArrayList<>();
         for (String studentGuid : studentGuids) {
             byte[] data = Hex.decodeHex(studentGuid.toCharArray());
@@ -648,8 +659,8 @@ public class CommonService {
         }
         final ParameterizedTypeReference<List<ReportGradStudentData>> responseType = new ParameterizedTypeReference<>() {
         };
-        List<ReportGradStudentData> reportGradStudentDataList = this.webClient.post()
-                .uri(constants.getStudentsForSchoolYearlyDistribution())
+        return this.webClient.post()
+                .uri(constants.getStudentsForSchoolDistribution())
                 .headers(h -> {
                     h.setBearerAuth(accessToken);
                     h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
@@ -658,10 +669,6 @@ public class CommonService {
                 .retrieve()
                 .bodyToMono(responseType)
                 .block();
-        if (reportGradStudentDataList != null) {
-            reportGradStudentDataList.removeIf(d -> (d.getCertificateTypes() == null || d.getCertificateTypes().isEmpty()) && StringUtils.isBlank(d.getTranscriptTypeCode()));
-        }
-        return reportGradStudentDataList;
     }
 
     private boolean isClobDataChanged(String currentBase64, String newBase64) {

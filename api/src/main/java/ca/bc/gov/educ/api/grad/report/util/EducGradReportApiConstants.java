@@ -57,6 +57,7 @@ public class EducGradReportApiConstants {
 
     public static final String STUDENT_CERTIFICATE_BY_DIST_DATE_N_STATUS = "/getcertificatesfordistribution";
     public static final String STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS = "/gettranscriptsfordistribution";
+    public static final String STUDENT_FOR_SCHOOL_REPORT = "/getstudentsforschoolreport";
     public static final String STUDENT_FOR_SCHOOL_YEAREND_REPORT = "/getstudentsforschoolyearendreport";
 
     public static final String STUDENT_TRANSCRIPT_N_REPORTS_POSTING = "/gettranscriptsandreportsforposting";
@@ -87,8 +88,8 @@ public class EducGradReportApiConstants {
     @Value("${endpoint.grad-student-api.get-students-for-yearly-run}")
     private String studentsForYearlyDistribution;
 
-    @Value("${endpoint.grad-student-api.get-students-for-school-yearly-run}")
-    private String studentsForSchoolYearlyDistribution;
+    @Value("${endpoint.grad-student-api.get-students-for-school-run}")
+    private String studentsForSchoolDistribution;
 
     @Value("${endpoint.grad-student-api.student-for-special-grad-run-list}")
     private String gradStudentApiStudentForSpcGradListUrl;
