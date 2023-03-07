@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.grad.report.model.transformer;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.SchoolReports;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsLightEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,14 +29,20 @@ public class SchoolReportsTransformer {
         return modelMapper.map(cae, SchoolReports.class);
     }
 
-	public List<SchoolReports> transformToDTO (Iterable<SchoolReportsEntity> schoolReportssEntities, boolean... skipBody ) {
+	public List<SchoolReports> transformToDTO (Iterable<SchoolReportsEntity> schoolReportssEntities) {
 		List<SchoolReports> schoolReportssList = new ArrayList<>();
         for (SchoolReportsEntity schoolReportssEntity : schoolReportssEntities) {
         	SchoolReports schoolReportss = modelMapper.map(schoolReportssEntity, SchoolReports.class);
-        	if(skipBody != null && skipBody.length > 0 && skipBody[0]) {
-                schoolReportss.setReport(null);
-            }
         	schoolReportssList.add(schoolReportss);
+        }
+        return schoolReportssList;
+    }
+
+    public List<SchoolReports> transformToLightDTO (Iterable<SchoolReportsLightEntity> schoolReportssEntities) {
+        List<SchoolReports> schoolReportssList = new ArrayList<>();
+        for (SchoolReportsLightEntity schoolReportssEntity : schoolReportssEntities) {
+            SchoolReports schoolReportss = modelMapper.map(schoolReportssEntity, SchoolReports.class);
+            schoolReportssList.add(schoolReportss);
         }
         return schoolReportssList;
     }

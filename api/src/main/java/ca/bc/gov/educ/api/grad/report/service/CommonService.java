@@ -71,6 +71,8 @@ public class CommonService {
     @Autowired
     SchoolReportsRepository schoolReportsRepository;
     @Autowired
+    SchoolReportsLightRepository schoolReportsLightRepository;
+    @Autowired
     WebClient webClient;
     @Autowired
     EducGradReportApiConstants constants;
@@ -331,8 +333,8 @@ public class CommonService {
         return reportList;
     }
 
-    public List<SchoolReports> getAllSchoolReportListByReportType(String reportType, boolean skipBody, String accessToken) {
-        List<SchoolReports> reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findByReportTypeCode(reportType), skipBody);
+    public List<SchoolReports> getAllSchoolReportListByReportType(String reportType, String accessToken) {
+        List<SchoolReports> reportList = schoolReportsTransformer.transformToLightDTO(schoolReportsLightRepository.findByReportTypeCode(reportType));
         populateSchoolRepors(reportList, accessToken);
         return reportList;
     }
