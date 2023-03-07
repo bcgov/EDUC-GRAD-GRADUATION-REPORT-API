@@ -304,10 +304,9 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<SchoolReports>> getSchoolReportsListByReportType(
             @PathVariable String reportType,
-            @RequestParam(value = "skipBody", required = false, defaultValue = "false") boolean skipBody,
             @RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getAllSchoolReportsList : ");
-        return response.GET(commonService.getAllSchoolReportListByReportType(reportType, skipBody, accessToken.replace(BEARER,"")));
+        return response.GET(commonService.getAllSchoolReportListByReportType(reportType, accessToken.replace(BEARER,"")));
     }
 
     @GetMapping(EducGradReportApiConstants.SCHOOL_REPORT)
