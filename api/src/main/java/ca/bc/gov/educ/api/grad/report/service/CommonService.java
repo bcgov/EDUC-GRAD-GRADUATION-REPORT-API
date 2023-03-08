@@ -10,8 +10,11 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
@@ -70,9 +73,18 @@ public class CommonService {
     @Autowired
     SchoolReportsRepository schoolReportsRepository;
     @Autowired
+    SchoolReportsLightRepository schoolReportsLightRepository;
+    @Autowired
+    SchoolReportYearEndRepository schoolReportYearEndRepository;
+    @Autowired
+    SchoolReportMonthlyRepository schoolReportMonthlyRepository;
+    @Autowired
     WebClient webClient;
     @Autowired
     EducGradReportApiConstants constants;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @SuppressWarnings("unused")
     private static final Logger logger = LoggerFactory.getLogger(CommonService.class);
@@ -330,8 +342,8 @@ public class CommonService {
         return reportList;
     }
 
-    public List<SchoolReports> getAllSchoolReportListByReportType(String reportType, boolean skipBody, String accessToken) {
-        List<SchoolReports> reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findByReportTypeCode(reportType), skipBody);
+    public List<SchoolReports> getAllSchoolReportListByReportType(String reportType, String accessToken) {
+        List<SchoolReports> reportList = schoolReportsTransformer.transformToLightDTO(schoolReportsLightRepository.findByReportTypeCode(reportType));
         populateSchoolRepors(reportList, accessToken);
         return reportList;
     }
@@ -639,29 +651,29 @@ public class CommonService {
 
     @SneakyThrows
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(String accessToken) {
-        List<String> studentGuids = gradStudentCertificatesRepository.findStudentIdForSchoolYearEndReport();
-        List<UUID> guids = new ArrayList<>();
-        for (String studentGuid : studentGuids) {
-            byte[] data = Hex.decodeHex(studentGuid.toCharArray());
-            UUID guid = new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong());
-            guids.add(guid);
-        }
+        List<UUID> studentGuids = schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport();
+        return getReportGradStudentData(accessToken, studentGuids);
+    }
+
+    @SneakyThrows
+    public List<ReportGradStudentData> getSchoolReportGradStudentData(String accessToken) {
+        List<UUID> studentGuids = schoolReportMonthlyRepository.findStudentIdForSchoolReport();
+        return getReportGradStudentData(accessToken, studentGuids);
+    }
+
+    private List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) throws DecoderException {
         final ParameterizedTypeReference<List<ReportGradStudentData>> responseType = new ParameterizedTypeReference<>() {
         };
-        List<ReportGradStudentData> reportGradStudentDataList = this.webClient.post()
-                .uri(constants.getStudentsForSchoolYearlyDistribution())
+        return this.webClient.post()
+                .uri(constants.getStudentsForSchoolDistribution())
                 .headers(h -> {
                     h.setBearerAuth(accessToken);
                     h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
                 })
-                .body(BodyInserters.fromValue(guids))
+                .body(BodyInserters.fromValue(studentGuids))
                 .retrieve()
                 .bodyToMono(responseType)
                 .block();
-        if (reportGradStudentDataList != null) {
-            reportGradStudentDataList.removeIf(d -> (d.getCertificateTypes() == null || d.getCertificateTypes().isEmpty()) && StringUtils.isBlank(d.getTranscriptTypeCode()));
-        }
-        return reportGradStudentDataList;
     }
 
     private boolean isClobDataChanged(String currentBase64, String newBase64) {
@@ -672,5 +684,11 @@ public class CommonService {
             return true;
         }
         return !currentBase64.equals(newBase64);
+    }
+
+    @SneakyThrows
+    private UUID convertStringToGuid(String studentGuid) {
+        byte[] data = Hex.decodeHex(studentGuid.toCharArray());
+        return new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong());
     }
 }
