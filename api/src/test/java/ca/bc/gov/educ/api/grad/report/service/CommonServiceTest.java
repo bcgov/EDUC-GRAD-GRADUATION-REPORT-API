@@ -1370,7 +1370,7 @@ public class CommonServiceTest {
 
     @Test
     @SneakyThrows
-    public void testGetSchoolYearEndReportGradStudentData() {
+    public void testGetSchoolReportGradStudentData() {
         UUID studentId = UUID.randomUUID();
 
         List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
@@ -1406,6 +1406,9 @@ public class CommonServiceTest {
         when(this.responseMock.bodyToMono(new ParameterizedTypeReference<List<ReportGradStudentData>>() {})).thenReturn(Mono.just(reportGradStudentDataList));
 
         var result = commonService.getSchoolYearEndReportGradStudentData("accessToken");
+        assertThat(result).isNotEmpty();
+
+        result = commonService.getSchoolReportGradStudentData("accessToken");
         assertThat(result).isNotEmpty();
     }
 }
