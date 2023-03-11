@@ -14,7 +14,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
@@ -461,7 +460,7 @@ public class CommonService {
                 GradStudentCertificatesEntity ent = optEntity.get();
                 ent.setUpdateDate(null);
                 ent.setUpdateUser(null);
-                if ("USERDISTOC".equalsIgnoreCase(activityCode) && ent.getDistributionDate() == null) {
+                if (ent.getDistributionDate() == null && !"USERDISTRC".equalsIgnoreCase(activityCode)) {
                     ent.setDistributionDate(new Date());
                 }
                 gradStudentCertificatesRepository.save(ent);
@@ -664,7 +663,7 @@ public class CommonService {
         return getReportGradStudentData(accessToken, studentGuids);
     }
 
-    private List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) throws DecoderException {
+    private List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) {
         final ParameterizedTypeReference<List<ReportGradStudentData>> responseType = new ParameterizedTypeReference<>() {
         };
         return this.webClient.post()
