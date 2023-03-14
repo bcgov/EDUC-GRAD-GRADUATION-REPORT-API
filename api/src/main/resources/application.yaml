@@ -52,7 +52,8 @@ logging:
         gov:
           educ:
             api:
-              report: ${APP_LOG_LEVEL}
+              grad:
+                report: ${APP_LOG_LEVEL}
     org:
       springframework:
         web: ${SPRING_WEB_LOG_LEVEL}
@@ -77,8 +78,15 @@ springdoc:
     path: /api/v1/api-docs-ui.html
     operationsSorter: alpha
 
+authorization:
+  user: ${GRAD_CLIENT_NAME}
+  password: ${GRAD_CLIENT_SECRET}
+  token-expiry-offset: '30'
+
 #Endpoint
 endpoint:
+  keycloak:
+    getToken: ${KEYCLOAK_TOKEN_URL}auth/realms/master/protocol/openid-connect/token
   grad-student-api:
     get-students-for-yearly-run: ${GRAD_STUDENT_API}api/v1/student/yearlydistribution
     get-students-for-school-run: ${GRAD_STUDENT_API}api/v1/student/studentschoolreportdata

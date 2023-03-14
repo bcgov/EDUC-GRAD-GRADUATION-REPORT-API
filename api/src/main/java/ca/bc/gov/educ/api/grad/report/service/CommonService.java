@@ -10,34 +10,32 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.ByteArrayInputStream;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 
 @Service
-public class CommonService {
+public class CommonService extends BaseService {
 
     @Autowired
     GradStudentCertificatesTransformer gradStudentCertificatesTransformer;
@@ -77,13 +75,6 @@ public class CommonService {
     SchoolReportYearEndRepository schoolReportYearEndRepository;
     @Autowired
     SchoolReportMonthlyRepository schoolReportMonthlyRepository;
-    @Autowired
-    WebClient webClient;
-    @Autowired
-    EducGradReportApiConstants constants;
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     @SuppressWarnings("unused")
     private static final Logger logger = LoggerFactory.getLogger(CommonService.class);
@@ -94,6 +85,7 @@ public class CommonService {
     private static final String COMPLETED = "COMPL";
     private static final String TRAN = "transcript";
     private static final List<String> SCCP_CERT_TYPES = Arrays.asList("SC", "SCF", "SCI");
+    private static final int PAGE_SIZE = 1000;
 
     @Transactional
     public GradStudentReports saveGradReports(GradStudentReports gradStudentReports, boolean isGraduated) {
@@ -648,16 +640,39 @@ public class CommonService {
         return null;
     }
 
-    @SneakyThrows
-    public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(String accessToken) {
-        List<UUID> studentGuids = schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport();
-        return getReportGradStudentData(accessToken, studentGuids);
+    public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData() {
+        logger.debug("getSchoolYearEndReportGradStudentData>");
+        PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
+        Page<UUID> studentGuids = schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport(nextPage);
+        return processReportGradStudentDataList(studentGuids);
     }
 
-    @SneakyThrows
-    public List<ReportGradStudentData> getSchoolReportGradStudentData(String accessToken) {
-        List<UUID> studentGuids = schoolReportMonthlyRepository.findStudentIdForSchoolReport();
-        return getReportGradStudentData(accessToken, studentGuids);
+    public List<ReportGradStudentData> getSchoolReportGradStudentData() {
+        PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
+        Page<UUID> studentGuids = schoolReportMonthlyRepository.findStudentIdForSchoolReport(nextPage);
+        processReportGradStudentDataList(studentGuids);
+        return processReportGradStudentDataList(studentGuids);
+    }
+
+    private List<ReportGradStudentData> processReportGradStudentDataList(Page<UUID> studentGuids) {
+        long startTime = System.currentTimeMillis();
+        PageRequest nextPage;
+        List<UUID> studentGuidsInBatch = studentGuids.getContent();
+        List<ReportGradStudentData> result = new ArrayList<>(getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch));
+        final int totalNumberOfPages = studentGuids.getTotalPages();
+        logger.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, studentGuids.getTotalElements());
+
+        List<Callable<Object>> tasks = new ArrayList<>();
+
+        for(int i = 1; i < totalNumberOfPages; i ++) {
+            nextPage = PageRequest.of(i, PAGE_SIZE);
+            UUIDPageTask pageTask = new UUIDPageTask(nextPage);
+            tasks.add(pageTask);
+        }
+
+        processReportGradStudentDataTasksAsync(tasks, result, totalNumberOfPages);
+        logger.debug("Completed in {} sec, total objects aquared {}", (System.currentTimeMillis() - startTime) / 1000, result.size());
+        return result;
     }
 
     private List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) {
@@ -675,19 +690,18 @@ public class CommonService {
                 .block();
     }
 
-    private boolean isClobDataChanged(String currentBase64, String newBase64) {
-        if (currentBase64 == null || newBase64 == null) {
-            return true;
-        }
-        if (currentBase64.length() != newBase64.length()) {
-            return true;
-        }
-        return !currentBase64.equals(newBase64);
-    }
+    class UUIDPageTask implements Callable<Object> {
 
-    @SneakyThrows
-    private UUID convertStringToGuid(String studentGuid) {
-        byte[] data = Hex.decodeHex(studentGuid.toCharArray());
-        return new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong());
+        private final PageRequest pageRequest;
+
+        public UUIDPageTask(PageRequest pageRequest) {
+            this.pageRequest = pageRequest;
+        }
+
+        @Override
+        public Object call() throws Exception {
+            Page<UUID> studentGuids = schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport(pageRequest);
+            return Pair.of(pageRequest, getReportGradStudentData(fetchAccessToken(), studentGuids.getContent()));
+        }
     }
 }

@@ -3,6 +3,8 @@ package ca.bc.gov.educ.api.grad.report.util;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -103,5 +105,21 @@ public class EducGradReportApiConstants {
     // Splunk LogHelper Enabled
     @Value("${splunk.log-helper.enabled}")
     private boolean splunkLogHelperEnabled;
+
+    @Value("${endpoint.keycloak.getToken}")
+    private String tokenUrl;
+
+    @Value("${authorization.user}")
+    private String userName;
+
+    @Value("${authorization.password}")
+    private String password;
+
+    public static HttpHeaders getHeaders (String username, String password) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        httpHeaders.setBasicAuth(username, password);
+        return httpHeaders;
+    }
 
 }

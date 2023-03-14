@@ -511,9 +511,9 @@ public class CommonControllerTest {
         List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
-        Mockito.when(commonService.getSchoolYearEndReportGradStudentData("accessToken")).thenReturn(reportGradStudentDataList);
-        commonController.getSchoolYearEndReportGradStudentData("accessToken");
-        Mockito.verify(commonService).getSchoolYearEndReportGradStudentData("accessToken");
+        Mockito.when(commonService.getSchoolYearEndReportGradStudentData()).thenReturn(reportGradStudentDataList);
+        commonController.getSchoolYearEndReportGradStudentData();
+        Mockito.verify(commonService).getSchoolYearEndReportGradStudentData();
     }
 
     @Test
@@ -522,8 +522,8 @@ public class CommonControllerTest {
         List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
-        Mockito.when(commonService.getSchoolReportGradStudentData("accessToken")).thenReturn(reportGradStudentDataList);
-        commonController.getSchoolReportGradStudentData("accessToken");
-        Mockito.verify(commonService).getSchoolReportGradStudentData("accessToken");
+        Mockito.when(commonService.getSchoolReportGradStudentData()).thenReturn(reportGradStudentDataList);
+        commonController.getSchoolReportGradStudentData();
+        Mockito.verify(commonService).getSchoolReportGradStudentData();
     }
 }
