@@ -23,10 +23,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public abstract class BaseService {
 
@@ -59,7 +56,7 @@ public abstract class BaseService {
         return new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong());
     }
 
-    protected void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result, int numberOfThreads) {
+    protected void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result, int numberOfThreads) throws ExecutionException, InterruptedException {
         List<Future<Object>> executionResult;
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
         try {
@@ -71,11 +68,12 @@ public abstract class BaseService {
                     result.addAll(taskResult.getRight());
                     logger.debug("Page {} processed successfully", taskResult.getLeft().getPageNumber());
                 } else {
-                    logger.error("Error during the task execution: {}", f.get().toString());
+                    logger.error("Error during the task execution: {}", f.get());
                 }
             }
-        } catch (Exception ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             logger.error(ex.toString());
+            throw ex;
         } finally {
             executorService.shutdown();
         }

@@ -11,6 +11,7 @@ import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
+import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -657,6 +658,7 @@ public class CommonService extends BaseService {
         return processReportGradStudentDataList(studentGuids);
     }
 
+    @SneakyThrows
     private List<ReportGradStudentData> processReportGradStudentDataList(Page<UUID> studentGuids) {
         List<ReportGradStudentData> result = new ArrayList<>();
         long startTime = System.currentTimeMillis();
