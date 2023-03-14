@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static ca.bc.gov.educ.api.grad.report.service.CommonService.PAGE_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,10 +53,8 @@ public class CommonServiceTest {
     @MockBean TranscriptTypesRepository transcriptTypesRepository;
     @MockBean SchoolReportsRepository schoolReportsRepository;
     @MockBean SchoolReportsLightRepository schoolReportsLightRepository;
-    @MockBean
-    SchoolReportYearEndRepository uuidYeRepository;
-    @MockBean
-    SchoolReportMonthlyRepository uuidRepository;
+    @MockBean SchoolReportYearEndRepository schoolReportYearEndRepository;
+    @MockBean SchoolReportMonthlyRepository schoolReportMonthlyRepository;
     @MockBean WebClient webClient;
 
     @Mock
@@ -1403,7 +1402,90 @@ public class CommonServiceTest {
 
         reportGradStudentDataList.add(reportGradStudentData);
 
-        when(uuidYeRepository.findStudentIdForSchoolYearEndReport(PageRequest.of(0, 100))).thenReturn(new Page() {
+        when(schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
+
+            @Override
+            public Iterator<UUID> iterator() {
+                return getContent().listIterator();
+            }
+
+            @Override
+            public int getNumber() {
+                return 1;
+            }
+
+            @Override
+            public int getSize() {
+                return 1;
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return 1;
+            }
+
+            @Override
+            public List<UUID> getContent() {
+                return List.of(studentId);
+            }
+
+            @Override
+            public boolean hasContent() {
+                return !getContent().isEmpty();
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isLast() {
+                return false;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public int getTotalPages() {
+                return getContent().size();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return getContent().size();
+            }
+
+            @Override
+            public Page map(Function converter) {
+                return null;
+            }
+        });
+
+        when(schoolReportMonthlyRepository.findStudentIdForSchoolReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
 
             @Override
             public Iterator<UUID> iterator() {

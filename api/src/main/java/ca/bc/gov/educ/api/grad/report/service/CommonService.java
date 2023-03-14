@@ -76,6 +76,8 @@ public class CommonService extends BaseService {
     @Autowired
     SchoolReportMonthlyRepository schoolReportMonthlyRepository;
 
+    public static final int PAGE_SIZE = 1000;
+
     @SuppressWarnings("unused")
     private static final Logger logger = LoggerFactory.getLogger(CommonService.class);
 
@@ -85,7 +87,6 @@ public class CommonService extends BaseService {
     private static final String COMPLETED = "COMPL";
     private static final String TRAN = "transcript";
     private static final List<String> SCCP_CERT_TYPES = Arrays.asList("SC", "SCF", "SCI");
-    private static final int PAGE_SIZE = 1000;
 
     @Transactional
     public GradStudentReports saveGradReports(GradStudentReports gradStudentReports, boolean isGraduated) {
@@ -650,27 +651,29 @@ public class CommonService extends BaseService {
     public List<ReportGradStudentData> getSchoolReportGradStudentData() {
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<UUID> studentGuids = schoolReportMonthlyRepository.findStudentIdForSchoolReport(nextPage);
-        processReportGradStudentDataList(studentGuids);
         return processReportGradStudentDataList(studentGuids);
     }
 
     private List<ReportGradStudentData> processReportGradStudentDataList(Page<UUID> studentGuids) {
+        List<ReportGradStudentData> result = new ArrayList<>();
         long startTime = System.currentTimeMillis();
-        PageRequest nextPage;
-        List<UUID> studentGuidsInBatch = studentGuids.getContent();
-        List<ReportGradStudentData> result = new ArrayList<>(getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch));
-        final int totalNumberOfPages = studentGuids.getTotalPages();
-        logger.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, studentGuids.getTotalElements());
+        if(studentGuids.hasContent()) {
+            PageRequest nextPage;
+            List<UUID> studentGuidsInBatch = studentGuids.getContent();
+            result.addAll(getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch));
+            final int totalNumberOfPages = studentGuids.getTotalPages();
+            logger.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, studentGuids.getTotalElements());
 
-        List<Callable<Object>> tasks = new ArrayList<>();
+            List<Callable<Object>> tasks = new ArrayList<>();
 
-        for(int i = 1; i < totalNumberOfPages; i ++) {
-            nextPage = PageRequest.of(i, PAGE_SIZE);
-            UUIDPageTask pageTask = new UUIDPageTask(nextPage);
-            tasks.add(pageTask);
+            for (int i = 1; i < totalNumberOfPages; i++) {
+                nextPage = PageRequest.of(i, PAGE_SIZE);
+                UUIDPageTask pageTask = new UUIDPageTask(nextPage);
+                tasks.add(pageTask);
+            }
+
+            processReportGradStudentDataTasksAsync(tasks, result, totalNumberOfPages);
         }
-
-        processReportGradStudentDataTasksAsync(tasks, result, totalNumberOfPages);
         logger.debug("Completed in {} sec, total objects aquared {}", (System.currentTimeMillis() - startTime) / 1000, result.size());
         return result;
     }
