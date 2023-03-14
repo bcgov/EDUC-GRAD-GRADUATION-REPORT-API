@@ -189,6 +189,9 @@ public class CommonService extends BaseService {
 
     @Transactional
     public GradStudentCertificates saveGradCertificates(GradStudentCertificates gradStudentCertificates) {
+        if (gradStudentCertificates.isOverwrite()) {
+            gradStudentCertificatesRepository.deleteByStudentID(gradStudentCertificates.getStudentID());
+        }
         GradStudentCertificatesEntity toBeSaved = gradStudentCertificatesTransformer.transformToEntity(gradStudentCertificates);
         Optional<GradStudentCertificatesEntity> existingEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode(), COMPLETED);
         if (existingEntity.isPresent()) {
