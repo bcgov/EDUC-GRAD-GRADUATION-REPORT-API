@@ -178,18 +178,18 @@ public class CommonController {
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData(@RequestHeader(name="Authorization") String accessToken) {
+    public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData() {
         logger.debug("getAllStudentSchoolYearEndDistribution : ");
-        return response.GET(commonService.getSchoolYearEndReportGradStudentData(accessToken.replace(BEARER, "")));
+        return response.GET(commonService.getSchoolYearEndReportGradStudentData());
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_REPORT)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<ReportGradStudentData>> getSchoolReportGradStudentData(@RequestHeader(name="Authorization") String accessToken) {
+    public ResponseEntity<List<ReportGradStudentData>> getSchoolReportGradStudentData() {
         logger.debug("getAllStudentSchoolYearEndDistribution : ");
-        return response.GET(commonService.getSchoolReportGradStudentData(accessToken.replace(BEARER, "")));
+        return response.GET(commonService.getSchoolReportGradStudentData());
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_BY_DIST_DATE_N_STATUS_YEARLY)

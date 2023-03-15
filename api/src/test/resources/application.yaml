@@ -46,7 +46,8 @@ logging:
         gov:
           educ:
             api:
-              report: INFO
+              grad:
+                report: DEBUG
     org:
       springframework:
         web: INFO
@@ -63,8 +64,15 @@ springdoc:
     path: /api/v1/api-docs-ui.html
     operationsSorter: alpha
 
+authorization:
+  user: batch-api
+  password: dsfs3434fddf
+  token-expiry-offset: '30'
+
 #Endpoint
 endpoint:
+  keycloak:
+    getToken: https://soam-dev.apps.silver.devops.gov.bc.ca/auth/realms/master/protocol/openid-connect/token
   grad-student-api:
     get-students-for-yearly-run: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/yearlydistribution
     get-students-for-school-run: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentschoolreportdata
