@@ -72,8 +72,7 @@ public abstract class BaseService {
                 }
             }
         } catch (InterruptedException | ExecutionException ex) {
-            logger.error(ex.toString());
-            throw ex;
+            throw new InterruptedException(ex.toString());
         } finally {
             executorService.shutdown();
         }
