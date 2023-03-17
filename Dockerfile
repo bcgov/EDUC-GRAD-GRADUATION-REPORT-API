@@ -14,7 +14,7 @@ ARG DEPENDENCY=/workspace/app/target/dependency
 COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java","-Duser.name=EDUC-GRAD-GRADUATN-REP-API","-Xms800m","-Xmx800m","-noverify",\
+ENTRYPOINT ["java","-Duser.name=EDUC-GRAD-GRADUATN-REP-API","-Xms256m","-Xmx1024m","-noverify",\
             "-XX:TieredStopAtLevel=1","-XX:+UseParallelGC","-XX:MinHeapFreeRatio=20",\
             "-XX:MaxHeapFreeRatio=40","-XX:GCTimeRatio=4","-XX:AdaptiveSizePolicyWeight=90",\
             "-XX:MaxMetaspaceSize=100m","-XX:ParallelGCThreads=1",\
