@@ -679,7 +679,7 @@ public class CommonService extends BaseService {
 
             processReportGradStudentDataTasksAsync(tasks, result, totalNumberOfPages);
         }
-        logger.debug("Completed in {} sec, total objects aquared {}", (System.currentTimeMillis() - startTime) / 1000, result.size());
+        logger.debug("Completed in {} sec, total objects acquired {}", (System.currentTimeMillis() - startTime) / 1000, result.size());
         return result;
     }
 
