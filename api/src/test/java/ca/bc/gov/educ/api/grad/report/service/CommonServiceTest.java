@@ -1110,7 +1110,7 @@ public class CommonServiceTest {
         when(this.responseMock.bodyToMono(District.class)).thenReturn(Mono.just(district));
 
         when(schoolReportsRepository.findBySchoolOfRecordContains("123456")).thenReturn(schoolReportsEntityList);
-        when(schoolReportsLightRepository.findByReportTypeCode(gradReportTypes.getCode())).thenReturn(schoolReportsLightEntityList);
+        when(schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(gradReportTypes.getCode(), mincode2)).thenReturn(schoolReportsLightEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
         var result = commonService.getAllSchoolReportListByMincode(mincode,"accessToken");
@@ -1121,20 +1121,20 @@ public class CommonServiceTest {
         assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode2);
         assertThat(result.get(1).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
 
-        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),"accessToken");
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2,"accessToken");
         assertThat(result).isNotNull().isNotEmpty();
 
         schoolReports.setSchoolOfRecord(district.getDistrictNumber());
         when(schoolReportsLightRepository.findByReportTypeCode(gradReportTypes.getCode())).thenReturn(schoolReportsLightEntityList);
 
-        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),"accessToken");
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2,"accessToken");
         assertThat(result).isNotNull().isNotEmpty();
         assertThat(result.get(0).getSchoolOfRecord()).isNotNull();
 
         schoolReports3.setSchoolOfRecord(null);
         when(schoolReportsLightRepository.findByReportTypeCode(gradReportTypes.getCode())).thenReturn(schoolReportsLightEntityList);
 
-        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),"accessToken");
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2,"accessToken");
         assertThat(result).isNotNull().isNotEmpty();
         assertThat(result.get(0).getSchoolOfRecord()).isNull();
     }
