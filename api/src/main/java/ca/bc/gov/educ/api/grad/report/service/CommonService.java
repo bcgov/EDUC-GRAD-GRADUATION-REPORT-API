@@ -2,10 +2,7 @@ package ca.bc.gov.educ.api.grad.report.service;
 
 
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentCertificatesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentReportsEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.*;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
@@ -338,8 +335,14 @@ public class CommonService extends BaseService {
         return reportList;
     }
 
-    public List<SchoolReports> getAllSchoolReportListByReportType(String reportType, String accessToken) {
-        List<SchoolReports> reportList = schoolReportsTransformer.transformToLightDTO(schoolReportsLightRepository.findByReportTypeCode(reportType));
+    public List<SchoolReports> getAllSchoolReportListByReportType(String reportType, String mincode, String accessToken) {
+        List<SchoolReportsLightEntity> schoolReportsLightEntityList;
+        if(StringUtils.isBlank(mincode)) {
+            schoolReportsLightEntityList = schoolReportsLightRepository.findByReportTypeCode(reportType);
+        } else {
+            schoolReportsLightEntityList = schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(reportType, mincode);
+        }
+        List<SchoolReports> reportList = schoolReportsTransformer.transformToLightDTO(schoolReportsLightEntityList);
         populateSchoolRepors(reportList, accessToken);
         return reportList;
     }

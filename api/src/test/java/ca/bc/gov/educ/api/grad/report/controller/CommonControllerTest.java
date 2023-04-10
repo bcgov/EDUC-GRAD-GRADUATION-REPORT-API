@@ -406,9 +406,9 @@ public class CommonControllerTest {
         commonController.getAllSchoolReportsList(mincode,"accessToken");
         Mockito.verify(commonService).getAllSchoolReportListByMincode(mincode,"accessToken");
 
-        Mockito.when(commonService.getAllSchoolReportListByReportType(gradCertificateType.getCode(), "accessToken")).thenReturn(gradStudentReportList);
-        commonController.getSchoolReportsListByReportType(gradCertificateType.getCode(), "accessToken");
-        Mockito.verify(commonService).getAllSchoolReportListByReportType(gradCertificateType.getCode(), "accessToken");
+        Mockito.when(commonService.getAllSchoolReportListByReportType(gradCertificateType.getCode(), mincode, "accessToken")).thenReturn(gradStudentReportList);
+        commonController.getSchoolReportsListByReportType(gradCertificateType.getCode(), mincode, "accessToken");
+        Mockito.verify(commonService).getAllSchoolReportListByReportType(gradCertificateType.getCode(), mincode, "accessToken");
     }
 
     @Test
