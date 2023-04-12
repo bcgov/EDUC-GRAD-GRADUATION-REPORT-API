@@ -11,5 +11,6 @@ import java.util.UUID;
 public interface SchoolReportsLightRepository extends JpaRepository<SchoolReportsLightEntity, UUID> {
 
 	List<SchoolReportsLightEntity> findByReportTypeCode(String reportTypeCode);
+	List<SchoolReportsLightEntity> findByReportTypeCodeAndSchoolOfRecord(String reportTypeCode, String schoolOfRecord);
 
 }
