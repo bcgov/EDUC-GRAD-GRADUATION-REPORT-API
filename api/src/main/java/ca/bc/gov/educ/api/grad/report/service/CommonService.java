@@ -258,7 +258,7 @@ public class CommonService extends BaseService {
         List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
         boolean hasDocuments = false;
         if (!repList.isEmpty()) {
-            repList.forEach(rep -> gradStudentReportsRepository.delete(rep));
+            gradStudentReportsRepository.deleteAll(repList);
             hasDocuments = true;
         }
         List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
@@ -272,7 +272,7 @@ public class CommonService extends BaseService {
         List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
         if (!tranList.isEmpty()) {
             hasDocuments = true;
-            tranList.forEach(tran -> gradStudentTranscriptsRepository.delete(tran));
+            gradStudentTranscriptsRepository.deleteAll(tranList);
         }
         if (hasDocuments) {
             return 1;
@@ -287,18 +287,18 @@ public class CommonService extends BaseService {
         List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
         boolean hasDocuments = false;
         if (!repList.isEmpty()) {
-            repList.forEach(rep -> gradStudentReportsRepository.delete(rep));
+            gradStudentReportsRepository.deleteAll(repList);
             hasDocuments = true;
         }
         List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
         if (!certList.isEmpty()) {
             hasDocuments = true;
-            certList.forEach(cert -> gradStudentCertificatesRepository.delete(cert));
+            gradStudentCertificatesRepository.deleteAll(certList);
         }
         List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
         if (!tranList.isEmpty()) {
             hasDocuments = true;
-            tranList.forEach(tran -> gradStudentTranscriptsRepository.delete(tran));
+            gradStudentTranscriptsRepository.deleteAll(tranList);
         }
         if (hasDocuments) {
             return 1;
@@ -502,7 +502,7 @@ public class CommonService extends BaseService {
                 partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
             }
             if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
-                processCertificate(partitions, scdList, credentialType);
+                processCertificate(partitions, scdList);
             } else if (credentialType.equalsIgnoreCase("OT") || credentialType.equalsIgnoreCase("RT")) {
                 processTranscript(partitions, studentSearchRequest, scdList);
             }
@@ -510,7 +510,7 @@ public class CommonService extends BaseService {
         return scdList;
     }
 
-    private void processCertificate(List<List<UUID>> partitions, List<StudentCredentialDistribution> scdList, String credentialType) {
+    private void processCertificate(List<List<UUID>> partitions, List<StudentCredentialDistribution> scdList) {
         for (List<UUID> subList : partitions) {
             List<StudentCredentialDistribution> scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
             if (!scdSubList.isEmpty()) {
