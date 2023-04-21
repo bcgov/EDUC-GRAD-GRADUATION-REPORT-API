@@ -421,6 +421,15 @@ public class CommonControllerTest {
     }
 
     @Test
+    public void testDeleteSchoolReport() {
+        final String schoolOfRecord = "123456789";
+        final String reportTypeCode = "TEST";
+        Mockito.when(commonService.deleteSchoolReports(schoolOfRecord,reportTypeCode)).thenReturn(true);
+        commonController.deleteSchoolReport(schoolOfRecord,reportTypeCode);
+        Mockito.verify(commonService).deleteSchoolReports(schoolOfRecord,reportTypeCode);
+    }
+
+    @Test
     public void testUpdateStudentCredential() {
         final UUID studentID = new UUID(1,1);
         final String schoolOfRecord = "123456789";
