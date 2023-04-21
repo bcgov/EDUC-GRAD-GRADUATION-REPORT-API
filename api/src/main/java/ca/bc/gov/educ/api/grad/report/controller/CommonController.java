@@ -330,6 +330,15 @@ public class CommonController {
         return response.GET(commonService.updateSchoolReports(mincode,reportTypeCode));
     }
 
+    @DeleteMapping(EducGradReportApiConstants.UPDATE_SCHOOL_REPORTS)
+    @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Boolean> deleteSchoolReport(@RequestParam(required = false) String mincode, @RequestParam String reportTypeCode) {
+        logger.debug("updateSchoolReport ");
+        return response.GET(commonService.deleteSchoolReports(mincode,reportTypeCode));
+    }
+
     @GetMapping(EducGradReportApiConstants.STUDENT_CREDENTIAL_BUSINESS)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Read Student Credentials by Student ID and Type of Credential", description = "Read Student Credentials by Student ID and Type of Credential", tags = { "Credentials" })
