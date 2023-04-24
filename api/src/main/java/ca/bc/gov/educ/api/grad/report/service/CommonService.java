@@ -578,6 +578,7 @@ public class CommonService extends BaseService {
         return false;
     }
 
+    @Transactional
     public boolean deleteSchoolReports(String minCode, String reportTypeCode) {
         if(StringUtils.isNotBlank(minCode)) {
             Optional<SchoolReportsEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(minCode, reportTypeCode);
@@ -586,8 +587,7 @@ public class CommonService extends BaseService {
                 return true;
             }
         } else {
-            schoolReportsRepository.deleteByReportTypeCode(reportTypeCode);
-            return true;
+            return !schoolReportsRepository.deleteAllByReportTypeCode(reportTypeCode).isEmpty();
         }
         return false;
     }

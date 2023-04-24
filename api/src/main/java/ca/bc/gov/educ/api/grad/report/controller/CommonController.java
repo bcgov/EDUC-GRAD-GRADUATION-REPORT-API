@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -336,7 +337,7 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Boolean> deleteSchoolReport(@RequestParam(required = false) String mincode, @RequestParam String reportTypeCode) {
         logger.debug("updateSchoolReport ");
-        return response.GET(commonService.deleteSchoolReports(mincode,reportTypeCode));
+        return response.GET(commonService.deleteSchoolReports(mincode, StringUtils.trim(reportTypeCode)));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_CREDENTIAL_BUSINESS)

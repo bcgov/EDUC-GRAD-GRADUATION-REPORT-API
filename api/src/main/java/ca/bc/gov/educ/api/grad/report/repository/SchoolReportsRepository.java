@@ -16,7 +16,7 @@ public interface SchoolReportsRepository extends JpaRepository<SchoolReportsEnti
 	List<SchoolReportsEntity> existsByReportTypeCode(String reportType);
    	
    	long deleteBySchoolOfRecord(String schoolOfRecord);
-	long deleteByReportTypeCode(String reportTypeCode);
+	List<SchoolReportsEntity> deleteAllByReportTypeCode(String reportTypeCode);
 
 	List<SchoolReportsEntity> findBySchoolOfRecordContains(String schoolOfRecord);
 	List<SchoolReportsEntity> findBySchoolOfRecord(String schoolOfRecord);
