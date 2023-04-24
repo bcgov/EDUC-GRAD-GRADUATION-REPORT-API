@@ -1232,6 +1232,7 @@ public class CommonServiceTest {
         assertThat(res).isTrue();
         res = commonService.deleteSchoolReports(mincode,reportTypeCode);
         assertThat(res).isTrue();
+        when(schoolReportsRepository.deleteAllByReportTypeCode(reportTypeCode)).thenReturn(List.of(ent));
         res = commonService.deleteSchoolReports(null,reportTypeCode);
         assertThat(res).isTrue();
     }
