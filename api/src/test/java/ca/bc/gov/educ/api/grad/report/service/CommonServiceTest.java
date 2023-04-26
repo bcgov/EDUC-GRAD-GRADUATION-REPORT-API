@@ -1230,6 +1230,11 @@ public class CommonServiceTest {
         when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode,reportTypeCode)).thenReturn(Optional.of(ent));
         boolean res = commonService.updateSchoolReports(mincode,reportTypeCode);
         assertThat(res).isTrue();
+        res = commonService.deleteSchoolReports(mincode,reportTypeCode);
+        assertThat(res).isTrue();
+        when(schoolReportsRepository.deleteAllByReportTypeCode(reportTypeCode)).thenReturn(List.of(ent));
+        res = commonService.deleteSchoolReports(null,reportTypeCode);
+        assertThat(res).isTrue();
     }
 
     @Test
