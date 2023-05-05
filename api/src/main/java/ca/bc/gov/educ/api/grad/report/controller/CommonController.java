@@ -308,7 +308,7 @@ public class CommonController {
             @RequestParam(value = "mincode", required = false) String mincode,
             @RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getSchoolReportsListByReportType : ");
-        return response.GET(commonService.getAllSchoolReportListByReportType(reportType, mincode, accessToken.replace(BEARER,"")));
+        return response.GET(commonService.getAllSchoolReportListByReportType(reportType, mincode));
     }
 
     @GetMapping(EducGradReportApiConstants.SCHOOL_REPORT)

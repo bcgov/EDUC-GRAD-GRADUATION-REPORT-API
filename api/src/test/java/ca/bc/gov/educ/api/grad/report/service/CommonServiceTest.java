@@ -1099,6 +1099,8 @@ public class CommonServiceTest {
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
 
+        mockAccessToken();
+
         District district = new District();
         district.setDistrictNumber("005");
         district.setDistrictName("SOOKE");
@@ -1121,20 +1123,22 @@ public class CommonServiceTest {
         assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode2);
         assertThat(result.get(1).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
 
-        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2,"accessToken");
+        mockAccessToken();
+
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2);
         assertThat(result).isNotNull().isNotEmpty();
 
         schoolReports.setSchoolOfRecord(district.getDistrictNumber());
         when(schoolReportsLightRepository.findByReportTypeCode(gradReportTypes.getCode())).thenReturn(schoolReportsLightEntityList);
 
-        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2,"accessToken");
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2);
         assertThat(result).isNotNull().isNotEmpty();
         assertThat(result.get(0).getSchoolOfRecord()).isNotNull();
 
         schoolReports3.setSchoolOfRecord(null);
         when(schoolReportsLightRepository.findByReportTypeCode(gradReportTypes.getCode())).thenReturn(schoolReportsLightEntityList);
 
-        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2,"accessToken");
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2);
         assertThat(result).isNotNull().isNotEmpty();
         assertThat(result.get(0).getSchoolOfRecord()).isNull();
     }
@@ -1171,6 +1175,8 @@ public class CommonServiceTest {
         final GradReportTypesEntity gradReportTypesEntity = new GradReportTypesEntity();
         gradReportTypesEntity.setCode("NONGRADPRJ");
         gradReportTypesEntity.setDescription("non grad projected");
+
+        mockAccessToken();
 
         when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
         when(this.requestHeadersUriMock.uri(String.format(constants.getSchoolByMincodeUrl(),mincode2))).thenReturn(this.requestHeadersMock);
@@ -1580,6 +1586,16 @@ public class CommonServiceTest {
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(new ParameterizedTypeReference<List<ReportGradStudentData>>() {})).thenReturn(Mono.just(reportGradStudentDataList));
 
+        mockAccessToken();
+
+        var result = commonService.getSchoolYearEndReportGradStudentData();
+        assertThat(result).isNotEmpty();
+
+        result = commonService.getSchoolReportGradStudentData();
+        assertThat(result).isNotEmpty();
+    }
+
+    private void mockAccessToken() {
         final TokenResponse tokenObject = new TokenResponse();
         tokenObject.setAccess_token(MOCK_TOKEN);
         tokenObject.setRefresh_token("456");
@@ -1591,11 +1607,5 @@ public class CommonServiceTest {
         when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(TokenResponse.class)).thenReturn(Mono.just(tokenObject));
-
-        var result = commonService.getSchoolYearEndReportGradStudentData();
-        assertThat(result).isNotEmpty();
-
-        result = commonService.getSchoolReportGradStudentData();
-        assertThat(result).isNotEmpty();
     }
 }
