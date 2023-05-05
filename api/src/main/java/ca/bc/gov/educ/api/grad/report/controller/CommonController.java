@@ -307,7 +307,7 @@ public class CommonController {
             @PathVariable String reportType,
             @RequestParam(value = "mincode", required = false) String mincode,
             @RequestHeader(name="Authorization") String accessToken) {
-        logger.debug("getAllSchoolReportsList : ");
+        logger.debug("getSchoolReportsListByReportType : ");
         return response.GET(commonService.getAllSchoolReportListByReportType(reportType, mincode, accessToken.replace(BEARER,"")));
     }
 

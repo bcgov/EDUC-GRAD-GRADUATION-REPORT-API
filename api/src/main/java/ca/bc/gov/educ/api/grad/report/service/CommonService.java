@@ -6,6 +6,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.*;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.RestUtils;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
@@ -73,6 +74,8 @@ public class CommonService extends BaseService {
     SchoolReportYearEndRepository schoolReportYearEndRepository;
     @Autowired
     SchoolReportMonthlyRepository schoolReportMonthlyRepository;
+    @Autowired
+    RestUtils restUtils;
 
     public static final int PAGE_SIZE = 1000;
 
@@ -331,7 +334,7 @@ public class CommonService extends BaseService {
                 reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecord(mincode));
             }
         }
-        populateSchoolRepors(reportList, accessToken);
+        populateSchoolRepors(reportList);
         return reportList;
     }
 
@@ -343,12 +346,13 @@ public class CommonService extends BaseService {
             schoolReportsLightEntityList = schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(reportType, mincode);
         }
         List<SchoolReports> reportList = schoolReportsTransformer.transformToLightDTO(schoolReportsLightEntityList);
-        populateSchoolRepors(reportList, accessToken);
+        populateSchoolRepors(reportList);
         return reportList;
     }
 
-    private void populateSchoolRepors(List<SchoolReports> reportList, String accessToken) {
+    private void populateSchoolRepors(List<SchoolReports> reportList) {
         reportList.forEach(rep -> {
+            String accessToken = restUtils.getAccessToken();
             GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getReportTypeCode()));
             if (types != null)
                 rep.setReportTypeLabel(types.getLabel());
