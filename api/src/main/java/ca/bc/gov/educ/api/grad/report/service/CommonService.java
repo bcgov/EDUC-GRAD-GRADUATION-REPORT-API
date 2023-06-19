@@ -138,7 +138,7 @@ public class CommonService extends BaseService {
 
     @Transactional
     public ResponseEntity<InputStreamResource> getSchoolReportByMincodeAndReportType(String mincode, String reportType) {
-        SchoolReports studentReport = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode, reportType));
+        SchoolReports studentReport = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(mincode, reportType));
         if (studentReport != null && studentReport.getReport() != null) {
             byte[] reportByte = Base64.decodeBase64(studentReport.getReport().getBytes(StandardCharsets.US_ASCII));
             ByteArrayInputStream bis = new ByteArrayInputStream(reportByte);
@@ -326,9 +326,9 @@ public class CommonService extends BaseService {
         List<SchoolReports> reportList = new ArrayList<>();
         if (StringUtils.isNotBlank(mincode)) {
             if (StringUtils.contains(mincode, "*")) {
-                reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordContains(StringUtils.strip(mincode, "*")));
+                reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordContainsOrderBySchoolOfRecord(StringUtils.strip(mincode, "*")));
             } else {
-                reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecord(mincode));
+                reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordOrderBySchoolOfRecord(mincode));
             }
         }
         populateSchoolRepors(reportList);
@@ -553,7 +553,7 @@ public class CommonService extends BaseService {
     @Transactional
     public SchoolReports saveSchoolReports(SchoolReports schoolReports) {
         SchoolReportsEntity toBeSaved = schoolReportsTransformer.transformToEntity(schoolReports);
-        Optional<SchoolReportsEntity> existingEnity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(schoolReports.getSchoolOfRecord(), schoolReports.getReportTypeCode());
+        Optional<SchoolReportsEntity> existingEnity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(schoolReports.getSchoolOfRecord(), schoolReports.getReportTypeCode());
         if (existingEnity.isPresent()) {
             SchoolReportsEntity gradEntity = existingEnity.get();
             gradEntity.setUpdateDate(null);
@@ -568,7 +568,7 @@ public class CommonService extends BaseService {
     }
 
     public boolean updateSchoolReports(String minCode, String reportTypeCode) {
-        Optional<SchoolReportsEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(minCode, reportTypeCode);
+        Optional<SchoolReportsEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(minCode, reportTypeCode);
         if (optEntity.isPresent()) {
             SchoolReportsEntity ent = optEntity.get();
             ent.setUpdateDate(null);
@@ -582,7 +582,7 @@ public class CommonService extends BaseService {
     @Transactional
     public boolean deleteSchoolReports(String minCode, String reportTypeCode) {
         if(StringUtils.isNotBlank(minCode)) {
-            Optional<SchoolReportsEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(minCode, reportTypeCode);
+            Optional<SchoolReportsEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(minCode, reportTypeCode);
             if (optEntity.isPresent()) {
                 schoolReportsRepository.delete(optEntity.get());
                 return true;

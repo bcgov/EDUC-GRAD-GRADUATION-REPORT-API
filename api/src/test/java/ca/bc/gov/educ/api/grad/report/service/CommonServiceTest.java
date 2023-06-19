@@ -1007,7 +1007,7 @@ public class CommonServiceTest {
 
         final Optional<SchoolReportsEntity> optionalEmpty = Optional.empty();
 
-        when(this.schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(schoolOfRecord, reportTypeCode)).thenReturn(optionalEmpty);
+        when(this.schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(schoolOfRecord, reportTypeCode)).thenReturn(optionalEmpty);
         when(this.schoolReportsRepository.save(schoolReportsEntity)).thenReturn(schoolReportsEntity);
 
         var result = commonService.saveSchoolReports(schoolReports);
@@ -1035,7 +1035,7 @@ public class CommonServiceTest {
 
         final Optional<SchoolReportsEntity> optional = Optional.of(schoolReportsEntity);
 
-        when(this.schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(schoolOfRecord, reportTypeCode)).thenReturn(optional);
+        when(this.schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(schoolOfRecord, reportTypeCode)).thenReturn(optional);
         when(this.schoolReportsRepository.save(schoolReportsEntity)).thenReturn(schoolReportsEntity);
 
         var result = commonService.saveSchoolReports(schoolReports);
@@ -1111,7 +1111,7 @@ public class CommonServiceTest {
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(District.class)).thenReturn(Mono.just(district));
 
-        when(schoolReportsRepository.findBySchoolOfRecordContains("123456")).thenReturn(schoolReportsEntityList);
+        when(schoolReportsRepository.findBySchoolOfRecordContainsOrderBySchoolOfRecord("123456")).thenReturn(schoolReportsEntityList);
         when(schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(gradReportTypes.getCode(), mincode2)).thenReturn(schoolReportsLightEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
@@ -1184,7 +1184,7 @@ public class CommonServiceTest {
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
 
-        when(schoolReportsRepository.findBySchoolOfRecord("12345631231")).thenReturn(schoolReportsEntityList);
+        when(schoolReportsRepository.findBySchoolOfRecordOrderBySchoolOfRecord("12345631231")).thenReturn(schoolReportsEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
         var result = commonService.getAllSchoolReportListByMincode(mincode,"accessToken");
@@ -1209,7 +1209,7 @@ public class CommonServiceTest {
         schoolReports.setSchoolOfRecord(mincode);
         schoolReports.setReport("TEST Report Body");
 
-        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode, reportTypeCode)).thenReturn(Optional.of(schoolReports));
+        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(mincode, reportTypeCode)).thenReturn(Optional.of(schoolReports));
         var result = commonService.getSchoolReportByMincodeAndReportType(mincode, reportTypeCode);
 
         assertThat(result).isNotNull();
@@ -1217,7 +1217,7 @@ public class CommonServiceTest {
         assertThat(result.getBody()).isNotNull();
 
         schoolReports.setReport(null);
-        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode, reportTypeCode)).thenReturn(Optional.of(schoolReports));
+        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(mincode, reportTypeCode)).thenReturn(Optional.of(schoolReports));
         result = commonService.getSchoolReportByMincodeAndReportType(mincode, reportTypeCode);
         assertThat(result).isNull();
 
@@ -1233,7 +1233,7 @@ public class CommonServiceTest {
         ent.setId(new UUID(1,2));
         ent.setReportTypeCode(reportTypeCode);
 
-        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode,reportTypeCode)).thenReturn(Optional.of(ent));
+        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(mincode,reportTypeCode)).thenReturn(Optional.of(ent));
         boolean res = commonService.updateSchoolReports(mincode,reportTypeCode);
         assertThat(res).isTrue();
         res = commonService.deleteSchoolReports(mincode,reportTypeCode);
