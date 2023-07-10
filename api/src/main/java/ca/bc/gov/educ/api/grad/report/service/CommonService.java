@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -666,26 +667,35 @@ public class CommonService extends BaseService {
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData() {
         logger.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
-        Page<UUID> studentGuids = schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport(nextPage);
-        return processReportGradStudentDataList(studentGuids);
+        Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
+        return processReportGradStudentDataList(students);
     }
 
     public List<ReportGradStudentData> getSchoolReportGradStudentData() {
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
-        Page<UUID> studentGuids = schoolReportMonthlyRepository.findStudentIdForSchoolReport(nextPage);
-        return processReportGradStudentDataList(studentGuids);
+        Page<SchoolReportEntity> students = schoolReportMonthlyRepository.findStudentForSchoolReport(nextPage);
+        return processReportGradStudentDataList(students);
     }
 
     @SneakyThrows
-    private List<ReportGradStudentData> processReportGradStudentDataList(Page<UUID> studentGuids) {
+    private List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students) {
         List<ReportGradStudentData> result = new ArrayList<>();
         long startTime = System.currentTimeMillis();
-        if(studentGuids.hasContent()) {
+        if(students.hasContent()) {
             PageRequest nextPage;
-            List<UUID> studentGuidsInBatch = studentGuids.getContent();
-            result.addAll(getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch));
-            final int totalNumberOfPages = studentGuids.getTotalPages();
-            logger.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, studentGuids.getTotalElements());
+            List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).collect(Collectors.toList());
+            List<ReportGradStudentData> studentsInBatch = getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch);
+            for(SchoolReportEntity e: students.getContent()) {
+                String paperType = e.getPaperType();
+                for(ReportGradStudentData s: studentsInBatch) {
+                    if(s.getGraduationStudentRecordId().equals(e.getGraduationStudentRecordId())) {
+                        s.setPaperType(paperType);
+                    }
+                }
+            }
+            result.addAll(studentsInBatch);
+            final int totalNumberOfPages = students.getTotalPages();
+            logger.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, students.getTotalElements());
 
             List<Callable<Object>> tasks = new ArrayList<>();
 
@@ -726,8 +736,18 @@ public class CommonService extends BaseService {
 
         @Override
         public Object call() throws Exception {
-            Page<UUID> studentGuids = schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport(pageRequest);
-            return Pair.of(pageRequest, getReportGradStudentData(fetchAccessToken(), studentGuids.getContent()));
+            Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(pageRequest);
+            List<UUID> studentGuids = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).collect(Collectors.toList());
+            List<ReportGradStudentData> studentsInBatch = getReportGradStudentData(fetchAccessToken(), studentGuids);
+            for(SchoolReportEntity e: students.getContent()) {
+                String paperType = e.getPaperType();
+                for(ReportGradStudentData s: studentsInBatch) {
+                    if(s.getGraduationStudentRecordId().equals(e.getGraduationStudentRecordId())) {
+                        s.setPaperType(paperType);
+                    }
+                }
+            }
+            return Pair.of(pageRequest, studentsInBatch);
         }
     }
 }

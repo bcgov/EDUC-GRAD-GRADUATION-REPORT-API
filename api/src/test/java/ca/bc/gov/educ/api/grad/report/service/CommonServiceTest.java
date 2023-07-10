@@ -1413,7 +1413,7 @@ public class CommonServiceTest {
 
         reportGradStudentDataList.add(reportGradStudentData);
 
-        when(schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
 
             @Override
             public Iterator<UUID> iterator() {
@@ -1496,7 +1496,7 @@ public class CommonServiceTest {
             }
         });
 
-        when(schoolReportMonthlyRepository.findStudentIdForSchoolReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
+        when(schoolReportMonthlyRepository.findStudentForSchoolReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
 
             @Override
             public Iterator<UUID> iterator() {
