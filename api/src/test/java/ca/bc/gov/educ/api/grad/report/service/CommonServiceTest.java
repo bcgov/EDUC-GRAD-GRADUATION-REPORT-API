@@ -1390,7 +1390,7 @@ public class CommonServiceTest {
     public void testGetSchoolReportGradStudentData() {
         UUID studentId = UUID.randomUUID();
 
-        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         reportGradStudentData.setTranscriptTypeCode("BC2018-IND");

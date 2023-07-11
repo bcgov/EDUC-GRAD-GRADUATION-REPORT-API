@@ -189,7 +189,7 @@ public class CommonController {
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData(@RequestBody List<String> schools) {
-        logger.debug("getAllStudentSchoolYearEndDistribution : {}", schools);
+        logger.debug("getAllStudentSchoolYearEndDistribution :");
         return response.GET(commonService.getSchoolYearEndReportGradStudentData(schools));
     }
 

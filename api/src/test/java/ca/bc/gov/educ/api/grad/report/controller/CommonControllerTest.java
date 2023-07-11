@@ -517,7 +517,7 @@ public class CommonControllerTest {
     @Test
     public void testGetAllStudentIdForSchoolYearEndDistribution() {
         final UUID studentId = new UUID(1, 1);
-        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         Mockito.when(commonService.getSchoolYearEndReportGradStudentData()).thenReturn(reportGradStudentDataList);
@@ -528,7 +528,7 @@ public class CommonControllerTest {
     @Test
     public void testGetAllStudentIdForSchoolDistribution() {
         final UUID studentId = new UUID(1, 1);
-        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         Mockito.when(commonService.getSchoolReportGradStudentData()).thenReturn(reportGradStudentDataList);

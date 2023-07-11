@@ -681,7 +681,7 @@ public class CommonService extends BaseService {
     public List<ReportGradStudentData> getSchoolReportGradStudentData() {
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> students = schoolReportMonthlyRepository.findStudentForSchoolReport(nextPage);
-        return processReportGradStudentDataList(students, new ArrayList());
+        return processReportGradStudentDataList(students, new ArrayList<>());
     }
 
     @SneakyThrows
@@ -711,7 +711,7 @@ public class CommonService extends BaseService {
     private List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
         List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).collect(Collectors.toList());
         List<ReportGradStudentData> studentsInBatch = getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch);
-        if(!schools.isEmpty()) {
+        if(studentsInBatch != null && !schools.isEmpty()) {
             boolean isDistrictSchool = schools.get(0).length() == 3;
             if(isDistrictSchool) {
                 studentsInBatch.removeIf(st -> (!schools.contains(StringUtils.substring(st.getMincode(), 0, 3))));
