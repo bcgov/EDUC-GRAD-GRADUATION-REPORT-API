@@ -722,13 +722,14 @@ public class CommonService extends BaseService {
         }
         for(SchoolReportEntity e: students.getContent()) {
             String paperType = e.getPaperType();
+            String certificateTypeCode = e.getCertificateTypeCode();
             for(ReportGradStudentData s: studentsInBatch) {
                 if(s.getGraduationStudentRecordId().equals(e.getGraduationStudentRecordId())) {
                     s.setPaperType(paperType);
                     if("YED4".equalsIgnoreCase(paperType)) {
-                        s.setTranscriptTypeCode(s.getTranscriptTypeCode());
+                        s.setTranscriptTypeCode(certificateTypeCode);
                     } else {
-                        s.setCertificateTypeCode(s.getCertificateTypeCode());
+                        s.setCertificateTypeCode(certificateTypeCode);
                     }
                 }
             }
