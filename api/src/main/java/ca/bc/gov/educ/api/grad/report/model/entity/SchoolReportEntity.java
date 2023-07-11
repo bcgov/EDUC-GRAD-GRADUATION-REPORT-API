@@ -18,4 +18,7 @@ public class SchoolReportEntity {
     @Column(name = "PAPER_TYPE")
     private String paperType;
 
+    @Column(name = "CERTIFICATE_TYPE_CODE")
+    private String certificateTypeCode;
+
 }
