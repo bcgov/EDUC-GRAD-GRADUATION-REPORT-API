@@ -1413,10 +1413,13 @@ public class CommonServiceTest {
 
         reportGradStudentDataList.add(reportGradStudentData);
 
+        SchoolReportEntity schoolReportEntity = new SchoolReportEntity();
+        schoolReportEntity.setGraduationStudentRecordId(studentId);
+
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
 
             @Override
-            public Iterator<UUID> iterator() {
+            public Iterator<SchoolReportEntity> iterator() {
                 return getContent().listIterator();
             }
 
@@ -1436,8 +1439,8 @@ public class CommonServiceTest {
             }
 
             @Override
-            public List<UUID> getContent() {
-                return List.of(studentId);
+            public List<SchoolReportEntity> getContent() {
+                return List.of(schoolReportEntity);
             }
 
             @Override
@@ -1499,7 +1502,7 @@ public class CommonServiceTest {
         when(schoolReportMonthlyRepository.findStudentForSchoolReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
 
             @Override
-            public Iterator<UUID> iterator() {
+            public Iterator<SchoolReportEntity> iterator() {
                 return getContent().listIterator();
             }
 
@@ -1519,8 +1522,8 @@ public class CommonServiceTest {
             }
 
             @Override
-            public List<UUID> getContent() {
-                return List.of(studentId);
+            public List<SchoolReportEntity> getContent() {
+                return List.of(schoolReportEntity);
             }
 
             @Override
