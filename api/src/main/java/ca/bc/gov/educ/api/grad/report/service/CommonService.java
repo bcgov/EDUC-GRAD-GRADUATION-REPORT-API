@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -709,7 +708,7 @@ public class CommonService extends BaseService {
     }
 
     private List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
-        List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).collect(Collectors.toList());
+        List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).toList();
         List<ReportGradStudentData> studentsInBatch = getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch);
         if(studentsInBatch != null && !schools.isEmpty()) {
             boolean isDistrictSchool = schools.get(0).length() == 3;
