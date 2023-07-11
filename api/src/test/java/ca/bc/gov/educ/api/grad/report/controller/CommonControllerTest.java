@@ -53,6 +53,17 @@ public class CommonControllerTest {
     }
 
     @Test
+    public void testGetStudentCertificateByGuid() {
+        final UUID studentGuid = UUID.randomUUID();
+        GradStudentCertificates studentCertificates = new GradStudentCertificates();
+        studentCertificates.setStudentID(studentGuid);
+
+        Mockito.when(commonService.getAllStudentCertificateList(studentGuid)).thenReturn(List.of(studentCertificates));
+        commonController.getStudentCertificates(studentGuid.toString());
+        Mockito.verify(commonService).getAllStudentCertificateList(studentGuid);
+    }
+
+    @Test
     public void testSaveStudentCertificate() {
         // UUID
         final UUID studentID = UUID.randomUUID();
@@ -523,6 +534,25 @@ public class CommonControllerTest {
         Mockito.when(commonService.getSchoolYearEndReportGradStudentData()).thenReturn(reportGradStudentDataList);
         commonController.getSchoolYearEndReportGradStudentData();
         Mockito.verify(commonService).getSchoolYearEndReportGradStudentData();
+    }
+
+    @Test
+    public void testGetAllStudentIdForSchoolYearEndDistributionWithSchools() {
+        final UUID studentId = new UUID(1, 1);
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        Mockito.when(commonService.getSchoolYearEndReportGradStudentData(List.of("12345"))).thenReturn(reportGradStudentDataList);
+        commonController.getSchoolYearEndReportGradStudentData(List.of("12345"));
+        Mockito.verify(commonService).getSchoolYearEndReportGradStudentData(List.of("12345"));
+    }
+
+    @Test
+    public void testGetAllStudentTranscriptAndReportsPosting() {
+        SchoolStudentCredentialDistribution schoolStudentCredentialDistribution = new SchoolStudentCredentialDistribution(null, null, null, null);
+        Mockito.when(commonService.getAllStudentTranscriptAndReportsPosting()).thenReturn(List.of(schoolStudentCredentialDistribution));
+        commonController.getAllStudentTranscriptAndReportsPosting();
+        Mockito.verify(commonService).getAllStudentTranscriptAndReportsPosting();
     }
 
     @Test
