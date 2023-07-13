@@ -120,6 +120,7 @@ public class CommonServiceTest {
         studentCertificate.setStudentID(studentID);
         studentCertificate.setCertificate("Test Certificate Body");
         studentCertificate.setGradCertificateTypeCode(gradCertificateType.getCode());
+        studentCertificate.setOverwrite(true);
 
         // Student Certificate Types Entity
         final GradStudentCertificatesEntity studentCertificateEntity = new GradStudentCertificatesEntity();
@@ -1113,6 +1114,7 @@ public class CommonServiceTest {
 
         when(schoolReportsRepository.findBySchoolOfRecordContainsOrderBySchoolOfRecord("123456")).thenReturn(schoolReportsEntityList);
         when(schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(gradReportTypes.getCode(), mincode2)).thenReturn(schoolReportsLightEntityList);
+        when(schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(gradReportTypes.getCode(), "")).thenReturn(schoolReportsLightEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
         var result = commonService.getAllSchoolReportListByMincode(mincode,"accessToken");
@@ -1127,6 +1129,9 @@ public class CommonServiceTest {
 
         result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2);
         assertThat(result).isNotNull().isNotEmpty();
+
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),"");
+        assertThat(result).isNotNull().isEmpty();
 
         schoolReports.setSchoolOfRecord(district.getDistrictNumber());
         when(schoolReportsLightRepository.findByReportTypeCode(gradReportTypes.getCode())).thenReturn(schoolReportsLightEntityList);
