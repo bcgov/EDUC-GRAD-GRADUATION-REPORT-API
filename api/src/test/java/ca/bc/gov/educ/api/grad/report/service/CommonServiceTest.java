@@ -532,7 +532,7 @@ public class CommonServiceTest {
 
         final Optional<GradStudentTranscriptsEntity> optionalEmpty = Optional.empty();
 
-        when(this.gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optionalEmpty);
+        when(this.gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,documentStatusCode)).thenReturn(new ArrayList<>());
         when(this.gradStudentTranscriptsRepository.save(any(GradStudentTranscriptsEntity.class))).thenReturn(gradStudentTranscriptsEntity);
 
         var result = commonService.saveGradTranscripts(gradStudentTranscripts,isGraduated);
@@ -548,8 +548,7 @@ public class CommonServiceTest {
         final UUID reportID = UUID.randomUUID();
         final UUID studentID = UUID.randomUUID();
         final String reportTypeCode = "TEST";
-        boolean isGraduated = false;
-        final String documentStatusCode = "COMPL";
+        boolean isGraduated = true;
         final GradStudentTranscripts gradStudentTranscripts = new GradStudentTranscripts();
         gradStudentTranscripts.setId(reportID);
         gradStudentTranscripts.setTranscriptTypeCode(reportTypeCode);
@@ -562,11 +561,82 @@ public class CommonServiceTest {
         gradStudentTranscriptsEntity.setStudentID(studentID);
         gradStudentTranscriptsEntity.setTranscript("TEST Report Body 456");
         gradStudentTranscriptsEntity.setTranscriptUpdateDate(new Date());
+        gradStudentTranscriptsEntity.setDocumentStatusCode("IP");
 
-        final Optional<GradStudentTranscriptsEntity> optional = Optional.of(gradStudentTranscriptsEntity);
-
-        when(this.gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,"ARCH")).thenReturn(optional);
+        when(this.gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(Arrays.asList(gradStudentTranscriptsEntity));
         when(this.gradStudentTranscriptsRepository.save(any(GradStudentTranscriptsEntity.class))).thenReturn(gradStudentTranscriptsEntity);
+
+        var result = commonService.saveGradTranscripts(gradStudentTranscripts,isGraduated);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getStudentID()).isEqualTo(studentID);
+        assertThat(result.getTranscriptTypeCode()).isEqualTo(gradStudentTranscripts.getTranscriptTypeCode());
+    }
+
+    @Test
+    public void testSaveGradTranscriptForExistingOneWithDifferentTranscriptTypeCode_thenReturnUpdateSuccess() {
+        // ID
+        final UUID reportID = UUID.randomUUID();
+        final UUID studentID = UUID.randomUUID();
+        final String reportTypeCode1 = "TEST1";
+        final String reportTypeCode2 = "TEST2";
+        boolean isGraduated = false;
+        final GradStudentTranscripts gradStudentTranscripts = new GradStudentTranscripts();
+        gradStudentTranscripts.setId(reportID);
+        gradStudentTranscripts.setTranscriptTypeCode(reportTypeCode2);
+        gradStudentTranscripts.setStudentID(studentID);
+        gradStudentTranscripts.setTranscript("TEST Report Body 123");
+
+        final GradStudentTranscriptsEntity gradStudentTranscriptsEntity = new GradStudentTranscriptsEntity();
+        gradStudentTranscriptsEntity.setId(reportID);
+        gradStudentTranscriptsEntity.setTranscriptTypeCode(reportTypeCode1);
+        gradStudentTranscriptsEntity.setStudentID(studentID);
+        gradStudentTranscriptsEntity.setTranscript("TEST Report Body 456");
+        gradStudentTranscriptsEntity.setTranscriptUpdateDate(new Date());
+
+        when(this.gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(Arrays.asList(gradStudentTranscriptsEntity));
+        when(this.gradStudentTranscriptsRepository.save(any(GradStudentTranscriptsEntity.class))).thenReturn(gradStudentTranscriptsEntity);
+
+        var result = commonService.saveGradTranscripts(gradStudentTranscripts,isGraduated);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getStudentID()).isEqualTo(studentID);
+        assertThat(result.getTranscriptTypeCode()).isEqualTo(gradStudentTranscripts.getTranscriptTypeCode());
+    }
+
+    @Test
+    public void testSaveGradTranscriptForMultipleExistingOneWithDifferentTranscriptTypeCode_thenReturnUpdateSuccess() {
+        // ID
+        final UUID reportID1 = UUID.randomUUID();
+        final UUID reportID2 = UUID.randomUUID();
+        final UUID studentID = UUID.randomUUID();
+        final String reportTypeCode1 = "TEST1";
+        final String reportTypeCode2 = "TEST2";
+        boolean isGraduated = false;
+        final GradStudentTranscripts gradStudentTranscripts = new GradStudentTranscripts();
+        gradStudentTranscripts.setId(reportID1);
+        gradStudentTranscripts.setTranscriptTypeCode(reportTypeCode2);
+        gradStudentTranscripts.setStudentID(studentID);
+        gradStudentTranscripts.setTranscript("TEST Report Body 123");
+
+        final GradStudentTranscriptsEntity gradStudentTranscriptsEntity1 = new GradStudentTranscriptsEntity();
+        gradStudentTranscriptsEntity1.setId(reportID1);
+        gradStudentTranscriptsEntity1.setTranscriptTypeCode(reportTypeCode1);
+        gradStudentTranscriptsEntity1.setStudentID(studentID);
+        gradStudentTranscriptsEntity1.setTranscript("TEST Report Body 456");
+        gradStudentTranscriptsEntity1.setTranscriptUpdateDate(new Date());
+        gradStudentTranscriptsEntity1.setUpdateDate(new Date(System.currentTimeMillis()));
+
+        final GradStudentTranscriptsEntity gradStudentTranscriptsEntity2 = new GradStudentTranscriptsEntity();
+        gradStudentTranscriptsEntity2.setId(reportID2);
+        gradStudentTranscriptsEntity2.setTranscriptTypeCode(reportTypeCode2);
+        gradStudentTranscriptsEntity2.setStudentID(studentID);
+        gradStudentTranscriptsEntity2.setTranscript("TEST Report Body 789");
+        gradStudentTranscriptsEntity2.setTranscriptUpdateDate(new Date());
+        gradStudentTranscriptsEntity2.setUpdateDate(new Date(System.currentTimeMillis()));
+
+        when(this.gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(Arrays.asList(gradStudentTranscriptsEntity1, gradStudentTranscriptsEntity2));
+        when(this.gradStudentTranscriptsRepository.save(any(GradStudentTranscriptsEntity.class))).thenReturn(gradStudentTranscriptsEntity2);
 
         var result = commonService.saveGradTranscripts(gradStudentTranscripts,isGraduated);
 
