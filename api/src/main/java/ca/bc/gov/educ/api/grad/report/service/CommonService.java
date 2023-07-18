@@ -113,21 +113,31 @@ public class CommonService extends BaseService {
             gradStudentTranscriptsRepository.deleteByStudentID(gradStudentTranscripts.getStudentID());
         }
         GradStudentTranscriptsEntity toBeSaved = gradStudentTranscriptsTransformer.transformToEntity(gradStudentTranscripts);
-        Optional<GradStudentTranscriptsEntity> existingEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCodeNot(gradStudentTranscripts.getStudentID(), gradStudentTranscripts.getTranscriptTypeCode(), "ARCH");
-        if (existingEntity.isPresent()) {
-            GradStudentTranscriptsEntity gradEntity = existingEntity.get();
-            if (isGraduated && gradEntity.getDocumentStatusCode().equals("IP")) {
-                gradEntity.setDocumentStatusCode(COMPLETED);
-
+        List<GradStudentTranscriptsEntity> existingTranscripts = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(gradStudentTranscripts.getStudentID(), "ARCH");
+        if (existingTranscripts.isEmpty()) { // Create
+            toBeSaved.setTranscriptUpdateDate(new Date());
+            return gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.save(toBeSaved));
+        } else { // Update
+            if (existingTranscripts.size() > 1) {
+                existingTranscripts.sort(Comparator.comparing(GradStudentTranscriptsEntity::getUpdateDate).reversed());
             }
-            if (gradStudentTranscripts.getTranscript() != null && isClobDataChanged(gradEntity.getTranscript(), gradStudentTranscripts.getTranscript())) {
+            GradStudentTranscriptsEntity gradEntity = existingTranscripts.get(0);
+            if (gradEntity.getTranscriptTypeCode().equals(gradStudentTranscripts.getTranscriptTypeCode())) { // the same type of transcript is updated
+                if (isGraduated && gradEntity.getDocumentStatusCode().equals("IP")) {
+                    gradEntity.setDocumentStatusCode(COMPLETED);
+                }
+                if (gradStudentTranscripts.getTranscript() != null && isClobDataChanged(gradEntity.getTranscript(), gradStudentTranscripts.getTranscript())) {
+                    gradEntity.setTranscriptUpdateDate(new Date());
+                    gradEntity.setTranscript(gradStudentTranscripts.getTranscript());
+                }
+            } else { // transcript type is changed
+                gradEntity.setTranscriptTypeCode(gradStudentTranscripts.getTranscriptTypeCode());
+                gradEntity.setDocumentStatusCode("IP");
+                gradEntity.setDistributionDate(null);
                 gradEntity.setTranscriptUpdateDate(new Date());
                 gradEntity.setTranscript(gradStudentTranscripts.getTranscript());
             }
             return gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.save(gradEntity));
-        } else {
-            toBeSaved.setTranscriptUpdateDate(new Date());
-            return gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.save(toBeSaved));
         }
     }
 
