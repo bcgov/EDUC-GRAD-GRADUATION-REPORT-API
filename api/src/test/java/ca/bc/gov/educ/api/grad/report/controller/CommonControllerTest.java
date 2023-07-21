@@ -53,6 +53,17 @@ public class CommonControllerTest {
     }
 
     @Test
+    public void testGetStudentCertificateByGuid() {
+        final UUID studentGuid = UUID.randomUUID();
+        GradStudentCertificates studentCertificates = new GradStudentCertificates();
+        studentCertificates.setStudentID(studentGuid);
+
+        Mockito.when(commonService.getAllStudentCertificateList(studentGuid)).thenReturn(List.of(studentCertificates));
+        commonController.getStudentCertificates(studentGuid.toString());
+        Mockito.verify(commonService).getAllStudentCertificateList(studentGuid);
+    }
+
+    @Test
     public void testSaveStudentCertificate() {
         // UUID
         final UUID studentID = UUID.randomUUID();
@@ -406,9 +417,9 @@ public class CommonControllerTest {
         commonController.getAllSchoolReportsList(mincode,"accessToken");
         Mockito.verify(commonService).getAllSchoolReportListByMincode(mincode,"accessToken");
 
-        Mockito.when(commonService.getAllSchoolReportListByReportType(gradCertificateType.getCode(), mincode, "accessToken")).thenReturn(gradStudentReportList);
+        Mockito.when(commonService.getAllSchoolReportListByReportType(gradCertificateType.getCode(), mincode)).thenReturn(gradStudentReportList);
         commonController.getSchoolReportsListByReportType(gradCertificateType.getCode(), mincode, "accessToken");
-        Mockito.verify(commonService).getAllSchoolReportListByReportType(gradCertificateType.getCode(), mincode, "accessToken");
+        Mockito.verify(commonService).getAllSchoolReportListByReportType(gradCertificateType.getCode(), mincode);
     }
 
     @Test
@@ -517,7 +528,7 @@ public class CommonControllerTest {
     @Test
     public void testGetAllStudentIdForSchoolYearEndDistribution() {
         final UUID studentId = new UUID(1, 1);
-        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         Mockito.when(commonService.getSchoolYearEndReportGradStudentData()).thenReturn(reportGradStudentDataList);
@@ -526,9 +537,28 @@ public class CommonControllerTest {
     }
 
     @Test
+    public void testGetAllStudentIdForSchoolYearEndDistributionWithSchools() {
+        final UUID studentId = new UUID(1, 1);
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        Mockito.when(commonService.getSchoolYearEndReportGradStudentData(List.of("12345"))).thenReturn(reportGradStudentDataList);
+        commonController.getSchoolYearEndReportGradStudentData(List.of("12345"));
+        Mockito.verify(commonService).getSchoolYearEndReportGradStudentData(List.of("12345"));
+    }
+
+    @Test
+    public void testGetAllStudentTranscriptAndReportsPosting() {
+        SchoolStudentCredentialDistribution schoolStudentCredentialDistribution = new SchoolStudentCredentialDistribution(null, null, null, null);
+        Mockito.when(commonService.getAllStudentTranscriptAndReportsPosting()).thenReturn(List.of(schoolStudentCredentialDistribution));
+        commonController.getAllStudentTranscriptAndReportsPosting();
+        Mockito.verify(commonService).getAllStudentTranscriptAndReportsPosting();
+    }
+
+    @Test
     public void testGetAllStudentIdForSchoolDistribution() {
         final UUID studentId = new UUID(1, 1);
-        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         Mockito.when(commonService.getSchoolReportGradStudentData()).thenReturn(reportGradStudentDataList);
