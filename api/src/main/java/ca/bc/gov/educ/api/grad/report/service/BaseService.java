@@ -56,7 +56,7 @@ public abstract class BaseService {
         return new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong());
     }
 
-    protected void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result, int numberOfThreads) throws ExecutionException, InterruptedException {
+    protected void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result, int numberOfThreads) {
         List<Future<Object>> executionResult;
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
         try {
@@ -72,7 +72,7 @@ public abstract class BaseService {
                 }
             }
         } catch (InterruptedException | ExecutionException ex) {
-            throw new InterruptedException(ex.toString());
+            logger.error("Multithreading error during the task execution: {}", ex.getLocalizedMessage());
         } finally {
             executorService.shutdown();
         }

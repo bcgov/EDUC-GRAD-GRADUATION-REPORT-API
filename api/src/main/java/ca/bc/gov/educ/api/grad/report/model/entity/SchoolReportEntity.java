@@ -1,7 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 
@@ -11,14 +10,35 @@ import java.util.UUID;
 @MappedSuperclass
 public class SchoolReportEntity {
 
-    @Id
-    @Column(name = "GRADUATION_STUDENT_RECORD_ID", nullable = false)
-    protected UUID graduationStudentRecordId;
+    @EmbeddedId
+    protected SchoolReportEntityId schoolReportEntityId;
 
-    @Column(name = "PAPER_TYPE")
-    private String paperType;
+    public UUID getGraduationStudentRecordId() {
+        return schoolReportEntityId.graduationStudentRecordId;
+    }
 
-    @Column(name = "CERTIFICATE_TYPE_CODE")
-    private String certificateTypeCode;
+    public void setGraduationStudentRecordId(UUID graduationStudentRecordId) {
+        this.schoolReportEntityId.graduationStudentRecordId = graduationStudentRecordId;
+    }
 
+    public String getPaperType() {
+        return schoolReportEntityId.paperType;
+    }
+
+    public void setPaperType(String paperType) {
+        this.schoolReportEntityId.paperType = paperType;
+    }
+
+    public String getCertificateTypeCode() {
+        return schoolReportEntityId.certificateTypeCode;
+    }
+
+    public void setCertificateTypeCode(String certificateTypeCode) {
+        this.schoolReportEntityId.certificateTypeCode = certificateTypeCode;
+    }
+
+    @Override
+    public String toString() {
+        return "SchoolReportEntity {" + schoolReportEntityId + "}";
+    }
 }
