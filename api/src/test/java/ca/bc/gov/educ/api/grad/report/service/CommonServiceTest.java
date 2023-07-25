@@ -1489,7 +1489,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(reportGradStudentData);
 
         SchoolReportEntity schoolReportEntity = new SchoolReportEntity();
-        schoolReportEntity.setGraduationStudentRecordId(studentId);
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
 
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
 
