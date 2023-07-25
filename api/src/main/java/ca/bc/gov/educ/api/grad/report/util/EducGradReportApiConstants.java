@@ -84,7 +84,9 @@ public class EducGradReportApiConstants {
 
     //Default Date format constants
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
-    
+    public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String SECOND_DEFAULT_DATE_FORMAT = "yyyy/MM/dd";
+    public static final String SECOND_DEFAULT_DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
     public static final String TRAX_DATE_FORMAT = "yyyyMM";
 
     @Value("${endpoint.grad-student-api.get-students-for-yearly-run}")
