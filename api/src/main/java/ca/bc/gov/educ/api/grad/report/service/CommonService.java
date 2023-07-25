@@ -8,8 +8,8 @@ import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
-import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -693,7 +693,6 @@ public class CommonService extends BaseService {
         return processReportGradStudentDataList(students, new ArrayList<>());
     }
 
-    @SneakyThrows
     private List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students, List<String> schools) {
         List<ReportGradStudentData> result = new ArrayList<>();
         long startTime = System.currentTimeMillis();
@@ -717,8 +716,9 @@ public class CommonService extends BaseService {
         return result;
     }
 
-    private List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
-        List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).toList();
+    private synchronized List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
+        List<ReportGradStudentData> result = new ArrayList<>();
+        List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).distinct().toList();
         List<ReportGradStudentData> studentsInBatch = getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch);
         if(studentsInBatch != null && !schools.isEmpty()) {
             boolean isDistrictSchool = schools.get(0).length() == 3;
@@ -733,21 +733,31 @@ public class CommonService extends BaseService {
         for(SchoolReportEntity e: students.getContent()) {
             String paperType = e.getPaperType();
             String certificateTypeCode = e.getCertificateTypeCode(); //either transcript or certificate codes
-            for(ReportGradStudentData s: studentsInBatch) {
-                if(s.getGraduationStudentRecordId().equals(e.getGraduationStudentRecordId())) {
-                    s.setPaperType(paperType);
-                    if("YED4".equalsIgnoreCase(paperType)) {
-                        s.setTranscriptTypeCode(certificateTypeCode);
-                    } else {
-                        s.setCertificateTypeCode(certificateTypeCode);
-                    }
+            ReportGradStudentData s = getReportGradStudentDataByGraduationStudentRecordIdFromList(e.getGraduationStudentRecordId(), studentsInBatch);
+            if(s != null) {
+                ReportGradStudentData dataResult = SerializationUtils.clone(s);
+                dataResult.setPaperType(paperType);
+                if ("YED4".equalsIgnoreCase(paperType)) {
+                    dataResult.setTranscriptTypeCode(certificateTypeCode);
+                } else {
+                    dataResult.setCertificateTypeCode(certificateTypeCode);
                 }
+                result.add(dataResult);
             }
         }
-        return studentsInBatch;
+        return result;
     }
 
-    private List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) {
+    private synchronized ReportGradStudentData getReportGradStudentDataByGraduationStudentRecordIdFromList(UUID id, List<ReportGradStudentData> studentsInBatch) {
+        for(ReportGradStudentData s: studentsInBatch) {
+            if(s.getGraduationStudentRecordId().equals(id)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    private synchronized List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) {
         final ParameterizedTypeReference<List<ReportGradStudentData>> responseType = new ParameterizedTypeReference<>() {
         };
         return this.webClient.post()
