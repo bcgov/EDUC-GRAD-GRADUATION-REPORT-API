@@ -453,9 +453,9 @@ public class CommonService extends BaseService {
 
     public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType, String documentStatusCode, String activityCode) {
         if (paperType.equalsIgnoreCase("YED4")) {
-            Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID, credentialTypeCode, documentStatusCode);
-            if (optEntity.isPresent()) {
-                GradStudentTranscriptsEntity ent = optEntity.get();
+            List<GradStudentTranscriptsEntity> entityList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCode(studentID, documentStatusCode);
+            if (entityList != null && !entityList.isEmpty()) {
+                GradStudentTranscriptsEntity ent = entityList.get(0);
                 ent.setUpdateDate(null);
                 ent.setUpdateUser(null);
                 ent.setDistributionDate(new Date());
