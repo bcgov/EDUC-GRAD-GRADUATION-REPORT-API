@@ -8,8 +8,8 @@ import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
-import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -148,7 +148,7 @@ public class CommonService extends BaseService {
 
     @Transactional
     public ResponseEntity<InputStreamResource> getSchoolReportByMincodeAndReportType(String mincode, String reportType) {
-        SchoolReports studentReport = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode, reportType));
+        SchoolReports studentReport = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(mincode, reportType));
         if (studentReport != null && studentReport.getReport() != null) {
             byte[] reportByte = Base64.decodeBase64(studentReport.getReport().getBytes(StandardCharsets.US_ASCII));
             ByteArrayInputStream bis = new ByteArrayInputStream(reportByte);
@@ -336,16 +336,16 @@ public class CommonService extends BaseService {
         List<SchoolReports> reportList = new ArrayList<>();
         if (StringUtils.isNotBlank(mincode)) {
             if (StringUtils.contains(mincode, "*")) {
-                reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordContains(StringUtils.strip(mincode, "*")));
+                reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordContainsOrderBySchoolOfRecord(StringUtils.strip(mincode, "*")));
             } else {
-                reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecord(mincode));
+                reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordOrderBySchoolOfRecord(mincode));
             }
         }
-        populateSchoolRepors(reportList, accessToken);
+        populateSchoolRepors(reportList);
         return reportList;
     }
 
-    public List<SchoolReports> getAllSchoolReportListByReportType(String reportType, String mincode, String accessToken) {
+    public List<SchoolReports> getAllSchoolReportListByReportType(String reportType, String mincode) {
         List<SchoolReportsLightEntity> schoolReportsLightEntityList;
         if(StringUtils.isBlank(mincode)) {
             schoolReportsLightEntityList = schoolReportsLightRepository.findByReportTypeCode(reportType);
@@ -353,12 +353,13 @@ public class CommonService extends BaseService {
             schoolReportsLightEntityList = schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(reportType, mincode);
         }
         List<SchoolReports> reportList = schoolReportsTransformer.transformToLightDTO(schoolReportsLightEntityList);
-        populateSchoolRepors(reportList, accessToken);
+        populateSchoolRepors(reportList);
         return reportList;
     }
 
-    private void populateSchoolRepors(List<SchoolReports> reportList, String accessToken) {
+    private void populateSchoolRepors(List<SchoolReports> reportList) {
         reportList.forEach(rep -> {
+            String accessToken = fetchAccessToken();
             GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getReportTypeCode()));
             if (types != null)
                 rep.setReportTypeLabel(types.getLabel());
@@ -452,9 +453,9 @@ public class CommonService extends BaseService {
 
     public boolean updateStudentCredential(UUID studentID, String credentialTypeCode, String paperType, String documentStatusCode, String activityCode) {
         if (paperType.equalsIgnoreCase("YED4")) {
-            Optional<GradStudentTranscriptsEntity> optEntity = gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentID, credentialTypeCode, documentStatusCode);
-            if (optEntity.isPresent()) {
-                GradStudentTranscriptsEntity ent = optEntity.get();
+            List<GradStudentTranscriptsEntity> entityList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCode(studentID, documentStatusCode);
+            if (entityList != null && !entityList.isEmpty()) {
+                GradStudentTranscriptsEntity ent = entityList.get(0);
                 ent.setUpdateDate(null);
                 ent.setUpdateUser(null);
                 ent.setDistributionDate(new Date());
@@ -562,7 +563,7 @@ public class CommonService extends BaseService {
     @Transactional
     public SchoolReports saveSchoolReports(SchoolReports schoolReports) {
         SchoolReportsEntity toBeSaved = schoolReportsTransformer.transformToEntity(schoolReports);
-        Optional<SchoolReportsEntity> existingEnity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(schoolReports.getSchoolOfRecord(), schoolReports.getReportTypeCode());
+        Optional<SchoolReportsEntity> existingEnity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(schoolReports.getSchoolOfRecord(), schoolReports.getReportTypeCode());
         if (existingEnity.isPresent()) {
             SchoolReportsEntity gradEntity = existingEnity.get();
             gradEntity.setUpdateDate(null);
@@ -577,7 +578,7 @@ public class CommonService extends BaseService {
     }
 
     public boolean updateSchoolReports(String minCode, String reportTypeCode) {
-        Optional<SchoolReportsEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(minCode, reportTypeCode);
+        Optional<SchoolReportsEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(minCode, reportTypeCode);
         if (optEntity.isPresent()) {
             SchoolReportsEntity ent = optEntity.get();
             ent.setUpdateDate(null);
@@ -591,7 +592,7 @@ public class CommonService extends BaseService {
     @Transactional
     public boolean deleteSchoolReports(String minCode, String reportTypeCode) {
         if(StringUtils.isNotBlank(minCode)) {
-            Optional<SchoolReportsEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(minCode, reportTypeCode);
+            Optional<SchoolReportsEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(minCode, reportTypeCode);
             if (optEntity.isPresent()) {
                 schoolReportsRepository.delete(optEntity.get());
                 return true;
@@ -675,32 +676,37 @@ public class CommonService extends BaseService {
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData() {
         logger.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
-        Page<UUID> studentGuids = schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport(nextPage);
-        return processReportGradStudentDataList(studentGuids);
+        Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
+        return processReportGradStudentDataList(students, new ArrayList<>());
+    }
+
+    public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(List<String> schools) {
+        logger.debug("getSchoolYearEndReportGradStudentData>");
+        PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
+        Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
+        return processReportGradStudentDataList(students, schools);
     }
 
     public List<ReportGradStudentData> getSchoolReportGradStudentData() {
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
-        Page<UUID> studentGuids = schoolReportMonthlyRepository.findStudentIdForSchoolReport(nextPage);
-        return processReportGradStudentDataList(studentGuids);
+        Page<SchoolReportEntity> students = schoolReportMonthlyRepository.findStudentForSchoolReport(nextPage);
+        return processReportGradStudentDataList(students, new ArrayList<>());
     }
 
-    @SneakyThrows
-    private List<ReportGradStudentData> processReportGradStudentDataList(Page<UUID> studentGuids) {
+    private List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students, List<String> schools) {
         List<ReportGradStudentData> result = new ArrayList<>();
         long startTime = System.currentTimeMillis();
-        if(studentGuids.hasContent()) {
+        if(students.hasContent()) {
             PageRequest nextPage;
-            List<UUID> studentGuidsInBatch = studentGuids.getContent();
-            result.addAll(getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch));
-            final int totalNumberOfPages = studentGuids.getTotalPages();
-            logger.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, studentGuids.getTotalElements());
+            result.addAll(getNextPageStudentsFromGradStudentApi(students, schools));
+            final int totalNumberOfPages = students.getTotalPages();
+            logger.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, students.getTotalElements());
 
             List<Callable<Object>> tasks = new ArrayList<>();
 
             for (int i = 1; i < totalNumberOfPages; i++) {
                 nextPage = PageRequest.of(i, PAGE_SIZE);
-                UUIDPageTask pageTask = new UUIDPageTask(nextPage);
+                UUIDPageTask pageTask = new UUIDPageTask(nextPage, schools);
                 tasks.add(pageTask);
             }
 
@@ -710,7 +716,48 @@ public class CommonService extends BaseService {
         return result;
     }
 
-    private List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) {
+    private synchronized List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
+        List<ReportGradStudentData> result = new ArrayList<>();
+        List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).distinct().toList();
+        List<ReportGradStudentData> studentsInBatch = getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch);
+        if(studentsInBatch != null && !schools.isEmpty()) {
+            boolean isDistrictSchool = schools.get(0).length() == 3;
+            if(isDistrictSchool) {
+                studentsInBatch.removeIf(st -> (!schools.contains(StringUtils.substring(st.getMincode(), 0, 3))));
+            }
+            boolean isSchoolSchool = schools.get(0).length() > 3;
+            if(isSchoolSchool) {
+                studentsInBatch.removeIf(st -> (!schools.contains(StringUtils.trimToEmpty(st.getMincode()))));
+            }
+        }
+        for(SchoolReportEntity e: students.getContent()) {
+            String paperType = e.getPaperType();
+            String certificateTypeCode = e.getCertificateTypeCode(); //either transcript or certificate codes
+            ReportGradStudentData s = getReportGradStudentDataByGraduationStudentRecordIdFromList(e.getGraduationStudentRecordId(), studentsInBatch);
+            if(s != null) {
+                ReportGradStudentData dataResult = SerializationUtils.clone(s);
+                dataResult.setPaperType(paperType);
+                if ("YED4".equalsIgnoreCase(paperType)) {
+                    dataResult.setTranscriptTypeCode(certificateTypeCode);
+                } else {
+                    dataResult.setCertificateTypeCode(certificateTypeCode);
+                }
+                result.add(dataResult);
+            }
+        }
+        return result;
+    }
+
+    private synchronized ReportGradStudentData getReportGradStudentDataByGraduationStudentRecordIdFromList(UUID id, List<ReportGradStudentData> studentsInBatch) {
+        for(ReportGradStudentData s: studentsInBatch) {
+            if(s.getGraduationStudentRecordId().equals(id)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    private synchronized List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) {
         final ParameterizedTypeReference<List<ReportGradStudentData>> responseType = new ParameterizedTypeReference<>() {
         };
         return this.webClient.post()
@@ -728,15 +775,17 @@ public class CommonService extends BaseService {
     class UUIDPageTask implements Callable<Object> {
 
         private final PageRequest pageRequest;
+        private final List<String> schools;
 
-        public UUIDPageTask(PageRequest pageRequest) {
+        public UUIDPageTask(PageRequest pageRequest, List<String> schools) {
             this.pageRequest = pageRequest;
+            this.schools = schools;
         }
 
         @Override
         public Object call() throws Exception {
-            Page<UUID> studentGuids = schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport(pageRequest);
-            return Pair.of(pageRequest, getReportGradStudentData(fetchAccessToken(), studentGuids.getContent()));
+            Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(pageRequest);
+            return Pair.of(pageRequest, getNextPageStudentsFromGradStudentApi(students, schools));
         }
     }
 }

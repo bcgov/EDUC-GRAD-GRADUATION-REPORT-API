@@ -184,6 +184,15 @@ public class CommonController {
         return response.GET(commonService.getSchoolYearEndReportGradStudentData());
     }
 
+    @PostMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_YEAREND_REPORT)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData(@RequestBody List<String> schools) {
+        logger.debug("getAllStudentSchoolYearEndDistribution :");
+        return response.GET(commonService.getSchoolYearEndReportGradStudentData(schools));
+    }
+
     @GetMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_REPORT)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
@@ -307,8 +316,8 @@ public class CommonController {
             @PathVariable String reportType,
             @RequestParam(value = "mincode", required = false) String mincode,
             @RequestHeader(name="Authorization") String accessToken) {
-        logger.debug("getAllSchoolReportsList : ");
-        return response.GET(commonService.getAllSchoolReportListByReportType(reportType, mincode, accessToken.replace(BEARER,"")));
+        logger.debug("getSchoolReportsListByReportType : ");
+        return response.GET(commonService.getAllSchoolReportListByReportType(reportType, mincode));
     }
 
     @GetMapping(EducGradReportApiConstants.SCHOOL_REPORT)

@@ -3,6 +3,7 @@ package ca.bc.gov.educ.api.grad.report.model.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +32,9 @@ public class ReportGradStudentData implements Serializable {
     private String programCompletionDate;
     private String graduated;
     private String transcriptTypeCode;
+    private String certificateTypeCode;
+    private String paperType;
+    private LocalDateTime updateDate;
     private List<GradCertificateTypes> certificateTypes;
 
 }

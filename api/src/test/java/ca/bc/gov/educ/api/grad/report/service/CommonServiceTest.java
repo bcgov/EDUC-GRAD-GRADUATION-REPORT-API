@@ -120,6 +120,7 @@ public class CommonServiceTest {
         studentCertificate.setStudentID(studentID);
         studentCertificate.setCertificate("Test Certificate Body");
         studentCertificate.setGradCertificateTypeCode(gradCertificateType.getCode());
+        studentCertificate.setOverwrite(true);
 
         // Student Certificate Types Entity
         final GradStudentCertificatesEntity studentCertificateEntity = new GradStudentCertificatesEntity();
@@ -851,7 +852,7 @@ public class CommonServiceTest {
         ent.setTranscriptTypeCode("E");
         ent.setDocumentStatusCode("COMPL");
 
-        when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
+        when(gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCode(studentId,"COMPL")).thenReturn(Arrays.asList(ent));
         boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL", activityCode);
         assertThat(res).isTrue();
     }
@@ -1077,7 +1078,7 @@ public class CommonServiceTest {
 
         final Optional<SchoolReportsEntity> optionalEmpty = Optional.empty();
 
-        when(this.schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(schoolOfRecord, reportTypeCode)).thenReturn(optionalEmpty);
+        when(this.schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(schoolOfRecord, reportTypeCode)).thenReturn(optionalEmpty);
         when(this.schoolReportsRepository.save(schoolReportsEntity)).thenReturn(schoolReportsEntity);
 
         var result = commonService.saveSchoolReports(schoolReports);
@@ -1105,7 +1106,7 @@ public class CommonServiceTest {
 
         final Optional<SchoolReportsEntity> optional = Optional.of(schoolReportsEntity);
 
-        when(this.schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(schoolOfRecord, reportTypeCode)).thenReturn(optional);
+        when(this.schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(schoolOfRecord, reportTypeCode)).thenReturn(optional);
         when(this.schoolReportsRepository.save(schoolReportsEntity)).thenReturn(schoolReportsEntity);
 
         var result = commonService.saveSchoolReports(schoolReports);
@@ -1169,6 +1170,8 @@ public class CommonServiceTest {
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
 
+        mockAccessToken();
+
         District district = new District();
         district.setDistrictNumber("005");
         district.setDistrictName("SOOKE");
@@ -1179,8 +1182,9 @@ public class CommonServiceTest {
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(District.class)).thenReturn(Mono.just(district));
 
-        when(schoolReportsRepository.findBySchoolOfRecordContains("123456")).thenReturn(schoolReportsEntityList);
+        when(schoolReportsRepository.findBySchoolOfRecordContainsOrderBySchoolOfRecord("123456")).thenReturn(schoolReportsEntityList);
         when(schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(gradReportTypes.getCode(), mincode2)).thenReturn(schoolReportsLightEntityList);
+        when(schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(gradReportTypes.getCode(), "")).thenReturn(schoolReportsLightEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
         var result = commonService.getAllSchoolReportListByMincode(mincode,"accessToken");
@@ -1191,20 +1195,25 @@ public class CommonServiceTest {
         assertThat(result.get(1).getSchoolOfRecord()).isEqualTo(mincode2);
         assertThat(result.get(1).getReportTypeCode()).isEqualTo(gradReportTypes.getCode());
 
-        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2,"accessToken");
+        mockAccessToken();
+
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2);
         assertThat(result).isNotNull().isNotEmpty();
+
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),"");
+        assertThat(result).isNotNull().isEmpty();
 
         schoolReports.setSchoolOfRecord(district.getDistrictNumber());
         when(schoolReportsLightRepository.findByReportTypeCode(gradReportTypes.getCode())).thenReturn(schoolReportsLightEntityList);
 
-        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2,"accessToken");
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2);
         assertThat(result).isNotNull().isNotEmpty();
         assertThat(result.get(0).getSchoolOfRecord()).isNotNull();
 
         schoolReports3.setSchoolOfRecord(null);
         when(schoolReportsLightRepository.findByReportTypeCode(gradReportTypes.getCode())).thenReturn(schoolReportsLightEntityList);
 
-        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2,"accessToken");
+        result = commonService.getAllSchoolReportListByReportType(gradReportTypes.getCode(),mincode2);
         assertThat(result).isNotNull().isNotEmpty();
         assertThat(result.get(0).getSchoolOfRecord()).isNull();
     }
@@ -1242,13 +1251,15 @@ public class CommonServiceTest {
         gradReportTypesEntity.setCode("NONGRADPRJ");
         gradReportTypesEntity.setDescription("non grad projected");
 
+        mockAccessToken();
+
         when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
         when(this.requestHeadersUriMock.uri(String.format(constants.getSchoolByMincodeUrl(),mincode2))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.headers(any(Consumer.class))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
 
-        when(schoolReportsRepository.findBySchoolOfRecord("12345631231")).thenReturn(schoolReportsEntityList);
+        when(schoolReportsRepository.findBySchoolOfRecordOrderBySchoolOfRecord("12345631231")).thenReturn(schoolReportsEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
         var result = commonService.getAllSchoolReportListByMincode(mincode,"accessToken");
@@ -1273,7 +1284,7 @@ public class CommonServiceTest {
         schoolReports.setSchoolOfRecord(mincode);
         schoolReports.setReport("TEST Report Body");
 
-        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode, reportTypeCode)).thenReturn(Optional.of(schoolReports));
+        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(mincode, reportTypeCode)).thenReturn(Optional.of(schoolReports));
         var result = commonService.getSchoolReportByMincodeAndReportType(mincode, reportTypeCode);
 
         assertThat(result).isNotNull();
@@ -1281,7 +1292,7 @@ public class CommonServiceTest {
         assertThat(result.getBody()).isNotNull();
 
         schoolReports.setReport(null);
-        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode, reportTypeCode)).thenReturn(Optional.of(schoolReports));
+        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(mincode, reportTypeCode)).thenReturn(Optional.of(schoolReports));
         result = commonService.getSchoolReportByMincodeAndReportType(mincode, reportTypeCode);
         assertThat(result).isNull();
 
@@ -1297,7 +1308,7 @@ public class CommonServiceTest {
         ent.setId(new UUID(1,2));
         ent.setReportTypeCode(reportTypeCode);
 
-        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCode(mincode,reportTypeCode)).thenReturn(Optional.of(ent));
+        when(schoolReportsRepository.findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(mincode,reportTypeCode)).thenReturn(Optional.of(ent));
         boolean res = commonService.updateSchoolReports(mincode,reportTypeCode);
         assertThat(res).isTrue();
         res = commonService.deleteSchoolReports(mincode,reportTypeCode);
@@ -1454,7 +1465,7 @@ public class CommonServiceTest {
     public void testGetSchoolReportGradStudentData() {
         UUID studentId = UUID.randomUUID();
 
-        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList();
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
@@ -1477,10 +1488,13 @@ public class CommonServiceTest {
 
         reportGradStudentDataList.add(reportGradStudentData);
 
-        when(schoolReportYearEndRepository.findStudentIdForSchoolYearEndReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
+        SchoolReportEntity schoolReportEntity = new SchoolReportEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
+
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
 
             @Override
-            public Iterator<UUID> iterator() {
+            public Iterator<SchoolReportEntity> iterator() {
                 return getContent().listIterator();
             }
 
@@ -1500,8 +1514,8 @@ public class CommonServiceTest {
             }
 
             @Override
-            public List<UUID> getContent() {
-                return List.of(studentId);
+            public List<SchoolReportEntity> getContent() {
+                return List.of(schoolReportEntity);
             }
 
             @Override
@@ -1560,10 +1574,10 @@ public class CommonServiceTest {
             }
         });
 
-        when(schoolReportMonthlyRepository.findStudentIdForSchoolReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
+        when(schoolReportMonthlyRepository.findStudentForSchoolReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
 
             @Override
-            public Iterator<UUID> iterator() {
+            public Iterator<SchoolReportEntity> iterator() {
                 return getContent().listIterator();
             }
 
@@ -1583,8 +1597,8 @@ public class CommonServiceTest {
             }
 
             @Override
-            public List<UUID> getContent() {
-                return List.of(studentId);
+            public List<SchoolReportEntity> getContent() {
+                return List.of(schoolReportEntity);
             }
 
             @Override
@@ -1650,6 +1664,16 @@ public class CommonServiceTest {
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(new ParameterizedTypeReference<List<ReportGradStudentData>>() {})).thenReturn(Mono.just(reportGradStudentDataList));
 
+        mockAccessToken();
+
+        var result = commonService.getSchoolYearEndReportGradStudentData();
+        assertThat(result).isNotEmpty();
+
+        result = commonService.getSchoolReportGradStudentData();
+        assertThat(result).isNotEmpty();
+    }
+
+    private void mockAccessToken() {
         final TokenResponse tokenObject = new TokenResponse();
         tokenObject.setAccess_token(MOCK_TOKEN);
         tokenObject.setRefresh_token("456");
@@ -1661,11 +1685,5 @@ public class CommonServiceTest {
         when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(TokenResponse.class)).thenReturn(Mono.just(tokenObject));
-
-        var result = commonService.getSchoolYearEndReportGradStudentData();
-        assertThat(result).isNotEmpty();
-
-        result = commonService.getSchoolReportGradStudentData();
-        assertThat(result).isNotEmpty();
     }
 }
