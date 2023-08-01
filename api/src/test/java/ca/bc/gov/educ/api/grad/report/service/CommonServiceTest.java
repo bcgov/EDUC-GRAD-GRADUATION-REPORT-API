@@ -852,7 +852,7 @@ public class CommonServiceTest {
         ent.setTranscriptTypeCode("E");
         ent.setDocumentStatusCode("COMPL");
 
-        when(gradStudentTranscriptsRepository.findByStudentIDAndTranscriptTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
+        when(gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCode(studentId,"COMPL")).thenReturn(Arrays.asList(ent));
         boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL", activityCode);
         assertThat(res).isTrue();
     }

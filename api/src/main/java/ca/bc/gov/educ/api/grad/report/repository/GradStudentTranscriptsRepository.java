@@ -16,6 +16,8 @@ import java.util.UUID;
 public interface GradStudentTranscriptsRepository extends JpaRepository<GradStudentTranscriptsEntity, UUID> {
 
 	List<GradStudentTranscriptsEntity> findByStudentID(UUID studentID);
+	List<GradStudentTranscriptsEntity> findByStudentIDAndDocumentStatusCode(UUID studentID,String documentStatusCode);
+
 	List<GradStudentTranscriptsEntity> findByStudentIDAndDocumentStatusCodeNot(UUID studentID,String documentStatusCode);
 	Optional<GradStudentTranscriptsEntity> findByStudentIDAndTranscriptTypeCode(UUID studentID,String transcriptTypeCode);
 
