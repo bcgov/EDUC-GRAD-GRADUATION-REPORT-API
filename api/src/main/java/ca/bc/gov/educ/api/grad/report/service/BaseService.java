@@ -57,6 +57,7 @@ public abstract class BaseService {
     }
 
     protected void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result) {
+        if(tasks.isEmpty()) return;
         List<Future<Object>> executionResult;
         ExecutorService executorService = Executors.newWorkStealingPool();
         try {
@@ -73,6 +74,7 @@ public abstract class BaseService {
             }
         } catch (InterruptedException | ExecutionException ex) {
             logger.error("Multithreading error during the task execution: {}", ex.getLocalizedMessage());
+            Thread.currentThread().interrupt();
         } finally {
             executorService.shutdown();
         }
