@@ -56,9 +56,10 @@ public abstract class BaseService {
         return new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong());
     }
 
-    protected void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result, int numberOfThreads) {
+    protected void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result) {
+        if(tasks.isEmpty()) return;
         List<Future<Object>> executionResult;
-        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        ExecutorService executorService = Executors.newWorkStealingPool();
         try {
             executionResult = executorService.invokeAll(tasks);
             for (Future<?> f : executionResult) {
@@ -73,6 +74,7 @@ public abstract class BaseService {
             }
         } catch (InterruptedException | ExecutionException ex) {
             logger.error("Multithreading error during the task execution: {}", ex.getLocalizedMessage());
+            Thread.currentThread().interrupt();
         } finally {
             executorService.shutdown();
         }
