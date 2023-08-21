@@ -58,7 +58,7 @@ public abstract class BaseService {
 
     protected void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result, int numberOfThreads) {
         List<Future<Object>> executionResult;
-        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        ExecutorService executorService = Executors.newWorkStealingPool();
         try {
             executionResult = executorService.invokeAll(tasks);
             for (Future<?> f : executionResult) {
