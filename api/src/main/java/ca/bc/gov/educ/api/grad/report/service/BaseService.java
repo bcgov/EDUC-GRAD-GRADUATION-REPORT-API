@@ -56,7 +56,7 @@ public abstract class BaseService {
         return new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong());
     }
 
-    protected void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result, int numberOfThreads) {
+    protected void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result) {
         List<Future<Object>> executionResult;
         ExecutorService executorService = Executors.newWorkStealingPool();
         try {
