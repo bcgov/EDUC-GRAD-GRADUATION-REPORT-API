@@ -19,6 +19,8 @@ public class ReportGradStudentData implements Serializable {
     private String firstName;
     private String middleName;
     private String lastName;
+    private String studentGrade;
+    private String studentStatus;
     private String districtName;
     private String schoolName;
     private String schoolAddress1;
