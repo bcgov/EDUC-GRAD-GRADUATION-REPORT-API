@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Component
@@ -20,6 +21,7 @@ public class StudentSearchRequest implements Serializable {
     List<String> schoolCategoryCodes;
     List<String> pens;
     List<String> programs;
+    private List<UUID> studentIDs;
 
     Boolean validateInput;
 }
