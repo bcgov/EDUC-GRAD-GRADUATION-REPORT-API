@@ -57,6 +57,8 @@ public class ReportDataMaintenanceController {
         logger.debug("saveStudentTranscriptValidation for Student: {}/{}",gradStudentTranscriptValidation.getStudentTranscriptValidationKey());
         validation.requiredField(gradStudentTranscriptValidation.getStudentTranscriptValidationKey().getStudentID(), "Student ID");
         validation.requiredField(gradStudentTranscriptValidation.getStudentTranscriptValidationKey().getPen(), "Student Pen");
+        validation.requiredField(gradStudentTranscriptValidation.getTranscriptTypeCode(), "Transcript Type Code");
+        validation.requiredField(gradStudentTranscriptValidation.getDocumentStatusCode(), "Document Status Code");
         return response.CREATED(studentTranscriptValidationService.saveGradStudentTranscriptValidation(gradStudentTranscriptValidation));
     }
     
