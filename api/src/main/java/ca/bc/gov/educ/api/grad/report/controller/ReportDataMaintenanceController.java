@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.controller;
 
+import ca.bc.gov.educ.api.grad.report.exception.GradBusinessRuleException;
 import ca.bc.gov.educ.api.grad.report.model.dto.GradStudentTranscriptValidation;
 import ca.bc.gov.educ.api.grad.report.service.StudentTranscriptValidationService;
 import ca.bc.gov.educ.api.grad.report.util.*;
@@ -59,6 +60,13 @@ public class ReportDataMaintenanceController {
         validation.requiredField(gradStudentTranscriptValidation.getStudentTranscriptValidationKey().getPen(), "Student Pen");
         validation.requiredField(gradStudentTranscriptValidation.getTranscriptTypeCode(), "Transcript Type Code");
         validation.requiredField(gradStudentTranscriptValidation.getDocumentStatusCode(), "Document Status Code");
+        if (validation.hasErrors()) {
+            try {
+                validation.stopOnErrors();
+            } catch (GradBusinessRuleException exception) {
+                return response.ERROR(gradStudentTranscriptValidation, validation.getErrors(), GradStudentTranscriptValidation.class);
+            }
+        }
         return response.CREATED(studentTranscriptValidationService.saveGradStudentTranscriptValidation(gradStudentTranscriptValidation));
     }
     

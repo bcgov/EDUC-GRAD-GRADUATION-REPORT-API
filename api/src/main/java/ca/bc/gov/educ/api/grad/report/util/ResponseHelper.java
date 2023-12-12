@@ -105,8 +105,11 @@ public class ResponseHelper {
 	}
 	
 	protected <T> ResponseEntity<ApiResponseModel<T>> CREATED(Object returnValue, List<String> warningMessages, Class<T> type) {
-		
 		return new ResponseEntity<>(ApiResponseModel.WARNING(modelMapper.map(returnValue, type), warningMessages), HttpStatus.MULTI_STATUS);
+	}
+
+	public <T> ResponseEntity<ApiResponseModel<T>> ERROR(Object returnValue, List<String> warningMessages, Class<T> type) {
+		return new ResponseEntity<>(ApiResponseModel.ERROR(modelMapper.map(returnValue, type), warningMessages), HttpStatus.BAD_REQUEST);
 	}
 
 	public <T> ResponseEntity<ApiResponseModel<T>> CREATED(T returnValue) {
