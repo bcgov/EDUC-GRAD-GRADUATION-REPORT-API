@@ -44,6 +44,8 @@ public class StudentTranscriptValidationService extends BaseService {
             return gradStudentTranscriptValidationTransformer.transformToDTO(gradStudentTranscriptValidationRepository.save(toBeSaved));
         } else { // Update
             toBeSaved = existingTranscriptValidationEntity.get();
+            toBeSaved.setDocumentStatusCode(gradStudentTranscriptValidation.getDocumentStatusCode());
+            toBeSaved.setValidationResult(gradStudentTranscriptValidation.getValidationResult());
             toBeSaved.setUpdateUser("Validation Process");
             toBeSaved.setUpdateDate(new Date());
             return gradStudentTranscriptValidationTransformer.transformToDTO(gradStudentTranscriptValidationRepository.save(toBeSaved));
