@@ -57,4 +57,9 @@ public class StudentTranscriptValidationService extends BaseService {
         List<GradStudentTranscriptValidationReadEntity> gradStudentTranscriptValidationReadEntities = gradStudentTranscriptValidationReadRepository.findAllByBatchIdIsNull(pageable).toList();
         return gradStudentTranscriptValidationTransformer.transformToReadDTO(gradStudentTranscriptValidationReadEntities);
     }
+
+    @Transactional
+    public Integer getGradStudentTranscriptValidationCount() {
+        return gradStudentTranscriptValidationReadRepository.countGradStudentTranscriptValidationReadEntitiesByBatchIdIsNull();
+    }
 }

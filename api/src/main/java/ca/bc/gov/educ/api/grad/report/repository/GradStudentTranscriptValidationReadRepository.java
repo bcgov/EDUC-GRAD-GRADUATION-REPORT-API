@@ -14,5 +14,6 @@ import org.springframework.stereotype.Repository;
 public interface GradStudentTranscriptValidationReadRepository extends PagingAndSortingRepository<GradStudentTranscriptValidationReadEntity, GradStudentTranscriptValidationKey> {
 
     Page<GradStudentTranscriptValidationReadEntity> findAllByBatchIdIsNull(Pageable pageable);
+    Integer countGradStudentTranscriptValidationReadEntitiesByBatchIdIsNull();
 
 }

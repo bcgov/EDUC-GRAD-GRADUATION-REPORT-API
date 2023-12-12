@@ -50,6 +50,15 @@ public class ReportDataMaintenanceController {
         return response.GET(studentTranscriptValidationService.getGradStudentTranscriptValidation(pageable));
     }
 
+    @PutMapping(EducGradReportApiConstants.STUDENT_TRANSCRIPT_VALIDATION)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Get List of Student Transcripts for Validation", description = "Get List of Student Transcripts for Validation", tags = { "Transcripts" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Integer> getStudentTranscriptValidationCount() {
+        logger.debug("getStudentTranscriptValidationCount");
+        return response.GET(studentTranscriptValidationService.getGradStudentTranscriptValidationCount());
+    }
+
     @PostMapping (EducGradReportApiConstants.STUDENT_TRANSCRIPT_VALIDATION)
     @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Save Student Transcript Validation", description = "Save Student Transcript Validation", tags = { "Student Transcript" })
