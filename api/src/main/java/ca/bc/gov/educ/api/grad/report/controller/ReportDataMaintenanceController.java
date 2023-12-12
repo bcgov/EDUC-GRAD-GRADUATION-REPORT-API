@@ -51,7 +51,7 @@ public class ReportDataMaintenanceController {
 
     @PostMapping (EducGradReportApiConstants.STUDENT_TRANSCRIPT_VALIDATION)
     @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
-    @Operation(summary = "Save Student Reports", description = "Save Student Reports", tags = { "Reports" })
+    @Operation(summary = "Save Student Transcript Validation", description = "Save Student Transcript Validation", tags = { "Student Transcript" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<ApiResponseModel<GradStudentTranscriptValidation>> saveStudentTranscriptValidation(@RequestBody GradStudentTranscriptValidation gradStudentTranscriptValidation) {
         logger.debug("saveStudentTranscriptValidation for Student: {}/{}",gradStudentTranscriptValidation.getStudentTranscriptValidationKey());

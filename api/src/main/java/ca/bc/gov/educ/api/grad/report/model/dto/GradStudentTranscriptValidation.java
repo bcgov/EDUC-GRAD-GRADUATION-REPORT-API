@@ -12,5 +12,6 @@ public class GradStudentTranscriptValidation extends BaseModel {
 	private Long batchId;
     private String transcriptTypeCode;
 	private String documentStatusCode;
+	private String validationResult;
 
 }

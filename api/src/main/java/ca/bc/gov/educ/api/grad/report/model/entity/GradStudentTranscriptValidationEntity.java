@@ -22,7 +22,10 @@ public class GradStudentTranscriptValidationEntity extends BaseEntity {
 	@Column(name = "TRANSCRIPT_TYPE_CODE", nullable = false)
     private String transcriptTypeCode;
 	
-	@Column(name="DOCUMENT_STATUS_CODE",nullable=false)
+	@Column(name="DOCUMENT_STATUS_CODE",nullable = false)
 	private String documentStatusCode;
+
+	@Column(name="VALIDATION_RESULT",nullable = false)
+	private String validationResult;
 
 }
