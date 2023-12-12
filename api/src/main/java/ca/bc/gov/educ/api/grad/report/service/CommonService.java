@@ -505,12 +505,15 @@ public class CommonService extends BaseService {
 
     public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, String accessToken) {
         List<StudentCredentialDistribution> scdList = new ArrayList<>();
-        List<UUID> studentList = getStudentsForSpecialGradRun(studentSearchRequest, accessToken);
-        if (!studentList.isEmpty()) {
+        List<UUID> studentIDs = studentSearchRequest.getStudentIDs();
+        if(studentIDs == null || studentIDs.isEmpty()) {
+            studentIDs = getStudentsForSpecialGradRun(studentSearchRequest, accessToken);
+        }
+        if (!studentIDs.isEmpty()) {
             int partitionSize = 1000;
             List<List<UUID>> partitions = new LinkedList<>();
-            for (int i = 0; i < studentList.size(); i += partitionSize) {
-                partitions.add(studentList.subList(i, Math.min(i + partitionSize, studentList.size())));
+            for (int i = 0; i < studentIDs.size(); i += partitionSize) {
+                partitions.add(studentIDs.subList(i, Math.min(i + partitionSize, studentIDs.size())));
             }
             if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
                 processCertificate(partitions, scdList);
