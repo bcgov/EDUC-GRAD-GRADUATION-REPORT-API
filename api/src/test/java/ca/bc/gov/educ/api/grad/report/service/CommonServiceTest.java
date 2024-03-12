@@ -503,12 +503,12 @@ public class CommonServiceTest {
 
     	Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentReportsList);
     	Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentCertificatesList);
-    	int res = commonService.getAllStudentAchievement(studentID);
+    	int res = commonService.deleteAllStudentAchievement(studentID);
         assertThat(res).isEqualTo(1);
 
         Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
         Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
-        res = commonService.getAllStudentAchievement(studentID);
+        res = commonService.deleteAllStudentAchievement(studentID);
         assertThat(res).isZero();
     }
 
