@@ -163,7 +163,7 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO_CONTENT")})
     public ResponseEntity<Void> deleteAllStudentAchievements(@PathVariable String studentID) { 
     	logger.debug("deleteAllStudentAchievements : ");
-        return response.DELETE(commonService.getAllStudentAchievement(UUID.fromString(studentID)));
+        return response.DELETE(commonService.deleteAllStudentAchievement(UUID.fromString(studentID)));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATE_BY_DIST_DATE_N_STATUS)

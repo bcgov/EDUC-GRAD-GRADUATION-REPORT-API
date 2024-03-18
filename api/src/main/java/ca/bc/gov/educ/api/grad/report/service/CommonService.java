@@ -293,7 +293,7 @@ public class CommonService extends BaseService {
     }
 
     @Transactional
-    public int getAllStudentAchievement(UUID studentID) {
+    public int deleteAllStudentAchievement(UUID studentID) {
         List<GradStudentReportsEntity> repList = gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
         boolean hasDocuments = false;
         if (!repList.isEmpty()) {
