@@ -269,7 +269,7 @@ public class CommonControllerTest {
     public void testDeleteAllStudentAchievements() {
     	UUID studentID = new UUID(1, 1);
         int returnValue = 1;
-    	Mockito.when(commonService.getAllStudentAchievement(studentID)).thenReturn(returnValue);
+    	Mockito.when(commonService.deleteAllStudentAchievement(studentID)).thenReturn(returnValue);
     	commonController.deleteAllStudentAchievements(studentID.toString());
         assertEquals(1,returnValue);
     }
