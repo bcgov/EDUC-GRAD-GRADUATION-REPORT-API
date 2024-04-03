@@ -516,7 +516,7 @@ public class CommonService extends BaseService {
                 partitions.add(studentIDs.subList(i, Math.min(i + partitionSize, studentIDs.size())));
             }
             if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
-                processCertificate(partitions, scdList);
+                processCertificate(partitions, studentSearchRequest, scdList);
             } else if (credentialType.equalsIgnoreCase("OT") || credentialType.equalsIgnoreCase("RT")) {
                 processTranscript(partitions, studentSearchRequest, scdList);
             }
@@ -524,9 +524,14 @@ public class CommonService extends BaseService {
         return scdList;
     }
 
-    private void processCertificate(List<List<UUID>> partitions, List<StudentCredentialDistribution> scdList) {
+    private void processCertificate(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList) {
         for (List<UUID> subList : partitions) {
-            List<StudentCredentialDistribution> scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
+            List<StudentCredentialDistribution> scdSubList;
+            if(studentSearchRequest != null && studentSearchRequest.getPens() != null && !studentSearchRequest.getPens().isEmpty()) {
+                scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
+            } else {
+                scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequestAndNullDistributionDate(subList);
+            }
             if (!scdSubList.isEmpty()) {
                 scdList.addAll(scdSubList);
             }
