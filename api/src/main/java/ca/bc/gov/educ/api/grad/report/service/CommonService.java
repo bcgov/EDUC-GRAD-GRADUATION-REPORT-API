@@ -332,7 +332,7 @@ public class CommonService extends BaseService {
         return reportList;
     }
 
-    public List<SchoolReports> getAllSchoolReportListByMincode(String mincode, String accessToken) {
+    public List<SchoolReports> getAllSchoolReportListByMincode(String mincode) {
         List<SchoolReports> reportList = new ArrayList<>();
         if (StringUtils.isNotBlank(mincode)) {
             if (StringUtils.contains(mincode, "*")) {
@@ -745,7 +745,12 @@ public class CommonService extends BaseService {
                 } else {
                     dataResult.setCertificateTypeCode(certificateTypeCode);
                 }
-                result.add(dataResult);
+                if("YED4".equalsIgnoreCase(paperType) && "CUR".equalsIgnoreCase(s.getStudentStatus())) {
+                    result.add(dataResult);
+                }
+                if (!"YED4".equalsIgnoreCase(paperType)) {
+                    result.add(dataResult);
+                }
             }
         }
         return result;
