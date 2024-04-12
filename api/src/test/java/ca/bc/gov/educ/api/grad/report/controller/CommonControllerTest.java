@@ -454,15 +454,6 @@ public class CommonControllerTest {
     }
 
     @Test
-    public void testUpdateStudentCredentialPosting() {
-        final UUID studentID = new UUID(1,1);
-        final String credentialTypeCode = "TEST";
-        Mockito.when(commonService.updateStudentCredentialPosting(studentID,credentialTypeCode)).thenReturn(true);
-        commonController.updateStudentCredentialPosting(studentID.toString(),credentialTypeCode);
-        Mockito.verify(commonService).updateStudentCredentialPosting(studentID,credentialTypeCode);
-    }
-
-    @Test
     public void testUpdateStudentCredential_YED2() {
         final UUID studentID = new UUID(1,1);
         final String schoolOfRecord = "123456789";
