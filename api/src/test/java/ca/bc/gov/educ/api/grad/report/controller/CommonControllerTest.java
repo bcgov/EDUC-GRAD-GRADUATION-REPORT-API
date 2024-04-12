@@ -413,9 +413,9 @@ public class CommonControllerTest {
         studentCertificate2.setReportTypeCode(gradCertificateType.getCode());
         gradStudentReportList.add(studentCertificate2);
 
-        Mockito.when(commonService.getAllSchoolReportListByMincode(mincode,"accessToken")).thenReturn(gradStudentReportList);
-        commonController.getAllSchoolReportsList(mincode,"accessToken");
-        Mockito.verify(commonService).getAllSchoolReportListByMincode(mincode,"accessToken");
+        Mockito.when(commonService.getAllSchoolReportListByMincode(mincode)).thenReturn(gradStudentReportList);
+        commonController.getAllSchoolReportsList(mincode);
+        Mockito.verify(commonService).getAllSchoolReportListByMincode(mincode);
 
         Mockito.when(commonService.getAllSchoolReportListByReportType(gradCertificateType.getCode(), mincode)).thenReturn(gradStudentReportList);
         commonController.getSchoolReportsListByReportType(gradCertificateType.getCode(), mincode, "accessToken");

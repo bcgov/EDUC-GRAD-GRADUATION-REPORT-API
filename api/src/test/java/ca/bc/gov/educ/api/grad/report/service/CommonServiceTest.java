@@ -1187,7 +1187,7 @@ public class CommonServiceTest {
         when(schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(gradReportTypes.getCode(), "")).thenReturn(schoolReportsLightEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
-        var result = commonService.getAllSchoolReportListByMincode(mincode,"accessToken");
+        var result = commonService.getAllSchoolReportListByMincode(mincode);
 
         assertThat(result).isNotNull().hasSize(2);
         assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode2);
@@ -1262,7 +1262,7 @@ public class CommonServiceTest {
         when(schoolReportsRepository.findBySchoolOfRecordOrderBySchoolOfRecord("12345631231")).thenReturn(schoolReportsEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
-        var result = commonService.getAllSchoolReportListByMincode(mincode,"accessToken");
+        var result = commonService.getAllSchoolReportListByMincode(mincode);
 
         assertThat(result).isNotNull().hasSize(2);
         assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode2);

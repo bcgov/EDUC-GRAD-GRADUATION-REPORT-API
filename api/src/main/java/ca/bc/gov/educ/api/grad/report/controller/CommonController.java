@@ -303,9 +303,9 @@ public class CommonController {
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Read All  School Reports by Mincode", description = "Read All School Reports by Mincode", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<SchoolReports>> getAllSchoolReportsList(@PathVariable String mincode,@RequestHeader(name="Authorization") String accessToken) {
+    public ResponseEntity<List<SchoolReports>> getAllSchoolReportsList(@PathVariable String mincode) {
         logger.debug("getAllSchoolReportsList : ");
-        return response.GET(commonService.getAllSchoolReportListByMincode(mincode, accessToken.replace(BEARER,"")));
+        return response.GET(commonService.getAllSchoolReportListByMincode(mincode));
     }
 
     @GetMapping(EducGradReportApiConstants.SCHOOL_REPORTS_BY_REPORT_TYPE)
