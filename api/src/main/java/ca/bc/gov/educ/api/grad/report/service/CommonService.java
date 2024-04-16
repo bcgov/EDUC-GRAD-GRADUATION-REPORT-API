@@ -623,7 +623,8 @@ public class CommonService extends BaseService {
         }
     }
 
-    private District getDistrict(String districtCode, String accessToken) {
+    @Transactional
+    public District getDistrict(String districtCode, String accessToken) {
         try {
             return webClient.get()
                     .uri(String.format(constants.getDistrictByMincodeUrl(), districtCode))
@@ -696,7 +697,8 @@ public class CommonService extends BaseService {
         return processReportGradStudentDataList(students, new ArrayList<>());
     }
 
-    private List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students, List<String> schools) {
+    @Transactional
+    public List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students, List<String> schools) {
         List<ReportGradStudentData> result = new ArrayList<>();
         long startTime = System.currentTimeMillis();
         if(students.hasContent()) {
@@ -719,7 +721,8 @@ public class CommonService extends BaseService {
         return result;
     }
 
-    private synchronized List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
+    @Transactional
+    public synchronized List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
         List<ReportGradStudentData> result = new ArrayList<>();
         List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).distinct().toList();
         List<ReportGradStudentData> studentsInBatch = getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch);
