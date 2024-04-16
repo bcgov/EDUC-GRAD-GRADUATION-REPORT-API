@@ -358,6 +358,7 @@ public class CommonService extends BaseService {
         return reportList;
     }
 
+    @Generated
     private void populateSchoolRepors(List<SchoolReports> reportList) {
         reportList.forEach(rep -> {
             String accessToken = fetchAccessToken();
