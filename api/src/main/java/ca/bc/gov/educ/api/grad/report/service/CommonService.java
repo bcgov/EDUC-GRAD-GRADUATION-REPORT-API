@@ -6,6 +6,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.*;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.Generated;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
 import org.apache.commons.codec.binary.Base64;
@@ -606,6 +607,7 @@ public class CommonService extends BaseService {
         return false;
     }
 
+    @Generated
     private School getSchool(String minCode, String accessToken) {
         try {
             return webClient.get()
@@ -623,8 +625,8 @@ public class CommonService extends BaseService {
         }
     }
 
-    @Transactional
-    public District getDistrict(String districtCode, String accessToken) {
+    @Generated
+    private District getDistrict(String districtCode, String accessToken) {
         try {
             return webClient.get()
                     .uri(String.format(constants.getDistrictByMincodeUrl(), districtCode))
@@ -697,8 +699,8 @@ public class CommonService extends BaseService {
         return processReportGradStudentDataList(students, new ArrayList<>());
     }
 
-    @Transactional
-    public List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students, List<String> schools) {
+    @Generated
+    private List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students, List<String> schools) {
         List<ReportGradStudentData> result = new ArrayList<>();
         long startTime = System.currentTimeMillis();
         if(students.hasContent()) {
@@ -721,8 +723,8 @@ public class CommonService extends BaseService {
         return result;
     }
 
-    @Transactional
-    public synchronized List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
+    @Generated
+    private synchronized List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
         List<ReportGradStudentData> result = new ArrayList<>();
         List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).distinct().toList();
         List<ReportGradStudentData> studentsInBatch = getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch);
@@ -761,6 +763,7 @@ public class CommonService extends BaseService {
         return result;
     }
 
+    @Generated
     private synchronized ReportGradStudentData getReportGradStudentDataByGraduationStudentRecordIdFromList(UUID id, List<ReportGradStudentData> studentsInBatch) {
         for(ReportGradStudentData s: studentsInBatch) {
             if(s.getGraduationStudentRecordId().equals(id)) {
@@ -770,6 +773,7 @@ public class CommonService extends BaseService {
         return null;
     }
 
+    @Generated
     private synchronized List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) {
         final ParameterizedTypeReference<List<ReportGradStudentData>> responseType = new ParameterizedTypeReference<>() {
         };
