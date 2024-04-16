@@ -1469,6 +1469,7 @@ public class CommonServiceTest {
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
+        reportGradStudentData.setMincode("12345678");
 
         GradCertificateTypes certificateTypes = new GradCertificateTypes();
         certificateTypes.setCode("E");
@@ -1485,6 +1486,8 @@ public class CommonServiceTest {
         reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         reportGradStudentData.setTranscriptTypeCode("BC2004-IND");
+        reportGradStudentData.setMincode("12345678");
+        reportGradStudentData.setMincodeAtGrad("09876543");
 
         reportGradStudentDataList.add(reportGradStudentData);
 
