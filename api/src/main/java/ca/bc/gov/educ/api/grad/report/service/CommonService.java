@@ -6,6 +6,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.*;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.Generated;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
 import org.apache.commons.codec.binary.Base64;
@@ -357,6 +358,7 @@ public class CommonService extends BaseService {
         return reportList;
     }
 
+    @Generated
     private void populateSchoolRepors(List<SchoolReports> reportList) {
         reportList.forEach(rep -> {
             String accessToken = fetchAccessToken();
@@ -606,6 +608,7 @@ public class CommonService extends BaseService {
         return false;
     }
 
+    @Generated
     private School getSchool(String minCode, String accessToken) {
         try {
             return webClient.get()
@@ -623,6 +626,7 @@ public class CommonService extends BaseService {
         }
     }
 
+    @Generated
     private District getDistrict(String districtCode, String accessToken) {
         try {
             return webClient.get()
@@ -696,6 +700,7 @@ public class CommonService extends BaseService {
         return processReportGradStudentDataList(students, new ArrayList<>());
     }
 
+    @Generated
     private List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students, List<String> schools) {
         List<ReportGradStudentData> result = new ArrayList<>();
         long startTime = System.currentTimeMillis();
@@ -719,6 +724,7 @@ public class CommonService extends BaseService {
         return result;
     }
 
+    @Generated
     private synchronized List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
         List<ReportGradStudentData> result = new ArrayList<>();
         List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).distinct().toList();
@@ -726,11 +732,13 @@ public class CommonService extends BaseService {
         if(studentsInBatch != null && !schools.isEmpty()) {
             boolean isDistrictSchool = schools.get(0).length() == 3;
             if(isDistrictSchool) {
-                studentsInBatch.removeIf(st -> (!schools.contains(StringUtils.substring(st.getMincode(), 0, 3))));
+                studentsInBatch.removeIf(st -> ((StringUtils.isBlank(st.getMincodeAtGrad()) || StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.substring(st.getMincode(), 0, 3))));
+                studentsInBatch.removeIf(st -> ((StringUtils.isNotBlank(st.getMincodeAtGrad()) && !StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.substring(st.getMincodeAtGrad(), 0, 3))));
             }
             boolean isSchoolSchool = schools.get(0).length() > 3;
             if(isSchoolSchool) {
-                studentsInBatch.removeIf(st -> (!schools.contains(StringUtils.trimToEmpty(st.getMincode()))));
+                studentsInBatch.removeIf(st -> ((StringUtils.isBlank(st.getMincodeAtGrad()) || StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.trimToEmpty(st.getMincode()))));
+                studentsInBatch.removeIf(st -> ((StringUtils.isNotBlank(st.getMincodeAtGrad()) && !StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.trimToEmpty(st.getMincodeAtGrad()))));
             }
         }
         for(SchoolReportEntity e: students.getContent()) {
@@ -756,6 +764,7 @@ public class CommonService extends BaseService {
         return result;
     }
 
+    @Generated
     private synchronized ReportGradStudentData getReportGradStudentDataByGraduationStudentRecordIdFromList(UUID id, List<ReportGradStudentData> studentsInBatch) {
         for(ReportGradStudentData s: studentsInBatch) {
             if(s.getGraduationStudentRecordId().equals(id)) {
@@ -765,6 +774,7 @@ public class CommonService extends BaseService {
         return null;
     }
 
+    @Generated
     private synchronized List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) {
         final ParameterizedTypeReference<List<ReportGradStudentData>> responseType = new ParameterizedTypeReference<>() {
         };

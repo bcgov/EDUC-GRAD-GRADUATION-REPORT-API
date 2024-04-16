@@ -1469,6 +1469,7 @@ public class CommonServiceTest {
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
+        reportGradStudentData.setMincode("12345678");
 
         GradCertificateTypes certificateTypes = new GradCertificateTypes();
         certificateTypes.setCode("E");
@@ -1485,6 +1486,8 @@ public class CommonServiceTest {
         reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         reportGradStudentData.setTranscriptTypeCode("BC2004-IND");
+        reportGradStudentData.setMincode("12345678");
+        reportGradStudentData.setMincodeAtGrad("09876543");
 
         reportGradStudentDataList.add(reportGradStudentData);
 
@@ -1667,6 +1670,224 @@ public class CommonServiceTest {
         mockAccessToken();
 
         var result = commonService.getSchoolYearEndReportGradStudentData();
+        assertThat(result).isNotEmpty();
+
+        result = commonService.getSchoolReportGradStudentData();
+        assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    @SneakyThrows
+    public void testGetSchoolReportGradStudentDataForSchools() {
+        UUID studentId = UUID.randomUUID();
+
+        String mincode = "12345678";
+
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
+        reportGradStudentData.setMincode(mincode);
+
+        GradCertificateTypes certificateTypes = new GradCertificateTypes();
+        certificateTypes.setCode("E");
+        certificateTypes.setDescription("Dogwood");
+        reportGradStudentData.setCertificateTypes(List.of(certificateTypes));
+
+        reportGradStudentDataList.add(reportGradStudentData);
+
+        reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+
+        reportGradStudentDataList.add(reportGradStudentData);
+
+        reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        reportGradStudentData.setTranscriptTypeCode("BC2004-IND");
+        reportGradStudentData.setMincode(mincode);
+        reportGradStudentData.setMincodeAtGrad("09876543");
+
+        reportGradStudentDataList.add(reportGradStudentData);
+
+        SchoolReportEntity schoolReportEntity = new SchoolReportEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
+
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
+
+            @Override
+            public Iterator<SchoolReportEntity> iterator() {
+                return getContent().listIterator();
+            }
+
+            @Override
+            public int getNumber() {
+                return 1;
+            }
+
+            @Override
+            public int getSize() {
+                return 1;
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return 1;
+            }
+
+            @Override
+            public List<SchoolReportEntity> getContent() {
+                return List.of(schoolReportEntity);
+            }
+
+            @Override
+            public boolean hasContent() {
+                return !getContent().isEmpty();
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isLast() {
+                return false;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public int getTotalPages() {
+                return getContent().size();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return getContent().size();
+            }
+
+            @Override
+            public Page map(Function converter) {
+                return null;
+            }
+        });
+
+        when(schoolReportMonthlyRepository.findStudentForSchoolReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
+
+            @Override
+            public Iterator<SchoolReportEntity> iterator() {
+                return getContent().listIterator();
+            }
+
+            @Override
+            public int getNumber() {
+                return 1;
+            }
+
+            @Override
+            public int getSize() {
+                return 1;
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return 1;
+            }
+
+            @Override
+            public List<SchoolReportEntity> getContent() {
+                return List.of(schoolReportEntity);
+            }
+
+            @Override
+            public boolean hasContent() {
+                return !getContent().isEmpty();
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isLast() {
+                return false;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public int getTotalPages() {
+                return getContent().size();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return getContent().size();
+            }
+
+            @Override
+            public Page map(Function converter) {
+                return null;
+            }
+        });
+
+        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getStudentsForSchoolDistribution())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(new ParameterizedTypeReference<List<ReportGradStudentData>>() {})).thenReturn(Mono.just(reportGradStudentDataList));
+
+        mockAccessToken();
+
+        var result = commonService.getSchoolYearEndReportGradStudentData(List.of(mincode));
         assertThat(result).isNotEmpty();
 
         result = commonService.getSchoolReportGradStudentData();
