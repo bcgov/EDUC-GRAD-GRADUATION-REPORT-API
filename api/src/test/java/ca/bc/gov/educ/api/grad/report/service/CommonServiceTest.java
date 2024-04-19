@@ -1470,6 +1470,7 @@ public class CommonServiceTest {
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
         reportGradStudentData.setMincode("12345678");
+        reportGradStudentData.setStudentStatus("CUR");
 
         GradCertificateTypes certificateTypes = new GradCertificateTypes();
         certificateTypes.setCode("E");
@@ -1480,6 +1481,7 @@ public class CommonServiceTest {
 
         reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
+        reportGradStudentData.setStudentStatus("CUR");
 
         reportGradStudentDataList.add(reportGradStudentData);
 
@@ -1488,6 +1490,7 @@ public class CommonServiceTest {
         reportGradStudentData.setTranscriptTypeCode("BC2004-IND");
         reportGradStudentData.setMincode("12345678");
         reportGradStudentData.setMincodeAtGrad("09876543");
+        reportGradStudentData.setStudentStatus("CUR");
 
         reportGradStudentDataList.add(reportGradStudentData);
 
@@ -1688,6 +1691,7 @@ public class CommonServiceTest {
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
         reportGradStudentData.setMincode(mincode);
+        reportGradStudentData.setStudentStatus("CUR");
 
         GradCertificateTypes certificateTypes = new GradCertificateTypes();
         certificateTypes.setCode("E");
@@ -1698,6 +1702,7 @@ public class CommonServiceTest {
 
         reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
+        reportGradStudentData.setStudentStatus("CUR");
 
         reportGradStudentDataList.add(reportGradStudentData);
 
@@ -1706,6 +1711,7 @@ public class CommonServiceTest {
         reportGradStudentData.setTranscriptTypeCode("BC2004-IND");
         reportGradStudentData.setMincode(mincode);
         reportGradStudentData.setMincodeAtGrad("09876543");
+        reportGradStudentData.setStudentStatus("CUR");
 
         reportGradStudentDataList.add(reportGradStudentData);
 

@@ -732,20 +732,20 @@ public class CommonService extends BaseService {
         if(studentsInBatch != null && !schools.isEmpty()) {
             boolean isDistrictSchool = schools.get(0).length() == 3;
             if(isDistrictSchool) {
-                studentsInBatch.removeIf(st -> ((StringUtils.isBlank(st.getMincodeAtGrad()) || StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.substring(st.getMincode(), 0, 3))));
-                studentsInBatch.removeIf(st -> ((StringUtils.isNotBlank(st.getMincodeAtGrad()) && !StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.substring(st.getMincodeAtGrad(), 0, 3))));
+                studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isBlank(st.getMincodeAtGrad()) || StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.substring(st.getMincode(), 0, 3))));
+                studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isNotBlank(st.getMincodeAtGrad()) && !StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.substring(st.getMincodeAtGrad(), 0, 3))));
             }
             boolean isSchoolSchool = schools.get(0).length() > 3;
             if(isSchoolSchool) {
-                studentsInBatch.removeIf(st -> ((StringUtils.isBlank(st.getMincodeAtGrad()) || StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.trimToEmpty(st.getMincode()))));
-                studentsInBatch.removeIf(st -> ((StringUtils.isNotBlank(st.getMincodeAtGrad()) && !StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.trimToEmpty(st.getMincodeAtGrad()))));
+                studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isBlank(st.getMincodeAtGrad()) || StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.trimToEmpty(st.getMincode()))));
+                studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isNotBlank(st.getMincodeAtGrad()) && !StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.trimToEmpty(st.getMincodeAtGrad()))));
             }
         }
         for(SchoolReportEntity e: students.getContent()) {
             String paperType = e.getPaperType();
             String certificateTypeCode = e.getCertificateTypeCode(); //either transcript or certificate codes
             ReportGradStudentData s = getReportGradStudentDataByGraduationStudentRecordIdFromList(e.getGraduationStudentRecordId(), studentsInBatch);
-            if(s != null) {
+            if(s != null && "CUR".equalsIgnoreCase(s.getStudentStatus())) {
                 ReportGradStudentData dataResult = SerializationUtils.clone(s);
                 dataResult.setPaperType(paperType);
                 if ("YED4".equalsIgnoreCase(paperType)) {
@@ -753,12 +753,7 @@ public class CommonService extends BaseService {
                 } else {
                     dataResult.setCertificateTypeCode(certificateTypeCode);
                 }
-                if("YED4".equalsIgnoreCase(paperType) && "CUR".equalsIgnoreCase(s.getStudentStatus())) {
-                    result.add(dataResult);
-                }
-                if (!"YED4".equalsIgnoreCase(paperType)) {
-                    result.add(dataResult);
-                }
+                result.add(dataResult);
             }
         }
         return result;
