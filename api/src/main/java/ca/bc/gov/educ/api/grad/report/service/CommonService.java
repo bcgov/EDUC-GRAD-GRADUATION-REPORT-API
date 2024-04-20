@@ -745,7 +745,7 @@ public class CommonService extends BaseService {
             String paperType = e.getPaperType();
             String certificateTypeCode = e.getCertificateTypeCode(); //either transcript or certificate codes
             ReportGradStudentData s = getReportGradStudentDataByGraduationStudentRecordIdFromList(e.getGraduationStudentRecordId(), studentsInBatch);
-            if(s != null && "CUR".equalsIgnoreCase(s.getStudentStatus())) {
+            if(s != null) {
                 ReportGradStudentData dataResult = SerializationUtils.clone(s);
                 dataResult.setPaperType(paperType);
                 if ("YED4".equalsIgnoreCase(paperType)) {
@@ -753,7 +753,12 @@ public class CommonService extends BaseService {
                 } else {
                     dataResult.setCertificateTypeCode(certificateTypeCode);
                 }
-                result.add(dataResult);
+                if("YED4".equalsIgnoreCase(paperType) && "CUR".equalsIgnoreCase(s.getStudentStatus())) {
+                    result.add(dataResult);
+                }
+                if (!"YED4".equalsIgnoreCase(paperType)) {
+                    result.add(dataResult);
+                }
             }
         }
         return result;
