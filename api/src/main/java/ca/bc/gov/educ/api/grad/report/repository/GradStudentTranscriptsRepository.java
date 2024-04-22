@@ -43,6 +43,12 @@ public interface GradStudentTranscriptsRepository extends JpaRepository<GradStud
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,tran.paperType,c.documentStatusCode,c.distributionDate) from GradStudentTranscriptsEntity c inner join TranscriptTypesEntity tran on tran.code = c.transcriptTypeCode  where c.studentID in (:subList)")
 	List<StudentCredentialDistribution> findRecordsForUserRequestByStudentIdOnly(List<UUID> subList);
 
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,tran.paperType,c.documentStatusCode,c.distributionDate) from GradStudentTranscriptsEntity c inner join TranscriptTypesEntity tran on tran.code = c.transcriptTypeCode  where c.studentID in (:subList) and c.documentStatusCode='COMPL' and c.distributionDate is null")
+	List<StudentCredentialDistribution> findRecordsWithNullDistributionDateForUserRequest(List<UUID> subList);
+
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,tran.paperType,c.documentStatusCode,c.distributionDate) from GradStudentTranscriptsEntity c inner join TranscriptTypesEntity tran on tran.code = c.transcriptTypeCode  where c.studentID in (:subList) and c.distributionDate is null")
+	List<StudentCredentialDistribution> findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(List<UUID> subList);
+
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.SchoolStudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,c.documentStatusCode) from GradStudentTranscriptsEntity c where c.transcriptUpdateDate is null or c.transcriptUpdateDate < c.updateDate")
 	List<SchoolStudentCredentialDistribution> findByTranscriptUpdateDate();
 

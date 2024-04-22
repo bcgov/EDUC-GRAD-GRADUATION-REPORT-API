@@ -505,7 +505,7 @@ public class CommonService extends BaseService {
         return false;
     }
 
-    public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, String accessToken) {
+    public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, boolean onlyWithNullDistributionDate, String accessToken) {
         List<StudentCredentialDistribution> scdList = new ArrayList<>();
         List<UUID> studentIDs = studentSearchRequest.getStudentIDs();
         if(studentIDs == null || studentIDs.isEmpty()) {
@@ -518,30 +518,36 @@ public class CommonService extends BaseService {
                 partitions.add(studentIDs.subList(i, Math.min(i + partitionSize, studentIDs.size())));
             }
             if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
-                processCertificate(partitions, scdList);
+                processCertificate(partitions, scdList, onlyWithNullDistributionDate);
             } else if (credentialType.equalsIgnoreCase("OT") || credentialType.equalsIgnoreCase("RT")) {
-                processTranscript(partitions, studentSearchRequest, scdList);
+                processTranscript(partitions, studentSearchRequest, scdList, onlyWithNullDistributionDate);
             }
         }
         return scdList;
     }
 
-    private void processCertificate(List<List<UUID>> partitions, List<StudentCredentialDistribution> scdList) {
+    private void processCertificate(List<List<UUID>> partitions, List<StudentCredentialDistribution> scdList, boolean onlyWithNullDistributionDate) {
         for (List<UUID> subList : partitions) {
-            List<StudentCredentialDistribution> scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
+            List<StudentCredentialDistribution> scdSubList = onlyWithNullDistributionDate?
+                    gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(subList) :
+                    gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
             if (!scdSubList.isEmpty()) {
                 scdList.addAll(scdSubList);
             }
         }
     }
 
-    private void processTranscript(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList) {
+    private void processTranscript(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList, boolean onlyWithNullDistributionDate) {
         for (List<UUID> subList : partitions) {
             List<StudentCredentialDistribution> scdSubList;
             if (!studentSearchRequest.getPens().isEmpty()) {
-                scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(subList);
+                scdSubList = onlyWithNullDistributionDate?
+                        gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(subList)
+                        : gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(subList);
             } else {
-                scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
+                scdSubList = onlyWithNullDistributionDate?
+                        gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
+                        : gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
             }
             if (!scdSubList.isEmpty()) {
                 scdList.addAll(scdSubList);

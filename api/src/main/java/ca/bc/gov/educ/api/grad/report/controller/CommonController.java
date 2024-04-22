@@ -271,13 +271,24 @@ public class CommonController {
 
     @PostMapping(EducGradReportApiConstants.USER_REQUEST_DIS_RUN)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
-    @Operation(summary = "Read All Student Transcripts/Certificates for  User Req Distribution", description = "Read All Student Transcripts for Distribution", tags = { "Certificates" })
+    @Operation(summary = "Read All Student Transcripts/Certificates for User Req Distribution", description = "Read All Student Credentials for Distribution", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<StudentCredentialDistribution>> getStudentCredentialsForUserRequestDisRun(
             @PathVariable String credentialType, @RequestBody StudentSearchRequest studentSearchRequest,
             @RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getStudentCredentialsForUserRequestDisRun : ");
-        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,accessToken.replace(BEARER, "")));
+        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,false,accessToken.replace(BEARER, "")));
+    }
+
+    @PostMapping(EducGradReportApiConstants.USER_REQUEST_DIS_RUN_WITH_NULL_DISTRIBUTION_DATE)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Read All Student Transcripts/Certificates with Null Distribution Date for User Req Distribution", description = "Read All Student Credentials with Null Distribution Date for Distribution", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<StudentCredentialDistribution>> getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(
+            @PathVariable String credentialType, @RequestBody StudentSearchRequest studentSearchRequest,
+            @RequestHeader(name="Authorization") String accessToken) {
+        logger.debug("getStudentCredentialsForRegenCertRun : ");
+        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,true,accessToken.replace(BEARER, "")));
     }
 
     @DeleteMapping(EducGradReportApiConstants.ARCH_ACHIEVEMENTS_BY_STUDENTID)
