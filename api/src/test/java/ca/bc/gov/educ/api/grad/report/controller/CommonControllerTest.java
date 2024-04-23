@@ -490,7 +490,7 @@ public class CommonControllerTest {
         final UUID studentID = UUID.randomUUID();
         final String credentialType = "E";
         final StudentSearchRequest req = new StudentSearchRequest();
-        req.setPens(List.of("2131231213"));
+        req.setDistricts(List.of("005"));
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
