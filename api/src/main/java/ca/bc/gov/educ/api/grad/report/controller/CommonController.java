@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @CrossOrigin
@@ -287,8 +288,10 @@ public class CommonController {
     public ResponseEntity<List<StudentCredentialDistribution>> getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(
             @PathVariable String credentialType, @RequestBody StudentSearchRequest studentSearchRequest,
             @RequestHeader(name="Authorization") String accessToken) {
-        logger.debug("getStudentCredentialsForRegenCertRun : ");
-        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,true,accessToken.replace(BEARER, "")));
+        logger.debug("getStudentCredentialsForUserRequestDisRunWithNullDistributionDate : ");
+        boolean isPenNumberSearch = studentSearchRequest.getPens()!= null && !studentSearchRequest.getPens().isEmpty()
+                && !studentSearchRequest.getPens().stream().filter(StringUtils::isNotBlank).toList().isEmpty();
+        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,!isPenNumberSearch,accessToken.replace(BEARER, "")));
     }
 
     @DeleteMapping(EducGradReportApiConstants.ARCH_ACHIEVEMENTS_BY_STUDENTID)
