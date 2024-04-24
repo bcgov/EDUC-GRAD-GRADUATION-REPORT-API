@@ -904,7 +904,41 @@ public class CommonServiceTest {
 
         Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
-        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),null);
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),false,null);
+        assertThat(result).isNotEmpty();
+
+    }
+
+    @Test
+    public void testGetStudentCredentialsForUserRequestDisRun_OC_with_Null_DistributionDate() {
+
+        String credentialType = "OC";
+        GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
+
+        List<UUID> studList= new ArrayList<>();
+        GraduationStudentRecord rec = new GraduationStudentRecord();
+        rec.setLegalFirstName("asda");
+        rec.setStudentID(new UUID(1,1));
+        studList.add(rec.getStudentID());
+        res.setStudentIDs(studList);
+
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date());
+        scdSubList.add(scdSub);
+
+        List<UUID> studentList = new ArrayList<>();
+        studentList.add(new UUID(1,1));
+
+        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+
+        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
+
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),true,null);
         assertThat(result).isNotEmpty();
 
     }
@@ -973,7 +1007,46 @@ public class CommonServiceTest {
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
 
-        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,null);
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false,null);
+        assertThat(result.size()).isEqualTo(1);
+
+    }
+
+    @Test
+    public void testGetStudentCredentialsWithNullDistributionDateForUserRequestDisRun_OT() {
+
+        String credentialType = "OT";
+        GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
+
+        List<UUID> studList= new ArrayList<>();
+        GraduationStudentRecord rec = new GraduationStudentRecord();
+        rec.setLegalFirstName("asda");
+        rec.setStudentID(new UUID(1,1));
+        studList.add(rec.getStudentID());
+        res.setStudentIDs(studList);
+
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date());
+        scdSubList.add(scdSub);
+
+        List<UUID> studentList = new ArrayList<>();
+        studentList.add(new UUID(1,1));
+
+        StudentSearchRequest req = new StudentSearchRequest();
+        List<String> penList = new ArrayList<>();
+        penList.add("13123111");
+        req.setPens(penList);
+
+        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+
+        Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true,null);
         assertThat(result.size()).isEqualTo(1);
 
     }
@@ -1013,7 +1086,47 @@ public class CommonServiceTest {
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
-        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,null);
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false,null);
+        assertThat(result.size()).isEqualTo(1);
+
+    }
+
+    @Test
+    public void testGetStudentCredentialsWithNullDistributionDateForUserRequestDisRun_OT_Prgm() {
+
+        String credentialType = "OT";
+        GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
+
+        List<UUID> studList= new ArrayList<>();
+        GraduationStudentRecord rec = new GraduationStudentRecord();
+        rec.setLegalFirstName("asda");
+        rec.setStudentID(new UUID(1,1));
+        studList.add(rec.getStudentID());
+        res.setStudentIDs(studList);
+
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date());
+        scdSubList.add(scdSub);
+
+        List<UUID> studentList = new ArrayList<>();
+        studentList.add(new UUID(1,1));
+
+        StudentSearchRequest req = new StudentSearchRequest();
+        List<String> pgList = new ArrayList<>();
+        pgList.add("2018-EN");
+        req.setPrograms(pgList);
+        req.setPens(new ArrayList<>());
+
+        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+
+        Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
+
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true,null);
         assertThat(result.size()).isEqualTo(1);
 
     }
@@ -1187,7 +1300,7 @@ public class CommonServiceTest {
         when(schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(gradReportTypes.getCode(), "")).thenReturn(schoolReportsLightEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
-        var result = commonService.getAllSchoolReportListByMincode(mincode,"accessToken");
+        var result = commonService.getAllSchoolReportListByMincode(mincode);
 
         assertThat(result).isNotNull().hasSize(2);
         assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode2);
@@ -1262,7 +1375,7 @@ public class CommonServiceTest {
         when(schoolReportsRepository.findBySchoolOfRecordOrderBySchoolOfRecord("12345631231")).thenReturn(schoolReportsEntityList);
         when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
 
-        var result = commonService.getAllSchoolReportListByMincode(mincode,"accessToken");
+        var result = commonService.getAllSchoolReportListByMincode(mincode);
 
         assertThat(result).isNotNull().hasSize(2);
         assertThat(result.get(0).getSchoolOfRecord()).isEqualTo(mincode2);
@@ -1469,6 +1582,8 @@ public class CommonServiceTest {
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
+        reportGradStudentData.setMincode("12345678");
+        reportGradStudentData.setStudentStatus("CUR");
 
         GradCertificateTypes certificateTypes = new GradCertificateTypes();
         certificateTypes.setCode("E");
@@ -1479,12 +1594,16 @@ public class CommonServiceTest {
 
         reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
+        reportGradStudentData.setStudentStatus("CUR");
 
         reportGradStudentDataList.add(reportGradStudentData);
 
         reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(studentId);
         reportGradStudentData.setTranscriptTypeCode("BC2004-IND");
+        reportGradStudentData.setMincode("12345678");
+        reportGradStudentData.setMincodeAtGrad("09876543");
+        reportGradStudentData.setStudentStatus("CUR");
 
         reportGradStudentDataList.add(reportGradStudentData);
 
@@ -1667,6 +1786,227 @@ public class CommonServiceTest {
         mockAccessToken();
 
         var result = commonService.getSchoolYearEndReportGradStudentData();
+        assertThat(result).isNotEmpty();
+
+        result = commonService.getSchoolReportGradStudentData();
+        assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    @SneakyThrows
+    public void testGetSchoolReportGradStudentDataForSchools() {
+        UUID studentId = UUID.randomUUID();
+
+        String mincode = "12345678";
+
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
+        reportGradStudentData.setMincode(mincode);
+        reportGradStudentData.setStudentStatus("CUR");
+
+        GradCertificateTypes certificateTypes = new GradCertificateTypes();
+        certificateTypes.setCode("E");
+        certificateTypes.setDescription("Dogwood");
+        reportGradStudentData.setCertificateTypes(List.of(certificateTypes));
+
+        reportGradStudentDataList.add(reportGradStudentData);
+
+        reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        reportGradStudentData.setStudentStatus("CUR");
+
+        reportGradStudentDataList.add(reportGradStudentData);
+
+        reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(studentId);
+        reportGradStudentData.setTranscriptTypeCode("BC2004-IND");
+        reportGradStudentData.setMincode(mincode);
+        reportGradStudentData.setMincodeAtGrad("09876543");
+        reportGradStudentData.setStudentStatus("CUR");
+
+        reportGradStudentDataList.add(reportGradStudentData);
+
+        SchoolReportEntity schoolReportEntity = new SchoolReportEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
+
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
+
+            @Override
+            public Iterator<SchoolReportEntity> iterator() {
+                return getContent().listIterator();
+            }
+
+            @Override
+            public int getNumber() {
+                return 1;
+            }
+
+            @Override
+            public int getSize() {
+                return 1;
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return 1;
+            }
+
+            @Override
+            public List<SchoolReportEntity> getContent() {
+                return List.of(schoolReportEntity);
+            }
+
+            @Override
+            public boolean hasContent() {
+                return !getContent().isEmpty();
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isLast() {
+                return false;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public int getTotalPages() {
+                return getContent().size();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return getContent().size();
+            }
+
+            @Override
+            public Page map(Function converter) {
+                return null;
+            }
+        });
+
+        when(schoolReportMonthlyRepository.findStudentForSchoolReport(PageRequest.of(0, PAGE_SIZE))).thenReturn(new Page() {
+
+            @Override
+            public Iterator<SchoolReportEntity> iterator() {
+                return getContent().listIterator();
+            }
+
+            @Override
+            public int getNumber() {
+                return 1;
+            }
+
+            @Override
+            public int getSize() {
+                return 1;
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return 1;
+            }
+
+            @Override
+            public List<SchoolReportEntity> getContent() {
+                return List.of(schoolReportEntity);
+            }
+
+            @Override
+            public boolean hasContent() {
+                return !getContent().isEmpty();
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isLast() {
+                return false;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public int getTotalPages() {
+                return getContent().size();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return getContent().size();
+            }
+
+            @Override
+            public Page map(Function converter) {
+                return null;
+            }
+        });
+
+        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.uri(constants.getStudentsForSchoolDistribution())).thenReturn(this.requestBodyUriMock);
+        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
+        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
+        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
+        when(this.responseMock.bodyToMono(new ParameterizedTypeReference<List<ReportGradStudentData>>() {})).thenReturn(Mono.just(reportGradStudentDataList));
+
+        mockAccessToken();
+
+        var result = commonService.getSchoolYearEndReportGradStudentData(List.of(mincode));
         assertThat(result).isNotEmpty();
 
         result = commonService.getSchoolReportGradStudentData();
