@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @CrossOrigin
@@ -271,13 +272,26 @@ public class CommonController {
 
     @PostMapping(EducGradReportApiConstants.USER_REQUEST_DIS_RUN)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
-    @Operation(summary = "Read All Student Transcripts/Certificates for  User Req Distribution", description = "Read All Student Transcripts for Distribution", tags = { "Certificates" })
+    @Operation(summary = "Read All Student Transcripts/Certificates for User Req Distribution", description = "Read All Student Credentials for Distribution", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<StudentCredentialDistribution>> getStudentCredentialsForUserRequestDisRun(
             @PathVariable String credentialType, @RequestBody StudentSearchRequest studentSearchRequest,
             @RequestHeader(name="Authorization") String accessToken) {
         logger.debug("getStudentCredentialsForUserRequestDisRun : ");
-        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,accessToken.replace(BEARER, "")));
+        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,false,accessToken.replace(BEARER, "")));
+    }
+
+    @PostMapping(EducGradReportApiConstants.USER_REQUEST_DIS_RUN_WITH_NULL_DISTRIBUTION_DATE)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Read All Student Transcripts/Certificates with Null Distribution Date for User Req Distribution", description = "Read All Student Credentials with Null Distribution Date for Distribution", tags = { "Certificates" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<StudentCredentialDistribution>> getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(
+            @PathVariable String credentialType, @RequestBody StudentSearchRequest studentSearchRequest,
+            @RequestHeader(name="Authorization") String accessToken) {
+        logger.debug("getStudentCredentialsForUserRequestDisRunWithNullDistributionDate : ");
+        boolean isPenNumberSearch = studentSearchRequest.getPens()!= null && !studentSearchRequest.getPens().isEmpty()
+                && !studentSearchRequest.getPens().stream().filter(StringUtils::isNotBlank).toList().isEmpty();
+        return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,!isPenNumberSearch,accessToken.replace(BEARER, "")));
     }
 
     @DeleteMapping(EducGradReportApiConstants.ARCH_ACHIEVEMENTS_BY_STUDENTID)
@@ -303,9 +317,9 @@ public class CommonController {
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Read All  School Reports by Mincode", description = "Read All School Reports by Mincode", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<SchoolReports>> getAllSchoolReportsList(@PathVariable String mincode,@RequestHeader(name="Authorization") String accessToken) {
+    public ResponseEntity<List<SchoolReports>> getAllSchoolReportsList(@PathVariable String mincode) {
         logger.debug("getAllSchoolReportsList : ");
-        return response.GET(commonService.getAllSchoolReportListByMincode(mincode, accessToken.replace(BEARER,"")));
+        return response.GET(commonService.getAllSchoolReportListByMincode(mincode));
     }
 
     @GetMapping(EducGradReportApiConstants.SCHOOL_REPORTS_BY_REPORT_TYPE)

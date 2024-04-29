@@ -6,6 +6,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.*;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.Generated;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
 import org.apache.commons.codec.binary.Base64;
@@ -332,7 +333,7 @@ public class CommonService extends BaseService {
         return reportList;
     }
 
-    public List<SchoolReports> getAllSchoolReportListByMincode(String mincode, String accessToken) {
+    public List<SchoolReports> getAllSchoolReportListByMincode(String mincode) {
         List<SchoolReports> reportList = new ArrayList<>();
         if (StringUtils.isNotBlank(mincode)) {
             if (StringUtils.contains(mincode, "*")) {
@@ -357,6 +358,7 @@ public class CommonService extends BaseService {
         return reportList;
     }
 
+    @Generated
     private void populateSchoolRepors(List<SchoolReports> reportList) {
         reportList.forEach(rep -> {
             String accessToken = fetchAccessToken();
@@ -503,7 +505,7 @@ public class CommonService extends BaseService {
         return false;
     }
 
-    public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, String accessToken) {
+    public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, boolean onlyWithNullDistributionDate, String accessToken) {
         List<StudentCredentialDistribution> scdList = new ArrayList<>();
         List<UUID> studentIDs = studentSearchRequest.getStudentIDs();
         if(studentIDs == null || studentIDs.isEmpty()) {
@@ -516,35 +518,36 @@ public class CommonService extends BaseService {
                 partitions.add(studentIDs.subList(i, Math.min(i + partitionSize, studentIDs.size())));
             }
             if (credentialType.equalsIgnoreCase("OC") || credentialType.equalsIgnoreCase("RC")) {
-                processCertificate(partitions, studentSearchRequest, scdList);
+                processCertificate(partitions, studentSearchRequest, scdList, onlyWithNullDistributionDate);
             } else if (credentialType.equalsIgnoreCase("OT") || credentialType.equalsIgnoreCase("RT")) {
-                processTranscript(partitions, studentSearchRequest, scdList);
+                processTranscript(partitions, studentSearchRequest, scdList, onlyWithNullDistributionDate);
             }
         }
         return scdList;
     }
 
-    private void processCertificate(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList) {
+    private void processCertificate(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList, boolean onlyWithNullDistributionDate) {
         for (List<UUID> subList : partitions) {
-            List<StudentCredentialDistribution> scdSubList;
-            if(studentSearchRequest != null && studentSearchRequest.getPens() != null && !studentSearchRequest.getPens().isEmpty()) {
-                scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
-            } else {
-                scdSubList = gradStudentCertificatesRepository.findRecordsForUserRequestAndNullDistributionDate(subList);
-            }
+            List<StudentCredentialDistribution> scdSubList = onlyWithNullDistributionDate?
+                    gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(subList) :
+                    gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
             if (!scdSubList.isEmpty()) {
                 scdList.addAll(scdSubList);
             }
         }
     }
 
-    private void processTranscript(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList) {
+    private void processTranscript(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList, boolean onlyWithNullDistributionDate) {
         for (List<UUID> subList : partitions) {
             List<StudentCredentialDistribution> scdSubList;
             if (!studentSearchRequest.getPens().isEmpty()) {
-                scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(subList);
+                scdSubList = onlyWithNullDistributionDate?
+                        gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(subList)
+                        : gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(subList);
             } else {
-                scdSubList = gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
+                scdSubList = onlyWithNullDistributionDate?
+                        gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
+                        : gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
             }
             if (!scdSubList.isEmpty()) {
                 scdList.addAll(scdSubList);
@@ -611,6 +614,7 @@ public class CommonService extends BaseService {
         return false;
     }
 
+    @Generated
     private School getSchool(String minCode, String accessToken) {
         try {
             return webClient.get()
@@ -628,6 +632,7 @@ public class CommonService extends BaseService {
         }
     }
 
+    @Generated
     private District getDistrict(String districtCode, String accessToken) {
         try {
             return webClient.get()
@@ -724,6 +729,7 @@ public class CommonService extends BaseService {
         return result;
     }
 
+    @Generated
     private synchronized List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
         List<ReportGradStudentData> result = new ArrayList<>();
         List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).distinct().toList();
@@ -731,11 +737,13 @@ public class CommonService extends BaseService {
         if(studentsInBatch != null && !schools.isEmpty()) {
             boolean isDistrictSchool = schools.get(0).length() == 3;
             if(isDistrictSchool) {
-                studentsInBatch.removeIf(st -> (!schools.contains(StringUtils.substring(st.getMincode(), 0, 3))));
+                studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isBlank(st.getMincodeAtGrad()) || StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.substring(st.getMincode(), 0, 3))));
+                studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isNotBlank(st.getMincodeAtGrad()) && !StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.substring(st.getMincodeAtGrad(), 0, 3))));
             }
             boolean isSchoolSchool = schools.get(0).length() > 3;
             if(isSchoolSchool) {
-                studentsInBatch.removeIf(st -> (!schools.contains(StringUtils.trimToEmpty(st.getMincode()))));
+                studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isBlank(st.getMincodeAtGrad()) || StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.trimToEmpty(st.getMincode()))));
+                studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isNotBlank(st.getMincodeAtGrad()) && !StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.trimToEmpty(st.getMincodeAtGrad()))));
             }
         }
         for(SchoolReportEntity e: students.getContent()) {
@@ -750,12 +758,18 @@ public class CommonService extends BaseService {
                 } else {
                     dataResult.setCertificateTypeCode(certificateTypeCode);
                 }
-                result.add(dataResult);
+                if("YED4".equalsIgnoreCase(paperType) && "CUR".equalsIgnoreCase(s.getStudentStatus())) {
+                    result.add(dataResult);
+                }
+                if (!"YED4".equalsIgnoreCase(paperType)) {
+                    result.add(dataResult);
+                }
             }
         }
         return result;
     }
 
+    @Generated
     private synchronized ReportGradStudentData getReportGradStudentDataByGraduationStudentRecordIdFromList(UUID id, List<ReportGradStudentData> studentsInBatch) {
         for(ReportGradStudentData s: studentsInBatch) {
             if(s.getGraduationStudentRecordId().equals(id)) {
@@ -765,6 +779,7 @@ public class CommonService extends BaseService {
         return null;
     }
 
+    @Generated
     private synchronized List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) {
         final ParameterizedTypeReference<List<ReportGradStudentData>> responseType = new ParameterizedTypeReference<>() {
         };
