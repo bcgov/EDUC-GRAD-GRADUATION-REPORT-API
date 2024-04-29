@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.model.dto;
 
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,9 +26,9 @@ public class StudentSearchRequest implements Serializable {
     private List<String> programs;
     private List<UUID> studentIDs;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern= EducGradReportApiConstants.DEFAULT_DATE_FORMAT)
     LocalDate gradDateFrom;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern= EducGradReportApiConstants.DEFAULT_DATE_FORMAT)
     LocalDate gradDateTo;
 
     Boolean validateInput;
