@@ -528,9 +528,16 @@ public class CommonService extends BaseService {
 
     private void processCertificate(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList, boolean onlyWithNullDistributionDate) {
         for (List<UUID> subList : partitions) {
-            List<StudentCredentialDistribution> scdSubList = onlyWithNullDistributionDate?
-                    gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(subList) :
-                    gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
+            List<StudentCredentialDistribution> scdSubList;
+            if (studentSearchRequest != null && studentSearchRequest.getPens() != null && !studentSearchRequest.getPens().isEmpty()) {
+                scdSubList = onlyWithNullDistributionDate?
+                        gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(subList) :
+                        gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(subList);
+            } else {
+                scdSubList = onlyWithNullDistributionDate?
+                        gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
+                        : gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
+            }
             if (!scdSubList.isEmpty()) {
                 scdList.addAll(scdSubList);
             }
@@ -540,7 +547,7 @@ public class CommonService extends BaseService {
     private void processTranscript(List<List<UUID>> partitions, StudentSearchRequest studentSearchRequest, List<StudentCredentialDistribution> scdList, boolean onlyWithNullDistributionDate) {
         for (List<UUID> subList : partitions) {
             List<StudentCredentialDistribution> scdSubList;
-            if (!studentSearchRequest.getPens().isEmpty()) {
+            if (studentSearchRequest != null && studentSearchRequest.getPens() != null && !studentSearchRequest.getPens().isEmpty()) {
                 scdSubList = onlyWithNullDistributionDate?
                         gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(subList)
                         : gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(subList);

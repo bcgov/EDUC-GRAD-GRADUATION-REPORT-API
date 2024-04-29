@@ -39,4 +39,10 @@ public interface GradStudentCertificatesRepository extends JpaRepository<GradStu
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from GradStudentCertificatesEntity c inner join GradCertificateTypesEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList) and c.distributionDate is null")
 	List<StudentCredentialDistribution> findRecordsWithNullDistributionDateForUserRequest(List<UUID> subList);
 
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from GradStudentCertificatesEntity c inner join GradCertificateTypesEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList) and c.distributionDate is null")
+	List<StudentCredentialDistribution> findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(List<UUID> subList);
+
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from GradStudentCertificatesEntity c inner join GradCertificateTypesEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList)")
+	List<StudentCredentialDistribution> findRecordsForUserRequestByStudentIdOnly(List<UUID> subList);
+
 }
