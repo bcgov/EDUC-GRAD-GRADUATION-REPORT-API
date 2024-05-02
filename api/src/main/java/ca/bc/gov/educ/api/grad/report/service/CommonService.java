@@ -538,8 +538,8 @@ public class CommonService extends BaseService {
                         gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(subList);
             } else {
                 scdSubList = onlyWithNullDistributionDate?
-                        gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
-                        : gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
+                        gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
+                        : gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
             }
             if (!scdSubList.isEmpty()) {
                 scdList.addAll(scdSubList);
