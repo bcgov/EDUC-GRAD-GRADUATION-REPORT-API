@@ -960,6 +960,8 @@ public class CommonServiceTest {
         List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun("OC",searchRequest,true,"accessToken");
         assertThat(result).isNotEmpty();
 
+        searchRequest.setActivityCode("USERDIST");
+
         result = commonService.getStudentCredentialsForUserRequestDisRun("OT",searchRequest,false,"accessToken");
         assertThat(result).isNotEmpty();
 

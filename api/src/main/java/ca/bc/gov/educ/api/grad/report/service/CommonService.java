@@ -507,6 +507,9 @@ public class CommonService extends BaseService {
 
     public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, boolean onlyWithNullDistributionDate, String accessToken) {
         List<StudentCredentialDistribution> scdList = new ArrayList<>();
+        if(StringUtils.isBlank(studentSearchRequest.getActivityCode())) {
+            studentSearchRequest.setActivityCode("USERDIST");
+        }
         List<UUID> studentIDs = studentSearchRequest.getStudentIDs();
         if(studentIDs == null || studentIDs.isEmpty()) {
             studentIDs = getStudentsForSpecialGradRun(studentSearchRequest, accessToken);
@@ -535,8 +538,8 @@ public class CommonService extends BaseService {
                         gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(subList);
             } else {
                 scdSubList = onlyWithNullDistributionDate?
-                        gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
-                        : gradStudentTranscriptsRepository.findRecordsForUserRequest(subList);
+                        gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
+                        : gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
             }
             if (!scdSubList.isEmpty()) {
                 scdList.addAll(scdSubList);
