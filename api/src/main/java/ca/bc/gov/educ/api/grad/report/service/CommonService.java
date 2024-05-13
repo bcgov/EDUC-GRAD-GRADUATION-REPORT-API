@@ -508,7 +508,7 @@ public class CommonService extends BaseService {
     public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, boolean onlyWithNullDistributionDate, String accessToken) {
         List<StudentCredentialDistribution> scdList = new ArrayList<>();
         if(StringUtils.isBlank(studentSearchRequest.getActivityCode())) {
-            studentSearchRequest.setActivityCode("USERDIST");
+            studentSearchRequest.setActivityCode("USERDIST" + StringUtils.upperCase(credentialType));
         }
         List<UUID> studentIDs = studentSearchRequest.getStudentIDs();
         if(studentIDs == null || studentIDs.isEmpty()) {
