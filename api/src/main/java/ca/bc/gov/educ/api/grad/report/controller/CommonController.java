@@ -279,7 +279,7 @@ public class CommonController {
         logger.debug("getStudentCredentialsForUserRequestDisRun : ");
         boolean isPenNumberSearch = studentSearchRequest.getPens() != null && !studentSearchRequest.getPens().isEmpty()
                 && !studentSearchRequest.getPens().stream().filter(StringUtils::isNotBlank).toList().isEmpty();
-        boolean onlyWithNullDistributionDate = !isPenNumberSearch && studentSearchRequest.getGradDateFrom() == null && studentSearchRequest.getGradDateTo() == null;
+        boolean onlyWithNullDistributionDate = !isPenNumberSearch && studentSearchRequest.getGradDateFrom() == null && studentSearchRequest.getGradDateTo() == null && !StringUtils.equalsAnyIgnoreCase(credentialType, "OT", "RT");
         return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,onlyWithNullDistributionDate,accessToken.replace(BEARER, "")));
     }
 
