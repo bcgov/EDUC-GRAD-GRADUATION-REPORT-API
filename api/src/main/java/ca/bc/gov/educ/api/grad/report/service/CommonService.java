@@ -747,13 +747,23 @@ public class CommonService extends BaseService {
         if(studentsInBatch != null && !schools.isEmpty()) {
             boolean isDistrictSchool = schools.get(0).length() == 3;
             if(isDistrictSchool) {
+                //--> Revert code back to school of record GRAD2-2758
+                /**
                 studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isBlank(st.getMincodeAtGrad()) || StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.substring(st.getMincode(), 0, 3))));
                 studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isNotBlank(st.getMincodeAtGrad()) && !StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.substring(st.getMincodeAtGrad(), 0, 3))));
+                 **/
+                studentsInBatch.removeIf(st -> (!schools.contains(StringUtils.substring(st.getMincode(), 0, 3))));
+                //<--
             }
             boolean isSchoolSchool = schools.get(0).length() > 3;
             if(isSchoolSchool) {
+                //--> Revert code back to school of record GRAD2-2758
+                /**
                 studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isBlank(st.getMincodeAtGrad()) || StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.trimToEmpty(st.getMincode()))));
                 studentsInBatch.removeIf(st -> (schools != null && !schools.isEmpty() && (StringUtils.isNotBlank(st.getMincodeAtGrad()) && !StringUtils.equals(st.getMincode(), st.getMincodeAtGrad())) && !schools.contains(StringUtils.trimToEmpty(st.getMincodeAtGrad()))));
+                 **/
+                studentsInBatch.removeIf(st -> (!schools.contains(StringUtils.trimToEmpty(st.getMincode()))));
+                //<--
             }
         }
         for(SchoolReportEntity e: students.getContent()) {
