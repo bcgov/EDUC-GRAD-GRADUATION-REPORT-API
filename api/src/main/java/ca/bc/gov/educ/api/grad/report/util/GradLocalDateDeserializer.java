@@ -35,7 +35,7 @@ public class GradLocalDateDeserializer extends StdDeserializer<LocalDate> {
             if(slashCount > 0) {
                 formatter = DateTimeFormatter.ofPattern(SECOND_DEFAULT_DATE_FORMAT);
             }
-            return LocalDate.parse(dateAsString, formatter).with(TemporalAdjusters.lastDayOfMonth());
+            return LocalDate.parse(dateAsString, formatter);
         } else if(jsonParser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
             long timestamp = jsonParser.getValueAsLong();
             return LocalDate.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
