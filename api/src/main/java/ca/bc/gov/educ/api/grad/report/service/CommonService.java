@@ -10,6 +10,7 @@ import ca.bc.gov.educ.api.grad.report.util.Generated;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -88,7 +89,7 @@ public class CommonService extends BaseService {
     private static final List<String> SCCP_CERT_TYPES = Arrays.asList("SC", "SCF", "SCI");
 
     @Transactional
-    public GradStudentReports saveGradReports(GradStudentReports gradStudentReports, boolean isGraduated) {
+    public GradStudentReports saveGradStudentReports(GradStudentReports gradStudentReports, boolean isGraduated) {
         GradStudentReportsEntity toBeSaved = gradStudentReportsTransformer.transformToEntity(gradStudentReports);
         Optional<GradStudentReportsEntity> existingEntity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(gradStudentReports.getStudentID(), gradStudentReports.getGradReportTypeCode(), "ARCH");
         if (existingEntity.isPresent()) {
@@ -317,6 +318,35 @@ public class CommonService extends BaseService {
             return 0;
         }
 
+    }
+
+    @Transactional
+    public long processStudentReports(List<UUID> studentIDs, String reportType, String actionType) {
+        String reportCode = StringUtils.replace(reportType, "TVRRUN", "ACHV");
+        if(StringUtils.containsIgnoreCase(actionType, "DELETE")) {
+            return deleteStudentReports(studentIDs, reportCode);
+        }
+        long reportsCount = 0L;
+        for(UUID uuid: studentIDs) {
+            Optional<GradStudentReportsEntity> existingEntity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(uuid, reportType);
+            if(existingEntity.isPresent()) {
+                GradStudentReportsEntity reportsEntity = existingEntity.get();
+                reportsEntity.setReportUpdateDate(new Date());
+                gradStudentReportsRepository.save(reportsEntity);
+                reportsCount ++;
+            }
+        }
+        return reportsCount;
+    }
+
+    @Transactional
+    public long deleteStudentReports(List<UUID> studentIDs, String reportType) {
+        return gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(studentIDs, ObjectUtils.defaultIfNull(reportType, "ACHV").toUpperCase());
+    }
+
+    @Transactional
+    public long deleteStudentReports(UUID studentID, String reportType) {
+        return gradStudentReportsRepository.deleteByStudentIDAndGradReportTypeCode(studentID, ObjectUtils.defaultIfNull(reportType, "ACHV").toUpperCase());
     }
 
     public List<GradStudentReports> getAllStudentReportList(UUID studentID) {

@@ -107,9 +107,9 @@ public class CommonControllerTest {
         gradStudentReport.setReport("TEST Report Body");
         gradStudentReport.setDocumentStatusCode("IP");
 
-        Mockito.when(commonService.saveGradReports(gradStudentReport,isGraduated)).thenReturn(gradStudentReport);
+        Mockito.when(commonService.saveGradStudentReports(gradStudentReport,isGraduated)).thenReturn(gradStudentReport);
         commonController.saveStudentReport(gradStudentReport,isGraduated);
-        Mockito.verify(commonService).saveGradReports(gradStudentReport,isGraduated);
+        Mockito.verify(commonService).saveGradStudentReports(gradStudentReport,isGraduated);
     }
 
     @Test

@@ -18,7 +18,9 @@ public interface GradStudentReportsRepository extends JpaRepository<GradStudentR
    	@Query("select c from GradStudentReportsEntity c where c.gradReportTypeCode=:reportType")
 	List<GradStudentReportsEntity> existsByReportTypeCode(String reportType);
    	
-   	long deleteByStudentID(UUID studentID);
+   	long deleteByStudentIDInAndGradReportTypeCode(List<UUID> studentIDs, String gradReportTypeCode);
+
+	long deleteByStudentIDAndGradReportTypeCode(UUID studentID, String gradReportTypeCode);
 
 	List<GradStudentReportsEntity> findByStudentID(UUID studentID);
 	

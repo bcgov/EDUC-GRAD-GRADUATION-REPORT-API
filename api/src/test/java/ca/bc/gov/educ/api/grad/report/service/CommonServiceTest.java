@@ -222,7 +222,7 @@ public class CommonServiceTest {
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optionalEmpty);
         when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
-        var result = commonService.saveGradReports(gradStudentReport,isGraduated);
+        var result = commonService.saveGradStudentReports(gradStudentReport,isGraduated);
 
         assertThat(result).isNotNull();
         assertThat(result.getStudentID()).isEqualTo(studentID);
@@ -258,7 +258,7 @@ public class CommonServiceTest {
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,"ARCH")).thenReturn(optional);
         when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
-        var result = commonService.saveGradReports(gradStudentReport,isGraduated);
+        var result = commonService.saveGradStudentReports(gradStudentReport,isGraduated);
 
         assertThat(result).isNotNull();
         assertThat(result.getStudentID()).isEqualTo(studentID);
@@ -294,7 +294,7 @@ public class CommonServiceTest {
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,"ARCH")).thenReturn(optional);
         when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
-        var result = commonService.saveGradReports(gradStudentReport,isGraduated);
+        var result = commonService.saveGradStudentReports(gradStudentReport,isGraduated);
 
         assertThat(result).isNotNull();
         assertThat(result.getStudentID()).isEqualTo(studentID);
