@@ -355,7 +355,7 @@ public class CommonServiceTest {
 
         when(gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(List.of(studentID), reportTypeCode)).thenReturn(0L);
         var result = commonService.processStudentReports(List.of(studentID), reportTypeCode, actionType);
-        assertThat(result).isEqualTo(0);
+        assertThat(result).isZero();
 
         final UUID reportID = UUID.randomUUID();
         final String pen = "123456789";
