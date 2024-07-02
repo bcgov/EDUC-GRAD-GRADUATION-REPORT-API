@@ -86,9 +86,9 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Long> deleteStudentReportByType(
             @RequestParam(value = "reportType") String reportType,
-            @PathVariable UUID uuid) {
+            @PathVariable UUID studentID) {
         logger.debug("getStudentReportByType : ");
-        return response.GET(commonService.deleteStudentReports(uuid, reportType));
+        return response.GET(commonService.deleteStudentReports(studentID, reportType));
     }
 
     @PostMapping(EducGradReportApiConstants.STUDENT_REPORTS)
