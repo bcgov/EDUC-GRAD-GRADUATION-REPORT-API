@@ -331,6 +331,51 @@ public class CommonServiceTest {
     }
 
     @Test
+    public void testDeleteStudentReports() {
+        // ID
+        final UUID studentID = UUID.randomUUID();
+        final String reportTypeCode = "TEST";
+
+        when(gradStudentReportsRepository.deleteByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(1L);
+        var result = commonService.deleteStudentReports(studentID, reportTypeCode);
+        assertThat(result).isEqualTo(1);
+
+        when(gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(List.of(studentID), reportTypeCode)).thenReturn(1L);
+        result = commonService.deleteStudentReports(studentID, reportTypeCode);
+        assertThat(result).isEqualTo(1);
+
+    }
+
+    @Test
+    public void testProcessStudentReports() {
+        // ID
+        final UUID studentID = UUID.randomUUID();
+        final String reportTypeCode = "TVRRUN";
+        String actionType = "TVRDELETE";
+
+        when(gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(List.of(studentID), reportTypeCode)).thenReturn(0L);
+        var result = commonService.processStudentReports(List.of(studentID), reportTypeCode, actionType);
+        assertThat(result).isEqualTo(0);
+
+        final UUID reportID = UUID.randomUUID();
+        final String pen = "123456789";
+
+        final GradStudentReportsEntity gradStudentReport = new GradStudentReportsEntity();
+        gradStudentReport.setId(reportID);
+        gradStudentReport.setGradReportTypeCode(reportTypeCode);
+        gradStudentReport.setPen(pen);
+        gradStudentReport.setStudentID(studentID);
+        gradStudentReport.setReport("TEST Report Body");
+        actionType = "TVRCREATE";
+
+        when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(Optional.of(gradStudentReport));
+        when(gradStudentReportsRepository.save(gradStudentReport)).thenReturn(gradStudentReport);
+        result = commonService.processStudentReports(List.of(studentID), reportTypeCode, actionType);
+        assertThat(result).isEqualTo(1);
+
+    }
+
+    @Test
     public void testGetStudentCertificateByType() {
         // UUID
         final UUID studentID = UUID.randomUUID();
