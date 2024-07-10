@@ -53,6 +53,22 @@ public class CommonControllerTest {
     }
 
     @Test
+    public void testProcessStudentReports() {
+        final UUID studentGuid = UUID.randomUUID();
+        Mockito.when(commonService.processStudentReports(List.of(studentGuid), "TVRRUN", "TVRDELETE")).thenReturn(1L);
+        commonController.processStudentReports("TVRRUN", "TVRDELETE", List.of(studentGuid));
+        Mockito.verify(commonService).processStudentReports(List.of(studentGuid), "TVRRUN", "TVRDELETE");
+    }
+
+    @Test
+    public void testDeleteStudentReportByType() {
+        final UUID studentGuid = UUID.randomUUID();
+        Mockito.when(commonService.deleteStudentReports(studentGuid, "TVRRUN")).thenReturn(1L);
+        commonController.deleteStudentReportByType("TVRRUN", studentGuid);
+        Mockito.verify(commonService).deleteStudentReports(studentGuid, "TVRRUN");
+    }
+
+    @Test
     public void testGetStudentCertificateByGuid() {
         final UUID studentGuid = UUID.randomUUID();
         GradStudentCertificates studentCertificates = new GradStudentCertificates();
@@ -107,9 +123,9 @@ public class CommonControllerTest {
         gradStudentReport.setReport("TEST Report Body");
         gradStudentReport.setDocumentStatusCode("IP");
 
-        Mockito.when(commonService.saveGradReports(gradStudentReport,isGraduated)).thenReturn(gradStudentReport);
+        Mockito.when(commonService.saveGradStudentReports(gradStudentReport,isGraduated)).thenReturn(gradStudentReport);
         commonController.saveStudentReport(gradStudentReport,isGraduated);
-        Mockito.verify(commonService).saveGradReports(gradStudentReport,isGraduated);
+        Mockito.verify(commonService).saveGradStudentReports(gradStudentReport,isGraduated);
     }
 
     @Test

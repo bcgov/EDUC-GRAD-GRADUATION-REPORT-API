@@ -65,7 +65,7 @@ public class CommonController {
     public ResponseEntity<ApiResponseModel<GradStudentReports>> saveStudentReport(@RequestBody GradStudentReports gradStudentReports,@RequestParam(value = "isGraduated", required = false, defaultValue = "false") boolean isGraduated) {
         logger.debug("Save student Grad Report for Student ID: {}",gradStudentReports.getStudentID());
         validation.requiredField(gradStudentReports.getStudentID(), "Student ID");
-        return response.UPDATED(commonService.saveGradReports(gradStudentReports,isGraduated));
+        return response.UPDATED(commonService.saveGradStudentReports(gradStudentReports,isGraduated));
     }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_REPORT)
@@ -78,6 +78,29 @@ public class CommonController {
     		@RequestParam(value = "documentStatusCode") String documentStatusCode) {
     	logger.debug("getStudentReportByType : ");
     	return commonService.getStudentReportByType(UUID.fromString(studentID),reportType,documentStatusCode);
+    }
+
+    @DeleteMapping(EducGradReportApiConstants.STUDENT_REPORT_BY_STUDENTID)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read Student Reports by Student ID and Report Type", description = "Read Student Reports by Student ID and Report Type", tags = { "Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Long> deleteStudentReportByType(
+            @RequestParam(value = "reportType") String reportType,
+            @PathVariable UUID studentID) {
+        logger.debug("getStudentReportByType : ");
+        return response.GET(commonService.deleteStudentReports(studentID, reportType));
+    }
+
+    @PostMapping(EducGradReportApiConstants.STUDENT_REPORTS)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read Student Reports by Student ID and Report Type", description = "Read Student Reports by Student ID and Report Type", tags = { "Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Long> processStudentReports(
+            @RequestParam(value = "reportTypeCode") String reportTypeCode,
+            @RequestParam(value = "actionType") String actionType,
+            @RequestBody List<UUID> studentIDs) {
+        logger.debug("processStudentReports : ");
+        return response.GET(commonService.processStudentReports(studentIDs, reportTypeCode, actionType));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATES)

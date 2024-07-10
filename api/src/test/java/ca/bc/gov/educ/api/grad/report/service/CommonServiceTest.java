@@ -222,7 +222,7 @@ public class CommonServiceTest {
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optionalEmpty);
         when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
-        var result = commonService.saveGradReports(gradStudentReport,isGraduated);
+        var result = commonService.saveGradStudentReports(gradStudentReport,isGraduated);
 
         assertThat(result).isNotNull();
         assertThat(result.getStudentID()).isEqualTo(studentID);
@@ -258,7 +258,7 @@ public class CommonServiceTest {
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,"ARCH")).thenReturn(optional);
         when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
-        var result = commonService.saveGradReports(gradStudentReport,isGraduated);
+        var result = commonService.saveGradStudentReports(gradStudentReport,isGraduated);
 
         assertThat(result).isNotNull();
         assertThat(result.getStudentID()).isEqualTo(studentID);
@@ -294,7 +294,7 @@ public class CommonServiceTest {
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,"ARCH")).thenReturn(optional);
         when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
-        var result = commonService.saveGradReports(gradStudentReport,isGraduated);
+        var result = commonService.saveGradStudentReports(gradStudentReport,isGraduated);
 
         assertThat(result).isNotNull();
         assertThat(result.getStudentID()).isEqualTo(studentID);
@@ -327,6 +327,51 @@ public class CommonServiceTest {
         when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(studentID, reportTypeCode,documentStatusCode)).thenReturn(Optional.of(gradStudentReport));
         result = commonService.getStudentReportByType(studentID, reportTypeCode,documentStatusCode);
         assertThat(result).isNull();
+
+    }
+
+    @Test
+    public void testDeleteStudentReports() {
+        // ID
+        final UUID studentID = UUID.randomUUID();
+        final String reportTypeCode = "TEST";
+
+        when(gradStudentReportsRepository.deleteByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(1L);
+        var result = commonService.deleteStudentReports(studentID, reportTypeCode);
+        assertThat(result).isEqualTo(1);
+
+        when(gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(List.of(studentID), reportTypeCode)).thenReturn(1L);
+        result = commonService.deleteStudentReports(studentID, reportTypeCode);
+        assertThat(result).isEqualTo(1);
+
+    }
+
+    @Test
+    public void testProcessStudentReports() {
+        // ID
+        final UUID studentID = UUID.randomUUID();
+        final String reportTypeCode = "TVRRUN";
+        String actionType = "TVRDELETE";
+
+        when(gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(List.of(studentID), reportTypeCode)).thenReturn(0L);
+        var result = commonService.processStudentReports(List.of(studentID), reportTypeCode, actionType);
+        assertThat(result).isZero();
+
+        final UUID reportID = UUID.randomUUID();
+        final String pen = "123456789";
+
+        final GradStudentReportsEntity gradStudentReport = new GradStudentReportsEntity();
+        gradStudentReport.setId(reportID);
+        gradStudentReport.setGradReportTypeCode(reportTypeCode);
+        gradStudentReport.setPen(pen);
+        gradStudentReport.setStudentID(studentID);
+        gradStudentReport.setReport("TEST Report Body");
+        actionType = "TVRCREATE";
+
+        when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(Optional.of(gradStudentReport));
+        when(gradStudentReportsRepository.save(gradStudentReport)).thenReturn(gradStudentReport);
+        result = commonService.processStudentReports(List.of(studentID), reportTypeCode, actionType);
+        assertThat(result).isEqualTo(1);
 
     }
 
