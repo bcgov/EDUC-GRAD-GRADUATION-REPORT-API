@@ -845,6 +845,24 @@ public class CommonService extends BaseService {
                 .block();
     }
 
+    public Long countBySchoolOfRecordsAndReportType(List<String> schoolOfRecords, String reportType) {
+        Long reportsCount = 0L;
+        if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
+            reportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
+        }
+        return reportsCount;
+    }
+
+    @Transactional
+    public Integer archiveSchoolReports(long batchId, List<String> schoolOfRecords, String reportType) {
+        Integer reportsCount = 0;
+        if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
+            schoolReportsRepository.deleteSchoolReports(schoolOfRecords, reportType + "ARC");
+            reportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, reportType + "ARC", batchId);
+        }
+        return reportsCount;
+    }
+
     class UUIDPageTask implements Callable<Object> {
 
         private final PageRequest pageRequest;

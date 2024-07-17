@@ -53,6 +53,24 @@ public class CommonControllerTest {
     }
 
     @Test
+    public void testGetReportsCount() {
+        // ID
+        String mincode = "123456789";
+        Mockito.when(commonService.countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType")).thenReturn(1L);
+        commonController.getReportsCount("reportType", List.of(mincode));
+        Mockito.verify(commonService).countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType");
+    }
+
+    @Test
+    public void testArchiveSchoolReports() {
+        // ID
+        String mincode = "123456789";
+        Mockito.when(commonService.archiveSchoolReports(1L, List.of(mincode), "reportType")).thenReturn(1);
+        commonController.archiveSchoolReports(1L, "reportType", List.of(mincode));
+        Mockito.verify(commonService).archiveSchoolReports(1L, List.of(mincode), "reportType");
+    }
+
+    @Test
     public void testProcessStudentReports() {
         final UUID studentGuid = UUID.randomUUID();
         Mockito.when(commonService.processStudentReports(List.of(studentGuid), "TVRRUN", "TVRDELETE")).thenReturn(1L);

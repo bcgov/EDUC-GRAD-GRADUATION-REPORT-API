@@ -397,5 +397,19 @@ public class CommonController {
         return commonService.getStudentCredentialByType(UUID.fromString(studentID),type);
     }
 
+    @PostMapping (EducGradReportApiConstants.REPORT_COUNT)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Get Students Count by mincode and status", description = "Get Students Count by mincode and status", tags = { "Business" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Long> getReportsCount(@RequestParam String reportType, @RequestBody List<String> schoolOfRecords) {
+        return response.GET(commonService.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType));
+    }
 
+    @PostMapping (EducGradReportApiConstants.REPORT_ARCHIVE)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Get Students Count by mincode and status", description = "Get Students Count by mincode and status", tags = { "Business" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Integer> archiveSchoolReports(@RequestParam long batchId, @RequestParam String reportType, @RequestBody List<String> schoolOfRecords) {
+        return response.GET(commonService.archiveSchoolReports(batchId, schoolOfRecords, reportType));
+    }
 }
