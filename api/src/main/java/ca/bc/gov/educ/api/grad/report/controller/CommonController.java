@@ -406,7 +406,7 @@ public class CommonController {
     }
 
     @PostMapping (EducGradReportApiConstants.REPORT_ARCHIVE)
-    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @PreAuthorize(PermissionsConstants.ARCHIVE_SCHOOL_REPORT)
     @Operation(summary = "Get Students Count by mincode and status", description = "Get Students Count by mincode and status", tags = { "Business" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Integer> archiveSchoolReports(@RequestParam long batchId, @RequestParam String reportType, @RequestBody List<String> schoolOfRecords) {
