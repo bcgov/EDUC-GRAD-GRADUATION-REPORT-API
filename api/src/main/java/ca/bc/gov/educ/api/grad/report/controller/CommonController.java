@@ -401,7 +401,7 @@ public class CommonController {
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Get Students Count by mincode and status", description = "Get Students Count by mincode and status", tags = { "Business" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<Long> getReportsCount(@RequestParam String reportType, @RequestBody List<String> schoolOfRecords) {
+    public ResponseEntity<Integer> getReportsCount(@RequestParam String reportType, @RequestBody List<String> schoolOfRecords) {
         return response.GET(commonService.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType));
     }
 

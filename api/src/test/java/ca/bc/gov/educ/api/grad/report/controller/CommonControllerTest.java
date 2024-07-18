@@ -56,7 +56,7 @@ public class CommonControllerTest {
     public void testGetReportsCount() {
         // ID
         String mincode = "123456789";
-        Mockito.when(commonService.countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType")).thenReturn(1L);
+        Mockito.when(commonService.countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType")).thenReturn(1);
         commonController.getReportsCount("reportType", List.of(mincode));
         Mockito.verify(commonService).countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType");
     }

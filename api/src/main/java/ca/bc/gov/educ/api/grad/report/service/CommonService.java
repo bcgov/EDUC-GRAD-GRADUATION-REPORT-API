@@ -845,8 +845,8 @@ public class CommonService extends BaseService {
                 .block();
     }
 
-    public Long countBySchoolOfRecordsAndReportType(List<String> schoolOfRecords, String reportType) {
-        Long reportsCount = 0L;
+    public Integer countBySchoolOfRecordsAndReportType(List<String> schoolOfRecords, String reportType) {
+        Integer reportsCount = 0;
         if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
             reportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
         }
@@ -855,12 +855,20 @@ public class CommonService extends BaseService {
 
     @Transactional
     public Integer archiveSchoolReports(long batchId, List<String> schoolOfRecords, String reportType) {
-        Integer reportsCount = 0;
+        Integer updatedReportsCount = 0;
+        Integer deletedReportsCount = 0;
+        Integer originalReportsCount = 0;
         if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
-            schoolReportsRepository.deleteSchoolReports(schoolOfRecords, reportType + "ARC");
-            reportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, reportType + "ARC", batchId);
+            reportType = StringUtils.upperCase(StringUtils.endsWithIgnoreCase(reportType, "ARC") ? StringUtils.removeEndIgnoreCase(reportType, "ARC") : reportType);
+            String archivedReportType = StringUtils.upperCase(StringUtils.endsWith(reportType, "ARC") ? reportType : reportType + "ARC");
+            originalReportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
+            updatedReportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, archivedReportType, batchId);
+            if(originalReportsCount.equals(updatedReportsCount)) {
+                deletedReportsCount += schoolReportsRepository.deleteSchoolReports(schoolOfRecords, archivedReportType);
+                logger.debug("{} School Reports deleted", deletedReportsCount);
+            }
         }
-        return reportsCount;
+        return updatedReportsCount;
     }
 
     class UUIDPageTask implements Callable<Object> {
