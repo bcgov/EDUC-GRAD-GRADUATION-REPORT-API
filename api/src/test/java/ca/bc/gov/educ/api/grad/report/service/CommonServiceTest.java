@@ -1684,7 +1684,7 @@ public class CommonServiceTest {
     public void testCountBySchoolOfRecordsAndReportType() {
         Mockito.when(schoolReportsRepository.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType")).thenReturn(1);
         Integer count = commonService.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType");
-        assertThat(count).isNotNull().isEqualTo(1L);
+        assertThat(count).isNotNull().isEqualTo(1);
     }
 
     @Test
