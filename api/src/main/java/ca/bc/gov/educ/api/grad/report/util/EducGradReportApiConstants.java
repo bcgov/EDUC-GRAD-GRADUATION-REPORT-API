@@ -23,6 +23,9 @@ public class EducGradReportApiConstants {
     public static final String API_VERSION = "v1";
     public static final String GRAD_REPORT_API_ROOT_MAPPING = "/api/" + API_VERSION + "/graduationreports";
 
+    public static final String REPORT_COUNT = "/count";
+    public static final String REPORT_ARCHIVE = "/archive";
+
     public static final String GET_ALL_CERTIFICATE_TYPE_MAPPING = "/certificatetype";
     public static final String GET_ALL_CERTIFICATE_TYPE_BY_CODE_MAPPING = "/certificatetype/{certTypeCode}";
 
