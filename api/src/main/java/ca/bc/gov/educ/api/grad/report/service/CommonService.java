@@ -849,6 +849,8 @@ public class CommonService extends BaseService {
         Integer reportsCount = 0;
         if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
             reportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
+        } else {
+            reportsCount += schoolReportsRepository.countByReportType(reportType);
         }
         return reportsCount;
     }
@@ -858,13 +860,20 @@ public class CommonService extends BaseService {
         Integer updatedReportsCount = 0;
         Integer deletedReportsCount = 0;
         Integer originalReportsCount = 0;
+        reportType = StringUtils.upperCase(StringUtils.endsWithIgnoreCase(reportType, "ARC") ? StringUtils.removeEndIgnoreCase(reportType, "ARC") : reportType);
+        String archivedReportType = StringUtils.upperCase(StringUtils.endsWith(reportType, "ARC") ? reportType : reportType + "ARC");
         if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
-            reportType = StringUtils.upperCase(StringUtils.endsWithIgnoreCase(reportType, "ARC") ? StringUtils.removeEndIgnoreCase(reportType, "ARC") : reportType);
-            String archivedReportType = StringUtils.upperCase(StringUtils.endsWith(reportType, "ARC") ? reportType : reportType + "ARC");
             originalReportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
             updatedReportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, archivedReportType, batchId);
             if(originalReportsCount.equals(updatedReportsCount)) {
                 deletedReportsCount += schoolReportsRepository.deleteSchoolReports(schoolOfRecords, archivedReportType);
+                logger.debug("{} School Reports deleted", deletedReportsCount);
+            }
+        } else {
+            originalReportsCount += schoolReportsRepository.countByReportType(reportType);
+            updatedReportsCount += schoolReportsRepository.archiveSchoolReports(reportType, archivedReportType, batchId);
+            if(originalReportsCount.equals(updatedReportsCount)) {
+                deletedReportsCount += schoolReportsRepository.deleteSchoolReports(archivedReportType);
                 logger.debug("{} School Reports deleted", deletedReportsCount);
             }
         }

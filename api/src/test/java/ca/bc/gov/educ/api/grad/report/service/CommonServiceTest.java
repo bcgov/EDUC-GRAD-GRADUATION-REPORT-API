@@ -1685,6 +1685,10 @@ public class CommonServiceTest {
         Mockito.when(schoolReportsRepository.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType")).thenReturn(1);
         Integer count = commonService.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType");
         assertThat(count).isNotNull().isEqualTo(1);
+
+        Mockito.when(schoolReportsRepository.countByReportType("reportType")).thenReturn(1);
+        count = commonService.countBySchoolOfRecordsAndReportType(List.of(), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
     }
 
     @Test
@@ -1697,6 +1701,16 @@ public class CommonServiceTest {
         Mockito.when(schoolReportsRepository.deleteSchoolReports(List.of("12345678"), "reportTypeARC".toUpperCase())).thenReturn(0);
         Mockito.when(schoolReportsRepository.archiveSchoolReports(List.of("12345678"), "reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(0);
         count = commonService.archiveSchoolReports(1L, List.of("12345678"), "reportType");
+        assertThat(count).isNotNull().isEqualTo(0);
+
+        Mockito.when(schoolReportsRepository.deleteSchoolReports("reportTypeARC".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportsRepository.archiveSchoolReports("reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(1);
+        count = commonService.archiveSchoolReports(1L, List.of(), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
+
+        Mockito.when(schoolReportsRepository.deleteSchoolReports("reportTypeARC".toUpperCase())).thenReturn(0);
+        Mockito.when(schoolReportsRepository.archiveSchoolReports("reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(0);
+        count = commonService.archiveSchoolReports(1L, List.of(), "reportType");
         assertThat(count).isNotNull().isEqualTo(0);
     }
 
