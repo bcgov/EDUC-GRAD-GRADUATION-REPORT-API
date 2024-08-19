@@ -334,14 +334,18 @@ public class CommonServiceTest {
     public void testDeleteStudentReports() {
         // ID
         final UUID studentID = UUID.randomUUID();
-        final String reportTypeCode = "TEST";
+        final String reportTypeCode = "TEST".toUpperCase();
 
-        when(gradStudentReportsRepository.deleteByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(1L);
+        when(gradStudentReportsRepository.deleteByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(1);
         var result = commonService.deleteStudentReports(studentID, reportTypeCode);
         assertThat(result).isEqualTo(1);
 
-        when(gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(List.of(studentID), reportTypeCode)).thenReturn(1L);
-        result = commonService.deleteStudentReports(studentID, reportTypeCode);
+        when(gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(List.of(studentID), reportTypeCode)).thenReturn(1);
+        result = commonService.deleteStudentReports(List.of(studentID), reportTypeCode);
+        assertThat(result).isEqualTo(1);
+
+        when(gradStudentReportsRepository.deleteByGradReportTypeCode(reportTypeCode)).thenReturn(1);
+        result = commonService.deleteStudentReports(List.of(), reportTypeCode);
         assertThat(result).isEqualTo(1);
 
     }
@@ -351,12 +355,6 @@ public class CommonServiceTest {
         // ID
         final UUID studentID = UUID.randomUUID();
         final String reportTypeCode = "TVRRUN";
-        String actionType = "TVRDELETE";
-
-        when(gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(List.of(studentID), reportTypeCode)).thenReturn(0L);
-        var result = commonService.processStudentReports(List.of(studentID), reportTypeCode, actionType);
-        assertThat(result).isZero();
-
         final UUID reportID = UUID.randomUUID();
         final String pen = "123456789";
 
@@ -366,11 +364,10 @@ public class CommonServiceTest {
         gradStudentReport.setPen(pen);
         gradStudentReport.setStudentID(studentID);
         gradStudentReport.setReport("TEST Report Body");
-        actionType = "TVRCREATE";
 
         when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(Optional.of(gradStudentReport));
         when(gradStudentReportsRepository.save(gradStudentReport)).thenReturn(gradStudentReport);
-        result = commonService.processStudentReports(List.of(studentID), reportTypeCode, actionType);
+        var result = commonService.processStudentReports(List.of(studentID), reportTypeCode);
         assertThat(result).isEqualTo(1);
 
     }
@@ -1688,6 +1685,19 @@ public class CommonServiceTest {
 
         Mockito.when(schoolReportsRepository.countByReportType("reportType")).thenReturn(1);
         count = commonService.countBySchoolOfRecordsAndReportType(List.of(), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
+    }
+
+    @Test
+    public void testCountByStudentGuidsAndReportType() {
+
+        UUID uuid = UUID.randomUUID();
+        Mockito.when(gradStudentReportsRepository.countByStudentGuidsAndReportType(List.of(uuid), "reportType")).thenReturn(1);
+        Integer count = commonService.countByStudentGuidsAndReportType(List.of(uuid.toString()), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
+
+        Mockito.when(gradStudentReportsRepository.countByReportType("reportType")).thenReturn(1);
+        count = commonService.countByStudentGuidsAndReportType(List.of(), "reportType");
         assertThat(count).isNotNull().isEqualTo(1);
     }
 

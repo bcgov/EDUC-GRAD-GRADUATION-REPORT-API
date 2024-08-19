@@ -56,9 +56,15 @@ public class CommonControllerTest {
     public void testGetReportsCount() {
         // ID
         String mincode = "123456789";
+        String guid = UUID.randomUUID().toString();
+
         Mockito.when(commonService.countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType")).thenReturn(1);
         commonController.getReportsCount("reportType", List.of(mincode));
         Mockito.verify(commonService).countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType");
+
+        Mockito.when(commonService.countByStudentGuidsAndReportType(List.of(guid), "ACHV")).thenReturn(1);
+        commonController.getReportsCount("ACHV", List.of(guid));
+        Mockito.verify(commonService).countByStudentGuidsAndReportType(List.of(guid), "ACHV");
     }
 
     @Test
@@ -66,24 +72,37 @@ public class CommonControllerTest {
         // ID
         String mincode = "123456789";
         Mockito.when(commonService.archiveSchoolReports(1L, List.of(mincode), "reportType")).thenReturn(1);
-        commonController.archiveSchoolReports(1L, "reportType", List.of(mincode));
+        commonController.archiveReports(1L, "reportType", List.of(mincode));
         Mockito.verify(commonService).archiveSchoolReports(1L, List.of(mincode), "reportType");
+    }
+
+    @Test
+    public void testDeleteStudentReports() {
+        // ID
+        UUID guid = UUID.randomUUID();
+        Mockito.when(commonService.deleteStudentReports(List.of(guid), "reportType")).thenReturn(1);
+        commonController.deleteReports(1L, "reportType", List.of(guid));
+        Mockito.verify(commonService).deleteStudentReports(List.of(guid), "reportType");
+
+        Mockito.when(commonService.deleteStudentReports(List.of(), "reportType")).thenReturn(1);
+        commonController.deleteReports(1L, "reportType", List.of());
+        Mockito.verify(commonService).deleteStudentReports(List.of(), "reportType");
     }
 
     @Test
     public void testProcessStudentReports() {
         final UUID studentGuid = UUID.randomUUID();
-        Mockito.when(commonService.processStudentReports(List.of(studentGuid), "TVRRUN", "TVRDELETE")).thenReturn(1L);
-        commonController.processStudentReports("TVRRUN", "TVRDELETE", List.of(studentGuid));
-        Mockito.verify(commonService).processStudentReports(List.of(studentGuid), "TVRRUN", "TVRDELETE");
+        Mockito.when(commonService.processStudentReports(List.of(studentGuid), "ARCH")).thenReturn(1L);
+        commonController.processStudentReports("ARCH", List.of(studentGuid));
+        Mockito.verify(commonService).processStudentReports(List.of(studentGuid), "ARCH");
     }
 
     @Test
     public void testDeleteStudentReportByType() {
         final UUID studentGuid = UUID.randomUUID();
-        Mockito.when(commonService.deleteStudentReports(studentGuid, "TVRRUN")).thenReturn(1L);
-        commonController.deleteStudentReportByType("TVRRUN", studentGuid);
-        Mockito.verify(commonService).deleteStudentReports(studentGuid, "TVRRUN");
+        Mockito.when(commonService.deleteStudentReports(studentGuid, "REPORT_TYPE")).thenReturn(1);
+        commonController.deleteStudentReportByType("REPORT_TYPE", studentGuid);
+        Mockito.verify(commonService).deleteStudentReports(studentGuid, "REPORT_TYPE");
     }
 
     @Test

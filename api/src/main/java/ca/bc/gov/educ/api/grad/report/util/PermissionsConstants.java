@@ -24,6 +24,7 @@ public class PermissionsConstants {
     public static final String READ_GRAD_REPORT = _PREFIX + "SCOPE_READ_GRAD_REPORT_CODE_DATA" + _SUFFIX;
 
     public static final String ARCHIVE_SCHOOL_REPORT = _PREFIX + "SCOPE_ARCHIVE_SCHOOL_REPORT" + _SUFFIX;
+    public static final String DELETE_STUDENT_REPORT = _PREFIX + "SCOPE_DELETE_STUDENT_REPORT" + _SUFFIX;
     public static final String DELETE_REPORT_TYPE = _PREFIX + "SCOPE_DELETE_GRAD_REPORT_CODE_DATA" + _SUFFIX;
     public static final String UPDATE_REPORT_TYPE = _PREFIX + "SCOPE_UPDATE_GRAD_REPORT_CODE_DATA" + _SUFFIX;
     public static final String CREATE_REPORT_TYPE = _PREFIX + "SCOPE_CREATE_GRAD_REPORT_CODE_DATA" + _SUFFIX;

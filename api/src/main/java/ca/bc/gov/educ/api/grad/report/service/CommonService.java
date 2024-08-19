@@ -10,7 +10,6 @@ import ca.bc.gov.educ.api.grad.report.util.Generated;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -321,11 +320,7 @@ public class CommonService extends BaseService {
     }
 
     @Transactional
-    public long processStudentReports(List<UUID> studentIDs, String reportType, String actionType) {
-        String reportCode = StringUtils.replace(reportType, "TVRRUN", "ACHV");
-        if(StringUtils.containsIgnoreCase(actionType, "DELETE")) {
-            return deleteStudentReports(studentIDs, reportCode);
-        }
+    public long processStudentReports(List<UUID> studentIDs, String reportType) {
         long reportsCount = 0L;
         for(UUID uuid: studentIDs) {
             Optional<GradStudentReportsEntity> existingEntity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(uuid, reportType);
@@ -340,13 +335,17 @@ public class CommonService extends BaseService {
     }
 
     @Transactional
-    public long deleteStudentReports(List<UUID> studentIDs, String reportType) {
-        return gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(studentIDs, ObjectUtils.defaultIfNull(reportType, "ACHV").toUpperCase());
+    public Integer deleteStudentReports(List<UUID> studentIDs, String reportType) {
+        if(studentIDs != null && !studentIDs.isEmpty()) {
+            return gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(studentIDs, StringUtils.upperCase(reportType));
+        } else {
+            return gradStudentReportsRepository.deleteByGradReportTypeCode(StringUtils.upperCase(reportType));
+        }
     }
 
     @Transactional
-    public long deleteStudentReports(UUID studentID, String reportType) {
-        return gradStudentReportsRepository.deleteByStudentIDAndGradReportTypeCode(studentID, ObjectUtils.defaultIfNull(reportType, "ACHV").toUpperCase());
+    public Integer deleteStudentReports(UUID studentID, String reportType) {
+        return gradStudentReportsRepository.deleteByStudentIDAndGradReportTypeCode(studentID, StringUtils.upperCase(reportType));
     }
 
     public List<GradStudentReports> getAllStudentReportList(UUID studentID) {
@@ -851,6 +850,20 @@ public class CommonService extends BaseService {
             reportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
         } else {
             reportsCount += schoolReportsRepository.countByReportType(reportType);
+        }
+        return reportsCount;
+    }
+
+    public Integer countByStudentGuidsAndReportType(List<String> studentGuidsString, String reportType) {
+        Integer reportsCount = 0;
+        if(studentGuidsString != null && !studentGuidsString.isEmpty()) {
+            List<UUID> studentGuids = new ArrayList<>();
+            for(String guid: studentGuidsString) {
+                studentGuids.add(UUID.fromString(guid));
+            }
+            reportsCount += gradStudentReportsRepository.countByStudentGuidsAndReportType(studentGuids, reportType);
+        } else {
+            reportsCount += gradStudentReportsRepository.countByReportType(reportType);
         }
         return reportsCount;
     }
