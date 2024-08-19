@@ -86,9 +86,9 @@ public class CommonControllerTest {
     @Test
     public void testProcessStudentReports() {
         final UUID studentGuid = UUID.randomUUID();
-        Mockito.when(commonService.processStudentReports(List.of(studentGuid), "TVRRUN")).thenReturn(1L);
-        commonController.processStudentReports("TVRRUN", List.of(studentGuid));
-        Mockito.verify(commonService).processStudentReports(List.of(studentGuid), "TVRRUN");
+        Mockito.when(commonService.processStudentReports(List.of(studentGuid), "ARCH")).thenReturn(1L);
+        commonController.processStudentReports("ARCH", List.of(studentGuid));
+        Mockito.verify(commonService).processStudentReports(List.of(studentGuid), "ARCH");
     }
 
     @Test
