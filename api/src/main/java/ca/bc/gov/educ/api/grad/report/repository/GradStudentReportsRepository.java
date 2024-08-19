@@ -18,9 +18,11 @@ public interface GradStudentReportsRepository extends JpaRepository<GradStudentR
    	@Query("select c from GradStudentReportsEntity c where c.gradReportTypeCode=:reportType")
 	List<GradStudentReportsEntity> existsByReportTypeCode(String reportType);
    	
-   	long deleteByStudentIDInAndGradReportTypeCode(List<UUID> studentIDs, String gradReportTypeCode);
+   	Integer deleteByStudentIDInAndGradReportTypeCode(List<UUID> studentIDs, String gradReportTypeCode);
 
-	long deleteByStudentIDAndGradReportTypeCode(UUID studentID, String gradReportTypeCode);
+	Integer deleteByGradReportTypeCode(String gradReportTypeCode);
+
+	Integer deleteByStudentIDAndGradReportTypeCode(UUID studentID, String gradReportTypeCode);
 
 	List<GradStudentReportsEntity> findByStudentID(UUID studentID);
 	
@@ -32,4 +34,10 @@ public interface GradStudentReportsRepository extends JpaRepository<GradStudentR
 
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.SchoolStudentCredentialDistribution(c.id,c.gradReportTypeCode,c.studentID,c.documentStatusCode) from GradStudentReportsEntity c where c.reportUpdateDate is null or c.reportUpdateDate < c.updateDate")
 	List<SchoolStudentCredentialDistribution> findByReportUpdateDate();
+
+	@Query("select count(*) from GradStudentReportsEntity c where c.studentID IN (:studentGuids) and c.gradReportTypeCode=:reportType")
+	Integer countByStudentGuidsAndReportType(List<UUID> studentGuids, String reportType);
+
+	@Query("select count(*) from GradStudentReportsEntity c where c.gradReportTypeCode=:reportType")
+	Integer countByReportType(String reportType);
 }

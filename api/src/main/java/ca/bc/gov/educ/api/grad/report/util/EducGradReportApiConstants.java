@@ -25,6 +25,7 @@ public class EducGradReportApiConstants {
 
     public static final String REPORT_COUNT = "/count";
     public static final String REPORT_ARCHIVE = "/archive";
+    public static final String REPORT_DELETE = "/delete";
 
     public static final String GET_ALL_CERTIFICATE_TYPE_MAPPING = "/certificatetype";
     public static final String GET_ALL_CERTIFICATE_TYPE_BY_CODE_MAPPING = "/certificatetype/{certTypeCode}";

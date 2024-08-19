@@ -82,9 +82,9 @@ public class CommonController {
 
     @DeleteMapping(EducGradReportApiConstants.STUDENT_REPORT_BY_STUDENTID)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
-    @Operation(summary = "Read Student Reports by Student ID and Report Type", description = "Read Student Reports by Student ID and Report Type", tags = { "Reports" })
+    @Operation(summary = "Delete Student Reports by Student ID and Report Type", description = "Delete Student Reports by Student ID and Report Type", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<Long> deleteStudentReportByType(
+    public ResponseEntity<Integer> deleteStudentReportByType(
             @RequestParam(value = "reportType") String reportType,
             @PathVariable UUID studentID) {
         logger.debug("getStudentReportByType : ");
@@ -97,10 +97,9 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Long> processStudentReports(
             @RequestParam(value = "reportTypeCode") String reportTypeCode,
-            @RequestParam(value = "actionType") String actionType,
             @RequestBody List<UUID> studentIDs) {
         logger.debug("processStudentReports : ");
-        return response.GET(commonService.processStudentReports(studentIDs, reportTypeCode, actionType));
+        return response.GET(commonService.processStudentReports(studentIDs, reportTypeCode));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATES)
@@ -399,17 +398,31 @@ public class CommonController {
 
     @PostMapping (EducGradReportApiConstants.REPORT_COUNT)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
-    @Operation(summary = "Get Students Count by mincode and status", description = "Get Students Count by mincode and status", tags = { "Business" })
+    @Operation(summary = "Get Reports Count by mincode and status", description = "Get Students Count by mincode and status", tags = { "Business" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<Integer> getReportsCount(@RequestParam String reportType, @RequestBody List<String> schoolOfRecords) {
-        return response.GET(commonService.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType));
+    public ResponseEntity<Integer> getReportsCount(@RequestParam String reportType, @RequestBody List<String> reportContainerIds) {
+        if(StringUtils.containsAnyIgnoreCase(reportType, "ACHV")) {
+            return response.GET(commonService.countByStudentGuidsAndReportType(reportContainerIds, reportType));
+        } else {
+            return response.GET(commonService.countBySchoolOfRecordsAndReportType(reportContainerIds, reportType));
+        }
     }
 
     @PostMapping (EducGradReportApiConstants.REPORT_ARCHIVE)
     @PreAuthorize(PermissionsConstants.ARCHIVE_SCHOOL_REPORT)
-    @Operation(summary = "Get Students Count by mincode and status", description = "Get Students Count by mincode and status", tags = { "Business" })
+    @Operation(summary = "Archive Reports", description = "Archive Reports", tags = { "Business" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<Integer> archiveSchoolReports(@RequestParam long batchId, @RequestParam String reportType, @RequestBody List<String> schoolOfRecords) {
+    public ResponseEntity<Integer> archiveReports(@RequestParam long batchId, @RequestParam String reportType, @RequestBody List<String> schoolOfRecords) {
+        logger.debug("Archive Reports for batch {}", batchId);
         return response.GET(commonService.archiveSchoolReports(batchId, schoolOfRecords, reportType));
+    }
+
+    @DeleteMapping (EducGradReportApiConstants.REPORT_DELETE)
+    @PreAuthorize(PermissionsConstants.DELETE_STUDENT_REPORT)
+    @Operation(summary = "Delete Reports", description = "Delete Reports", tags = { "Business" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Integer> deleteReports(@RequestParam long batchId, @RequestParam String reportType, @RequestBody List<UUID> studentGuids) {
+        logger.debug("Delete Reports for batch {}", batchId);
+        return response.GET(commonService.deleteStudentReports(studentGuids, reportType));
     }
 }
