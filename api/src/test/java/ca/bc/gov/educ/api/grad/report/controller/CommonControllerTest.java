@@ -56,9 +56,15 @@ public class CommonControllerTest {
     public void testGetReportsCount() {
         // ID
         String mincode = "123456789";
+        String guid = UUID.randomUUID().toString();
+
         Mockito.when(commonService.countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType")).thenReturn(1);
         commonController.getReportsCount("reportType", List.of(mincode));
         Mockito.verify(commonService).countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType");
+
+        Mockito.when(commonService.countByStudentGuidsAndReportType(List.of(guid), "ACHV")).thenReturn(1);
+        commonController.getReportsCount("ACHV", List.of(guid));
+        Mockito.verify(commonService).countByStudentGuidsAndReportType(List.of(guid), "ACHV");
     }
 
     @Test
