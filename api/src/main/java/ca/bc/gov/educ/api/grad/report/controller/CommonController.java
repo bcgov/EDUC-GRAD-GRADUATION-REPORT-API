@@ -81,7 +81,7 @@ public class CommonController {
     }
 
     @DeleteMapping(EducGradReportApiConstants.STUDENT_REPORT_BY_STUDENTID)
-    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @PreAuthorize(PermissionsConstants.DELETE_STUDENT_REPORT)
     @Operation(summary = "Delete Student Reports by Student ID and Report Type", description = "Delete Student Reports by Student ID and Report Type", tags = { "Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Integer> deleteStudentReportByType(
