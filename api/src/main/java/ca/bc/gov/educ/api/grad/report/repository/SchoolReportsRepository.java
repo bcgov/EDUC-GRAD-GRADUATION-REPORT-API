@@ -35,7 +35,15 @@ public interface SchoolReportsRepository extends JpaRepository<SchoolReportsEnti
 	Integer archiveSchoolReports(List<String> schoolOfRecords, String reportTypeFrom, String reportTypeTo, long batchId);
 
 	@Modifying
+	@Query(value="update SCHOOL_REPORT set REPORT_TYPE_CODE = :reportTypeTo, update_date = SYSDATE, update_user = 'Batch ' || :batchId || ' Archive Process' where REPORT_TYPE_CODE = :reportTypeFrom", nativeQuery=true)
+	Integer archiveSchoolReports(String reportTypeFrom, String reportTypeTo, long batchId);
+
+	@Modifying
 	@Query(value="delete from SCHOOL_REPORT where school_of_record in (:schoolOfRecords) and REPORT_TYPE_CODE = :reportType and UPDATE_DATE <= SYSDATE - 1", nativeQuery=true)
 	Integer deleteSchoolReports(List<String> schoolOfRecords, String reportType);
+
+	@Modifying
+	@Query(value="delete from SCHOOL_REPORT where REPORT_TYPE_CODE = :reportType and UPDATE_DATE <= SYSDATE - 1", nativeQuery=true)
+	Integer deleteSchoolReports(String reportType);
 
 }
