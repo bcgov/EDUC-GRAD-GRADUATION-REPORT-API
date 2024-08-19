@@ -87,7 +87,7 @@ public class CommonController {
     public ResponseEntity<Integer> deleteStudentReportByType(
             @RequestParam(value = "reportType") String reportType,
             @PathVariable UUID studentID) {
-        logger.debug("deleteStudentReportByType {}", reportType);
+        logger.debug("deleteStudentReportByType");
         return response.GET(commonService.deleteStudentReports(studentID, reportType));
     }
 
