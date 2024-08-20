@@ -408,6 +408,14 @@ public class CommonController {
         }
     }
 
+    @PostMapping (EducGradReportApiConstants.STUDENT_REPORTS_BY_GUIDS)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Get Report Students Guids by mincode and status", description = "Get Report Students Guids by mincode and status", tags = { "Business" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<UUID>> getStudentIDsForTVRReport(@RequestParam String reportType, @RequestBody List<String> reportContainerIds) {
+        return response.GET(commonService.getStudentIDsByStudentGuidsAndReportType(reportContainerIds, reportType));
+    }
+
     @PostMapping (EducGradReportApiConstants.REPORT_ARCHIVE)
     @PreAuthorize(PermissionsConstants.ARCHIVE_SCHOOL_REPORT)
     @Operation(summary = "Archive Reports", description = "Archive Reports", tags = { "Business" })
@@ -417,7 +425,7 @@ public class CommonController {
         return response.GET(commonService.archiveSchoolReports(batchId, schoolOfRecords, reportType));
     }
 
-    @DeleteMapping (EducGradReportApiConstants.REPORT_DELETE)
+    @PostMapping (EducGradReportApiConstants.REPORT_DELETE)
     @PreAuthorize(PermissionsConstants.DELETE_STUDENT_REPORT)
     @Operation(summary = "Delete Reports", description = "Delete Reports", tags = { "Business" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})

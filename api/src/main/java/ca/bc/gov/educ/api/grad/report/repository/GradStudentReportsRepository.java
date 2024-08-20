@@ -38,6 +38,12 @@ public interface GradStudentReportsRepository extends JpaRepository<GradStudentR
 	@Query("select count(*) from GradStudentReportsEntity c where c.studentID IN (:studentGuids) and c.gradReportTypeCode=:reportType")
 	Integer countByStudentGuidsAndReportType(List<UUID> studentGuids, String reportType);
 
+	@Query("select c.studentID from GradStudentReportsEntity c where c.studentID IN (:studentGuids) and c.gradReportTypeCode=:reportType")
+	List<UUID> getStudentIDsByStudentGuidsAndReportType(List<UUID> studentGuids, String reportType);
+
 	@Query("select count(*) from GradStudentReportsEntity c where c.gradReportTypeCode=:reportType")
 	Integer countByReportType(String reportType);
+
+	@Query("select c.studentID from GradStudentReportsEntity c where c.gradReportTypeCode=:reportType")
+	List<UUID> getStudentIDsByReportType(String reportType);
 }
