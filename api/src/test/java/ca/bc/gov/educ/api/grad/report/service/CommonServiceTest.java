@@ -1702,6 +1702,22 @@ public class CommonServiceTest {
     }
 
     @Test
+    public void testGetStudentIDsByStudentGuidsAndReportType() {
+
+        UUID uuid = UUID.randomUUID();
+        Mockito.when(gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(List.of(uuid), "reportType")).thenReturn(List.of(uuid));
+        List<UUID> result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(uuid.toString()), "reportType");
+        assertThat(result).isNotNull();
+        assertThat(result).isNotEmpty();
+
+        Mockito.when(gradStudentReportsRepository.getReportStudentIDsByReportType("reportType")).thenReturn(List.of(uuid));
+        result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(), "reportType");
+        assertThat(result).isNotNull();
+        assertThat(result).isNotEmpty();
+    }
+
+
+    @Test
     public void testArchiveSchoolReports() {
         Mockito.when(schoolReportsRepository.deleteSchoolReports(List.of("12345678"), "reportTypeARC".toUpperCase())).thenReturn(1);
         Mockito.when(schoolReportsRepository.archiveSchoolReports(List.of("12345678"), "reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(1);

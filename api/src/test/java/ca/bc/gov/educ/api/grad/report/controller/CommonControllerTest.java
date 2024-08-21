@@ -538,6 +538,28 @@ public class CommonControllerTest {
     }
 
     @Test
+    public void testUpdateStudentCredentialPosting() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String credentialType = "E";
+
+        Mockito.when(commonService.updateStudentCredentialPosting(studentID, credentialType)).thenReturn(true);
+        commonController.updateStudentCredentialPosting(studentID.toString(), credentialType);
+        Mockito.verify(commonService).updateStudentCredentialPosting(studentID, credentialType);
+    }
+
+    @Test
+    public void testGetStudentIDsByIdentityAndReportType() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String reportType = "ACHV";
+
+        Mockito.when(commonService.getStudentIDsByStudentGuidsAndReportType(List.of(studentID.toString()), reportType)).thenReturn(List.of(studentID));
+        commonController.getStudentIDsByIdentityAndReportType(reportType, List.of(studentID.toString()));
+        Mockito.verify(commonService).getStudentIDsByStudentGuidsAndReportType(List.of(studentID.toString()), reportType);
+    }
+
+    @Test
     public void testGetAllStudentCredentialDistributionListWithNullDistributionDate() {
         // UUID
         final UUID studentID = UUID.randomUUID();
