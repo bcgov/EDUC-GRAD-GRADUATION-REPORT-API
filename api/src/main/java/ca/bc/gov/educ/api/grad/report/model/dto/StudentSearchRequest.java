@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,12 +20,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class StudentSearchRequest implements Serializable {
-    private List<String> schoolOfRecords;
-    private List<String> districts;
-    private List<String> schoolCategoryCodes;
-    private List<String> pens;
-    private List<String> programs;
-    private List<UUID> studentIDs;
+    private List<String> schoolOfRecords = new ArrayList<>();
+    private List<String> districts = new ArrayList<>();
+    private List<String> schoolCategoryCodes = new ArrayList<>();
+    private List<String> pens = new ArrayList<>();
+    private List<String> programs = new ArrayList<>();
+    private List<UUID> studentIDs = new ArrayList<>();
+    private List<String> statuses = new ArrayList<>();
+    private List<String> reportTypes = new ArrayList();
+
+    private String user;
+    private Address address;
 
     @JsonFormat(pattern= EducGradReportApiConstants.DEFAULT_DATE_FORMAT)
     LocalDate gradDateFrom;
@@ -33,5 +39,15 @@ public class StudentSearchRequest implements Serializable {
 
     Boolean validateInput;
     String activityCode;
+    String localDownload;
+
+    public boolean isEmpty() {
+        return  schoolOfRecords.isEmpty() &&
+                districts.isEmpty() &&
+                schoolCategoryCodes.isEmpty() &&
+                pens.isEmpty() &&
+                studentIDs.isEmpty() &&
+                programs.isEmpty();
+    }
 
 }

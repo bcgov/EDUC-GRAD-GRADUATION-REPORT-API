@@ -410,9 +410,9 @@ public class CommonController {
 
     @PostMapping (EducGradReportApiConstants.STUDENT_REPORTS_BY_GUIDS)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
-    @Operation(summary = "Get Report Students Guids by mincode and status", description = "Get Report Students Guids by mincode and status", tags = { "Business" })
+    @Operation(summary = "Get Report Students Guids by mincode and type", description = "Get Report Students Guids by mincode and type", tags = { "Business" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-    public ResponseEntity<List<UUID>> getStudentIDsForTVRReport(@RequestParam String reportType, @RequestBody List<String> reportContainerIds) {
+    public ResponseEntity<List<UUID>> getStudentIDsByIdentityAndReportType(@RequestParam String reportType, @RequestBody List<String> reportContainerIds) {
         return response.GET(commonService.getStudentIDsByStudentGuidsAndReportType(reportContainerIds, reportType));
     }
 

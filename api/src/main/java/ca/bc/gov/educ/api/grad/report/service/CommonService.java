@@ -877,9 +877,9 @@ public class CommonService extends BaseService {
             for(String guid: studentGuidsString) {
                 studentGuids.add(UUID.fromString(guid));
             }
-            result = gradStudentReportsRepository.getStudentIDsByStudentGuidsAndReportType(studentGuids, reportType);
+            result = gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(studentGuids, reportType);
         } else {
-            result = gradStudentReportsRepository.getStudentIDsByReportType(reportType);
+            result = gradStudentReportsRepository.getReportStudentIDsByReportType(reportType);
         }
         return result;
     }
