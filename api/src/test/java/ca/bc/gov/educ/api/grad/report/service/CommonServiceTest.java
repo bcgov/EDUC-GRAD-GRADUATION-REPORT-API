@@ -1707,13 +1707,11 @@ public class CommonServiceTest {
         UUID uuid = UUID.randomUUID();
         Mockito.when(gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(List.of(uuid), "reportType")).thenReturn(List.of(uuid));
         List<UUID> result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(uuid.toString()), "reportType");
-        assertThat(result).isNotNull();
-        assertThat(result).isNotEmpty();
+        assertThat(result).isNotNull().isNotEmpty();
 
         Mockito.when(gradStudentReportsRepository.getReportStudentIDsByReportType("reportType")).thenReturn(List.of(uuid));
         result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(), "reportType");
-        assertThat(result).isNotNull();
-        assertThat(result).isNotEmpty();
+        assertThat(result).isNotNull().isNotEmpty();
     }
 
 
