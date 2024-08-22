@@ -336,11 +336,13 @@ public class CommonService extends BaseService {
 
     @Transactional
     public Integer deleteStudentReports(List<UUID> studentIDs, String reportType) {
+        Integer result;
         if(studentIDs != null && !studentIDs.isEmpty()) {
-            return gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(studentIDs, StringUtils.upperCase(reportType));
+            result = gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(studentIDs, StringUtils.upperCase(reportType));
         } else {
-            return gradStudentReportsRepository.deleteByGradReportTypeCode(StringUtils.upperCase(reportType));
+            result = gradStudentReportsRepository.deleteByGradReportTypeCode(StringUtils.upperCase(reportType));
         }
+        return result;
     }
 
     @Transactional
@@ -866,6 +868,20 @@ public class CommonService extends BaseService {
             reportsCount += gradStudentReportsRepository.countByReportType(reportType);
         }
         return reportsCount;
+    }
+
+    public List<UUID> getStudentIDsByStudentGuidsAndReportType(List<String> studentGuidsString, String reportType) {
+        List<UUID> result;
+        if(studentGuidsString != null && !studentGuidsString.isEmpty()) {
+            List<UUID> studentGuids = new ArrayList<>();
+            for(String guid: studentGuidsString) {
+                studentGuids.add(UUID.fromString(guid));
+            }
+            result = gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(studentGuids, reportType);
+        } else {
+            result = gradStudentReportsRepository.getReportStudentIDsByReportType(reportType);
+        }
+        return result;
     }
 
     @Transactional
