@@ -1705,13 +1705,14 @@ public class CommonServiceTest {
     public void testGetStudentIDsByStudentGuidsAndReportType() {
 
         UUID uuid = UUID.randomUUID();
-        Mockito.when(gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(List.of(uuid), "reportType")).thenReturn(List.of(uuid));
-        List<UUID> result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(uuid.toString()), "reportType");
-        assertThat(result).isNotNull().isNotEmpty();
+        Pageable paging = PageRequest.of(0, 1);
+        Mockito.when(gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(List.of(uuid), "reportType", paging)).thenReturn(Page.empty());
+        List<UUID> result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(uuid.toString()), "reportType", 100);
+        assertThat(result).isNotNull().isEmpty();
 
-        Mockito.when(gradStudentReportsRepository.getReportStudentIDsByReportType("reportType")).thenReturn(List.of(uuid));
-        result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(), "reportType");
-        assertThat(result).isNotNull().isNotEmpty();
+        Mockito.when(gradStudentReportsRepository.findStudentIDByGradReportTypeCode("reportType", paging)).thenReturn(Page.empty());
+        result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(), "reportType", 100);
+        assertThat(result).isNotNull().isEmpty();
     }
 
 

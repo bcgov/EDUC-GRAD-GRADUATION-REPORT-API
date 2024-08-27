@@ -554,9 +554,9 @@ public class CommonControllerTest {
         final UUID studentID = UUID.randomUUID();
         final String reportType = "ACHV";
 
-        Mockito.when(commonService.getStudentIDsByStudentGuidsAndReportType(List.of(studentID.toString()), reportType)).thenReturn(List.of(studentID));
-        commonController.getStudentIDsByIdentityAndReportType(reportType, List.of(studentID.toString()));
-        Mockito.verify(commonService).getStudentIDsByStudentGuidsAndReportType(List.of(studentID.toString()), reportType);
+        Mockito.when(commonService.getStudentIDsByStudentGuidsAndReportType(List.of(studentID.toString()), reportType, 1)).thenReturn(List.of(studentID));
+        commonController.getStudentIDsByIdentityAndReportType(reportType, 1, List.of(studentID.toString()));
+        Mockito.verify(commonService).getStudentIDsByStudentGuidsAndReportType(List.of(studentID.toString()), reportType, 1);
     }
 
     @Test
