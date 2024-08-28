@@ -20,6 +20,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -870,16 +871,18 @@ public class CommonService extends BaseService {
         return reportsCount;
     }
 
-    public List<UUID> getStudentIDsByStudentGuidsAndReportType(List<String> studentGuidsString, String reportType) {
-        List<UUID> result;
+    public List<UUID> getStudentIDsByStudentGuidsAndReportType(List<String> studentGuidsString, String reportType, Integer rowCount) {
+        List<UUID> result = new ArrayList<>();
+        rowCount = (rowCount) == 0 ? Integer.MAX_VALUE : rowCount;
+        Pageable paging = PageRequest.of(0, rowCount);
         if(studentGuidsString != null && !studentGuidsString.isEmpty()) {
             List<UUID> studentGuids = new ArrayList<>();
             for(String guid: studentGuidsString) {
                 studentGuids.add(UUID.fromString(guid));
             }
-            result = gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(studentGuids, reportType);
+            result.addAll(gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(studentGuids, reportType, paging).getContent());
         } else {
-            result = gradStudentReportsRepository.getReportStudentIDsByReportType(reportType);
+            result.addAll(gradStudentReportsRepository.findStudentIDByGradReportTypeCode(reportType, paging).getContent());
         }
         return result;
     }

@@ -1705,13 +1705,94 @@ public class CommonServiceTest {
     public void testGetStudentIDsByStudentGuidsAndReportType() {
 
         UUID uuid = UUID.randomUUID();
-        Mockito.when(gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(List.of(uuid), "reportType")).thenReturn(List.of(uuid));
-        List<UUID> result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(uuid.toString()), "reportType");
+        Pageable paging = PageRequest.of(0, 1);
+        Mockito.when(gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(List.of(uuid), "reportType", paging)).thenReturn(new Page() {
+            @Override
+            public Iterator<UUID> iterator() {
+                return getContent().listIterator();
+            }
+
+            @Override
+            public int getNumber() {
+                return 1;
+            }
+
+            @Override
+            public int getSize() {
+                return 1;
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return 1;
+            }
+
+            @Override
+            public List<UUID> getContent() {
+                return List.of(uuid);
+            }
+
+            @Override
+            public boolean hasContent() {
+                return !getContent().isEmpty();
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isLast() {
+                return false;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public int getTotalPages() {
+                return getContent().size();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return getContent().size();
+            }
+
+            @Override
+            public Page map(Function converter) {
+                return null;
+            }
+        });
+        List<UUID> result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(uuid.toString()), "reportType", 1);
         assertThat(result).isNotNull().isNotEmpty();
 
-        Mockito.when(gradStudentReportsRepository.getReportStudentIDsByReportType("reportType")).thenReturn(List.of(uuid));
-        result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(), "reportType");
-        assertThat(result).isNotNull().isNotEmpty();
+        Mockito.when(gradStudentReportsRepository.findStudentIDByGradReportTypeCode("reportType", paging)).thenReturn(Page.empty());
+        result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(), "reportType", 1);
+        assertThat(result).isNotNull().isEmpty();
     }
 
 
