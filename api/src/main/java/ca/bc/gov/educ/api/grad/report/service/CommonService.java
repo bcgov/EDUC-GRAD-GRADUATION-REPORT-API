@@ -894,17 +894,19 @@ public class CommonService extends BaseService {
         Integer originalReportsCount = 0;
         String archivedReportType = StringUtils.appendIfMissing(reportType, "ARC", "ARC");
         if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
+            List<UUID> reportGuids = schoolReportsRepository.getReportGuidsBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
             originalReportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
             updatedReportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, archivedReportType, batchId);
             if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
-                deletedReportsCount += schoolReportsRepository.deleteSchoolReports(schoolOfRecords, archivedReportType);
+                deletedReportsCount += schoolReportsRepository.deleteSchoolOfRecordsNotMatchingSchoolReports(reportGuids, schoolOfRecords, archivedReportType);
                 logger.debug("{} School Reports deleted", deletedReportsCount);
             }
         } else {
+            List<UUID> reportGuids = schoolReportsRepository.getReportGuidsByReportType(reportType);
             originalReportsCount += schoolReportsRepository.countByReportType(reportType);
             updatedReportsCount += schoolReportsRepository.archiveSchoolReports(reportType, archivedReportType, batchId);
             if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
-                deletedReportsCount += schoolReportsRepository.deleteSchoolReports(archivedReportType);
+                deletedReportsCount += schoolReportsRepository.deleteAllNotMatchingSchoolReports(reportGuids, archivedReportType);
                 logger.debug("{} School Reports deleted", deletedReportsCount);
             }
         }
