@@ -892,19 +892,18 @@ public class CommonService extends BaseService {
         Integer updatedReportsCount = 0;
         Integer deletedReportsCount = 0;
         Integer originalReportsCount = 0;
-        reportType = StringUtils.upperCase(StringUtils.endsWithIgnoreCase(reportType, "ARC") ? StringUtils.removeEndIgnoreCase(reportType, "ARC") : reportType);
-        String archivedReportType = StringUtils.upperCase(StringUtils.endsWith(reportType, "ARC") ? reportType : reportType + "ARC");
+        String archivedReportType = StringUtils.appendIfMissing(reportType, "ARC", "ARC");
         if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
             originalReportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
             updatedReportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, archivedReportType, batchId);
-            if(originalReportsCount.equals(updatedReportsCount)) {
+            if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
                 deletedReportsCount += schoolReportsRepository.deleteSchoolReports(schoolOfRecords, archivedReportType);
                 logger.debug("{} School Reports deleted", deletedReportsCount);
             }
         } else {
             originalReportsCount += schoolReportsRepository.countByReportType(reportType);
             updatedReportsCount += schoolReportsRepository.archiveSchoolReports(reportType, archivedReportType, batchId);
-            if(originalReportsCount.equals(updatedReportsCount)) {
+            if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
                 deletedReportsCount += schoolReportsRepository.deleteSchoolReports(archivedReportType);
                 logger.debug("{} School Reports deleted", deletedReportsCount);
             }
