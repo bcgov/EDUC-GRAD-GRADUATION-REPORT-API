@@ -892,7 +892,7 @@ public class CommonService extends BaseService {
         Integer updatedReportsCount = 0;
         Integer deletedReportsCount = 0;
         Integer originalReportsCount = 0;
-        String archivedReportType = StringUtils.upperCase(StringUtils.endsWith(reportType, "ARC") ? reportType : reportType + "ARC");
+        String archivedReportType = StringUtils.appendIfMissing(reportType, "ARC", "ARC");
         if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
             originalReportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
             updatedReportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, archivedReportType, batchId);
