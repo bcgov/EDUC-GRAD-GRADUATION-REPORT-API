@@ -898,7 +898,7 @@ public class CommonService extends BaseService {
             originalReportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
             updatedReportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, archivedReportType, batchId);
             if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
-                deletedReportsCount += schoolReportsRepository.deleteNotMatchingSchoolReports(reportGuids, archivedReportType);
+                deletedReportsCount += schoolReportsRepository.deleteSchoolOfRecordsNotMatchingSchoolReports(reportGuids, schoolOfRecords, archivedReportType);
                 logger.debug("{} School Reports deleted", deletedReportsCount);
             }
         } else {
@@ -906,7 +906,7 @@ public class CommonService extends BaseService {
             originalReportsCount += schoolReportsRepository.countByReportType(reportType);
             updatedReportsCount += schoolReportsRepository.archiveSchoolReports(reportType, archivedReportType, batchId);
             if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
-                deletedReportsCount += schoolReportsRepository.deleteNotMatchingSchoolReports(reportGuids, archivedReportType);
+                deletedReportsCount += schoolReportsRepository.deleteAllNotMatchingSchoolReports(reportGuids, archivedReportType);
                 logger.debug("{} School Reports deleted", deletedReportsCount);
             }
         }
