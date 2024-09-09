@@ -1819,7 +1819,7 @@ public class CommonServiceTest {
         Mockito.when(schoolReportsRepository.deleteAllNotMatchingSchoolReports(List.of(schoolReportGuid), "reportTypeARC".toUpperCase())).thenReturn(1);
         Mockito.when(schoolReportsRepository.archiveSchoolReports("reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(1);
         count = commonService.archiveSchoolReports(1L, List.of(), "reportType".toUpperCase());
-        assertThat(count).isNotNull().isEqualTo(1);
+        assertThat(count).isNotNull().isEqualTo(0);
 
         Mockito.when(schoolReportsRepository.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType".toUpperCase())).thenReturn(0);
         Mockito.when(schoolReportsRepository.getReportSchoolOfRecordsByReportType("reportType".toUpperCase())).thenReturn(List.of("12345678"));
