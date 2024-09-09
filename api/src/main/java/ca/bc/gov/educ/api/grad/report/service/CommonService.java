@@ -889,6 +889,16 @@ public class CommonService extends BaseService {
 
     @Transactional
     public Integer archiveSchoolReports(long batchId, List<String> schoolOfRecords, String reportType) {
+        if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
+            return archiveSchoolReportsBySchoolOfRecordAndReportType(batchId, schoolOfRecords, reportType);
+        } else {
+            schoolOfRecords = schoolReportsRepository.getReportSchoolOfRecordsByReportType(reportType);
+            return archiveSchoolReportsBySchoolOfRecordAndReportType(batchId, schoolOfRecords, reportType);
+        }
+    }
+
+    @Transactional
+    public Integer archiveSchoolReportsBySchoolOfRecordAndReportType(long batchId, List<String> schoolOfRecords, String reportType) {
         Integer updatedReportsCount = 0;
         Integer deletedReportsCount = 0;
         Integer originalReportsCount = 0;
@@ -899,14 +909,6 @@ public class CommonService extends BaseService {
             updatedReportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, archivedReportType, batchId);
             if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
                 deletedReportsCount += schoolReportsRepository.deleteSchoolOfRecordsNotMatchingSchoolReports(reportGuids, schoolOfRecords, archivedReportType);
-                logger.debug("{} School Reports deleted", deletedReportsCount);
-            }
-        } else {
-            List<UUID> reportGuids = schoolReportsRepository.getReportGuidsByReportType(reportType);
-            originalReportsCount += schoolReportsRepository.countByReportType(reportType);
-            updatedReportsCount += schoolReportsRepository.archiveSchoolReports(reportType, archivedReportType, batchId);
-            if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
-                deletedReportsCount += schoolReportsRepository.deleteAllNotMatchingSchoolReports(reportGuids, archivedReportType);
                 logger.debug("{} School Reports deleted", deletedReportsCount);
             }
         }
