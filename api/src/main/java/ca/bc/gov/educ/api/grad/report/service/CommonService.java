@@ -897,8 +897,7 @@ public class CommonService extends BaseService {
         }
     }
 
-    @Transactional
-    public Integer archiveSchoolReportsBySchoolOfRecordAndReportType(long batchId, List<String> schoolOfRecords, String reportType) {
+    private Integer archiveSchoolReportsBySchoolOfRecordAndReportType(long batchId, List<String> schoolOfRecords, String reportType) {
         Integer updatedReportsCount = 0;
         Integer deletedReportsCount = 0;
         Integer originalReportsCount = 0;
