@@ -36,6 +36,9 @@ public interface SchoolReportsRepository extends JpaRepository<SchoolReportsEnti
 	@Query("select c.id from SchoolReportsLightEntity c where c.reportTypeCode=:reportType")
 	List<UUID> getReportGuidsByReportType(String reportType);
 
+	@Query("select c.schoolOfRecord from SchoolReportsLightEntity c where c.reportTypeCode=:reportType")
+	List<String> getReportSchoolOfRecordsByReportType(String reportType);
+
 	@Modifying
 	@Query(value="update SCHOOL_REPORT set REPORT_TYPE_CODE = :reportTypeTo, update_date = SYSDATE, update_user = 'Batch ' || :batchId || ' Archive Process' where school_of_record in (:schoolOfRecords) and REPORT_TYPE_CODE = :reportTypeFrom", nativeQuery=true)
 	Integer archiveSchoolReports(List<String> schoolOfRecords, String reportTypeFrom, String reportTypeTo, long batchId);
