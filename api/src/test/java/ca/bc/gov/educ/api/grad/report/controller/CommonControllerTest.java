@@ -53,6 +53,59 @@ public class CommonControllerTest {
     }
 
     @Test
+    public void testGetReportsCount() {
+        // ID
+        String mincode = "123456789";
+        String guid = UUID.randomUUID().toString();
+
+        Mockito.when(commonService.countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType")).thenReturn(1);
+        commonController.getReportsCount("reportType", List.of(mincode));
+        Mockito.verify(commonService).countBySchoolOfRecordsAndReportType(List.of(mincode), "reportType");
+
+        Mockito.when(commonService.countByStudentGuidsAndReportType(List.of(guid), "ACHV")).thenReturn(1);
+        commonController.getReportsCount("ACHV", List.of(guid));
+        Mockito.verify(commonService).countByStudentGuidsAndReportType(List.of(guid), "ACHV");
+    }
+
+    @Test
+    public void testArchiveSchoolReports() {
+        // ID
+        String mincode = "123456789";
+        Mockito.when(commonService.archiveSchoolReports(1L, List.of(mincode), "reportType")).thenReturn(1);
+        commonController.archiveReports(1L, "reportType", List.of(mincode));
+        Mockito.verify(commonService).archiveSchoolReports(1L, List.of(mincode), "reportType");
+    }
+
+    @Test
+    public void testDeleteStudentReports() {
+        // ID
+        UUID guid = UUID.randomUUID();
+        Mockito.when(commonService.deleteStudentReports(List.of(guid), "reportType")).thenReturn(1);
+        commonController.deleteReports(1L, "reportType", List.of(guid));
+        Mockito.verify(commonService).deleteStudentReports(List.of(guid), "reportType");
+
+        Mockito.when(commonService.deleteStudentReports(List.of(), "reportType")).thenReturn(1);
+        commonController.deleteReports(1L, "reportType", List.of());
+        Mockito.verify(commonService).deleteStudentReports(List.of(), "reportType");
+    }
+
+    @Test
+    public void testProcessStudentReports() {
+        final UUID studentGuid = UUID.randomUUID();
+        Mockito.when(commonService.processStudentReports(List.of(studentGuid), "ARCH")).thenReturn(1L);
+        commonController.processStudentReports("ARCH", List.of(studentGuid));
+        Mockito.verify(commonService).processStudentReports(List.of(studentGuid), "ARCH");
+    }
+
+    @Test
+    public void testDeleteStudentReportByType() {
+        final UUID studentGuid = UUID.randomUUID();
+        Mockito.when(commonService.deleteStudentReports(studentGuid, "REPORT_TYPE")).thenReturn(1);
+        commonController.deleteStudentReportByType("REPORT_TYPE", studentGuid);
+        Mockito.verify(commonService).deleteStudentReports(studentGuid, "REPORT_TYPE");
+    }
+
+    @Test
     public void testGetStudentCertificateByGuid() {
         final UUID studentGuid = UUID.randomUUID();
         GradStudentCertificates studentCertificates = new GradStudentCertificates();
@@ -107,9 +160,9 @@ public class CommonControllerTest {
         gradStudentReport.setReport("TEST Report Body");
         gradStudentReport.setDocumentStatusCode("IP");
 
-        Mockito.when(commonService.saveGradReports(gradStudentReport,isGraduated)).thenReturn(gradStudentReport);
+        Mockito.when(commonService.saveGradStudentReports(gradStudentReport,isGraduated)).thenReturn(gradStudentReport);
         commonController.saveStudentReport(gradStudentReport,isGraduated);
-        Mockito.verify(commonService).saveGradReports(gradStudentReport,isGraduated);
+        Mockito.verify(commonService).saveGradStudentReports(gradStudentReport,isGraduated);
     }
 
     @Test
@@ -482,6 +535,28 @@ public class CommonControllerTest {
         Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false,"accessToken")).thenReturn(list);
         commonController.getStudentCredentialsForUserRequestDisRun(credentialType,req,"accessToken");
         Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,false,"accessToken");
+    }
+
+    @Test
+    public void testUpdateStudentCredentialPosting() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String credentialType = "E";
+
+        Mockito.when(commonService.updateStudentCredentialPosting(studentID, credentialType)).thenReturn(true);
+        commonController.updateStudentCredentialPosting(studentID.toString(), credentialType);
+        Mockito.verify(commonService).updateStudentCredentialPosting(studentID, credentialType);
+    }
+
+    @Test
+    public void testGetStudentIDsByIdentityAndReportType() {
+        // UUID
+        final UUID studentID = UUID.randomUUID();
+        final String reportType = "ACHV";
+
+        Mockito.when(commonService.getStudentIDsByStudentGuidsAndReportType(List.of(studentID.toString()), reportType, 1)).thenReturn(List.of(studentID));
+        commonController.getStudentIDsByIdentityAndReportType(reportType, 1, List.of(studentID.toString()));
+        Mockito.verify(commonService).getStudentIDsByStudentGuidsAndReportType(List.of(studentID.toString()), reportType, 1);
     }
 
     @Test

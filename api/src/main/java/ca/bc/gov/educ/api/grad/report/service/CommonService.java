@@ -20,6 +20,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -88,7 +89,7 @@ public class CommonService extends BaseService {
     private static final List<String> SCCP_CERT_TYPES = Arrays.asList("SC", "SCF", "SCI");
 
     @Transactional
-    public GradStudentReports saveGradReports(GradStudentReports gradStudentReports, boolean isGraduated) {
+    public GradStudentReports saveGradStudentReports(GradStudentReports gradStudentReports, boolean isGraduated) {
         GradStudentReportsEntity toBeSaved = gradStudentReportsTransformer.transformToEntity(gradStudentReports);
         Optional<GradStudentReportsEntity> existingEntity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(gradStudentReports.getStudentID(), gradStudentReports.getGradReportTypeCode(), "ARCH");
         if (existingEntity.isPresent()) {
@@ -317,6 +318,37 @@ public class CommonService extends BaseService {
             return 0;
         }
 
+    }
+
+    @Transactional
+    public long processStudentReports(List<UUID> studentIDs, String reportType) {
+        long reportsCount = 0L;
+        for(UUID uuid: studentIDs) {
+            Optional<GradStudentReportsEntity> existingEntity = gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(uuid, reportType);
+            if(existingEntity.isPresent()) {
+                GradStudentReportsEntity reportsEntity = existingEntity.get();
+                reportsEntity.setReportUpdateDate(new Date());
+                gradStudentReportsRepository.save(reportsEntity);
+                reportsCount ++;
+            }
+        }
+        return reportsCount;
+    }
+
+    @Transactional
+    public Integer deleteStudentReports(List<UUID> studentIDs, String reportType) {
+        Integer result;
+        if(studentIDs != null && !studentIDs.isEmpty()) {
+            result = gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(studentIDs, StringUtils.upperCase(reportType));
+        } else {
+            result = gradStudentReportsRepository.deleteByGradReportTypeCode(StringUtils.upperCase(reportType));
+        }
+        return result;
+    }
+
+    @Transactional
+    public Integer deleteStudentReports(UUID studentID, String reportType) {
+        return gradStudentReportsRepository.deleteByStudentIDAndGradReportTypeCode(studentID, StringUtils.upperCase(reportType));
     }
 
     public List<GradStudentReports> getAllStudentReportList(UUID studentID) {
@@ -813,6 +845,73 @@ public class CommonService extends BaseService {
                 .retrieve()
                 .bodyToMono(responseType)
                 .block();
+    }
+
+    public Integer countBySchoolOfRecordsAndReportType(List<String> schoolOfRecords, String reportType) {
+        Integer reportsCount = 0;
+        if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
+            reportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
+        } else {
+            reportsCount += schoolReportsRepository.countByReportType(reportType);
+        }
+        return reportsCount;
+    }
+
+    public Integer countByStudentGuidsAndReportType(List<String> studentGuidsString, String reportType) {
+        Integer reportsCount = 0;
+        if(studentGuidsString != null && !studentGuidsString.isEmpty()) {
+            List<UUID> studentGuids = new ArrayList<>();
+            for(String guid: studentGuidsString) {
+                studentGuids.add(UUID.fromString(guid));
+            }
+            reportsCount += gradStudentReportsRepository.countByStudentGuidsAndReportType(studentGuids, reportType);
+        } else {
+            reportsCount += gradStudentReportsRepository.countByReportType(reportType);
+        }
+        return reportsCount;
+    }
+
+    public List<UUID> getStudentIDsByStudentGuidsAndReportType(List<String> studentGuidsString, String reportType, Integer rowCount) {
+        List<UUID> result = new ArrayList<>();
+        rowCount = (rowCount) == 0 ? Integer.MAX_VALUE : rowCount;
+        Pageable paging = PageRequest.of(0, rowCount);
+        if(studentGuidsString != null && !studentGuidsString.isEmpty()) {
+            List<UUID> studentGuids = new ArrayList<>();
+            for(String guid: studentGuidsString) {
+                studentGuids.add(UUID.fromString(guid));
+            }
+            result.addAll(gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(studentGuids, reportType, paging).getContent());
+        } else {
+            result.addAll(gradStudentReportsRepository.findStudentIDByGradReportTypeCode(reportType, paging).getContent());
+        }
+        return result;
+    }
+
+    @Transactional
+    public Integer archiveSchoolReports(long batchId, List<String> schoolOfRecords, String reportType) {
+        if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
+            return archiveSchoolReportsBySchoolOfRecordAndReportType(batchId, schoolOfRecords, reportType);
+        } else {
+            schoolOfRecords = schoolReportsRepository.getReportSchoolOfRecordsByReportType(reportType);
+            return archiveSchoolReportsBySchoolOfRecordAndReportType(batchId, schoolOfRecords, reportType);
+        }
+    }
+
+    private Integer archiveSchoolReportsBySchoolOfRecordAndReportType(long batchId, List<String> schoolOfRecords, String reportType) {
+        Integer updatedReportsCount = 0;
+        Integer deletedReportsCount = 0;
+        Integer originalReportsCount = 0;
+        String archivedReportType = StringUtils.appendIfMissing(reportType, "ARC", "ARC");
+        if(schoolOfRecords != null && !schoolOfRecords.isEmpty()) {
+            List<UUID> reportGuids = schoolReportsRepository.getReportGuidsBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
+            originalReportsCount += schoolReportsRepository.countBySchoolOfRecordsAndReportType(schoolOfRecords, reportType);
+            updatedReportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, archivedReportType, batchId);
+            if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
+                deletedReportsCount += schoolReportsRepository.deleteSchoolOfRecordsNotMatchingSchoolReports(reportGuids, schoolOfRecords, archivedReportType);
+                logger.debug("{} School Reports deleted", deletedReportsCount);
+            }
+        }
+        return updatedReportsCount;
     }
 
     class UUIDPageTask implements Callable<Object> {

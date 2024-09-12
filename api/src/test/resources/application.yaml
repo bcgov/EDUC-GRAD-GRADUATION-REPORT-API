@@ -55,7 +55,9 @@ logging:
         boot:
           autoconfigure:
             logging: INFO
-
+    com:
+      zaxxer:
+        hikari: ERROR
 #API Documentation
 springdoc:
   api-docs:

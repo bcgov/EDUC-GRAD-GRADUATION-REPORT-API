@@ -222,7 +222,7 @@ public class CommonServiceTest {
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,documentStatusCode)).thenReturn(optionalEmpty);
         when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
-        var result = commonService.saveGradReports(gradStudentReport,isGraduated);
+        var result = commonService.saveGradStudentReports(gradStudentReport,isGraduated);
 
         assertThat(result).isNotNull();
         assertThat(result.getStudentID()).isEqualTo(studentID);
@@ -258,7 +258,7 @@ public class CommonServiceTest {
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,"ARCH")).thenReturn(optional);
         when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
-        var result = commonService.saveGradReports(gradStudentReport,isGraduated);
+        var result = commonService.saveGradStudentReports(gradStudentReport,isGraduated);
 
         assertThat(result).isNotNull();
         assertThat(result.getStudentID()).isEqualTo(studentID);
@@ -294,7 +294,7 @@ public class CommonServiceTest {
         when(this.gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCodeNot(studentID, reportTypeCode,"ARCH")).thenReturn(optional);
         when(this.gradStudentReportsRepository.save(any(GradStudentReportsEntity.class))).thenReturn(gradStudentReportEntity);
 
-        var result = commonService.saveGradReports(gradStudentReport,isGraduated);
+        var result = commonService.saveGradStudentReports(gradStudentReport,isGraduated);
 
         assertThat(result).isNotNull();
         assertThat(result.getStudentID()).isEqualTo(studentID);
@@ -327,6 +327,48 @@ public class CommonServiceTest {
         when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCodeAndDocumentStatusCode(studentID, reportTypeCode,documentStatusCode)).thenReturn(Optional.of(gradStudentReport));
         result = commonService.getStudentReportByType(studentID, reportTypeCode,documentStatusCode);
         assertThat(result).isNull();
+
+    }
+
+    @Test
+    public void testDeleteStudentReports() {
+        // ID
+        final UUID studentID = UUID.randomUUID();
+        final String reportTypeCode = "TEST".toUpperCase();
+
+        when(gradStudentReportsRepository.deleteByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(1);
+        var result = commonService.deleteStudentReports(studentID, reportTypeCode);
+        assertThat(result).isEqualTo(1);
+
+        when(gradStudentReportsRepository.deleteByStudentIDInAndGradReportTypeCode(List.of(studentID), reportTypeCode)).thenReturn(1);
+        result = commonService.deleteStudentReports(List.of(studentID), reportTypeCode);
+        assertThat(result).isEqualTo(1);
+
+        when(gradStudentReportsRepository.deleteByGradReportTypeCode(reportTypeCode)).thenReturn(1);
+        result = commonService.deleteStudentReports(List.of(), reportTypeCode);
+        assertThat(result).isEqualTo(1);
+
+    }
+
+    @Test
+    public void testProcessStudentReports() {
+        // ID
+        final UUID studentID = UUID.randomUUID();
+        final String reportTypeCode = "TVRRUN";
+        final UUID reportID = UUID.randomUUID();
+        final String pen = "123456789";
+
+        final GradStudentReportsEntity gradStudentReport = new GradStudentReportsEntity();
+        gradStudentReport.setId(reportID);
+        gradStudentReport.setGradReportTypeCode(reportTypeCode);
+        gradStudentReport.setPen(pen);
+        gradStudentReport.setStudentID(studentID);
+        gradStudentReport.setReport("TEST Report Body");
+
+        when(gradStudentReportsRepository.findByStudentIDAndGradReportTypeCode(studentID, reportTypeCode)).thenReturn(Optional.of(gradStudentReport));
+        when(gradStudentReportsRepository.save(gradStudentReport)).thenReturn(gradStudentReport);
+        var result = commonService.processStudentReports(List.of(studentID), reportTypeCode);
+        assertThat(result).isEqualTo(1);
 
     }
 
@@ -1633,6 +1675,179 @@ public class CommonServiceTest {
 
         var result = commonService.checkStudentCertificateExistsForSCCP(studentID);
         assertThat(result).isTrue();
+    }
+
+    @Test
+    public void testCountBySchoolOfRecordsAndReportType() {
+        Mockito.when(schoolReportsRepository.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType")).thenReturn(1);
+        Integer count = commonService.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
+
+        Mockito.when(schoolReportsRepository.countByReportType("reportType")).thenReturn(1);
+        count = commonService.countBySchoolOfRecordsAndReportType(List.of(), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
+    }
+
+    @Test
+    public void testCountByStudentGuidsAndReportType() {
+
+        UUID uuid = UUID.randomUUID();
+        Mockito.when(gradStudentReportsRepository.countByStudentGuidsAndReportType(List.of(uuid), "reportType")).thenReturn(1);
+        Integer count = commonService.countByStudentGuidsAndReportType(List.of(uuid.toString()), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
+
+        Mockito.when(gradStudentReportsRepository.countByReportType("reportType")).thenReturn(1);
+        count = commonService.countByStudentGuidsAndReportType(List.of(), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
+    }
+
+    @Test
+    public void testGetStudentIDsByStudentGuidsAndReportType() {
+
+        UUID uuid = UUID.randomUUID();
+        Pageable paging = PageRequest.of(0, 1);
+        Mockito.when(gradStudentReportsRepository.getReportStudentIDsByStudentIDsAndReportType(List.of(uuid), "reportType", paging)).thenReturn(new Page() {
+            @Override
+            public Iterator<UUID> iterator() {
+                return getContent().listIterator();
+            }
+
+            @Override
+            public int getNumber() {
+                return 1;
+            }
+
+            @Override
+            public int getSize() {
+                return 1;
+            }
+
+            @Override
+            public int getNumberOfElements() {
+                return 1;
+            }
+
+            @Override
+            public List<UUID> getContent() {
+                return List.of(uuid);
+            }
+
+            @Override
+            public boolean hasContent() {
+                return !getContent().isEmpty();
+            }
+
+            @Override
+            public Sort getSort() {
+                return null;
+            }
+
+            @Override
+            public boolean isFirst() {
+                return false;
+            }
+
+            @Override
+            public boolean isLast() {
+                return false;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public Pageable nextPageable() {
+                return null;
+            }
+
+            @Override
+            public Pageable previousPageable() {
+                return null;
+            }
+
+            @Override
+            public int getTotalPages() {
+                return getContent().size();
+            }
+
+            @Override
+            public long getTotalElements() {
+                return getContent().size();
+            }
+
+            @Override
+            public Page map(Function converter) {
+                return null;
+            }
+        });
+        List<UUID> result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(uuid.toString()), "reportType", 1);
+        assertThat(result).isNotNull().isNotEmpty();
+
+        Mockito.when(gradStudentReportsRepository.findStudentIDByGradReportTypeCode("reportType", paging)).thenReturn(Page.empty());
+        result = commonService.getStudentIDsByStudentGuidsAndReportType(List.of(), "reportType", 1);
+        assertThat(result).isNotNull().isEmpty();
+    }
+
+
+    @Test
+    public void testArchiveSchoolReports() {
+        UUID schoolReportGuid = UUID.randomUUID();
+        Mockito.when(schoolReportsRepository.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportsRepository.getReportSchoolOfRecordsByReportType("reportType".toUpperCase())).thenReturn(List.of("12345678"));
+        Mockito.when(schoolReportsRepository.deleteSchoolOfRecordsNotMatchingSchoolReports(List.of(schoolReportGuid), List.of("12345678"), "reportTypeARC".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportsRepository.deleteAllNotMatchingSchoolReports(List.of(schoolReportGuid), "reportTypeARC".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportsRepository.archiveSchoolReports(List.of("12345678"), "reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(1);
+        Integer count = commonService.archiveSchoolReports(1L, List.of("12345678"), "reportType".toUpperCase());
+        assertThat(count).isNotNull().isEqualTo(1);
+
+        Mockito.when(schoolReportsRepository.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType".toUpperCase())).thenReturn(0);
+        Mockito.when(schoolReportsRepository.getReportSchoolOfRecordsByReportType("reportType".toUpperCase())).thenReturn(List.of("12345678"));
+        Mockito.when(schoolReportsRepository.deleteAllNotMatchingSchoolReports(List.of(schoolReportGuid), "reportTypeARC".toUpperCase())).thenReturn(0);
+        Mockito.when(schoolReportsRepository.archiveSchoolReports(List.of("12345678"), "reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(0);
+        count = commonService.archiveSchoolReports(1L, List.of("12345678"), "reportType".toUpperCase());
+        assertThat(count).isNotNull().isEqualTo(0);
+
+        Mockito.when(schoolReportsRepository.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportsRepository.getReportSchoolOfRecordsByReportType("reportType".toUpperCase())).thenReturn(List.of("12345678"));
+        Mockito.when(schoolReportsRepository.deleteAllNotMatchingSchoolReports(List.of(schoolReportGuid), "reportTypeARC".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportsRepository.archiveSchoolReports("reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(1);
+        count = commonService.archiveSchoolReports(1L, List.of(), "reportType".toUpperCase());
+        assertThat(count).isNotNull().isEqualTo(0);
+
+        Mockito.when(schoolReportsRepository.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType".toUpperCase())).thenReturn(0);
+        Mockito.when(schoolReportsRepository.getReportSchoolOfRecordsByReportType("reportType".toUpperCase())).thenReturn(List.of("12345678"));
+        Mockito.when(schoolReportsRepository.deleteAllNotMatchingSchoolReports(List.of(schoolReportGuid), "reportTypeARC".toUpperCase())).thenReturn(0);
+        Mockito.when(schoolReportsRepository.archiveSchoolReports("reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(0);
+        count = commonService.archiveSchoolReports(1L, List.of(), "reportType".toUpperCase());
+        assertThat(count).isNotNull().isEqualTo(0);
+    }
+
+    @Test
+    public void testArchiveSchoolReportsEmpty() {
+        Mockito.when(schoolReportsRepository.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType".toUpperCase())).thenReturn(0);
+        Mockito.when(schoolReportsRepository.getReportSchoolOfRecordsByReportType("reportType".toUpperCase())).thenReturn(List.of("12345678"));
+        Mockito.when(schoolReportsRepository.archiveSchoolReports(new ArrayList<>(), "reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(0);
+        Integer count = commonService.archiveSchoolReports(1L, new ArrayList<>(), "reportType".toUpperCase());
+        assertThat(count).isNotNull().isEqualTo(0);
+    }
+
+    @Test
+    public void testDeleteSchoolReports() {
+        UUID schoolReportGuid = UUID.randomUUID();
+        Mockito.when(schoolReportsRepository.countBySchoolOfRecordsAndReportType(List.of("12345678"), "reportType".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportsRepository.getReportSchoolOfRecordsByReportType("reportType".toUpperCase())).thenReturn(List.of("12345678"));
+        Mockito.when(schoolReportsRepository.deleteSchoolOfRecordsNotMatchingSchoolReports(List.of(schoolReportGuid), List.of("12345678"), "reportTypeARC".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportsRepository.deleteAllNotMatchingSchoolReports(List.of(schoolReportGuid), "reportTypeARC".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportsRepository.archiveSchoolReports(List.of("12345678"), "reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(1);
+        Integer count = commonService.archiveSchoolReports(1L, List.of("12345678"), "reportType".toUpperCase());
+        assertThat(count).isNotNull().isEqualTo(1);
     }
 
     @Test

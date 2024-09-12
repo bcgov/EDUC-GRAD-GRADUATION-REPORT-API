@@ -23,6 +23,10 @@ public class EducGradReportApiConstants {
     public static final String API_VERSION = "v1";
     public static final String GRAD_REPORT_API_ROOT_MAPPING = "/api/" + API_VERSION + "/graduationreports";
 
+    public static final String REPORT_COUNT = "/count";
+    public static final String REPORT_ARCHIVE = "/archive";
+    public static final String REPORT_DELETE = "/delete";
+
     public static final String GET_ALL_CERTIFICATE_TYPE_MAPPING = "/certificatetype";
     public static final String GET_ALL_CERTIFICATE_TYPE_BY_CODE_MAPPING = "/certificatetype/{certTypeCode}";
 
@@ -42,6 +46,9 @@ public class EducGradReportApiConstants {
     public static final String UPDATE_SCHOOL_REPORTS = "/updateschoolreport";
 
     public static final String STUDENT_REPORT = "/studentreport";
+    public static final String STUDENT_REPORT_BY_STUDENTID = "/studentreport/{studentID}";
+    public static final String STUDENT_REPORTS = "/studentreports";
+    public static final String STUDENT_REPORTS_BY_GUIDS = "/studentreportsbystudentid";
     public static final String SCHOOL_REPORT = "/schoolreport";
     public static final String STUDENT_CERTIFICATE = "/studentcertificate";
     public static final String STUDENT_CERTIFICATES = "/studentcertificates";

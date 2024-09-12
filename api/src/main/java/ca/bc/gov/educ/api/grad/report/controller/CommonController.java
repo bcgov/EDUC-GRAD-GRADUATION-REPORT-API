@@ -65,7 +65,7 @@ public class CommonController {
     public ResponseEntity<ApiResponseModel<GradStudentReports>> saveStudentReport(@RequestBody GradStudentReports gradStudentReports,@RequestParam(value = "isGraduated", required = false, defaultValue = "false") boolean isGraduated) {
         logger.debug("Save student Grad Report for Student ID: {}",gradStudentReports.getStudentID());
         validation.requiredField(gradStudentReports.getStudentID(), "Student ID");
-        return response.UPDATED(commonService.saveGradReports(gradStudentReports,isGraduated));
+        return response.UPDATED(commonService.saveGradStudentReports(gradStudentReports,isGraduated));
     }
     
     @GetMapping(EducGradReportApiConstants.STUDENT_REPORT)
@@ -78,6 +78,28 @@ public class CommonController {
     		@RequestParam(value = "documentStatusCode") String documentStatusCode) {
     	logger.debug("getStudentReportByType : ");
     	return commonService.getStudentReportByType(UUID.fromString(studentID),reportType,documentStatusCode);
+    }
+
+    @DeleteMapping(EducGradReportApiConstants.STUDENT_REPORT_BY_STUDENTID)
+    @PreAuthorize(PermissionsConstants.DELETE_STUDENT_REPORT)
+    @Operation(summary = "Delete Student Reports by Student ID and Report Type", description = "Delete Student Reports by Student ID and Report Type", tags = { "Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Integer> deleteStudentReportByType(
+            @RequestParam(value = "reportType") String reportType,
+            @PathVariable UUID studentID) {
+        logger.debug("deleteStudentReportByType");
+        return response.GET(commonService.deleteStudentReports(studentID, reportType));
+    }
+
+    @PostMapping(EducGradReportApiConstants.STUDENT_REPORTS)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Read Student Reports by Student ID and Report Type", description = "Read Student Reports by Student ID and Report Type", tags = { "Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Long> processStudentReports(
+            @RequestParam(value = "reportTypeCode") String reportTypeCode,
+            @RequestBody List<UUID> studentIDs) {
+        logger.debug("processStudentReports : ");
+        return response.GET(commonService.processStudentReports(studentIDs, reportTypeCode));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_CERTIFICATES)
@@ -374,5 +396,41 @@ public class CommonController {
         return commonService.getStudentCredentialByType(UUID.fromString(studentID),type);
     }
 
+    @PostMapping (EducGradReportApiConstants.REPORT_COUNT)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Get Reports Count by mincode and status", description = "Get Students Count by mincode and status", tags = { "Business" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Integer> getReportsCount(@RequestParam String reportType, @RequestBody List<String> reportContainerIds) {
+        if(StringUtils.containsAnyIgnoreCase(reportType, "ACHV")) {
+            return response.GET(commonService.countByStudentGuidsAndReportType(reportContainerIds, reportType));
+        } else {
+            return response.GET(commonService.countBySchoolOfRecordsAndReportType(reportContainerIds, reportType));
+        }
+    }
 
+    @PostMapping (EducGradReportApiConstants.STUDENT_REPORTS_BY_GUIDS)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Get Report Students Guids by mincode and type", description = "Get Report Students Guids by mincode and type", tags = { "Business" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<UUID>> getStudentIDsByIdentityAndReportType(@RequestParam String reportType, @RequestParam Integer rowCount, @RequestBody List<String> reportContainerIds) {
+        return response.GET(commonService.getStudentIDsByStudentGuidsAndReportType(reportContainerIds, reportType, rowCount));
+    }
+
+    @PostMapping (EducGradReportApiConstants.REPORT_ARCHIVE)
+    @PreAuthorize(PermissionsConstants.ARCHIVE_SCHOOL_REPORT)
+    @Operation(summary = "Archive Reports", description = "Archive Reports", tags = { "Business" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Integer> archiveReports(@RequestParam long batchId, @RequestParam String reportType, @RequestBody List<String> schoolOfRecords) {
+        logger.debug("Archive Reports for batch {}", batchId);
+        return response.GET(commonService.archiveSchoolReports(batchId, schoolOfRecords, reportType));
+    }
+
+    @PostMapping (EducGradReportApiConstants.REPORT_DELETE)
+    @PreAuthorize(PermissionsConstants.DELETE_STUDENT_REPORT)
+    @Operation(summary = "Delete Reports", description = "Delete Reports", tags = { "Business" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Integer> deleteReports(@RequestParam long batchId, @RequestParam String reportType, @RequestBody List<UUID> studentGuids) {
+        logger.debug("Delete Reports for batch {}", batchId);
+        return response.GET(commonService.deleteStudentReports(studentGuids, reportType));
+    }
 }
