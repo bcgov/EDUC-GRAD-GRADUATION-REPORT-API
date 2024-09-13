@@ -42,12 +42,11 @@ public class StudentSearchRequest implements Serializable {
     String localDownload;
 
     public boolean isEmpty() {
-        return  schoolOfRecords.isEmpty() &&
-                districts.isEmpty() &&
-                schoolCategoryCodes.isEmpty() &&
-                pens.isEmpty() &&
-                studentIDs.isEmpty() &&
-                programs.isEmpty();
+        return  (schoolOfRecords == null || schoolOfRecords.isEmpty()) &&
+                (districts == null || districts.isEmpty()) &&
+                (schoolCategoryCodes == null || schoolCategoryCodes.isEmpty()) &&
+                (pens == null || pens.isEmpty()) &&
+                (studentIDs == null || studentIDs.isEmpty());
     }
 
 }
