@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.grad.report.model.dto;
 
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,6 +42,7 @@ public class StudentSearchRequest implements Serializable {
     String activityCode;
     String localDownload;
 
+    @JsonIgnore
     public boolean isEmpty() {
         return  (schoolOfRecords == null || schoolOfRecords.isEmpty()) &&
                 (districts == null || districts.isEmpty()) &&
