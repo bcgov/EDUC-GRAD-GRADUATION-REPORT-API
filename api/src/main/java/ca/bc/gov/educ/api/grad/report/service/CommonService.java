@@ -402,7 +402,7 @@ public class CommonService extends BaseService {
                 School schObj = getSchool(rep.getSchoolOfRecord(), accessToken);
                 if (schObj != null) {
                     rep.setSchoolOfRecordName(schObj.getSchoolName());
-                    rep.setSchoolCategory(schObj.getSchoolCategory());
+                    rep.setSchoolCategory(schObj.getSchoolCategoryCode());
                 }
             } else if (rep.getSchoolOfRecord() != null) {
                 District distObj = getDistrict(rep.getSchoolOfRecord(), accessToken);
