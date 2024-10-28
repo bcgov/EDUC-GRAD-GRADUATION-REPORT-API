@@ -1391,7 +1391,7 @@ public class CommonServiceTest {
 
         District district = new District();
         district.setDistrictNumber("005");
-        district.setDistrictName("SOOKE");
+        district.setDisplayName("SOOKE");
 
         when(this.webClient.get()).thenReturn(this.requestHeadersUriMock);
         when(this.requestHeadersUriMock.uri(String.format(constants.getDistrictByMincodeUrl(),district.getDistrictNumber()))).thenReturn(this.requestHeadersMock);
