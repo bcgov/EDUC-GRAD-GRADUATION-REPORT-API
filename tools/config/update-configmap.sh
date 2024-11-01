@@ -23,7 +23,7 @@ FLB_CONFIG="[SERVICE]
    Exclude_Path *.gz,*.zip
    Parser docker
    Mem_Buf_Limit 20MB
-   Buffer_Max_Size 1MB
+   Buffer_Max_Size 4MB
 [FILTER]
    Name record_modifier
    Match *
@@ -53,12 +53,14 @@ PARSER_CONFIG="
 echo Creating config map "$APP_NAME"-config-map
 oc create -n "$GRAD_NAMESPACE"-"$envValue" configmap "$APP_NAME"-config-map \
  --from-literal=APP_LOG_LEVEL="$APP_LOG_LEVEL" \
- --from-literal=CONNECTION_TIMEOUT="60000" \
  --from-literal=GRAD_STUDENT_API="http://educ-grad-student-api.$GRAD_NAMESPACE-$envValue.svc.cluster.local:8080/" \
  --from-literal=GRAD_TRAX_API="http://educ-grad-trax-api.$GRAD_NAMESPACE-$envValue.svc.cluster.local:8080/" \
  --from-literal=KEYCLOAK_TOKEN_URL="https://soam-$envValue.apps.silver.devops.gov.bc.ca/" \
- --from-literal=MAXIMUM_POOL_SIZE="30" \
- --from-literal=MAX_LIFETIME="600000" \
+ --from-literal=CONNECTION_TIMEOUT='60000' \
+ --from-literal=MAXIMUM_POOL_SIZE='30' \
+ --from-literal=MIN_IDLE='30' \
+ --from-literal=IDLE_TIMEOUT='300000' \
+ --from-literal=MAX_LIFETIME='600000' \
  --dry-run=client -o yaml | oc apply -f -
 echo
 
