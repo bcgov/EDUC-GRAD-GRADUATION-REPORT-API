@@ -678,7 +678,7 @@ public class CommonService extends BaseService {
     private District getDistrict(String districtCode, String accessToken) {
         try {
             return webClient.get()
-                    .uri(String.format(constants.getDistrictByMincodeUrl(), districtCode))
+                    .uri(String.format(constants.getDistrictByDistrictNumberUrl(), districtCode))
                     .headers(h -> h.setBearerAuth(accessToken))
                     .retrieve()
                     .bodyToMono(District.class)

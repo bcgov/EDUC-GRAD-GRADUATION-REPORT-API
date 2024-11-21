@@ -82,7 +82,7 @@ endpoint:
   grad-trax-api:
     school-by-school-id:
       url: https://educ-grad-trax-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v2/trax/school-clob/%s
-    district-by-min-code:
+    district-by-dist-no:
       url: https://educ-grad-trax-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v2/trax/district?distNo=%s
 
 #Splunk LogHelper
