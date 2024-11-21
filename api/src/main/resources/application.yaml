@@ -96,10 +96,10 @@ endpoint:
     get-students-for-school-run: ${GRAD_STUDENT_API}api/v1/student/studentschoolreportdata
     student-for-special-grad-run-list: ${GRAD_STUDENT_API}api/v1/student/studentlistsearch
   grad-trax-api:
-    school-by-min-code:
+    school-by-school-id:
       url: ${GRAD_TRAX_API}api/v2/trax/school-clob/%s
-    district-by-min-code:
-      url: ${GRAD_TRAX_API}api/v2/trax/district/%s
+    district-by-dist-no:
+      url: ${GRAD_TRAX_API}api/v2/trax/district?distNo=%s
 
 #Splunk LogHelper
 splunk:
