@@ -660,7 +660,7 @@ public class CommonService extends BaseService {
     private School getSchool(String schoolId, String accessToken) {
         try {
             return webClient.get()
-                    .uri(String.format(constants.getSchoolByMincodeUrl(), schoolId))
+                    .uri(String.format(constants.getSchoolBySchoolIdUrl(), schoolId))
                     .headers(h -> {
                         h.setBearerAuth(accessToken);
                         h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
