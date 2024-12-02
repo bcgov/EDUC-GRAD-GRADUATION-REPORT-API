@@ -399,7 +399,7 @@ public class CommonService extends BaseService {
                 rep.setReportTypeLabel(types.getLabel());
 
             if (rep.getSchoolOfRecord() != null && rep.getSchoolOfRecord().length() > 3) {
-                School schObj = getSchool(rep.getSchoolOfRecord(), accessToken);
+                School schObj = getSchool(rep.getSchoolOfRecord());
                 if (schObj != null) {
                     rep.setSchoolOfRecordName(schObj.getSchoolName());
                     rep.setSchoolCategory(schObj.getSchoolCategoryCode());
@@ -657,14 +657,11 @@ public class CommonService extends BaseService {
     }
 
     @Generated
-    private School getSchool(String schoolId, String accessToken) {
+    public School getSchool(String schoolId) {
         try {
             return webClient.get()
                     .uri(String.format(constants.getSchoolBySchoolIdUrl(), schoolId))
-                    .headers(h -> {
-                        h.setBearerAuth(accessToken);
-                        h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
-                    })
+                    .headers(h -> h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID()))
                     .retrieve()
                     .bodyToMono(School.class)
                     .block();

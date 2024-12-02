@@ -1,51 +1,33 @@
 package ca.bc.gov.educ.api.grad.report.model.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Component
 public class School {
 
 	private String minCode;
 	private String schoolId;
-    private String schoolName;
-    private String districtName;
-    private String transcriptEligibility;    
-    private String certificateEligibility;
-    private String address1;
-    private String address2;    
-    private String city;    
-    private String provCode; 
-    private String countryCode;
-    private String postal;
+	private String schoolName;
+	private String districtName;
+	private String transcriptEligibility;
+	private String certificateEligibility;
+	private String address1;
+	private String address2;
+	private String city;
+	private String provCode;
+	private String countryCode;
+	private String postal;
 	private String openFlag;
 	private String schoolCategoryCode;
 	private String schoolCategoryLegacyCode;
-    
-	public String getSchoolName() {
-		return  schoolName != null ? schoolName.trim(): null;
-	}
-	
-	public String getDistrictName() {
-		return districtName != null ? districtName.trim(): null;
-	}
-	
-	public String getAddress1() {
-		return address1 != null ? address1.trim(): null;
-	}
-
-	public String getAddress2() {
-		return address2 != null ? address2.trim(): null;
-	}
-
-	public String getCity() {
-		return city != null ? city.trim(): null;
-	}
-	
-	public String getPostal() {
-		return postal != null ? postal.trim(): null;
-	}
 
 	@Override
 	public String toString() {
