@@ -3,7 +3,9 @@ package ca.bc.gov.educ.api.grad.report.service;
 import ca.bc.gov.educ.api.grad.report.filter.SchoolReportsSpecifications;
 import ca.bc.gov.educ.api.grad.report.model.dto.SchoolReports;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsLightEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.SchoolReportsTransformer;
+import ca.bc.gov.educ.api.grad.report.repository.SchoolReportsLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.SchoolReportsRepository;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -27,20 +29,22 @@ import java.util.UUID;
 @Service
 public class SchoolReportsService extends BaseService {
   SchoolReportsRepository schoolReportsRepository;
+  SchoolReportsLightRepository schoolReportsLightRepository;
   SchoolReportsTransformer schoolReportsTransformer;
   CommonService commonService;
 
   private static final Logger logger = LoggerFactory.getLogger(SchoolReportsService.class);
 
   @Autowired
-  public SchoolReportsService(SchoolReportsRepository schoolReportsRepository, SchoolReportsTransformer schoolReportsTransformer, CommonService commonService) {
+  public SchoolReportsService(SchoolReportsRepository schoolReportsRepository, SchoolReportsTransformer schoolReportsTransformer, CommonService commonService, SchoolReportsLightRepository schoolReportsLightRepository) {
     this.schoolReportsRepository = schoolReportsRepository;
     this.schoolReportsTransformer = schoolReportsTransformer;
     this.commonService = commonService;
+    this.schoolReportsLightRepository = schoolReportsLightRepository;
   }
 
-  private Specification<SchoolReportsEntity> buildSearchSpecification(UUID schoolOfRecordId, String reportTypeCode) {
-    Specification<SchoolReportsEntity> spec = Specification.where(null);
+  private <T> Specification<T> buildSearchSpecification(UUID schoolOfRecordId, String reportTypeCode) {
+    Specification<T> spec = Specification.where(null);
 
     if (schoolOfRecordId != null) {
       spec = spec.and(SchoolReportsSpecifications.hasSchoolOfRecordId(schoolOfRecordId));
@@ -51,10 +55,16 @@ public class SchoolReportsService extends BaseService {
     return spec;
   }
 
-  public List<SchoolReports> searchSchoolReports(UUID schoolOfRecordId, String reportTypeCode) {
-    Specification<SchoolReportsEntity> spec = buildSearchSpecification(schoolOfRecordId, reportTypeCode);
-    List<SchoolReportsEntity> entities = schoolReportsRepository.findAll(spec);
-    return schoolReportsTransformer.transformToDTO(entities);
+  public List<SchoolReports> searchSchoolReports(UUID schoolOfRecordId, String reportTypeCode, boolean isLight) {
+    if(isLight) {
+      Specification<SchoolReportsLightEntity> spec = buildSearchSpecification(schoolOfRecordId, reportTypeCode);
+      List<SchoolReportsLightEntity> entities = schoolReportsLightRepository.findAll(spec);
+      return schoolReportsTransformer.transformToLightDTO(entities);
+    } else {
+      Specification<SchoolReportsEntity> spec = buildSearchSpecification(schoolOfRecordId, reportTypeCode);
+      List<SchoolReportsEntity> entities = schoolReportsRepository.findAll(spec);
+      return schoolReportsTransformer.transformToDTO(entities);
+    }
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin
 @RestController
 @RequestMapping(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
 @OpenAPIDefinition(info = @Info(title = "API for School Reports endpoints.", description = "This API is for reading and updating endpoints.", version = "2"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_REPORT_DATA","UPDATE_GRAD_STUDENT_REPORT_DATA"})})
@@ -48,9 +47,10 @@ public class SchoolReportsController {
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public ResponseEntity<List<SchoolReports>> searchSchoolReports(
           @RequestParam(value = "schoolOfRecordId", required = false) UUID schoolOfRecordId,
-          @RequestParam(value = "reportTypeCode", required = false) String reportTypeCode) {
+          @RequestParam(value = "reportTypeCode", required = false) String reportTypeCode,
+          @RequestParam(value = "isLight", defaultValue = "false") boolean isLight) {
     logger.debug("searchSchoolReports: ");
-    List<SchoolReports> reports = service.searchSchoolReports(schoolOfRecordId, reportTypeCode);
+    List<SchoolReports> reports = service.searchSchoolReports(schoolOfRecordId, reportTypeCode, isLight);
     return ResponseEntity.ok(reports);
   }
 
@@ -77,14 +77,16 @@ public class SchoolReportsController {
     return service.updateSchoolReports(schoolOfRecordId, StringUtils.trim(reportTypeCode));
   }
 
-  @PostMapping (EducGradReportApiConstants.SCHOOL_REPORT)
+  @PostMapping ()
   @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
   @Operation(summary = "Save Student Reports", description = "Save Student Reports", tags = { "Reports" })
-  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
-  public ResponseEntity<ApiResponseModel<SchoolReports>> saveSchoolReport(@RequestBody SchoolReports schoolReports) {
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "OK"),
+          @ApiResponse(responseCode = "400", description = "Bad request")})
+  public SchoolReports saveSchoolReport(@RequestBody SchoolReports schoolReports) {
     logger.debug("Save {} School Report for {}",schoolReports.getReportTypeCode(),schoolReports.getSchoolOfRecord());
     validation.requiredField(schoolReports.getSchoolOfRecord(), "School of Record");
-    return response.UPDATED(service.saveSchoolReports(schoolReports));
+    return service.saveSchoolReports(schoolReports);
   }
 
   @DeleteMapping(EducGradReportApiConstants.DELETE_SCHOOL_REPORT)

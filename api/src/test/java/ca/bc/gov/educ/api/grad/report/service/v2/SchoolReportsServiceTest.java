@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.SchoolReports;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsLightEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.SchoolReportsTransformer;
+import ca.bc.gov.educ.api.grad.report.repository.SchoolReportsLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.SchoolReportsRepository;
 import ca.bc.gov.educ.api.grad.report.service.SchoolReportsService;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +28,8 @@ class SchoolReportsServiceTest {
 
   @Mock
   private SchoolReportsRepository schoolReportsRepository;
+  @Mock
+  private SchoolReportsLightRepository schoolReportsLightRepository;
   @Mock
   private SchoolReportsTransformer schoolReportsTransformer;
   @InjectMocks
@@ -48,12 +52,32 @@ class SchoolReportsServiceTest {
     when(schoolReportsRepository.findAll(any(Specification.class))).thenReturn(entities);
     when(schoolReportsTransformer.transformToDTO(entities)).thenReturn(dtos);
 
-    List<SchoolReports> result = schoolReportsService.searchSchoolReports(schoolOfRecordId, reportType);
+    List<SchoolReports> result = schoolReportsService.searchSchoolReports(schoolOfRecordId, reportType, false);
 
     assertNotNull(result);
     assertEquals(1, result.size());
     verify(schoolReportsRepository, times(1)).findAll(any(Specification.class));
     verify(schoolReportsTransformer, times(1)).transformToDTO(entities);
+  }
+
+  @Test
+  void testSearchSchoolReports_givenValidParams_returnsLightReports() {
+    UUID schoolOfRecordId = UUID.randomUUID();
+    String reportType = "type";
+    SchoolReportsLightEntity entity = new SchoolReportsLightEntity();
+    List<SchoolReportsLightEntity> entities = Collections.singletonList(entity);
+    SchoolReports dto = new SchoolReports();
+    List<SchoolReports> dtos = Collections.singletonList(dto);
+
+    when(schoolReportsLightRepository.findAll(any(Specification.class))).thenReturn(entities);
+    when(schoolReportsTransformer.transformToLightDTO(entities)).thenReturn(dtos);
+
+    List<SchoolReports> result = schoolReportsService.searchSchoolReports(schoolOfRecordId, reportType, true);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(schoolReportsLightRepository, times(1)).findAll(any(Specification.class));
+    verify(schoolReportsTransformer, times(1)).transformToLightDTO(entities);
   }
 
   @Test
@@ -64,7 +88,7 @@ class SchoolReportsServiceTest {
     when(schoolReportsRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
     when(schoolReportsTransformer.transformToDTO(anyList())).thenReturn(Collections.emptyList());
 
-    List<SchoolReports> result = schoolReportsService.searchSchoolReports(schoolOfRecordId, reportTypeCode);
+    List<SchoolReports> result = schoolReportsService.searchSchoolReports(schoolOfRecordId, reportTypeCode, false);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
