@@ -22,6 +22,7 @@ public class EducGradReportApiConstants {
     public static final String API_ROOT_MAPPING = "";
     public static final String API_VERSION = "v1";
     public static final String GRAD_REPORT_API_ROOT_MAPPING = "/api/" + API_VERSION + "/graduationreports";
+    public static final String GRAD_REPORT_API_V2_ROOT_MAPPING = "/api/v2/graduationreports";
 
     public static final String REPORT_COUNT = "/count";
     public static final String REPORT_ARCHIVE = "/archive";
@@ -61,6 +62,11 @@ public class EducGradReportApiConstants {
 
     public static final String STUDENT_CREDENTIAL_BUSINESS = "business/studentcredential/{studentID}/{type}";
 
+    public static final String SCHOOL_REPORTS_ROOT_MAPPING = GRAD_REPORT_API_V2_ROOT_MAPPING + "/schoolreports";
+    public static final String UPDATE_SCHOOL_REPORTS_UPDATE_DETAILS = "/{schoolOfRecordId}/{reportTypeCode}/reset-update-user";
+    public static final String DELETE_SCHOOL_REPORT = "/{schoolOfRecordId}/{reportTypeCode}";
+    public static final String GET_SCHOOL_REPORT_DATA = "/{schoolOfRecordId}/{reportTypeCode}/report-data";
+
     public static final String SCHOOL_REPORTS_BY_MINCODE = "/schoolreport/{mincode}";
     public static final String SCHOOL_REPORTS_BY_REPORT_TYPE = "/schoolreport/type/{reportType}";
 
@@ -83,6 +89,8 @@ public class EducGradReportApiConstants {
     
     public static final String GET_ALL_PROGRAM_CERTIFICATES_MAPPING = "/programcertificates";
     public static final String GET_PROGRAM_TRANSCRIPTS_MAPPING = "/programtranscripts";
+
+    public static final String SEARCH_MAPPING = "/search";
 
     //Default Attribute value constants
     public static final String DEFAULT_CREATED_BY = "API_GRAD_REPORT";

@@ -29,25 +29,25 @@ public class SchoolReportsTransformer {
         return modelMapper.map(cae, SchoolReports.class);
     }
 
-	public List<SchoolReports> transformToDTO (Iterable<SchoolReportsEntity> schoolReportssEntities) {
+	public List<SchoolReports> transformToDTO (Iterable<SchoolReportsEntity> schoolReportsEntities) {
 		List<SchoolReports> schoolReportssList = new ArrayList<>();
-        for (SchoolReportsEntity schoolReportssEntity : schoolReportssEntities) {
-        	SchoolReports schoolReportss = modelMapper.map(schoolReportssEntity, SchoolReports.class);
-        	schoolReportssList.add(schoolReportss);
+        for (SchoolReportsEntity schoolReportsEntity : schoolReportsEntities) {
+        	SchoolReports schoolReports = modelMapper.map(schoolReportsEntity, SchoolReports.class);
+        	schoolReportssList.add(schoolReports);
         }
         return schoolReportssList;
     }
 
-    public List<SchoolReports> transformToLightDTO (Iterable<SchoolReportsLightEntity> schoolReportssEntities) {
+    public List<SchoolReports> transformToLightDTO (Iterable<SchoolReportsLightEntity> schoolReportsEntities) {
         List<SchoolReports> schoolReportssList = new ArrayList<>();
-        for (SchoolReportsLightEntity schoolReportssEntity : schoolReportssEntities) {
-            SchoolReports schoolReportss = modelMapper.map(schoolReportssEntity, SchoolReports.class);
-            schoolReportssList.add(schoolReportss);
+        for (SchoolReportsLightEntity schoolReportsEntity : schoolReportsEntities) {
+            SchoolReports schoolReports = modelMapper.map(schoolReportsEntity, SchoolReports.class);
+            schoolReportssList.add(schoolReports);
         }
         return schoolReportssList;
     }
 
-    public SchoolReportsEntity transformToEntity(SchoolReports schoolReportss) {
-        return modelMapper.map(schoolReportss, SchoolReportsEntity.class);
+    public SchoolReportsEntity transformToEntity(SchoolReports schoolReports) {
+        return modelMapper.map(schoolReports, SchoolReportsEntity.class);
     }
 }
