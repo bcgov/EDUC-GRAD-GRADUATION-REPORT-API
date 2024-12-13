@@ -21,8 +21,6 @@ public interface SchoolReportsRepository extends JpaRepository<SchoolReportsEnti
 
 	Optional<SchoolReportsEntity> findBySchoolOfRecordAndReportTypeCodeOrderBySchoolOfRecord(String schoolOfRecord, String reportTypeCode);
 
-	Optional<SchoolReportsEntity> findBySchoolOfRecordIdAndReportTypeCode(UUID schoolOfRecordId, String reportTypeCode);
-
 	@Query("select count(*) from SchoolReportsLightEntity c where c.schoolOfRecord IN (:schoolOfRecords) and c.reportTypeCode=:reportType")
 	Integer countBySchoolOfRecordsAndReportType(List<String> schoolOfRecords, String reportType);
 

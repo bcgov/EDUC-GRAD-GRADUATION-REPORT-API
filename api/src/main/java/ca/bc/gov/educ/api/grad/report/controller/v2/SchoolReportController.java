@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.controller.v2;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.SchoolReports;
-import ca.bc.gov.educ.api.grad.report.service.SchoolReportsService;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.SchoolReport;
+import ca.bc.gov.educ.api.grad.report.service.v2.SchoolReportService;
 import ca.bc.gov.educ.api.grad.report.util.*;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,15 +25,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
 @OpenAPIDefinition(info = @Info(title = "API for School Reports endpoints.", description = "This API is for reading and updating endpoints.", version = "2"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_REPORT_DATA","UPDATE_GRAD_STUDENT_REPORT_DATA"})})
-public class SchoolReportsController {
-  private static final Logger logger = LoggerFactory.getLogger(SchoolReportsController.class);
+public class SchoolReportController {
+  private static final Logger logger = LoggerFactory.getLogger(SchoolReportController.class);
 
-  SchoolReportsService service;
+  SchoolReportService service;
   GradValidation validation;
   ResponseHelper response;
 
   @Autowired
-  public SchoolReportsController(SchoolReportsService service, GradValidation validation, ResponseHelper response) {
+  public SchoolReportController(SchoolReportService service, GradValidation validation, ResponseHelper response) {
       this.service = service;
       this.validation = validation;
       this.response = response;
@@ -45,12 +45,12 @@ public class SchoolReportsController {
   @ApiResponses(value = {
           @ApiResponse(responseCode = "200", description = "OK"),
           @ApiResponse(responseCode = "400", description = "Bad request")})
-  public ResponseEntity<List<SchoolReports>> searchSchoolReports(
+  public ResponseEntity<List<SchoolReport>> searchSchoolReports(
           @RequestParam(value = "schoolOfRecordId", required = false) UUID schoolOfRecordId,
           @RequestParam(value = "reportTypeCode", required = false) String reportTypeCode,
           @RequestParam(value = "isLight", defaultValue = "false") boolean isLight) {
     logger.debug("searchSchoolReports: ");
-    List<SchoolReports> reports = service.searchSchoolReports(schoolOfRecordId, reportTypeCode, isLight);
+    List<SchoolReport> reports = service.searchSchoolReports(schoolOfRecordId, reportTypeCode, isLight);
     return ResponseEntity.ok(reports);
   }
 
@@ -62,7 +62,8 @@ public class SchoolReportsController {
           @RequestParam(value = "schoolOfRecordId") UUID schoolOfRecordId,
           @RequestParam(value = "reportTypeCode") String reportTypeCode) {
     logger.debug("getSchoolReportByType v2: ");
-    return service.getSchoolReportBySchoolOfRecordIdAndReportType(schoolOfRecordId, reportTypeCode);
+    var stream = service.getSchoolReportBySchoolOfRecordIdAndReportType(schoolOfRecordId, reportTypeCode);
+    return ResponseEntity.ok(stream);
   }
 
   @PostMapping(EducGradReportApiConstants.UPDATE_SCHOOL_REPORTS_UPDATE_DETAILS)
@@ -74,7 +75,8 @@ public class SchoolReportsController {
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public ResponseEntity<Void> updateSchoolReport(@PathVariable @NotNull UUID schoolOfRecordId, @PathVariable @NotNull String reportTypeCode) {
     logger.debug("updateSchoolReport v2: ");
-    return service.updateSchoolReports(schoolOfRecordId, StringUtils.trim(reportTypeCode));
+    service.updateSchoolReports(schoolOfRecordId, StringUtils.trim(reportTypeCode));
+    return ResponseEntity.noContent().build();
   }
 
   @PostMapping ()
@@ -83,9 +85,9 @@ public class SchoolReportsController {
   @ApiResponses(value = {
           @ApiResponse(responseCode = "200", description = "OK"),
           @ApiResponse(responseCode = "400", description = "Bad request")})
-  public SchoolReports saveSchoolReport(@RequestBody SchoolReports schoolReports) {
-    logger.debug("Save {} School Report for {}",schoolReports.getReportTypeCode(),schoolReports.getSchoolOfRecord());
-    validation.requiredField(schoolReports.getSchoolOfRecord(), "School of Record");
+  public SchoolReport saveSchoolReport(@RequestBody SchoolReport schoolReports) {
+    logger.debug("Save {} School Report for {}",schoolReports.getReportTypeCode(),schoolReports.getSchoolOfRecordId());
+    validation.requiredField(schoolReports.getSchoolOfRecordId(), "School of Record Id");
     return service.saveSchoolReports(schoolReports);
   }
 
@@ -94,11 +96,11 @@ public class SchoolReportsController {
   @Operation(summary = "Delete school report: ", description = "Delete a specific school report by schoolOfRecordId and reportTypeCode", tags = {"Credential"})
   @ApiResponses(value = {
           @ApiResponse(responseCode = "204", description = "Deleted successfully"),
-          @ApiResponse(responseCode = "404", description = "Report not found"),
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public ResponseEntity<Void> deleteSchoolReport(@PathVariable @NotNull UUID schoolOfRecordId, @PathVariable @NotNull String reportTypeCode) {
     logger.debug("deleteSchoolReport: ");
-    return service.deleteSchoolReport(schoolOfRecordId, StringUtils.trim(reportTypeCode));
+    service.deleteSchoolReport(schoolOfRecordId, StringUtils.trim(reportTypeCode));
+    return ResponseEntity.noContent().build();
   }
 
   @DeleteMapping
@@ -109,6 +111,7 @@ public class SchoolReportsController {
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public ResponseEntity<Void> deleteSchoolReportsByType(@RequestParam @NotNull String reportTypeCode) {
     logger.debug("deleteSchoolReportsByType: ");
-    return service.deleteAllSchoolReportsByType(StringUtils.trim(reportTypeCode));
+    service.deleteAllSchoolReportsByType(StringUtils.trim(reportTypeCode));
+    return ResponseEntity.noContent().build();
   }
 }

@@ -1,10 +1,10 @@
 package ca.bc.gov.educ.api.grad.report.controller.v2;
 
 import ca.bc.gov.educ.api.grad.report.EducGradReportApiApplication;
-import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsEntity;
-import ca.bc.gov.educ.api.grad.report.model.dto.School;
-import ca.bc.gov.educ.api.grad.report.repository.SchoolReportsRepository;
-import ca.bc.gov.educ.api.grad.report.service.CommonService;
+import ca.bc.gov.educ.api.grad.report.model.entity.v2.SchoolReportEntity;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
+import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
+import ca.bc.gov.educ.api.grad.report.service.v2.InstituteService;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -42,10 +41,10 @@ class SchoolReportsControllerTest {
   private MockMvc mockMvc;
 
   @Autowired
-  private SchoolReportsRepository schoolReportsRepository;
+  private SchoolReportRepository schoolReportsRepository;
 
   @MockBean
-  private CommonService commonService;
+  private InstituteService instituteService;
 
   @BeforeEach
   void setUp() {
@@ -69,7 +68,9 @@ class SchoolReportsControllerTest {
   void testSearchSchoolReports_givenParams_shouldReturnAllContent() throws Exception {
     UUID schoolOfRecordId = UUID.randomUUID();
     String reportTypeCode = "type";
-    schoolReportsRepository.save(SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).schoolOfRecord("123456").build());
+    schoolReportsRepository.save(SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).build());
+
+    when(instituteService.getSchool(schoolOfRecordId)).thenReturn(School.builder().schoolId(String.valueOf(schoolOfRecordId)).displayName("School1").build());
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
@@ -82,9 +83,11 @@ class SchoolReportsControllerTest {
   void testSearchSchoolReports_givenSchoolOfRecordIdParams_shouldReturnCorrectRecord() throws Exception {
     UUID schoolOfRecordId = UUID.randomUUID();
     String reportTypeCode = "type";
-    SchoolReportsEntity schoolReportsEntity1 = SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).schoolOfRecord("123456").build();
-    SchoolReportsEntity schoolReportsEntity2 = SchoolReportsEntity.builder().schoolOfRecordId(UUID.randomUUID()).reportTypeCode(reportTypeCode).schoolOfRecord("123455").build();
+    SchoolReportEntity schoolReportsEntity1 = SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).build();
+    SchoolReportEntity schoolReportsEntity2 = SchoolReportEntity.builder().schoolOfRecordId(UUID.randomUUID()).reportTypeCode(reportTypeCode).build();
     schoolReportsRepository.saveAll(List.of(schoolReportsEntity1, schoolReportsEntity2));
+
+    when(instituteService.getSchool(schoolOfRecordId)).thenReturn(School.builder().schoolId(String.valueOf(schoolOfRecordId)).displayName("School1").build());
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
@@ -100,9 +103,11 @@ class SchoolReportsControllerTest {
   void testSearchSchoolReports_givenReportTypeParams_shouldReturnCorrectRecord() throws Exception {
     UUID schoolOfRecordId = UUID.randomUUID();
     String reportTypeCode = "type";
-    SchoolReportsEntity schoolReportsEntity1 = SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).schoolOfRecord("123456").build();
-    SchoolReportsEntity schoolReportsEntity2 = SchoolReportsEntity.builder().schoolOfRecordId(UUID.randomUUID()).reportTypeCode("TEST_TYPE").schoolOfRecord("123455").build();
+    SchoolReportEntity schoolReportsEntity1 = SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).build();
+    SchoolReportEntity schoolReportsEntity2 = SchoolReportEntity.builder().schoolOfRecordId(UUID.randomUUID()).reportTypeCode("TEST_TYPE").build();
     schoolReportsRepository.saveAll(List.of(schoolReportsEntity1, schoolReportsEntity2));
+
+    when(instituteService.getSchool(schoolOfRecordId)).thenReturn(School.builder().schoolId(String.valueOf(schoolOfRecordId)).displayName("School1").build());
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
@@ -118,9 +123,9 @@ class SchoolReportsControllerTest {
   void testSearchSchoolReports_givenAllParams_shouldReturnCorrectRecord() throws Exception {
     UUID schoolOfRecordId = UUID.randomUUID();
     String reportTypeCode = "type";
-    SchoolReportsEntity schoolReportsEntity1 = SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).schoolOfRecord("123456").build();
-    SchoolReportsEntity schoolReportsEntity2 = SchoolReportsEntity.builder().schoolOfRecordId(UUID.randomUUID()).reportTypeCode("TEST_TYPE").schoolOfRecord("123455").build();
-    SchoolReportsEntity schoolReportsEntity3 = SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode("TEST_TYPE").schoolOfRecord("123455").build();
+    SchoolReportEntity schoolReportsEntity1 = SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).build();
+    SchoolReportEntity schoolReportsEntity2 = SchoolReportEntity.builder().schoolOfRecordId(UUID.randomUUID()).reportTypeCode("TEST_TYPE").build();
+    SchoolReportEntity schoolReportsEntity3 = SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode("TEST_TYPE").build();
     schoolReportsRepository.saveAll(List.of(schoolReportsEntity1, schoolReportsEntity2, schoolReportsEntity3));
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
@@ -141,12 +146,12 @@ class SchoolReportsControllerTest {
     String expectedReportContent = "Some fake report";
     String base64EncodedReport = Base64.encodeBase64String(expectedReportContent.getBytes(StandardCharsets.US_ASCII));
 
-    SchoolReportsEntity schoolReportsEntity1 = SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).report(base64EncodedReport).schoolOfRecord("123456").build();
-    SchoolReportsEntity schoolReportsEntity2 = SchoolReportsEntity.builder().schoolOfRecordId(UUID.randomUUID()).reportTypeCode("TEST_TYPE").schoolOfRecord("123455").build();
-    SchoolReportsEntity schoolReportsEntity3 = SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode("TEST_TYPE").schoolOfRecord("123455").build();
+    SchoolReportEntity schoolReportsEntity1 = SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).report(base64EncodedReport).build();
+    SchoolReportEntity schoolReportsEntity2 = SchoolReportEntity.builder().schoolOfRecordId(UUID.randomUUID()).reportTypeCode("TEST_TYPE").build();
+    SchoolReportEntity schoolReportsEntity3 = SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode("TEST_TYPE").build();
     schoolReportsRepository.saveAll(List.of(schoolReportsEntity1, schoolReportsEntity2, schoolReportsEntity3));
 
-    when(commonService.getSchool(anyString())).thenReturn(School.builder().minCode("123456").build());
+    when(instituteService.getSchool(schoolOfRecordId)).thenReturn(School.builder().mincode("123456").build());
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
@@ -167,7 +172,7 @@ class SchoolReportsControllerTest {
   void testUpdateSchoolReport_givenValidPayload_ReturnOkAndUpdateDetailsUpdated() throws Exception {
     UUID schoolOfRecordId = UUID.randomUUID();
     String reportTypeCode = "type";
-    SchoolReportsEntity schoolReportsEntity1 = SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).schoolOfRecord("123456").build();
+    SchoolReportEntity schoolReportsEntity1 = SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).build();
     schoolReportsRepository.save(schoolReportsEntity1);
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
@@ -206,8 +211,8 @@ class SchoolReportsControllerTest {
   void testDeleteSchoolReport_givenValidPayload_SchoolReportIsDeleted() throws Exception {
     UUID schoolOfRecordId = UUID.randomUUID();
     String reportTypeCode = "type";
-    schoolReportsRepository.save(SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).schoolOfRecord("123456").build());
-    schoolReportsRepository.save(SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode("TEST_TYPE").schoolOfRecord("123456").build());
+    schoolReportsRepository.save(SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).build());
+    schoolReportsRepository.save(SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode("TEST_TYPE").build());
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
@@ -220,21 +225,11 @@ class SchoolReportsControllerTest {
   }
 
   @Test
-  void testDeleteSchoolReport_givenNoRecordToDelete_ReturnBadRequest() throws Exception {
-    final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
-    final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(delete(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + "/" + UUID.randomUUID() + "/type")
-                    .with(mockAuthority)
-                    .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
-  }
-
-  @Test
   void testDeleteSchoolReportsByType_givenValidPayload_SchoolReportIsDeleted() throws Exception {
     UUID schoolOfRecordId = UUID.randomUUID();
     String reportTypeCode = "type";
-    schoolReportsRepository.save(SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).schoolOfRecord("123456").build());
-    schoolReportsRepository.save(SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode("TEST_TYPE").schoolOfRecord("123456").build());
+    schoolReportsRepository.save(SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).build());
+    schoolReportsRepository.save(SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode("TEST_TYPE").build());
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
@@ -261,7 +256,7 @@ class SchoolReportsControllerTest {
   @Test
   void testDeleteSchoolReportsByType_givenNoneToDelete_ReturnNoContent() throws Exception {
     UUID schoolOfRecordId = UUID.randomUUID();
-    schoolReportsRepository.save(SchoolReportsEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode("TEST_TYPE").schoolOfRecord("123456").build());
+    schoolReportsRepository.save(SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode("TEST_TYPE").build());
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);

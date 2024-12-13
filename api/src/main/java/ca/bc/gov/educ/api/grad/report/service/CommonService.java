@@ -660,7 +660,7 @@ public class CommonService extends BaseService {
     public School getSchool(String schoolId) {
         try {
             return webClient.get()
-                    .uri(String.format(constants.getSchoolBySchoolIdUrl(), schoolId))
+                    .uri(String.format(constants.getSchoolClobBySchoolIdUrl(), schoolId))
                     .headers(h -> h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID()))
                     .retrieve()
                     .bodyToMono(School.class)
