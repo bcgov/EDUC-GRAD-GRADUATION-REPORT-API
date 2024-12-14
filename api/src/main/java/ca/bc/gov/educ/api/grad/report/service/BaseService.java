@@ -33,10 +33,10 @@ public abstract class BaseService {
     EntityManager entityManager;
 
     @Autowired
-    EducGradReportApiConstants constants;
+    public EducGradReportApiConstants constants;
 
     @Autowired
-    WebClient webClient;
+    public WebClient webClient;
 
     private TokenResponseCached tokenResponseCached;
 

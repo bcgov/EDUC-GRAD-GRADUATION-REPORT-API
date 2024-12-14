@@ -1,13 +1,10 @@
-package ca.bc.gov.educ.api.grad.report.model.dto;
+package ca.bc.gov.educ.api.grad.report.model.dto.v2;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.Address;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -16,12 +13,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Component
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class StudentSearchRequest implements Serializable {
-    private List<String> schoolOfRecords = new ArrayList<>();
+    private List<UUID> schoolOfRecordIds = new ArrayList<>();
     private List<String> districts = new ArrayList<>();
     private List<String> schoolCategoryCodes = new ArrayList<>();
     private List<String> pens = new ArrayList<>();
@@ -44,7 +37,7 @@ public class StudentSearchRequest implements Serializable {
 
     @JsonIgnore
     public boolean isEmpty() {
-        return  (schoolOfRecords == null || schoolOfRecords.isEmpty()) &&
+        return  (schoolOfRecordIds == null || schoolOfRecordIds.isEmpty()) &&
                 (districts == null || districts.isEmpty()) &&
                 (schoolCategoryCodes == null || schoolCategoryCodes.isEmpty()) &&
                 (pens == null || pens.isEmpty()) &&

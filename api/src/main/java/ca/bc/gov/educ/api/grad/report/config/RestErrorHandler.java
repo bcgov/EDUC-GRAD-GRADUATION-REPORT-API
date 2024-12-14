@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.config;
 
+import ca.bc.gov.educ.api.grad.report.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.grad.report.exception.GradBusinessRuleException;
 import ca.bc.gov.educ.api.grad.report.util.ApiResponseMessage;
 import ca.bc.gov.educ.api.grad.report.util.ApiResponseModel;
@@ -38,11 +39,15 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(reponse, HttpStatus.UNPROCESSABLE_ENTITY);
 	}
 
-	@ExceptionHandler(value = { JpaObjectRetrievalFailureException.class, DataRetrievalFailureException.class })
+	@ExceptionHandler(value = { JpaObjectRetrievalFailureException.class, DataRetrievalFailureException.class, EntityNotFoundException.class })
 	protected ResponseEntity<Object> handleEntityNotFound(RuntimeException ex, WebRequest request) {
-		log.error("JPA ERROR IS: " + ex.getClass().getName(), ex);
+		// no need to log EntityNotFoundExceptions as error
+		// it is used to denote NOT FOUND and is normal part of operations
+		if(!(ex instanceof EntityNotFoundException)) {
+			log.error("JPA ERROR IS: " + ex.getClass().getName(), ex);
+		}
 		validation.clear();
-		return new ResponseEntity<>(ApiResponseModel.ERROR(null, ex.getLocalizedMessage()), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(ApiResponseModel.ERROR(null, ex.getLocalizedMessage()), HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(value = { AccessDeniedException.class })
