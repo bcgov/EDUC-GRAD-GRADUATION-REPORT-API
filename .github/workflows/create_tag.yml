@@ -11,7 +11,7 @@ env:
   # 🖊️ EDIT to specify custom tags for the container image, or default tags will be generated below.
   IMAGE_TAGS: ""
 
-  REPO_NAME: "educ-grad-graduation-report-api",
+  REPO_NAME: "educ-grad-graduation-report-api"
   BRANCH: "master"
   NAMESPACE: ${{ vars.GRAD_NAMESPACE }}
 

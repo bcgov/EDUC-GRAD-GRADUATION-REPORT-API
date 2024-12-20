@@ -6,7 +6,7 @@ labels:
 metadata:
   name: "${REPO_NAME}-deploy-template"
 objects:
-  - apiVersion: apps/v2
+  - apiVersion: apps/v1
     kind: Deployment
     metadata:
       labels:
