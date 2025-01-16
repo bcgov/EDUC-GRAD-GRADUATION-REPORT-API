@@ -6,27 +6,20 @@ import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.reactive.function.BodyInserter;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,31 +31,28 @@ import static org.mockito.MockitoAnnotations.openMocks;
 @ActiveProfiles("test")
 public class CommonServiceTest {
 
-    @Autowired EducGradReportApiConstants constants;
     @Autowired
     CommonService commonService;
+
     @MockBean
     GradStudentCertificatesRepository gradStudentCertificatesRepository;
-    @MockBean GradStudentTranscriptsRepository gradStudentTranscriptsRepository;
-    @MockBean
-    SchoolReportRepository schoolReportsRepository;
-    @MockBean WebClient webClient;
 
-    @Mock
-    WebClient.RequestHeadersSpec requestHeadersMock;
-    @Mock WebClient.RequestHeadersUriSpec requestHeadersUriMock;
-    @Mock WebClient.ResponseSpec responseMock;
-    @Mock WebClient.RequestBodySpec requestBodyMock;
-    @Mock WebClient.RequestBodyUriSpec requestBodyUriMock;
+    @MockBean
+    GradStudentTranscriptsRepository gradStudentTranscriptsRepository;
+
+    @MockBean
+    RESTService restService;
+
+    @MockBean
+    GradStudentReportsRepository gradStudentReportsRepository;
+
+    @MockBean
+    SchoolReportRepository schoolReportRepository;
+
 
     @Before
     public void setUp() {
         openMocks(this);
-    }
-
-    @After
-    public void tearDown() {
-
     }
 
     @Test
@@ -85,12 +75,7 @@ public class CommonServiceTest {
         List<UUID> studentList = new ArrayList<>();
         studentList.add(new UUID(1,1));
 
-        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
-        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
-        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
-        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+        when(this.restService.post(any(), any(), any())).thenReturn(res);
 
         Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
@@ -102,7 +87,7 @@ public class CommonServiceTest {
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
-        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),false,null);
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),false);
         assertThat(result).isNotEmpty();
 
     }
@@ -126,12 +111,7 @@ public class CommonServiceTest {
         List<UUID> studentList = new ArrayList<>();
         studentList.add(new UUID(1,1));
 
-        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
-        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
-        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
-        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+        when(this.restService.post(any(), any(), any())).thenReturn(res);
 
         StudentSearchRequest searchRequest = new StudentSearchRequest();
         searchRequest.setPens(new ArrayList<>());
@@ -147,12 +127,12 @@ public class CommonServiceTest {
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
-        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun("OC",searchRequest,true,"accessToken");
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun("OC",searchRequest,true);
         assertThat(result).isNotEmpty();
 
         searchRequest.setActivityCode("USERDIST");
 
-        result = commonService.getStudentCredentialsForUserRequestDisRun("OT",searchRequest,false,"accessToken");
+        result = commonService.getStudentCredentialsForUserRequestDisRun("OT",searchRequest,false);
         assertThat(result).isNotEmpty();
 
     }
@@ -177,12 +157,7 @@ public class CommonServiceTest {
         List<UUID> studentList = new ArrayList<>();
         studentList.add(new UUID(1,1));
 
-        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
-        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
-        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
-        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+        when(this.restService.post(any(), any(), any())).thenReturn(res);
 
         Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
@@ -190,7 +165,7 @@ public class CommonServiceTest {
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
-        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),true,null);
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,new StudentSearchRequest(),true);
         assertThat(result).isNotEmpty();
 
     }
@@ -213,14 +188,9 @@ public class CommonServiceTest {
         studentList.add(rec.getStudentID());
         res.setStudentIDs(studentList);
 
-        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
-        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
-        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
-        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+        when(this.restService.post(any(), any(), any())).thenReturn(res);
 
-        List<UUID> result = commonService.getStudentsForSpecialGradRun(req,"accessToken");
+        List<UUID> result = commonService.getStudentsForSpecialGradRun(req);
         assertThat(result).hasSize(1);
 
     }
@@ -250,16 +220,11 @@ public class CommonServiceTest {
         penList.add("13123111");
         req.setPens(penList);
 
-        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
-        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
-        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
-        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+        when(this.restService.post(any(), any(), any())).thenReturn(res);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
 
-        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false,null);
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false);
         assertThat(result).hasSize(1);
 
     }
@@ -289,16 +254,11 @@ public class CommonServiceTest {
         penList.add("13123111");
         req.setPens(penList);
 
-        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
-        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
-        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
-        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+        when(this.restService.post(any(), any(), any())).thenReturn(res);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
 
-        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true,null);
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true);
         assertThat(result).hasSize(1);
 
     }
@@ -329,16 +289,11 @@ public class CommonServiceTest {
         req.setPrograms(pgList);
         req.setPens(new ArrayList<>());
 
-        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
-        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
-        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
-        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+        when(this.restService.post(any(), any(), any())).thenReturn(res);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
-        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false,null);
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false);
         assertThat(result).hasSize(1);
 
     }
@@ -369,17 +324,35 @@ public class CommonServiceTest {
         req.setPrograms(pgList);
         req.setPens(new ArrayList<>());
 
-        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.uri(constants.getGradStudentApiStudentForSpcGradListUrl())).thenReturn(this.requestBodyUriMock);
-        when(this.requestBodyUriMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
-        when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
-        when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
-        when(this.responseMock.bodyToMono(GraduationStudentRecordSearchResult.class)).thenReturn(Mono.just(res));
+        when(this.restService.post(any(), any(), any())).thenReturn(res);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
 
-        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true,null);
+        List<StudentCredentialDistribution> result = commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true);
         assertThat(result).hasSize(1);
+    }
 
+    @Test
+    public void testCountByStudentGuidsAndReportType() {
+        UUID uuid = UUID.randomUUID();
+        Mockito.when(gradStudentReportsRepository.countByStudentGuidsAndReportType(List.of(uuid), "reportType")).thenReturn(1);
+        Integer count = commonService.countByStudentGuidsAndReportType(List.of(uuid), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
+
+        Mockito.when(gradStudentReportsRepository.countByReportType("reportType")).thenReturn(1);
+        count = commonService.countByStudentGuidsAndReportType(List.of(), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
+    }
+
+    @Test
+    public void testCountBySchoolOfRecordsAndReportType() {
+        UUID schoolId = UUID.randomUUID();
+        Mockito.when(schoolReportRepository.countBySchoolOfRecordIdInAndReportTypeCode(List.of(schoolId), "reportType")).thenReturn(1);
+        Integer count = commonService.countBySchoolOfRecordsAndReportType(List.of(schoolId), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
+
+        Mockito.when(schoolReportRepository.countByReportTypeCode("reportType")).thenReturn(1);
+        count = commonService.countBySchoolOfRecordsAndReportType(List.of(), "reportType");
+        assertThat(count).isNotNull().isEqualTo(1);
     }
 }

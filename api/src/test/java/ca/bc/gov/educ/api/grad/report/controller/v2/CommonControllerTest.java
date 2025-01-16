@@ -48,9 +48,9 @@ public class CommonControllerTest {
         final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
-        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false,"accessToken")).thenReturn(list);
-        commonController.getStudentCredentialsForUserRequestDisRun(credentialType,req,"accessToken");
-        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,false,"accessToken");
+        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false)).thenReturn(list);
+        commonController.getStudentCredentialsForUserRequestDisRun(credentialType,req);
+        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,false);
     }
 
     @Test
@@ -59,15 +59,37 @@ public class CommonControllerTest {
         final UUID studentID = UUID.randomUUID();
         final String credentialType = "E";
         final StudentSearchRequest req = new StudentSearchRequest();
-        req.setDistricts(List.of("005"));
+        req.setDistrictIds(List.of(UUID.randomUUID()));
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
         final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
-        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true,"accessToken")).thenReturn(list);
-        commonController.getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(credentialType,req,"accessToken");
-        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,true,"accessToken");
+        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true)).thenReturn(list);
+        commonController.getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(credentialType,req);
+        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,true);
+    }
+
+    @Test
+    public void testGetReportsCount_givenACHV() {
+        final String reportType = "ACHV";
+        final List<UUID> reportContainerIds = List.of(UUID.randomUUID(), UUID.randomUUID());
+        final Integer expectedCount = 5;
+
+        Mockito.when(commonService.countByStudentGuidsAndReportType(reportContainerIds, reportType)).thenReturn(expectedCount);
+        commonController.getReportsCount(reportType, reportContainerIds);
+        Mockito.verify(commonService).countByStudentGuidsAndReportType(reportContainerIds, reportType);
+    }
+
+    @Test
+    public void testGetReportsCount_givenNotACHV() {
+        final String reportType = "TEST";
+        final List<UUID> reportContainerIds = List.of(UUID.randomUUID(), UUID.randomUUID());
+        final Integer expectedCount = 5;
+
+        Mockito.when(commonService.countBySchoolOfRecordsAndReportType(reportContainerIds, reportType)).thenReturn(expectedCount);
+        commonController.getReportsCount(reportType, reportContainerIds);
+        Mockito.verify(commonService).countBySchoolOfRecordsAndReportType(reportContainerIds, reportType);
     }
 }
