@@ -70,4 +70,26 @@ public class CommonControllerTest {
         commonController.getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(credentialType,req);
         Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,true);
     }
+
+    @Test
+    public void testGetReportsCount_givenACHV() {
+        final String reportType = "ACHV";
+        final List<UUID> reportContainerIds = List.of(UUID.randomUUID(), UUID.randomUUID());
+        final Integer expectedCount = 5;
+
+        Mockito.when(commonService.countByStudentGuidsAndReportType(reportContainerIds, reportType)).thenReturn(expectedCount);
+        commonController.getReportsCount(reportType, reportContainerIds);
+        Mockito.verify(commonService).countByStudentGuidsAndReportType(reportContainerIds, reportType);
+    }
+
+    @Test
+    public void testGetReportsCount_givenNotACHV() {
+        final String reportType = "TEST";
+        final List<UUID> reportContainerIds = List.of(UUID.randomUUID(), UUID.randomUUID());
+        final Integer expectedCount = 5;
+
+        Mockito.when(commonService.countBySchoolOfRecordsAndReportType(reportContainerIds, reportType)).thenReturn(expectedCount);
+        commonController.getReportsCount(reportType, reportContainerIds);
+        Mockito.verify(commonService).countBySchoolOfRecordsAndReportType(reportContainerIds, reportType);
+    }
 }
