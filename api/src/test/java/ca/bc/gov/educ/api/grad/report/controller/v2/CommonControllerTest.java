@@ -3,6 +3,8 @@ package ca.bc.gov.educ.api.grad.report.controller.v2;
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
 import ca.bc.gov.educ.api.grad.report.service.v2.CommonService;
+import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import ca.bc.gov.educ.api.grad.report.util.ResponseHelper;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -23,6 +25,12 @@ public class CommonControllerTest {
 
     @Mock
     private CommonService commonService;
+
+    @Mock
+    ResponseHelper responseHelper;
+
+    @Mock
+    GradValidation validation;
 
     @InjectMocks
     private CommonController commonController;
