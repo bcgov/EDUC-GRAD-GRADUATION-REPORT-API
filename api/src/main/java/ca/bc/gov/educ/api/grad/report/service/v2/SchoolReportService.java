@@ -11,7 +11,6 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.v2.SchoolReportTransform
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.BaseService;
-import ca.bc.gov.educ.api.grad.report.service.CommonService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,16 +31,14 @@ public class SchoolReportService extends BaseService {
   SchoolReportRepository schoolReportsRepository;
   SchoolReportLightRepository schoolReportsLightRepository;
   SchoolReportTransformer schoolReportsTransformer;
-  CommonService commonService;
   InstituteService instituteService;
 
   private static final Logger logger = LoggerFactory.getLogger(SchoolReportService.class);
 
   @Autowired
-  public SchoolReportService(SchoolReportRepository schoolReportsRepository, SchoolReportTransformer schoolReportsTransformer, CommonService commonService, SchoolReportLightRepository schoolReportsLightRepository, InstituteService instituteService) {
+  public SchoolReportService(SchoolReportRepository schoolReportsRepository, SchoolReportTransformer schoolReportsTransformer, SchoolReportLightRepository schoolReportsLightRepository, InstituteService instituteService) {
     this.schoolReportsRepository = schoolReportsRepository;
     this.schoolReportsTransformer = schoolReportsTransformer;
-    this.commonService = commonService;
     this.schoolReportsLightRepository = schoolReportsLightRepository;
     this.instituteService = instituteService;
   }

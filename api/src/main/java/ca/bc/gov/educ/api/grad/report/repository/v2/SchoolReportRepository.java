@@ -11,6 +11,12 @@ import java.util.UUID;
 
 @Repository("schoolReportsRepositoryV2")
 public interface SchoolReportRepository extends JpaRepository<SchoolReportEntity, UUID>, JpaSpecificationExecutor<SchoolReportEntity> {
+
 	List<SchoolReportEntity> deleteAllByReportTypeCode(String reportTypeCode);
+
 	Optional<SchoolReportEntity> findBySchoolOfRecordIdAndReportTypeCode(UUID schoolOfRecordId, String reportTypeCode);
+
+	Integer countBySchoolOfRecordIdInAndReportTypeCode(List<UUID> schoolOfRecordIds, String reportType);
+
+	Integer countByReportTypeCode(String reportType);
 }

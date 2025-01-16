@@ -10,7 +10,6 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.v2.DistrictReportTransfo
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.BaseService;
-import ca.bc.gov.educ.api.grad.report.service.CommonService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -31,15 +30,13 @@ public class DistrictReportService extends BaseService {
   DistrictReportRepository districtReportsRepository;
   DistrictReportLightRepository districtReportLightRepository;
   DistrictReportTransformer districtReportTransformer;
-  CommonService commonService;
   InstituteService instituteService;
 
   private static final Logger logger = LoggerFactory.getLogger(DistrictReportService.class);
 
   @Autowired
-  public DistrictReportService(DistrictReportRepository districtReportsRepository, CommonService commonService, DistrictReportLightRepository districtReportLightRepository, InstituteService instituteService, DistrictReportTransformer districtReportTransformer) {
+  public DistrictReportService(DistrictReportRepository districtReportsRepository, DistrictReportLightRepository districtReportLightRepository, InstituteService instituteService, DistrictReportTransformer districtReportTransformer) {
     this.districtReportsRepository = districtReportsRepository;
-    this.commonService = commonService;
     this.districtReportLightRepository = districtReportLightRepository;
     this.instituteService = instituteService;
     this.districtReportTransformer = districtReportTransformer;

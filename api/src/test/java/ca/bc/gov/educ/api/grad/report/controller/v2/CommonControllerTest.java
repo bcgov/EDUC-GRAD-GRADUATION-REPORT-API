@@ -3,8 +3,6 @@ package ca.bc.gov.educ.api.grad.report.controller.v2;
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
 import ca.bc.gov.educ.api.grad.report.service.v2.CommonService;
-import ca.bc.gov.educ.api.grad.report.util.GradValidation;
-import ca.bc.gov.educ.api.grad.report.util.ResponseHelper;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -26,12 +24,6 @@ public class CommonControllerTest {
     @Mock
     private CommonService commonService;
 
-    @Mock
-    ResponseHelper responseHelper;
-
-    @Mock
-    GradValidation validation;
-
     @InjectMocks
     private CommonController commonController;
 
@@ -48,9 +40,9 @@ public class CommonControllerTest {
         final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
-        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false,"accessToken")).thenReturn(list);
-        commonController.getStudentCredentialsForUserRequestDisRun(credentialType,req,"accessToken");
-        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,false,"accessToken");
+        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false)).thenReturn(list);
+        commonController.getStudentCredentialsForUserRequestDisRun(credentialType,req);
+        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,false);
     }
 
     @Test
@@ -59,15 +51,15 @@ public class CommonControllerTest {
         final UUID studentID = UUID.randomUUID();
         final String credentialType = "E";
         final StudentSearchRequest req = new StudentSearchRequest();
-        req.setDistricts(List.of("005"));
+        req.setDistrictIds(List.of(UUID.randomUUID()));
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> list = new ArrayList<>();
         final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
-        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true,"accessToken")).thenReturn(list);
-        commonController.getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(credentialType,req,"accessToken");
-        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,true,"accessToken");
+        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true)).thenReturn(list);
+        commonController.getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(credentialType,req);
+        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,true);
     }
 }

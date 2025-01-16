@@ -14,8 +14,8 @@ import java.util.UUID;
 
 @Data
 public class StudentSearchRequest implements Serializable {
-    private List<UUID> schoolOfRecordIds = new ArrayList<>();
-    private List<String> districts = new ArrayList<>();
+    private List<UUID> schoolIds = new ArrayList<>();
+    private List<UUID> districtIds = new ArrayList<>();
     private List<String> schoolCategoryCodes = new ArrayList<>();
     private List<String> pens = new ArrayList<>();
     private List<String> programs = new ArrayList<>();
@@ -37,8 +37,8 @@ public class StudentSearchRequest implements Serializable {
 
     @JsonIgnore
     public boolean isEmpty() {
-        return  (schoolOfRecordIds == null || schoolOfRecordIds.isEmpty()) &&
-                (districts == null || districts.isEmpty()) &&
+        return  (schoolIds == null || schoolIds.isEmpty()) &&
+                (districtIds == null || districtIds.isEmpty()) &&
                 (schoolCategoryCodes == null || schoolCategoryCodes.isEmpty()) &&
                 (pens == null || pens.isEmpty()) &&
                 (studentIDs == null || studentIDs.isEmpty());
