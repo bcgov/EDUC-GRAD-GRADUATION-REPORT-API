@@ -8,6 +8,7 @@ COMMON_NAMESPACE=$4
 BUSINESS_NAMESPACE=$5
 SPLUNK_TOKEN=$6
 APP_LOG_LEVEL=$7
+CLIENT_ID=educ-grad-graduation-report-api-service
 CLIENT_SECRET_NAME=grad-graduation-report-api-client-secret
 
 SPLUNK_URL="gww.splunk.educ.gov.bc.ca"
