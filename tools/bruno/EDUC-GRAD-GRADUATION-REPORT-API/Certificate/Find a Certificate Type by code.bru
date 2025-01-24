@@ -1,0 +1,15 @@
+meta {
+  name: Find a Certificate Type by code
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/certificatetype/:certTypeCode
+  body: none
+  auth: none
+}
+
+params:path {
+  certTypeCode: 
+}

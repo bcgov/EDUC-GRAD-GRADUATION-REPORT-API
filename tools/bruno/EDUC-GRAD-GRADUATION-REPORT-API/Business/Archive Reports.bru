@@ -1,0 +1,22 @@
+meta {
+  name: Archive Reports
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/v1/graduationreports/archive
+  body: json
+  auth: none
+}
+
+params:query {
+  batchId: 
+  reportType: 
+}
+
+body:json {
+  [
+    {}
+  ]
+}

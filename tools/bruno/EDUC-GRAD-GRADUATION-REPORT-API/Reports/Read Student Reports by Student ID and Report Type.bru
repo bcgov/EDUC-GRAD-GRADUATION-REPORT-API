@@ -1,0 +1,16 @@
+meta {
+  name: Read Student Reports by Student ID and Report Type
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/schoolreport
+  body: none
+  auth: none
+}
+
+params:query {
+  mincode: 
+  reportType: 
+}

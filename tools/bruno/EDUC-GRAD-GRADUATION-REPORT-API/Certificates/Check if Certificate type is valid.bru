@@ -1,0 +1,15 @@
+meta {
+  name: Check if Certificate type is valid
+  type: http
+  seq: 16
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/certificate/:certificateTypeCode
+  body: none
+  auth: none
+}
+
+params:path {
+  certificateTypeCode: 
+}
