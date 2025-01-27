@@ -1,0 +1,15 @@
+meta {
+  name: Read All  Student Certificates by Student ID
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/studentcertificate/:studentID
+  body: none
+  auth: none
+}
+
+params:path {
+  studentID: 
+}

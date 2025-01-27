@@ -1,0 +1,15 @@
+meta {
+  name: Read All  Student Transcripts by Student ID
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/studenttranscript/:studentID
+  body: none
+  auth: none
+}
+
+params:path {
+  studentID: 
+}

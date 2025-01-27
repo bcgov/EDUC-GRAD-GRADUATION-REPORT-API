@@ -1,0 +1,15 @@
+meta {
+  name: Read Student Certificate by Student ID and Certificate Type
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/psi/studenttranscript/:studentID
+  body: none
+  auth: none
+}
+
+params:path {
+  studentID: 
+}

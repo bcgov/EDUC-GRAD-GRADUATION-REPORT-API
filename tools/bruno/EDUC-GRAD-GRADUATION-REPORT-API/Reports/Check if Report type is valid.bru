@@ -1,0 +1,15 @@
+meta {
+  name: Check if Report type is valid
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/report/:reportTypeCode
+  body: none
+  auth: none
+}
+
+params:path {
+  reportTypeCode: 
+}

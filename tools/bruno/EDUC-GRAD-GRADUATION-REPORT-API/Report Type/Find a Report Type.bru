@@ -1,0 +1,15 @@
+meta {
+  name: Find a Report Type
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/reporttype/:reportTypeCode
+  body: none
+  auth: none
+}
+
+params:path {
+  reportTypeCode: 
+}

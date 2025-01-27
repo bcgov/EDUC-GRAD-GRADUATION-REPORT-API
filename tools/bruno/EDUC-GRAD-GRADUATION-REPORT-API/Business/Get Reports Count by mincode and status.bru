@@ -1,0 +1,21 @@
+meta {
+  name: Get Reports Count by mincode and status
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/graduationreports/count
+  body: json
+  auth: none
+}
+
+params:query {
+  reportType: 
+}
+
+body:json {
+  [
+    {}
+  ]
+}
