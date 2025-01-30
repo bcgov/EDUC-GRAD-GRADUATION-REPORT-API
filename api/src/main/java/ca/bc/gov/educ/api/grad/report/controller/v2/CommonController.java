@@ -1,8 +1,10 @@
 package ca.bc.gov.educ.api.grad.report.controller.v2;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.ReportGradStudentData;
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndReportRequest;
 import ca.bc.gov.educ.api.grad.report.service.v2.CommonService;
 import ca.bc.gov.educ.api.grad.report.util.*;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -77,5 +79,32 @@ public class CommonController {
         } else {
             return response.GET(commonService.countBySchoolOfRecordsAndReportType(reportContainerIds, reportType));
         }
+    }
+
+    @PostMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_YEAREND_REPORT)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData(@RequestBody YearEndReportRequest yearEndReportRequest) {
+        logger.debug("getAllStudentSchoolYearEndDistribution :");
+        return response.GET(commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest));
+    }
+
+    @GetMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_YEAREND_REPORT)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData() {
+        logger.debug("getAllStudentSchoolYearEndDistribution : ");
+        return response.GET(commonService.getSchoolYearEndReportGradStudentData());
+    }
+
+    @GetMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_REPORT)
+    @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
+    @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<List<ReportGradStudentData>> getSchoolReportGradStudentData() {
+        logger.debug("getAllStudentSchoolYearEndDistribution : ");
+        return response.GET(commonService.getSchoolReportGradStudentData());
     }
 }
