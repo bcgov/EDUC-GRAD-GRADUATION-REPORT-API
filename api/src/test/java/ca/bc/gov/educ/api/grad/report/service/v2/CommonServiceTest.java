@@ -5,6 +5,7 @@ import ca.bc.gov.educ.api.grad.report.model.dto.GraduationStudentRecordSearchRes
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.ReportGradStudentData;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndReportRequest;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportEntityId;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportMonthlyEntity;
 import ca.bc.gov.educ.api.grad.report.repository.*;
@@ -373,7 +374,7 @@ public class CommonServiceTest {
         SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
         schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
         SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
-        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YRD4", "E"));
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E"));
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity), PageRequest.of(0, 1), 2));
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity2), PageRequest.of(1, 1), 2));
 
@@ -391,12 +392,39 @@ public class CommonServiceTest {
         assertEquals(2, result.size());
     }
 
+    @Test
+    public void testGetSchoolYearEndReportGradStudentDataWithFilteredSchools() {
+        UUID studentId = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
+        SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E"));
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
+
+        UUID schoolId = UUID.randomUUID();
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId);
+        student1.setSchoolOfRecordId(schoolId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+
+        YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolIds(List.of(schoolId)).build();
+        List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
+        assertEquals(1, result.size());
+    }
+
     private ReportGradStudentData createReportGradStudentData() {
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
         reportGradStudentData.setGraduationStudentRecordId(UUID.randomUUID());
         reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
         reportGradStudentData.setSchoolOfRecordId(UUID.randomUUID());
-        reportGradStudentData.setSchoolAtGradId(UUID.randomUUID());
         reportGradStudentData.setStudentStatus("CUR");
         reportGradStudentData.setCertificateTypes(Collections.singletonList(createGradCertificateTypes()));
         return reportGradStudentData;
