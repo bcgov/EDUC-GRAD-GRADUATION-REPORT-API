@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
+import java.util.List;
 
 @Service
 public class RESTService {
@@ -57,6 +58,28 @@ public class RESTService {
                     e);
         }
         return obj;
+    }
+
+    public <T> List<T> postForList(String url, Object body, Class<T> clazz) {
+        try {
+            return graduationServiceWebClient.post()
+                    .uri(url)
+                    .headers(h -> h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID()))
+                    .body(BodyInserters.fromValue(body))
+                    .retrieve()
+                    .onStatus(HttpStatusCode::is5xxServerError,
+                            clientResponse -> Mono.error(new ServiceException(getErrorMessage(url, SERVER_ERROR), clientResponse.statusCode().value())))
+                .bodyToFlux(clazz)
+                .collectList()
+                    .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
+                            .filter(ServiceException.class::isInstance)
+                            .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
+                                throw new ServiceException(getErrorMessage(url, SERVICE_FAILED_ERROR), HttpStatus.SERVICE_UNAVAILABLE.value());
+                            }))
+                    .block();
+        } catch (Exception e) {
+            throw new ServiceException(getErrorMessage(url, e.getLocalizedMessage()), HttpStatus.SERVICE_UNAVAILABLE.value(), e);
+        }
     }
 
     public <T> T post(String url, Object body, Class<T> clazz) {

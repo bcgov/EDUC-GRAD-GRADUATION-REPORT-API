@@ -1,9 +1,13 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.GraduationStudentRecord;
+import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GraduationStudentRecordSearchResult;
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.ReportGradStudentData;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndReportRequest;
+import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportEntityId;
+import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportMonthlyEntity;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import org.junit.Before;
@@ -13,16 +17,17 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -39,6 +44,12 @@ public class CommonServiceTest {
 
     @MockBean
     GradStudentTranscriptsRepository gradStudentTranscriptsRepository;
+
+    @MockBean
+    SchoolReportMonthlyRepository schoolReportMonthlyRepository;
+
+    @MockBean
+    SchoolReportYearEndRepository schoolReportYearEndRepository;
 
     @MockBean
     RESTService restService;
@@ -62,10 +73,7 @@ public class CommonServiceTest {
         GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
 
         List<UUID> studList= new ArrayList<>();
-        GraduationStudentRecord rec = new GraduationStudentRecord();
-        rec.setLegalFirstName("asda");
-        rec.setStudentID(new UUID(1,1));
-        studList.add(rec.getStudentID());
+        studList.add(new UUID(1,1));
         res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
@@ -98,10 +106,7 @@ public class CommonServiceTest {
         GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
 
         List<UUID> studList= new ArrayList<>();
-        GraduationStudentRecord rec = new GraduationStudentRecord();
-        rec.setLegalFirstName("asda");
-        rec.setStudentID(new UUID(1,1));
-        studList.add(rec.getStudentID());
+        studList.add(new UUID(1,1));
         res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
@@ -144,10 +149,7 @@ public class CommonServiceTest {
         GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
 
         List<UUID> studList= new ArrayList<>();
-        GraduationStudentRecord rec = new GraduationStudentRecord();
-        rec.setLegalFirstName("asda");
-        rec.setStudentID(new UUID(1,1));
-        studList.add(rec.getStudentID());
+        studList.add(new UUID(1,1));
         res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
@@ -182,10 +184,7 @@ public class CommonServiceTest {
         penList.add("13123111");
         req.setPens(penList);
 
-        GraduationStudentRecord rec = new GraduationStudentRecord();
-        rec.setLegalFirstName("asda");
-        rec.setStudentID(new UUID(1,1));
-        studentList.add(rec.getStudentID());
+        studentList.add(new UUID(1,1));
         res.setStudentIDs(studentList);
 
         when(this.restService.post(any(), any(), any())).thenReturn(res);
@@ -202,10 +201,7 @@ public class CommonServiceTest {
         GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
 
         List<UUID> studList= new ArrayList<>();
-        GraduationStudentRecord rec = new GraduationStudentRecord();
-        rec.setLegalFirstName("asda");
-        rec.setStudentID(new UUID(1,1));
-        studList.add(rec.getStudentID());
+        studList.add(new UUID(1,1));
         res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
@@ -236,10 +232,7 @@ public class CommonServiceTest {
         GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
 
         List<UUID> studList= new ArrayList<>();
-        GraduationStudentRecord rec = new GraduationStudentRecord();
-        rec.setLegalFirstName("asda");
-        rec.setStudentID(new UUID(1,1));
-        studList.add(rec.getStudentID());
+        studList.add(new UUID(1,1));
         res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
@@ -270,10 +263,7 @@ public class CommonServiceTest {
         GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
 
         List<UUID> studList= new ArrayList<>();
-        GraduationStudentRecord rec = new GraduationStudentRecord();
-        rec.setLegalFirstName("asda");
-        rec.setStudentID(new UUID(1,1));
-        studList.add(rec.getStudentID());
+        studList.add(new UUID(1,1));
         res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
@@ -305,10 +295,7 @@ public class CommonServiceTest {
         GraduationStudentRecordSearchResult res = new GraduationStudentRecordSearchResult();
 
         List<UUID> studList= new ArrayList<>();
-        GraduationStudentRecord rec = new GraduationStudentRecord();
-        rec.setLegalFirstName("asda");
-        rec.setStudentID(new UUID(1,1));
-        studList.add(rec.getStudentID());
+        studList.add(new UUID(1,1));
         res.setStudentIDs(studList);
 
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
@@ -354,5 +341,99 @@ public class CommonServiceTest {
         Mockito.when(schoolReportRepository.countByReportTypeCode("reportType")).thenReturn(1);
         count = commonService.countBySchoolOfRecordsAndReportType(List.of(), "reportType");
         assertThat(count).isNotNull().isEqualTo(1);
+    }
+
+    @Test
+    public void testGetSchoolReportGradStudentData() {
+        UUID studentId = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
+        SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YRD4", "E"));
+        when(schoolReportMonthlyRepository.findStudentForSchoolReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
+
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        List<ReportGradStudentData> result = commonService.getSchoolReportGradStudentData();
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testGetSchoolYearEndReportGradStudentData() {
+        UUID studentId = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
+        SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E"));
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity), PageRequest.of(0, 1), 2));
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity2), PageRequest.of(1, 1), 2));
+
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData();
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testGetSchoolYearEndReportGradStudentDataWithFilteredSchools() {
+        UUID studentId = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
+        SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E"));
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
+
+        UUID schoolId = UUID.randomUUID();
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId);
+        student1.setSchoolOfRecordId(schoolId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+
+        YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolIds(List.of(schoolId)).build();
+        List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
+        assertEquals(1, result.size());
+    }
+
+    private ReportGradStudentData createReportGradStudentData() {
+        ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
+        reportGradStudentData.setGraduationStudentRecordId(UUID.randomUUID());
+        reportGradStudentData.setTranscriptTypeCode("BC2018-IND");
+        reportGradStudentData.setSchoolOfRecordId(UUID.randomUUID());
+        reportGradStudentData.setStudentStatus("CUR");
+        reportGradStudentData.setCertificateTypes(Collections.singletonList(createGradCertificateTypes()));
+        return reportGradStudentData;
+    }
+
+    private GradCertificateTypes createGradCertificateTypes() {
+        GradCertificateTypes certificateTypes = new GradCertificateTypes();
+        certificateTypes.setCode("E");
+        certificateTypes.setDescription("Dogwood");
+        return certificateTypes;
     }
 }

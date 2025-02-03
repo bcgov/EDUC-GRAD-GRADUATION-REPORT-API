@@ -16,8 +16,10 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepo
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -81,4 +83,19 @@ public class RESTServicePOSTTest {
         this.restService.post(TEST_URL, TEST_BODY, byte[].class);
     }
 
+    @Test
+    public void testPostForList_GivenProperData_Expect200Response() {
+        List<String> expectedResponse = List.of("response1", "response2");
+        when(this.responseMock.bodyToFlux(String.class)).thenReturn(Flux.fromIterable(expectedResponse));
+        when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
+
+        List<String> response = this.restService.postForList(TEST_URL, TEST_BODY, String.class);
+        Assert.assertEquals(expectedResponse, response);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testPostForList_Given5xxErrorFromService_ExpectServiceError() {
+        when(this.responseMock.onStatus(any(), any())).thenThrow(new ServiceException("Error", 500));
+        this.restService.postForList(TEST_URL, TEST_BODY, String.class);
+    }
 }
