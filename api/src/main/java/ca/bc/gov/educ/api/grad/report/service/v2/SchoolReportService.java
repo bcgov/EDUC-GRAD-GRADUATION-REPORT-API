@@ -122,7 +122,7 @@ public class SchoolReportService extends BaseService {
 
     reportList.forEach(report -> {
       GradReportTypesEnum.findByValue(report.getReportTypeCode()).ifPresent(types -> report.setReportTypeLabel(types.getLabel()));
-      if (report.getSchoolOfRecordId() != null) {
+      if (report.getSchoolOfRecordId() != null && !GradReportTypesEnum.isAddressLabelReport(report.getReportTypeCode())) {
         School schObj = schoolCache.computeIfAbsent(report.getSchoolOfRecordId(), id -> instituteService.getSchool(id));
         if (schObj != null) {
           report.setSchoolName(schObj.getDisplayName());
