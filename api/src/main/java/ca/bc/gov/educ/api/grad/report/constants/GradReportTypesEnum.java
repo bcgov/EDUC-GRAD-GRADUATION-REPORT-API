@@ -42,4 +42,8 @@ public enum GradReportTypesEnum {
   public static Optional<GradReportTypesEnum> findByValue(String value) {
     return Arrays.stream(values()).filter(e -> Arrays.asList(e.code).contains(value)).findFirst();
   }
+
+public static boolean isAddressLabelReport(String reportType) {
+    return ADDRESS_LABEL_SCHL.getCode().equals(reportType) || ADDRESS_LABEL_YE.getCode().equals(reportType) || ADDRESS_LABEL_PSI.getCode().equals(reportType);
+  }
 }
