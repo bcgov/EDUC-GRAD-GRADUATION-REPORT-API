@@ -51,4 +51,8 @@ public enum GradReportTypesEnum {
   public static boolean isDistrictAddressLabelReport(String reportType) {
     return ADDRESS_LABEL_YE.getCode().equals(reportType) ;
   }
+
+public static boolean isAddressLabelReport(String reportType) {
+    return ADDRESS_LABEL_SCHL.getCode().equals(reportType) || ADDRESS_LABEL_YE.getCode().equals(reportType) || ADDRESS_LABEL_PSI.getCode().equals(reportType);
+  }
 }
