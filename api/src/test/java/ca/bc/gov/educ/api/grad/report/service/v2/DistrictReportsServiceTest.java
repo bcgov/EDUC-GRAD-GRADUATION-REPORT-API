@@ -1,5 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
+import ca.bc.gov.educ.api.grad.report.constants.GradReportTypesEnum;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.District;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.DistrictReport;
 import ca.bc.gov.educ.api.grad.report.model.entity.v2.DistrictReportEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.v2.DistrictReportLightEntity;
@@ -8,9 +10,9 @@ import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportLightRepositor
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -29,53 +31,105 @@ class DistrictReportsServiceTest {
   @Mock
   private DistrictReportLightRepository districtReportsLightRepository;
   @Mock
-  private DistrictReportTransformer districtReportsTransformer;
-  @InjectMocks
+  private InstituteService instituteService;
   private DistrictReportService districtReportsService;
 
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
+    DistrictReportTransformer districtReportsTransformer = new DistrictReportTransformer(new ModelMapper());
+    districtReportsService = new DistrictReportService(
+        districtReportsRepository,
+        districtReportsLightRepository,
+        instituteService,
+        districtReportsTransformer
+    );
+  }
+
+  private DistrictReportEntity createDistrictReportEntity(String reportTypeCode) {
+    return DistrictReportEntity.builder()
+        .districtId(UUID.randomUUID())
+        .reportTypeCode(reportTypeCode)
+        .report("data")
+        .build();
+  }
+
+  private DistrictReportLightEntity createDistrictReportLightEntity(String reportTypeCode) {
+    return DistrictReportLightEntity.builder()
+        .districtId(UUID.randomUUID())
+        .reportTypeCode(reportTypeCode)
+        .build();
+  }
+
+  private District createDistrict() {
+    return District.builder()
+        .districtId(UUID.randomUUID().toString())
+        .districtNumber("123")
+        .displayName("Test District")
+        .build();
   }
 
   @Test
   void testSearchDistrictReports_givenValidParams_returnsReports() {
-    UUID districtId = UUID.randomUUID();
-    String reportType = "type";
-    DistrictReportEntity entity = new DistrictReportEntity();
+    String reportType = GradReportTypesEnum.DISTREP_SD.getCode();
+    DistrictReportEntity entity = createDistrictReportEntity(reportType);
+    UUID districtId = entity.getDistrictId();
     List<DistrictReportEntity> entities = Collections.singletonList(entity);
-    DistrictReport dto = new DistrictReport();
-    List<DistrictReport> dtos = Collections.singletonList(dto);
+    District district = createDistrict();
+    district.setDistrictId(String.valueOf(entity.getDistrictId()));
 
     when(districtReportsRepository.findAll(any(Specification.class))).thenReturn(entities);
-    when(districtReportsTransformer.transformToDTO(entities)).thenReturn(dtos);
+    when(instituteService.getDistrict(any())).thenReturn(district);
 
     List<DistrictReport> result = districtReportsService.searchDistrictReports(districtId, reportType, false);
 
     assertNotNull(result);
     assertEquals(1, result.size());
     verify(districtReportsRepository, times(1)).findAll(any(Specification.class));
-    verify(districtReportsTransformer, times(1)).transformToDTO(entities);
+    assertEquals(result.get(0).getReportTypeLabel(), GradReportTypesEnum.DISTREP_SD.getLabel());
+    assertEquals("Test District", result.get(0).getDistrictName());
   }
 
   @Test
   void testSearchDistrictReports_givenValidParams_returnsLightReports() {
-    UUID districtId = UUID.randomUUID();
-    String reportType = "type";
-    DistrictReportLightEntity entity = new DistrictReportLightEntity();
+    String reportType = GradReportTypesEnum.DISTREP_SD.getCode();
+    DistrictReportLightEntity entity = createDistrictReportLightEntity(reportType);
+    UUID districtId = entity.getDistrictId();
     List<DistrictReportLightEntity> entities = Collections.singletonList(entity);
-    DistrictReport dto = new DistrictReport();
-    List<DistrictReport> dtos = Collections.singletonList(dto);
+    District district = createDistrict();
+    district.setDistrictId(String.valueOf(entity.getDistrictId()));
 
     when(districtReportsLightRepository.findAll(any(Specification.class))).thenReturn(entities);
-    when(districtReportsTransformer.transformToLightDTO(entities)).thenReturn(dtos);
+    when(instituteService.getDistrict(any())).thenReturn(district);
 
     List<DistrictReport> result = districtReportsService.searchDistrictReports(districtId, reportType, true);
 
     assertNotNull(result);
     assertEquals(1, result.size());
     verify(districtReportsLightRepository, times(1)).findAll(any(Specification.class));
-    verify(districtReportsTransformer, times(1)).transformToLightDTO(entities);
+    assertEquals(result.get(0).getReportTypeLabel(), GradReportTypesEnum.DISTREP_SD.getLabel());
+    assertEquals("Test District", result.get(0).getDistrictName());
+  }
+
+  @Test
+  void testSearchDistrictReports_givenLabelReport_returnsReports() {
+    String reportType = GradReportTypesEnum.ADDRESS_LABEL_YE.getCode();
+    DistrictReportEntity entity = createDistrictReportEntity(reportType);
+    UUID districtId = entity.getDistrictId();
+    List<DistrictReportEntity> entities = Collections.singletonList(entity);
+    District district = createDistrict();
+    district.setDistrictId(String.valueOf(entity.getDistrictId()));
+
+    when(districtReportsRepository.findAll(any(Specification.class))).thenReturn(entities);
+    when(instituteService.getDistrict(any())).thenReturn(district);
+
+    List<DistrictReport> result = districtReportsService.searchDistrictReports(districtId, reportType, false);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(districtReportsRepository, times(1)).findAll(any(Specification.class));
+    assertEquals(result.get(0).getReportTypeLabel(), GradReportTypesEnum.ADDRESS_LABEL_YE.getLabel());
+    assertNull(result.get(0).getDistrictName());
   }
 
   @Test
@@ -84,7 +138,6 @@ class DistrictReportsServiceTest {
     String reportTypeCode = "type";
 
     when(districtReportsRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
-    when(districtReportsTransformer.transformToDTO(anyList())).thenReturn(Collections.emptyList());
 
     List<DistrictReport> result = districtReportsService.searchDistrictReports(districtId, reportTypeCode, false);
 

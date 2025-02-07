@@ -4,7 +4,6 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.DistrictReport;
 import ca.bc.gov.educ.api.grad.report.model.entity.v2.DistrictReportEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.v2.DistrictReportLightEntity;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,10 +14,9 @@ import java.util.Optional;
 @Component()
 public class DistrictReportTransformer {
 
-    @Autowired
     ModelMapper modelMapper;
 
-    DistrictReportTransformer (ModelMapper modelMapper){
+    public DistrictReportTransformer (ModelMapper modelMapper){
         this.modelMapper = modelMapper;
     }
 

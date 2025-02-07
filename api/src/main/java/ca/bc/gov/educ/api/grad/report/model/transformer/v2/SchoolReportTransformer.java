@@ -4,7 +4,6 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.SchoolReport;
 import ca.bc.gov.educ.api.grad.report.model.entity.v2.SchoolReportEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.v2.SchoolReportLightEntity;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,8 +14,11 @@ import java.util.Optional;
 @Component()
 public class SchoolReportTransformer {
 
-    @Autowired
-    ModelMapper modelMapper;
+  ModelMapper modelMapper;
+
+  public SchoolReportTransformer (ModelMapper modelMapper){
+    this.modelMapper = modelMapper;
+  }
 
     public SchoolReport transformToDTO (SchoolReportEntity schoolReportsEntity) {
     	return modelMapper.map(schoolReportsEntity, SchoolReport.class);
