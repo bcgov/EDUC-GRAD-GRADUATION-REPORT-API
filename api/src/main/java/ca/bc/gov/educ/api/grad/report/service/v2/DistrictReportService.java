@@ -112,7 +112,7 @@ public class DistrictReportService extends BaseService {
 
     reportList.forEach(report -> {
       GradReportTypesEnum.findByValue(report.getReportTypeCode()).ifPresent(types -> report.setReportTypeLabel(types.getLabel()));
-      if (report.getDistrictId() != null) {
+      if (report.getDistrictId() != null && ! GradReportTypesEnum.isDistrictAddressLabelReport(report.getReportTypeCode())) {
         District district = districtCache.computeIfAbsent(report.getDistrictId(), id -> instituteService.getDistrict(id));
         if (district != null) {
           report.setDistrictName(district.getDisplayName());

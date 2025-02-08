@@ -2,14 +2,16 @@ package ca.bc.gov.educ.api.grad.report.model.entity.v2;
 
 import ca.bc.gov.educ.api.grad.report.model.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@EqualsAndHashCode(callSuper = false)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity(name = "SchoolReportsLightEntityV2")
 @Table(name = "SCHOOL_REPORT")
 public class SchoolReportLightEntity extends BaseEntity {

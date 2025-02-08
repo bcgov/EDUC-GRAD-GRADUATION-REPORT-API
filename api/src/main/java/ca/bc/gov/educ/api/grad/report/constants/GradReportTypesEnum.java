@@ -3,6 +3,8 @@ package ca.bc.gov.educ.api.grad.report.constants;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 
 @Getter
@@ -40,7 +42,14 @@ public enum GradReportTypesEnum {
   }
 
   public static Optional<GradReportTypesEnum> findByValue(String value) {
-    return Arrays.stream(values()).filter(e -> Arrays.asList(e.code).contains(value)).findFirst();
+    return Arrays.stream(values()).filter(e -> Objects.equals(e.code, value)).findFirst();
+  }
+
+  public static boolean isSchoolAddressLabelReport(String reportType) {
+    return ADDRESS_LABEL_SCHL.getCode().equals(reportType) || ADDRESS_LABEL_PSI.getCode().equals(reportType);
+  }
+  public static boolean isDistrictAddressLabelReport(String reportType) {
+    return ADDRESS_LABEL_YE.getCode().equals(reportType) ;
   }
 
 public static boolean isAddressLabelReport(String reportType) {
