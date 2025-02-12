@@ -34,10 +34,6 @@ jobs:
     runs-on: ubuntu-22.04
     environment: prod
 
-    outputs:
-      ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
-      SELECTOR: ${{ steps.deploy-and-expose.outputs.selector }}
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -77,8 +73,7 @@ jobs:
           -p MIN_CPU=${{ env.MIN_CPU }} \
           -p MAX_CPU=${{ env.MAX_CPU }} \
           -p MIN_MEM=${{ env.MIN_MEM }} \
-          -p MAX_MEM=${{ env.MAX_MEM }} \
-          -p STORAGE_LIMIT=${{ env.STORAGE_LIMIT }} | oc apply -f -
+          -p MAX_MEM=${{ env.MAX_MEM }} | oc apply -f -
           
           # UPDATE Configmaps
           curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/update-configmap.sh \
@@ -92,7 +87,7 @@ jobs:
           ${{ vars.APP_LOG_LEVEL }}
           
           # Start rollout (if necessary) and follow it
-          oc rollout restart deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
+          oc rollout restart deployment/${{ env.SPRING_BOOT_IMAGE_NAME }} 
           
           # Get status, returns 0 if rollout is successful
           oc rollout status deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
