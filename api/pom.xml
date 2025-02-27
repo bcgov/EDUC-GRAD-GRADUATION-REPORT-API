@@ -29,6 +29,7 @@
             src/main/java/ca/bc/gov/educ/api/grad/report/util/**,
             src/main/java/ca/bc/gov/educ/api/grad/report/repository/**,
             src/main/java/ca/bc/gov/educ/api/grad/report/exception/**,
+            src/main/java/ca/bc/gov/educ/api/grad/report/controller/APIMetadataController.java,
             src/test/java/ca/bc/gov/educ/api/grad/report/**
         </sonar.coverage.exclusions>
         <java.version>18</java.version>
