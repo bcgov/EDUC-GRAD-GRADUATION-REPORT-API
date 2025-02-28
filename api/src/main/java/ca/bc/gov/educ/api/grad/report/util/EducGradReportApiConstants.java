@@ -139,6 +139,15 @@ public class EducGradReportApiConstants {
     @Value("${authorization.password}")
     private String password;
 
+    @Value("${spring.security.oauth2.client.provider.graduation-report-client.token-uri}")
+    private String gradReportClientTokenUrl;
+
+    @Value("${spring.security.oauth2.client.registration.graduation-report-client.client-id}")
+    private String gradReportClientUserName;
+
+    @Value("${spring.security.oauth2.client.registration.graduation-report-client.client-secret}")
+    private String gradReportClientPassword;
+
     public static HttpHeaders getHeaders (String username, String password) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
