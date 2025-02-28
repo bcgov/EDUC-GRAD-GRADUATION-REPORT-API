@@ -42,17 +42,17 @@ public class RestWebClient {
     @Autowired
     WebClient getGraduationReportClient(final WebClient.Builder builder) {
         val clientRegistryRepo = new InMemoryReactiveClientRegistrationRepository(ClientRegistration
-            .withRegistrationId(this.constants.getUserName())
-            .tokenUri(this.constants.getTokenUrl())
-            .clientId(this.constants.getUserName())
-            .clientSecret(this.constants.getPassword())
+            .withRegistrationId(this.constants.getGradReportClientUserName())
+            .tokenUri(this.constants.getGradReportClientTokenUrl())
+            .clientId(this.constants.getGradReportClientUserName())
+            .clientSecret(this.constants.getGradReportClientPassword())
             .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
             .build());
         val clientService = new InMemoryReactiveOAuth2AuthorizedClientService(clientRegistryRepo);
         val authorizedClientManager =
             new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(clientRegistryRepo, clientService);
         val oauthFilter = new ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
-        oauthFilter.setDefaultClientRegistrationId(this.constants.getUserName());
+        oauthFilter.setDefaultClientRegistrationId(this.constants.getGradReportClientUserName());
         return builder
             .codecs(configurer -> configurer
                 .defaultCodecs()
