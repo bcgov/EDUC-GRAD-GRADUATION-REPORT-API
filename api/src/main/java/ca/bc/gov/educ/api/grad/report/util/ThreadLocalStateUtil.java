@@ -1,8 +1,8 @@
 package ca.bc.gov.educ.api.grad.report.util;
 
 public class ThreadLocalStateUtil {
-    private static ThreadLocal<String> transaction = new ThreadLocal<>();
-    private static ThreadLocal<String> user = new ThreadLocal<>();
+    private static InheritableThreadLocal<String> transaction = new InheritableThreadLocal<>();
+    private static InheritableThreadLocal<String> user = new InheritableThreadLocal<>();
 
     private ThreadLocalStateUtil() {
     }
