@@ -130,13 +130,13 @@ public class EducGradReportApiConstants {
     @Value("${splunk.log-helper.enabled}")
     private boolean splunkLogHelperEnabled;
 
-    @Value("${spring.security.oauth2.client.provider.graduation-report-client.token-uri}")
+    @Value("${endpoint.keycloak.getToken}")
     private String tokenUrl;
 
-    @Value("${spring.security.oauth2.client.registration.graduation-report-client.client-id}")
+    @Value("${authorization.user}")
     private String userName;
 
-    @Value("${spring.security.oauth2.client.registration.graduation-report-client.client-secret}")
+    @Value("${authorization.password}")
     private String password;
 
     @Value("${spring.security.oauth2.client.provider.graduation-report-client.token-uri}")
