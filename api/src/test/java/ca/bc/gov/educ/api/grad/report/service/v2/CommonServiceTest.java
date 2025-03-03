@@ -9,6 +9,7 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndReportRequest;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportEntityId;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportMonthlyEntity;
 import ca.bc.gov.educ.api.grad.report.repository.*;
+import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +60,9 @@ public class CommonServiceTest {
 
     @MockBean
     SchoolReportRepository schoolReportRepository;
+
+    @MockBean
+    SchoolReportLightRepository schoolReportLightRepository;
 
 
     @Before
@@ -418,6 +422,28 @@ public class CommonServiceTest {
         YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolIds(List.of(schoolId)).build();
         List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
         assertEquals(1, result.size());
+    }
+
+    @Test
+    public void testArchiveSchoolReports() {
+        UUID schoolReportGuid = UUID.randomUUID();
+        UUID schoolReportId = UUID.randomUUID();
+        Mockito.when(schoolReportLightRepository.countBySchoolOfRecordsAndReportType(List.of(schoolReportId), "reportType".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportLightRepository.getReportSchoolOfRecordsByReportType("reportType".toUpperCase())).thenReturn(List.of(schoolReportId));
+        Mockito.when(schoolReportRepository.deleteSchoolOfRecordsNotMatchingSchoolReports(List.of(schoolReportGuid), List.of(schoolReportId), "reportTypeARC".toUpperCase())).thenReturn(1);
+        Mockito.when(schoolReportRepository.archiveSchoolReports(List.of(schoolReportId), "reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(1);
+        Integer count = commonService.archiveSchoolReports(1L, List.of(schoolReportId), "reportType".toUpperCase());
+        assertThat(count).isNotNull().isEqualTo(1);
+    }
+
+    @Test
+    public void testArchiveSchoolReportsEmpty() {
+        UUID schoolReportId = UUID.randomUUID();
+        Mockito.when(schoolReportLightRepository.countBySchoolOfRecordsAndReportType(List.of(schoolReportId), "reportType".toUpperCase())).thenReturn(0);
+        Mockito.when(schoolReportLightRepository.getReportSchoolOfRecordsByReportType("reportType".toUpperCase())).thenReturn(List.of(schoolReportId));
+        Mockito.when(schoolReportRepository.archiveSchoolReports(new ArrayList<>(), "reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(0);
+        Integer count = commonService.archiveSchoolReports(1L, new ArrayList<>(), "reportType".toUpperCase());
+        assertThat(count).isNotNull().isEqualTo(0);
     }
 
     private ReportGradStudentData createReportGradStudentData() {
