@@ -27,7 +27,7 @@ public interface SchoolReportRepository extends JpaRepository<SchoolReportEntity
 	Integer archiveSchoolReports(List<UUID> schoolOfRecordIds, String reportTypeFrom, String reportTypeTo, long batchId);
 
 	@Modifying
-	@Query(value="delete from SCHOOL_REPORT where SCHOOL_REPORT_ID not in (:schoolReportGuids) and school_of_record in (:schoolOfRecords) and REPORT_TYPE_CODE = :archivedReportType", nativeQuery=true)
-	Integer deleteSchoolOfRecordsNotMatchingSchoolReports(List<UUID> schoolReportGuids, List<UUID> schoolOfRecords, String archivedReportType);
+	@Query(value="delete from SCHOOL_REPORT where SCHOOL_REPORT_ID not in (:schoolReportGuids) and school_of_record_id in (:schoolOfRecordIds) and REPORT_TYPE_CODE = :archivedReportType", nativeQuery=true)
+	Integer deleteSchoolOfRecordsNotMatchingSchoolReports(List<UUID> schoolReportGuids, List<UUID> schoolOfRecordIds, String archivedReportType);
 
 }
