@@ -107,4 +107,13 @@ public class CommonController {
         logger.debug("getAllStudentSchoolYearEndDistribution : ");
         return response.GET(commonService.getSchoolReportGradStudentData());
     }
+
+    @PostMapping (EducGradReportApiConstants.REPORT_ARCHIVE)
+    @PreAuthorize(PermissionsConstants.ARCHIVE_SCHOOL_REPORT)
+    @Operation(summary = "Archive Reports", description = "Archive Reports", tags = { "Business" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Integer> archiveReports(@RequestParam long batchId, @RequestParam String reportType, @RequestBody List<UUID> schoolOfRecordIds) {
+        logger.debug("Archive Reports for batch {}", batchId);
+        return response.GET(commonService.archiveSchoolReports(batchId, schoolOfRecordIds, reportType));
+    }
 }

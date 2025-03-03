@@ -7,8 +7,10 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndReportRequest;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportEntity;
 import ca.bc.gov.educ.api.grad.report.repository.*;
+import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,6 +31,7 @@ public class CommonService {
     final GradStudentTranscriptsRepository gradStudentTranscriptsRepository;
     final GradStudentReportsRepository gradStudentReportsRepository;
     final SchoolReportRepository schoolReportRepository;
+    final SchoolReportLightRepository schoolReportLightRepository;
     final SchoolReportYearEndRepository schoolReportYearEndRepository;
     final SchoolReportMonthlyRepository schoolReportMonthlyRepository;
     final RESTService restService;
@@ -39,13 +42,14 @@ public class CommonService {
     public static final int PAGE_SIZE = 1000;
 
     @Autowired
-    public CommonService(GradStudentCertificatesRepository gradStudentCertificatesRepository, GradStudentTranscriptsRepository gradStudentTranscriptsRepository, GradStudentReportsRepository gradStudentReportsRepository, SchoolReportRepository schoolReportRepository, RESTService restService, SchoolReportYearEndRepository schoolReportYearEndRepository, EducGradReportApiConstants constants, SchoolReportMonthlyRepository schoolReportMonthlyRepository) {
+    public CommonService(GradStudentCertificatesRepository gradStudentCertificatesRepository, GradStudentTranscriptsRepository gradStudentTranscriptsRepository, GradStudentReportsRepository gradStudentReportsRepository, SchoolReportRepository schoolReportRepository, RESTService restService, SchoolReportYearEndRepository schoolReportYearEndRepository, EducGradReportApiConstants constants, SchoolReportMonthlyRepository schoolReportMonthlyRepository,SchoolReportLightRepository schoolReportLightRepository) {
         this.gradStudentCertificatesRepository = gradStudentCertificatesRepository;
         this.gradStudentTranscriptsRepository = gradStudentTranscriptsRepository;
         this.gradStudentReportsRepository = gradStudentReportsRepository;
         this.schoolReportRepository = schoolReportRepository;
         this.schoolReportYearEndRepository = schoolReportYearEndRepository;
         this.schoolReportMonthlyRepository = schoolReportMonthlyRepository;
+        this.schoolReportLightRepository = schoolReportLightRepository;
         this.restService = restService;
         this.constants = constants;
     }
@@ -269,5 +273,32 @@ public class CommonService {
             Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(pageRequest);
             return Pair.of(pageRequest, getNextPageStudentsFromGradStudentApi(students, yearEndReportRequest));
         }
+    }
+
+    @Transactional
+    public Integer archiveSchoolReports(long batchId, List<UUID> schoolOfRecordIds, String reportType) {
+        if(schoolOfRecordIds != null && !schoolOfRecordIds.isEmpty()) {
+            return archiveSchoolReportsBySchoolOfRecordAndReportType(batchId, schoolOfRecordIds, reportType);
+        } else {
+            schoolOfRecordIds = schoolReportLightRepository.getReportSchoolOfRecordsByReportType(reportType);
+            return archiveSchoolReportsBySchoolOfRecordAndReportType(batchId, schoolOfRecordIds, reportType);
+        }
+    }
+
+    private Integer archiveSchoolReportsBySchoolOfRecordAndReportType(long batchId, List<UUID> schoolOfRecordIds, String reportType) {
+        Integer updatedReportsCount = 0;
+        Integer deletedReportsCount = 0;
+        Integer originalReportsCount = 0;
+        String archivedReportType = StringUtils.appendIfMissing(reportType, "ARC", "ARC");
+        if(schoolOfRecordIds != null && !schoolOfRecordIds.isEmpty()) {
+            List<UUID> reportGuids = schoolReportLightRepository.getReportGuidsBySchoolOfRecordsAndReportType(schoolOfRecordIds, reportType);
+            originalReportsCount += schoolReportLightRepository.countBySchoolOfRecordsAndReportType(schoolOfRecordIds, reportType);
+            updatedReportsCount += schoolReportRepository.archiveSchoolReports(schoolOfRecordIds, reportType, archivedReportType, batchId);
+            if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
+                deletedReportsCount += schoolReportRepository.deleteSchoolOfRecordsNotMatchingSchoolReports(reportGuids, schoolOfRecordIds, archivedReportType);
+                logger.debug("{} School Reports deleted", deletedReportsCount);
+            }
+        }
+        return updatedReportsCount;
     }
 }

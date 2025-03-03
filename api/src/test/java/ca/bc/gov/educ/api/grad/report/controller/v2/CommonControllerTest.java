@@ -92,4 +92,12 @@ public class CommonControllerTest {
         commonController.getReportsCount(reportType, reportContainerIds);
         Mockito.verify(commonService).countBySchoolOfRecordsAndReportType(reportContainerIds, reportType);
     }
+
+    @Test
+    public void testArchiveSchoolReports() {
+        UUID schoolOfRecordId = UUID.randomUUID();
+        Mockito.when(commonService.archiveSchoolReports(1L, List.of(schoolOfRecordId), "reportType")).thenReturn(1);
+        commonController.archiveReports(1L, "reportType", List.of(schoolOfRecordId));
+        Mockito.verify(commonService).archiveSchoolReports(1L, List.of(schoolOfRecordId), "reportType");
+    }
 }
