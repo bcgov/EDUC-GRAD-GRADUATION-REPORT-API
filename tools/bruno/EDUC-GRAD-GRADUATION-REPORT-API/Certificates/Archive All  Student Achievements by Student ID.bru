@@ -1,0 +1,15 @@
+meta {
+  name: Archive All  Student Achievements by Student ID
+  type: http
+  seq: 18
+}
+
+delete {
+  url: {{baseUrl}}/api/v1/graduationreports/archiveachievement/:studentID
+  body: none
+  auth: none
+}
+
+params:path {
+  studentID: 
+}

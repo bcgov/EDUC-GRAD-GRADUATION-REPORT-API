@@ -374,7 +374,7 @@ public class CommonService extends BaseService {
                 reportList = schoolReportsTransformer.transformToDTO(schoolReportsRepository.findBySchoolOfRecordOrderBySchoolOfRecord(mincode));
             }
         }
-        populateSchoolRepors(reportList);
+        populateSchoolReports(reportList);
         return reportList;
     }
 
@@ -386,12 +386,12 @@ public class CommonService extends BaseService {
             schoolReportsLightEntityList = schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(reportType, mincode);
         }
         List<SchoolReports> reportList = schoolReportsTransformer.transformToLightDTO(schoolReportsLightEntityList);
-        populateSchoolRepors(reportList);
+        populateSchoolReports(reportList);
         return reportList;
     }
 
     @Generated
-    private void populateSchoolRepors(List<SchoolReports> reportList) {
+    private void populateSchoolReports(List<SchoolReports> reportList) {
         reportList.forEach(rep -> {
             String accessToken = fetchAccessToken();
             GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getReportTypeCode()));
@@ -399,10 +399,10 @@ public class CommonService extends BaseService {
                 rep.setReportTypeLabel(types.getLabel());
 
             if (rep.getSchoolOfRecord() != null && rep.getSchoolOfRecord().length() > 3) {
-                School schObj = getSchool(rep.getSchoolOfRecord(), accessToken);
+                School schObj = getSchool(rep.getSchoolOfRecord());
                 if (schObj != null) {
                     rep.setSchoolOfRecordName(schObj.getSchoolName());
-                    rep.setSchoolCategory(schObj.getSchoolCategory());
+                    rep.setSchoolCategory(schObj.getSchoolCategoryCode());
                 }
             } else if (rep.getSchoolOfRecord() != null) {
                 District distObj = getDistrict(rep.getSchoolOfRecord(), accessToken);
@@ -657,19 +657,16 @@ public class CommonService extends BaseService {
     }
 
     @Generated
-    private School getSchool(String minCode, String accessToken) {
+    public School getSchool(String schoolId) {
         try {
             return webClient.get()
-                    .uri(String.format(constants.getSchoolByMincodeUrl(), minCode))
-                    .headers(h -> {
-                        h.setBearerAuth(accessToken);
-                        h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
-                    })
+                    .uri(String.format(constants.getSchoolClobBySchoolIdUrl(), schoolId))
+                    .headers(h -> h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID()))
                     .retrieve()
                     .bodyToMono(School.class)
                     .block();
         } catch (Exception e) {
-            logger.warn("Trax School with mincode {} error {}", minCode, e.getMessage());
+            logger.warn("School clob with schoolId={} error {}", schoolId, e.getMessage());
             return null;
         }
     }
@@ -678,7 +675,7 @@ public class CommonService extends BaseService {
     private District getDistrict(String districtCode, String accessToken) {
         try {
             return webClient.get()
-                    .uri(String.format(constants.getDistrictByMincodeUrl(), districtCode))
+                    .uri(String.format(constants.getDistrictByDistrictNumberUrl(), districtCode))
                     .headers(h -> h.setBearerAuth(accessToken))
                     .retrieve()
                     .bodyToMono(District.class)

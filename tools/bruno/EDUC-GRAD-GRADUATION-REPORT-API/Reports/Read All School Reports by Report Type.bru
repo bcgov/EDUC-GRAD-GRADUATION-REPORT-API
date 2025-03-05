@@ -1,0 +1,21 @@
+meta {
+  name: Read All School Reports by Report Type
+  type: http
+  seq: 16
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/schoolreport/type/:reportType
+  body: none
+  auth: none
+}
+
+params:query {
+  ~mincode: 
+}
+
+params:path {
+  reportType: 
+}
+
+

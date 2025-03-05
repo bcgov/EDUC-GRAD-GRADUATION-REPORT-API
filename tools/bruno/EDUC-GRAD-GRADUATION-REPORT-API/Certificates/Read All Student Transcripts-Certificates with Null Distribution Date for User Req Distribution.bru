@@ -1,0 +1,17 @@
+meta {
+  name: Read All Student Transcripts-Certificates with Null Distribution Date for User Req Distribution
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/graduationreports/userrequest/notyetdistributed/:credentialType
+  body: json
+  auth: none
+}
+
+params:path {
+  credentialType: 
+}
+
+

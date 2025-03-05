@@ -1,0 +1,16 @@
+meta {
+  name: Read district report data by district id and report type code
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v2/graduationreports/district-report
+  body: none
+  auth: none
+}
+
+params:query {
+  districtId: 
+  reportTypeCode: 
+}

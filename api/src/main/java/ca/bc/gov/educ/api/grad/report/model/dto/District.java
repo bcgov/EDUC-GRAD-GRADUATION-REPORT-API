@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 public class District {
 
     private String districtNumber;
-    private String districtName;
+    private String displayName;
 
+    public String getDistrictName() {
+        return displayName;
+    }
 }

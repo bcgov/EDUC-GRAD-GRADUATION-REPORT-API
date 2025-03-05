@@ -1,0 +1,27 @@
+meta {
+  name: Save Student Reports
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/v1/graduationreports/schoolreport
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "createUser": "",
+    "createDate": "",
+    "updateUser": "",
+    "updateDate": "",
+    "id": "",
+    "report": "",
+    "reportTypeCode": "",
+    "reportTypeLabel": "",
+    "schoolOfRecord": "",
+    "schoolOfRecordName": "",
+    "schoolCategory": ""
+  }
+}

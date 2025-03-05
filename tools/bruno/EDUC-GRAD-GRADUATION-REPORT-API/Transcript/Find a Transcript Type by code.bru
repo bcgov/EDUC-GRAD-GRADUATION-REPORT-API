@@ -1,0 +1,15 @@
+meta {
+  name: Find a Transcript Type by code
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/transcripttype/:tranTypeCode
+  body: none
+  auth: none
+}
+
+params:path {
+  tranTypeCode: 
+}

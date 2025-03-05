@@ -1,0 +1,17 @@
+meta {
+  name: Search School Reports
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/api/v2/graduationreports/schoolreports/search
+  body: none
+  auth: none
+}
+
+params:query {
+  ~schoolOfRecordId: 
+  ~reportTypeCode: 
+  ~isLight: 
+}

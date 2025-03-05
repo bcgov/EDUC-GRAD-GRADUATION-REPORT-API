@@ -1,0 +1,17 @@
+meta {
+  name: Search District Reports
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/api/v2/graduationreports/district-report/search
+  body: none
+  auth: none
+}
+
+params:query {
+  ~districtId: 
+  ~reportTypeCode: 
+  ~isLight: 
+}

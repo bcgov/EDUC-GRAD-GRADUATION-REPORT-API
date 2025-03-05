@@ -1,0 +1,15 @@
+meta {
+  name: Find a Document Status Code
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/graduationreports/documentstatus/:documentStatusCode
+  body: none
+  auth: none
+}
+
+params:path {
+  documentStatusCode: 
+}

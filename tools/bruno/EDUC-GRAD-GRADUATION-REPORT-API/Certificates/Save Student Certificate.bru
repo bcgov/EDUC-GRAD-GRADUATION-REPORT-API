@@ -1,0 +1,30 @@
+meta {
+  name: Save Student Certificate
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/v1/graduationreports/studentcertificate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "createUser": "",
+    "createDate": "",
+    "updateUser": "",
+    "updateDate": "",
+    "id": "",
+    "pen": "",
+    "certificate": "",
+    "gradCertificateTypeCode": "",
+    "gradCertificateTypeLabel": "",
+    "studentID": "",
+    "distributionDate": "",
+    "documentStatusCode": "",
+    "documentStatusLabel": "",
+    "overwrite": ""
+  }
+}

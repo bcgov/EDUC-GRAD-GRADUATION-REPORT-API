@@ -1,0 +1,22 @@
+meta {
+  name: Save District Reports
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v2/graduationreports/district-report
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": "",
+    "report": "",
+    "reportTypeCode": "",
+    "reportTypeLabel": "",
+    "districtId": "",
+    "districtName": ""
+  }
+}

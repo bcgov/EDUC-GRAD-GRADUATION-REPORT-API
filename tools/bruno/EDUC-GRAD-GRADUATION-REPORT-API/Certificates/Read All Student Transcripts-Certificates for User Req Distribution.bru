@@ -1,0 +1,17 @@
+meta {
+  name: Read All Student Transcripts-Certificates for User Req Distribution
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/graduationreports/userrequest/:credentialType
+  body: json
+  auth: none
+}
+
+params:path {
+  credentialType: 
+}
+
+

@@ -69,8 +69,7 @@ jobs:
           -p MIN_CPU=${{ env.MIN_CPU }} \
           -p MAX_CPU=${{ env.MAX_CPU }} \
           -p MIN_MEM=${{ env.MIN_MEM }} \
-          -p MAX_MEM=${{ env.MAX_MEM }} \
-          -p STORAGE_LIMIT=${{ env.STORAGE_LIMIT }} | oc apply -f -
+          -p MAX_MEM=${{ env.MAX_MEM }} | oc apply -f -
           
           # UPDATE Configmaps
           curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/update-configmap.sh \

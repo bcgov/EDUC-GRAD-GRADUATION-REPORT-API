@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.grad.report.repository;
 
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,12 +12,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface SchoolReportsRepository extends JpaRepository<SchoolReportsEntity, UUID> {
+public interface SchoolReportsRepository extends JpaRepository<SchoolReportsEntity, UUID>, JpaSpecificationExecutor<SchoolReportsEntity> {
 
-   	@Query("select c from SchoolReportsEntity c where c.reportTypeCode=:reportType")
-	List<SchoolReportsEntity> existsByReportTypeCode(String reportType);
-   	
-   	long deleteBySchoolOfRecord(String schoolOfRecord);
 	List<SchoolReportsEntity> deleteAllByReportTypeCode(String reportTypeCode);
 
 	List<SchoolReportsEntity> findBySchoolOfRecordContainsOrderBySchoolOfRecord(String schoolOfRecord);
@@ -32,9 +29,6 @@ public interface SchoolReportsRepository extends JpaRepository<SchoolReportsEnti
 
 	@Query("select c.id from SchoolReportsLightEntity c where c.schoolOfRecord IN (:schoolOfRecords) and c.reportTypeCode=:reportType")
 	List<UUID> getReportGuidsBySchoolOfRecordsAndReportType(List<String> schoolOfRecords, String reportType);
-
-	@Query("select c.id from SchoolReportsLightEntity c where c.reportTypeCode=:reportType")
-	List<UUID> getReportGuidsByReportType(String reportType);
 
 	@Query("select c.schoolOfRecord from SchoolReportsLightEntity c where c.reportTypeCode=:reportType")
 	List<String> getReportSchoolOfRecordsByReportType(String reportType);

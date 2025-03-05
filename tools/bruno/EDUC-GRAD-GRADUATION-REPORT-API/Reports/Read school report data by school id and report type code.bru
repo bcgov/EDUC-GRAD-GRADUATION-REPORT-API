@@ -1,0 +1,16 @@
+meta {
+  name: Read school report data by school id and report type code
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v2/graduationreports/schoolreports
+  body: none
+  auth: none
+}
+
+params:query {
+  schoolOfRecordId: 
+  reportTypeCode: 
+}

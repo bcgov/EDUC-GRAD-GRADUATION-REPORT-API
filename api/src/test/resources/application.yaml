@@ -29,6 +29,16 @@ spring:
         jwt:
           issuer-uri: https://soam-dev.apps.silver.devops.gov.bc.ca/auth/realms/master
           jwk-set-uri: https://soam-dev.apps.silver.devops.gov.bc.ca/auth/realms/master/protocol/openid-connect/certs
+      client:
+        registration:
+          graduation-report-client:
+            client-id: test
+            client-secret: test
+            authorization-grant-type: client_credentials
+        provider:
+          graduation-report-client:
+            issuer-uri: http://test
+            token-uri: http://test
 
 #Logging properties
 logging:
@@ -80,10 +90,14 @@ endpoint:
     get-students-for-school-run: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentschoolreportdata
     student-for-special-grad-run-list:  https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentlistsearch
   grad-trax-api:
-    school-by-min-code:
-      url: https://educ-grad-trax-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/trax/school/%s
-    district-by-min-code:
-      url: https://educ-grad-trax-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/trax/district/%s
+    school-by-school-id:
+      url: http://test
+    school-clob-by-school-id:
+      url: https://educ-grad-trax-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v2/trax/school-clob/%s
+    district-by-district-id:
+      url: http://test
+    district-by-dist-no:
+      url: https://educ-grad-trax-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v2/trax/district?distNo=%s
 
 #Splunk LogHelper
 splunk:
