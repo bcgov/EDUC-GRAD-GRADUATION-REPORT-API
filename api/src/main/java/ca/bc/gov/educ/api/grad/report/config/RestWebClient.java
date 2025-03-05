@@ -61,7 +61,6 @@ public class RestWebClient {
                 .defaultCodecs()
                 .maxInMemorySize(100 * 1024 * 1024))
             .filter(setRequestHeaders()) // Log headers
-            .filter(logRequestHeaders()) // Log headers
             .filter(this.log())
             .clientConnector(this.connector)
             .uriBuilderFactory(this.factory)
@@ -77,7 +76,6 @@ public class RestWebClient {
                     .maxInMemorySize(300 * 1024 * 1024))  // 300MB
                 .build())
             .filter(setRequestHeaders()) // Log headers
-            .filter(logRequestHeaders()) // Log headers
             .filter(this.log())
             .build();
     }
@@ -106,14 +104,4 @@ public class RestWebClient {
             return next.exchange(modifiedRequest);
         };
     }
-    private static ExchangeFilterFunction logRequestHeaders() {
-        return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
-            System.out.println("Request Headers:");
-            clientRequest.headers().forEach((name, values) ->
-                    values.forEach(value -> System.out.println(name + ": " + value))
-            );
-            return Mono.just(clientRequest);
-        });
-    }
-
 }
