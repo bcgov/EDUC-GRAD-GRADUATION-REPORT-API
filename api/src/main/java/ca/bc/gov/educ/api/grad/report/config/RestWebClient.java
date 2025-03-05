@@ -2,6 +2,7 @@ package ca.bc.gov.educ.api.grad.report.config;
 
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.LogHelper;
+import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +15,12 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
@@ -57,6 +60,8 @@ public class RestWebClient {
             .codecs(configurer -> configurer
                 .defaultCodecs()
                 .maxInMemorySize(100 * 1024 * 1024))
+            .filter(setRequestHeaders()) // Log headers
+            .filter(logRequestHeaders()) // Log headers
             .filter(this.log())
             .clientConnector(this.connector)
             .uriBuilderFactory(this.factory)
@@ -71,6 +76,8 @@ public class RestWebClient {
                     .defaultCodecs()
                     .maxInMemorySize(300 * 1024 * 1024))  // 300MB
                 .build())
+            .filter(setRequestHeaders()) // Log headers
+            .filter(logRequestHeaders()) // Log headers
             .filter(this.log())
             .build();
     }
@@ -84,7 +91,29 @@ public class RestWebClient {
                 //GRAD2-1929 Refactoring/Linting replaced rawStatusCode() with statusCode() as it was deprecated.
                 clientResponse.statusCode().value(),
                 clientRequest.headers().get(EducGradReportApiConstants.CORRELATION_ID),
+                clientRequest.headers().get(EducGradReportApiConstants.REQUEST_SOURCE),
                 constants.isSplunkLogHelperEnabled())
             ));
     }
+
+    private ExchangeFilterFunction setRequestHeaders() {
+        return (clientRequest, next) -> {
+            ClientRequest modifiedRequest = ClientRequest.from(clientRequest)
+                    .header(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID())
+                    .header(EducGradReportApiConstants.USER_NAME, ThreadLocalStateUtil.getCurrentUser())
+                    .header(EducGradReportApiConstants.REQUEST_SOURCE, EducGradReportApiConstants.API_NAME)
+                    .build();
+            return next.exchange(modifiedRequest);
+        };
+    }
+    private static ExchangeFilterFunction logRequestHeaders() {
+        return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
+            System.out.println("Request Headers:");
+            clientRequest.headers().forEach((name, values) ->
+                    values.forEach(value -> System.out.println(name + ": " + value))
+            );
+            return Mono.just(clientRequest);
+        });
+    }
+
 }
