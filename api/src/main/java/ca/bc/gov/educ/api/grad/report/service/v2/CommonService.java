@@ -205,15 +205,12 @@ public class CommonService {
             if(s != null) {
                 ReportGradStudentData dataResult = SerializationUtils.clone(s);
                 dataResult.setPaperType(paperType);
-                if ("YED4".equalsIgnoreCase(paperType)) {
-                    dataResult.setTranscriptTypeCode(certificateTypeCode);
-                } else {
-                    dataResult.setCertificateTypeCode(certificateTypeCode);
-                }
                 if("YED4".equalsIgnoreCase(paperType) && Set.of("CUR", "TER", "ARC").contains(s.getStudentStatus())) {
+                    dataResult.setTranscriptTypeCode(certificateTypeCode);
                     result.add(dataResult);
                 }
                 if (!"YED4".equalsIgnoreCase(paperType)) {
+                    dataResult.setCertificateTypeCode(certificateTypeCode);
                     result.add(dataResult);
                 }
             }
