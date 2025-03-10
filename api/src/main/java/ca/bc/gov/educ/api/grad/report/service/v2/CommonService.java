@@ -210,7 +210,7 @@ public class CommonService {
                 } else {
                     dataResult.setCertificateTypeCode(certificateTypeCode);
                 }
-                if("YED4".equalsIgnoreCase(paperType) && "CUR".equalsIgnoreCase(s.getStudentStatus())) {
+                if("YED4".equalsIgnoreCase(paperType) && Set.of("CUR", "TER", "ARC").contains(s.getStudentStatus())) {
                     result.add(dataResult);
                 }
                 if (!"YED4".equalsIgnoreCase(paperType)) {
