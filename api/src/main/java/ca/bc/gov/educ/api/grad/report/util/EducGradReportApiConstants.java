@@ -17,6 +17,9 @@ public class EducGradReportApiConstants {
     private EducGradReportApiConstants(){}
 
     public static final String CORRELATION_ID = "correlationID";
+    public static final String USER_NAME = "User-Name";
+    public static final String REQUEST_SOURCE = "Request-Source";
+    public static final String API_NAME = "EDUC-GRAD-REPORT-API";
 
     //API end-point Mapping constants
     public static final String API_ROOT_MAPPING = "";
