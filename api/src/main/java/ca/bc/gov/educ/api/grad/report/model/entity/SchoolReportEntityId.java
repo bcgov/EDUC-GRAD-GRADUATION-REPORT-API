@@ -20,6 +20,8 @@ public class SchoolReportEntityId implements Serializable {
     protected String paperType;
     @Column(name = "CERTIFICATE_TYPE_CODE")
     protected String certificateTypeCode;
+    @Column(name = "REPORTING_SCHOOL_TYPE_CODE")
+    protected String reportingSchoolTypeCode;
 
     @Override
     public boolean equals(Object o) {

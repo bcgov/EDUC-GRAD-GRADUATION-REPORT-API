@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.SCHOOL_AT_GRAD;
+
 @Service("commonServiceV2")
 public class CommonService {
 
@@ -195,7 +197,7 @@ public class CommonService {
             studentsInBatch.removeIf(st -> (!yearEndReportRequest.getDistrictIds().contains(st.getDistrictId())));
         }
         if(studentsInBatch != null && yearEndReportRequest.getSchoolIds() != null && !yearEndReportRequest.getSchoolIds().isEmpty()) {
-            studentsInBatch.removeIf(st -> (!yearEndReportRequest.getSchoolIds().contains(st.getSchoolOfRecordId())));
+            filterStudentsBySchoolId(studentsInBatch, yearEndReportRequest, students);
         }
 
         for(SchoolReportEntity e: students.getContent()) {
@@ -205,6 +207,7 @@ public class CommonService {
             if(s != null) {
                 ReportGradStudentData dataResult = SerializationUtils.clone(s);
                 dataResult.setPaperType(paperType);
+                dataResult.setReportingSchoolTypeCode(e.getSchoolReportEntityId().getReportingSchoolTypeCode());
                 if("YED4".equalsIgnoreCase(paperType) && Set.of("CUR", "TER", "ARC").contains(s.getStudentStatus())) {
                     dataResult.setTranscriptTypeCode(certificateTypeCode);
                     result.add(dataResult);
@@ -216,6 +219,28 @@ public class CommonService {
             }
         }
         return result;
+    }
+
+    private void filterStudentsBySchoolId(List<ReportGradStudentData> studentsInBatch, YearEndReportRequest yearEndReportRequest, Page<SchoolReportEntity> students) {
+        Set<UUID> schoolIdsSet = new HashSet<>(yearEndReportRequest.getSchoolIds());
+
+        studentsInBatch.removeIf(st -> {
+            SchoolReportEntity schoolReportEntity = students.getContent().stream()
+                .filter(entity -> entity.getGraduationStudentRecordId().equals(st.getGraduationStudentRecordId()))
+                .findFirst()
+                .orElse(null);
+
+            if (schoolReportEntity == null) {
+                return true;
+            }
+            UUID schoolIdToCheck = null;
+            if (SCHOOL_AT_GRAD.name().equals(schoolReportEntity.getSchoolReportEntityId().getReportingSchoolTypeCode())) {
+                schoolIdToCheck = st.getSchoolAtGradId();
+            } else {
+                schoolIdToCheck = st.getSchoolOfRecordId();
+            }
+            return schoolIdToCheck == null || !schoolIdsSet.contains(schoolIdToCheck);
+        });
     }
 
     private synchronized ReportGradStudentData getReportGradStudentDataByGraduationStudentRecordIdFromList(UUID id, List<ReportGradStudentData> studentsInBatch) {
