@@ -25,6 +25,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
 
+import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.SCHOOL_AT_GRAD;
+import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.SCHOOL_OF_RECORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -352,9 +354,9 @@ public class CommonServiceTest {
         UUID studentId = UUID.randomUUID();
         UUID studentId2 = UUID.randomUUID();
         SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
-        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E", SCHOOL_AT_GRAD.name()));
         SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
-        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YRD4", "E"));
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YRD4", "E", SCHOOL_OF_RECORD.name()));
         when(schoolReportMonthlyRepository.findStudentForSchoolReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
 
         List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
@@ -376,9 +378,9 @@ public class CommonServiceTest {
         UUID studentId = UUID.randomUUID();
         UUID studentId2 = UUID.randomUUID();
         SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
-        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E", SCHOOL_AT_GRAD.name()));
         SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
-        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E"));
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity), PageRequest.of(0, 1), 2));
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity2), PageRequest.of(1, 1), 2));
 
@@ -401,16 +403,16 @@ public class CommonServiceTest {
         UUID studentId = UUID.randomUUID();
         UUID studentId2 = UUID.randomUUID();
         SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
-        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E"));
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E", SCHOOL_AT_GRAD.name()));
         SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
-        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E"));
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
 
         UUID schoolId = UUID.randomUUID();
         List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
         var student1 = createReportGradStudentData();
         student1.setGraduationStudentRecordId(studentId);
-        student1.setSchoolOfRecordId(schoolId);
+        student1.setSchoolAtGradId(schoolId);
         reportGradStudentDataList.add(student1);
         var student2 = createReportGradStudentData();
         student2.setGraduationStudentRecordId(studentId2);
