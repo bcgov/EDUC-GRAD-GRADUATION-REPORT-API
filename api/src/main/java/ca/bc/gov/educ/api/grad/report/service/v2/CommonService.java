@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.SCHOOL_AT_GRAD;
+import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.SCHOOL_OF_RECORD;
 
 @Service("commonServiceV2")
 public class CommonService {
@@ -208,17 +209,24 @@ public class CommonService {
                 ReportGradStudentData dataResult = SerializationUtils.clone(s);
                 dataResult.setPaperType(paperType);
                 dataResult.setReportingSchoolTypeCode(e.getSchoolReportEntityId().getReportingSchoolTypeCode());
-                if("YED4".equalsIgnoreCase(paperType) && Set.of("CUR", "TER", "ARC").contains(s.getStudentStatus())) {
-                    dataResult.setTranscriptTypeCode(certificateTypeCode);
-                    result.add(dataResult);
-                }
-                if (!"YED4".equalsIgnoreCase(paperType)) {
-                    dataResult.setCertificateTypeCode(certificateTypeCode);
-                    result.add(dataResult);
-                }
+                setTranscriptAndCertificates(dataResult, certificateTypeCode, paperType, result, s.getStudentStatus());
             }
         }
         return result;
+    }
+
+    private void setTranscriptAndCertificates(ReportGradStudentData dataResult, String certificateTypeCode, String paperType, List<ReportGradStudentData> result, String studentStatus) {
+        boolean isTranscriptEligible = SCHOOL_OF_RECORD.name().equals(dataResult.getReportingSchoolTypeCode())
+            ? "CUR".equals(studentStatus)
+            : Set.of("CUR", "TER", "ARC").contains(studentStatus);
+        if("YED4".equalsIgnoreCase(paperType) && isTranscriptEligible) {
+            dataResult.setTranscriptTypeCode(certificateTypeCode);
+            result.add(dataResult);
+        }
+        if (!"YED4".equalsIgnoreCase(paperType)) {
+            dataResult.setCertificateTypeCode(certificateTypeCode);
+            result.add(dataResult);
+        }
     }
 
     private void filterStudentsBySchoolId(List<ReportGradStudentData> studentsInBatch, YearEndReportRequest yearEndReportRequest, Page<SchoolReportEntity> students) {
