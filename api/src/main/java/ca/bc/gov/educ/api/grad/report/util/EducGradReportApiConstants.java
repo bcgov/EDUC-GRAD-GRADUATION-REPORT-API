@@ -123,6 +123,8 @@ public class EducGradReportApiConstants {
     private String schoolClobBySchoolIdUrl;
     @Value("${endpoint.grad-trax-api.school-by-school-id.url}")
     private String schoolBySchoolIdUrl;
+    @Value("${endpoint.grad-trax-api.all-schools.url}")
+    private String allSchoolsUrl;
 
     @Value("${endpoint.grad-trax-api.district-by-dist-no.url}")
     private String districtByDistrictNumberUrl;
