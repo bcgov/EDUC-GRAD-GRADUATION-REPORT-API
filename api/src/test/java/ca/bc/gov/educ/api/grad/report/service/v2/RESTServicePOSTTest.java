@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
+import ca.bc.gov.educ.api.grad.report.cache.CacheInitializer;
 import ca.bc.gov.educ.api.grad.report.exception.ServiceException;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import io.netty.channel.ConnectTimeoutException;
@@ -59,6 +60,8 @@ public class RESTServicePOSTTest {
 
     @MockBean
     OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
+    @MockBean
+    private CacheInitializer cacheInitializer;
 
     private static final byte[] TEST_BYTES = "The rain in Spain stays mainly on the plain.".getBytes();
     private static final String TEST_BODY = "{test:test}";

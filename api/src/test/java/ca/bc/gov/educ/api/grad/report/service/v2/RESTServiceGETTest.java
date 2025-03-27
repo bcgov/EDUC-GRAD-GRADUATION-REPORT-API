@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
+import ca.bc.gov.educ.api.grad.report.cache.CacheInitializer;
 import ca.bc.gov.educ.api.grad.report.exception.ServiceException;
 import io.netty.channel.ConnectTimeoutException;
 import org.junit.Assert;
@@ -53,6 +54,9 @@ public class RESTServiceGETTest {
 
     @MockBean
     private OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepositoryMock;
+
+    @MockBean
+    private CacheInitializer cacheInitializer;
 
     private static final String TEST_URL_200 = "https://httpstat.us/200";
     private static final String TEST_URL_403 = "https://httpstat.us/403";

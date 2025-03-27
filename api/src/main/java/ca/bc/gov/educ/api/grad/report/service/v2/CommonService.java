@@ -1,6 +1,5 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
-import ca.bc.gov.educ.api.grad.report.cache.SchoolCache;
 import ca.bc.gov.educ.api.grad.report.model.dto.GraduationStudentRecordSearchResult;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.ReportGradStudentData;
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
@@ -42,14 +41,14 @@ public class CommonService {
     final SchoolReportMonthlyRepository schoolReportMonthlyRepository;
     final RESTService restService;
     final EducGradReportApiConstants constants;
-    private final SchoolCache schoolCache;
+    private final SchoolCacheService schoolCache;
 
     private static final Logger logger = LoggerFactory.getLogger(CommonService.class);
 
     public static final int PAGE_SIZE = 1000;
 
     @Autowired
-    public CommonService(GradStudentCertificatesRepository gradStudentCertificatesRepository, GradStudentTranscriptsRepository gradStudentTranscriptsRepository, GradStudentReportsRepository gradStudentReportsRepository, SchoolReportRepository schoolReportRepository, RESTService restService, SchoolReportYearEndRepository schoolReportYearEndRepository, EducGradReportApiConstants constants, SchoolReportMonthlyRepository schoolReportMonthlyRepository, SchoolReportLightRepository schoolReportLightRepository, SchoolCache schoolCache) {
+    public CommonService(GradStudentCertificatesRepository gradStudentCertificatesRepository, GradStudentTranscriptsRepository gradStudentTranscriptsRepository, GradStudentReportsRepository gradStudentReportsRepository, SchoolReportRepository schoolReportRepository, RESTService restService, SchoolReportYearEndRepository schoolReportYearEndRepository, EducGradReportApiConstants constants, SchoolReportMonthlyRepository schoolReportMonthlyRepository, SchoolReportLightRepository schoolReportLightRepository, SchoolCacheService schoolCache) {
         this.gradStudentCertificatesRepository = gradStudentCertificatesRepository;
         this.gradStudentTranscriptsRepository = gradStudentTranscriptsRepository;
         this.gradStudentReportsRepository = gradStudentReportsRepository;
