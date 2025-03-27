@@ -66,6 +66,9 @@ public class CommonServiceTest {
     @MockBean
     SchoolReportLightRepository schoolReportLightRepository;
 
+    @MockBean
+    SchoolCacheService schoolCache;
+
 
     @Before
     public void setUp() {
