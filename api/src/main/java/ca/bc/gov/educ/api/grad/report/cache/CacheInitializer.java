@@ -24,7 +24,7 @@ public class CacheInitializer {
         schoolCacheService.refreshCache();
     }
 
-    @Scheduled(cron = "0 0 23 * * ?")
+    @Scheduled(cron = "0 0 4 * * ?")
     public void scheduledCacheRefresh() {
         log.info("Refreshing cache...");
         schoolCacheService.refreshCache();
