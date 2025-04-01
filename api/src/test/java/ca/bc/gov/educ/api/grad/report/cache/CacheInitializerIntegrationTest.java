@@ -34,4 +34,13 @@ class CacheInitializerIntegrationTest {
     // Verify that the refreshCache method is called during startup
     verify(schoolCacheService, Mockito.times(1)).refreshCache();
   }
+
+  @Test
+  void testScheduledCacheRefresh() {
+    // Call the scheduled method directly
+    cacheInitializer.scheduledCacheRefresh();
+
+    // Verify that the refreshCache method is called
+    verify(schoolCacheService, Mockito.times(1)).refreshCache();
+  }
 }
