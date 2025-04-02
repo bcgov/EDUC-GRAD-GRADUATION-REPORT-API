@@ -4,6 +4,7 @@ import ca.bc.gov.educ.api.grad.report.model.dto.GradCertificateTypes;
 import ca.bc.gov.educ.api.grad.report.model.dto.GraduationStudentRecordSearchResult;
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.ReportGradStudentData;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndReportRequest;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportEntityId;
@@ -29,8 +30,7 @@ import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.
 import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.SCHOOL_OF_RECORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -425,6 +425,41 @@ public class CommonServiceTest {
         when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolIds(List.of(schoolId)).build();
+        List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void testGetSchoolYearEndReportGradStudentDataWithFilteredDistricts() {
+        UUID studentId = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        UUID schoolId = UUID.randomUUID();
+        UUID districtId = UUID.randomUUID();
+
+        SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E", SCHOOL_AT_GRAD.name()));
+        SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
+
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
+
+        School school = new School();
+        school.setDistrictId(districtId.toString());
+        when(schoolCache.getSchool(schoolId)).thenReturn(school);
+
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId);
+        student1.setSchoolAtGradId(schoolId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+
+        YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().districtIds(List.of(districtId)).build();
         List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
         assertEquals(1, result.size());
     }
