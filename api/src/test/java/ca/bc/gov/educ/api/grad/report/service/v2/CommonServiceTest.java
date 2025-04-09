@@ -9,6 +9,7 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndReportRequest;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportEntityId;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportMonthlyEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportYearEndEntity;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
@@ -380,9 +381,9 @@ public class CommonServiceTest {
     public void testGetSchoolYearEndReportGradStudentData() {
         UUID studentId = UUID.randomUUID();
         UUID studentId2 = UUID.randomUUID();
-        SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
+        SchoolReportYearEndEntity schoolReportEntity = new SchoolReportYearEndEntity();
         schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E", SCHOOL_AT_GRAD.name()));
-        SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
+        SchoolReportYearEndEntity schoolReportEntity2 = new SchoolReportYearEndEntity();
         schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity), PageRequest.of(0, 1), 2));
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity2), PageRequest.of(1, 1), 2));
@@ -405,9 +406,9 @@ public class CommonServiceTest {
     public void testGetSchoolYearEndReportGradStudentDataWithFilteredSchools() {
         UUID studentId = UUID.randomUUID();
         UUID studentId2 = UUID.randomUUID();
-        SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
+        SchoolReportYearEndEntity schoolReportEntity = new SchoolReportYearEndEntity();
         schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E", SCHOOL_AT_GRAD.name()));
-        SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
+        SchoolReportYearEndEntity schoolReportEntity2 = new SchoolReportYearEndEntity();
         schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
 
@@ -430,15 +431,115 @@ public class CommonServiceTest {
     }
 
     @Test
+    public void testGetSchoolYearEndReportGradStudentDataWithFilteredSchoolCategoryCodes() {
+        UUID studentId = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        UUID schoolId = UUID.randomUUID();
+        SchoolReportYearEndEntity schoolReportEntity = new SchoolReportYearEndEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E", SCHOOL_AT_GRAD.name()));
+        SchoolReportYearEndEntity schoolReportEntity2 = new SchoolReportYearEndEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
+
+        School school = new School();
+        school.setSchoolCategoryCode("INDEPEND");
+        school.setDistrictId(UUID.randomUUID().toString());
+        when(schoolCache.getSchool(schoolId)).thenReturn(school);
+
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId);
+        student1.setSchoolAtGradId(schoolId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+
+        YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolCategoryCodes(List.of("INDEPEND")).build();
+        List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void testGetSchoolYearEndReportGradStudentDataWithFilteredSchoolCategoryCodesInDistrict() {
+        UUID studentId = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        UUID schoolId = UUID.randomUUID();
+        UUID districtId = UUID.randomUUID();
+        SchoolReportYearEndEntity schoolReportEntity = new SchoolReportYearEndEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E", SCHOOL_AT_GRAD.name()));
+        SchoolReportYearEndEntity schoolReportEntity2 = new SchoolReportYearEndEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
+
+        School school = new School();
+        school.setSchoolCategoryCode("INDEPEND");
+        school.setDistrictId(districtId.toString());
+        when(schoolCache.getSchool(schoolId)).thenReturn(school);
+
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId);
+        student1.setSchoolAtGradId(schoolId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+
+        YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolCategoryCodes(List.of("INDEPEND")).districtIds(List.of(districtId)).build();
+        List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void testGetSchoolYearEndReportGradStudentDataWithFilteredSchoolCategoryCodesNotInDistrict() {
+        UUID studentId = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        UUID schoolId = UUID.randomUUID();
+        SchoolReportYearEndEntity schoolReportEntity = new SchoolReportYearEndEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E", SCHOOL_AT_GRAD.name()));
+        SchoolReportYearEndEntity schoolReportEntity2 = new SchoolReportYearEndEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
+
+        School school = new School();
+        school.setSchoolCategoryCode("INDEPEND");
+        school.setDistrictId(UUID.randomUUID().toString());
+        when(schoolCache.getSchool(schoolId)).thenReturn(school);
+
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId);
+        student1.setSchoolAtGradId(schoolId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+
+        YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolCategoryCodes(List.of("INDEPEND")).districtIds(List.of(UUID.randomUUID())).build();
+        List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
+        assertEquals(0, result.size());
+    }
+
+    @Test
     public void testGetSchoolYearEndReportGradStudentDataWithFilteredDistricts() {
         UUID studentId = UUID.randomUUID();
         UUID studentId2 = UUID.randomUUID();
         UUID schoolId = UUID.randomUUID();
         UUID districtId = UUID.randomUUID();
 
-        SchoolReportMonthlyEntity schoolReportEntity = new SchoolReportMonthlyEntity();
+        SchoolReportYearEndEntity schoolReportEntity = new SchoolReportYearEndEntity();
         schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId, "EBDR", "E", SCHOOL_AT_GRAD.name()));
-        SchoolReportMonthlyEntity schoolReportEntity2 = new SchoolReportMonthlyEntity();
+        SchoolReportYearEndEntity schoolReportEntity2 = new SchoolReportYearEndEntity();
         schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
 
         when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
