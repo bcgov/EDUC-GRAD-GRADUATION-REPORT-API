@@ -209,8 +209,9 @@ public class CommonService {
 
             boolean isStudentDistrictEligible = (yearEndReportRequest.getDistrictIds() == null || yearEndReportRequest.getDistrictIds().isEmpty()) || studentInDistricts(student, yearEndReportRequest.getDistrictIds());
             boolean isStudentSchoolEligible = (yearEndReportRequest.getSchoolIds() == null || yearEndReportRequest.getSchoolIds().isEmpty()) || studentInSchool(student, yearEndReportRequest.getSchoolIds());
+            boolean isStudentSchoolCategoryCodeEligible = (yearEndReportRequest.getSchoolCategoryCodes() == null || yearEndReportRequest.getSchoolCategoryCodes().isEmpty()) || studentInSchoolCategoryCodes(student, yearEndReportRequest.getSchoolCategoryCodes());
 
-            if(isStudentDistrictEligible && isStudentSchoolEligible) {
+            if(isStudentDistrictEligible && isStudentSchoolEligible  && isStudentSchoolCategoryCodeEligible) {
                 ReportGradStudentData dataResult = SerializationUtils.clone(student);
                 dataResult.setPaperType(paperType);
                 UUID schoolAtGradId = dataResult.getSchoolAtGradId();
@@ -235,6 +236,12 @@ public class CommonService {
         UUID schoolId = SCHOOL_AT_GRAD.name().equals(student.getReportingSchoolTypeCode()) ? student.getSchoolAtGradId() : student.getSchoolOfRecordId();
         School school = this.schoolCache.getSchool(schoolId);
         return school != null && districtIds.contains(UUID.fromString(school.getDistrictId()));
+    }
+
+    private boolean studentInSchoolCategoryCodes(ReportGradStudentData student, List<String> schoolCategoryCodes) {
+        UUID schoolId = SCHOOL_AT_GRAD.name().equals(student.getReportingSchoolTypeCode()) ? student.getSchoolAtGradId() : student.getSchoolOfRecordId();
+        School school = this.schoolCache.getSchool(schoolId);
+        return school != null && schoolCategoryCodes.contains(school.getSchoolCategoryCode());
     }
 
     private void setTranscriptAndCertificates(ReportGradStudentData dataResult, String certificateTypeCode, String paperType, List<ReportGradStudentData> result, String studentStatus) {
