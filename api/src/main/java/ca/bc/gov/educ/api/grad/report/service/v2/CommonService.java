@@ -212,19 +212,23 @@ public class CommonService {
             boolean isStudentSchoolCategoryCodeEligible = (yearEndReportRequest.getSchoolCategoryCodes() == null || yearEndReportRequest.getSchoolCategoryCodes().isEmpty()) || studentInSchoolCategoryCodes(student, yearEndReportRequest.getSchoolCategoryCodes());
 
             if(isStudentDistrictEligible && isStudentSchoolEligible  && isStudentSchoolCategoryCodeEligible) {
-                ReportGradStudentData dataResult = SerializationUtils.clone(student);
-                dataResult.setPaperType(paperType);
-                UUID schoolAtGradId = dataResult.getSchoolAtGradId();
-                if (schoolAtGradId != null) {
-                    School school = this.schoolCache.getSchool(schoolAtGradId);
-                    if (school != null) {
-                        dataResult.setDistrictAtGradId(UUID.fromString(school.getDistrictId()));
-                    }
-                }
-                setTranscriptAndCertificates(dataResult, certificateTypeCode, paperType, result, student.getStudentStatus());
+                addStudentToResult(student, paperType, certificateTypeCode, result);
             }
         }
         return result;
+    }
+
+    private void addStudentToResult(ReportGradStudentData student, String paperType, String certificateTypeCode, List<ReportGradStudentData> result) {
+        ReportGradStudentData dataResult = SerializationUtils.clone(student);
+        dataResult.setPaperType(paperType);
+        UUID schoolAtGradId = dataResult.getSchoolAtGradId();
+        if (schoolAtGradId != null) {
+            School school = this.schoolCache.getSchool(schoolAtGradId);
+            if (school != null) {
+                dataResult.setDistrictAtGradId(UUID.fromString(school.getDistrictId()));
+            }
+        }
+        setTranscriptAndCertificates(dataResult, certificateTypeCode, paperType, result, student.getStudentStatus());
     }
 
     private boolean studentInSchool(ReportGradStudentData student, List<UUID> schoolIds) {
