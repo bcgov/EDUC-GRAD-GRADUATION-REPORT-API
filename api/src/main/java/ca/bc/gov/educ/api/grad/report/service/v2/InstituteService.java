@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,6 +31,10 @@ public class InstituteService {
 
 	public District getDistrict(UUID districtId) {
 		var response = this.restService.get(String.format(educGraduationApiConstants.getDistrictByDistrictIdUrl(),districtId), District.class);
+		return jsonTransformer.convertValue(response, new TypeReference<>() {});
+	}
+	public List<School> getAllSchools() {
+		var response = this.restService.get(educGraduationApiConstants.getAllSchoolsUrl(), List.class);
 		return jsonTransformer.convertValue(response, new TypeReference<>() {});
 	}
 }
