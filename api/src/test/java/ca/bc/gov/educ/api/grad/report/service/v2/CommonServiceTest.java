@@ -7,6 +7,7 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.ReportGradStudentData;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndReportRequest;
+import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportEntityId;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportMonthlyEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportYearEndEntity;
@@ -585,6 +586,17 @@ public class CommonServiceTest {
         Mockito.when(schoolReportRepository.archiveSchoolReports(new ArrayList<>(), "reportType".toUpperCase(), "reportTypeARC".toUpperCase(), 1L)).thenReturn(0);
         Integer count = commonService.archiveSchoolReports(1L, new ArrayList<>(), "reportType".toUpperCase());
         assertThat(count).isNotNull().isEqualTo(0);
+    }
+
+    @Test
+    public void testupdateStudentCredentials() {
+        String activityCode="USERDISTOC";
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
+        scdSubList.add(new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date()));
+        scdSubList.add(new StudentCredentialDistribution(new UUID(5,4),"E",new UUID(5,5),"YEDR","COMPL", new Date()));
+
+        Integer res = commonService.updateStudentCredentials(scdSubList, activityCode);
+        assertThat(res).isZero();
     }
 
     private ReportGradStudentData createReportGradStudentData() {
