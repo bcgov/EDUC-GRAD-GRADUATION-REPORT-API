@@ -11,6 +11,8 @@ import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
+import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -163,6 +165,14 @@ public class CommonService {
         return processReportGradStudentDataList(schoolStudents, yearEndReportRequest);
     }
 
+    public List<ReportGradStudentData> getYearEndReportGradStudentData(YearEndReportRequest yearEndReportRequest) {
+        logger.debug("getSchoolYearEndReportGradStudentData");
+        if(!yearEndReportRequest.getStudentList().isEmpty()) {
+            return getStudentsFromGradStudentApi(yearEndReportRequest);
+        }
+        return getSchoolYearEndReportGradStudentData(yearEndReportRequest);
+    }
+
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData() {
         logger.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
@@ -211,6 +221,29 @@ public class CommonService {
             boolean isStudentSchoolEligible = (yearEndReportRequest.getSchoolIds() == null || yearEndReportRequest.getSchoolIds().isEmpty()) || studentInSchool(student, yearEndReportRequest.getSchoolIds());
             boolean isStudentSchoolCategoryCodeEligible = (yearEndReportRequest.getSchoolCategoryCodes() == null || yearEndReportRequest.getSchoolCategoryCodes().isEmpty()) || studentInSchoolCategoryCodes(student, yearEndReportRequest.getSchoolCategoryCodes());
 
+            if(isStudentDistrictEligible && isStudentSchoolEligible  && isStudentSchoolCategoryCodeEligible) {
+                addStudentToResult(student, paperType, certificateTypeCode, result);
+            }
+        }
+        return result;
+    }
+
+    private List<ReportGradStudentData> getStudentsFromGradStudentApi(YearEndReportRequest yearEndReportRequest) {
+        List<ReportGradStudentData> result = new ArrayList<>();
+        List<UUID> studentGuidsInBatch = yearEndReportRequest.getStudentList().stream().map(ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndStudentCredentialDistribution::getStudentID).distinct().toList();
+        Map<UUID, ReportGradStudentData> studentMap = getReportGradStudentData(studentGuidsInBatch).stream()
+                .collect(Collectors.toMap(ReportGradStudentData::getGraduationStudentRecordId, student -> student));
+        for(ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndStudentCredentialDistribution e: yearEndReportRequest.getStudentList()) {
+            String paperType = e.getPaperType();
+            String certificateTypeCode = e.getCertificateTypeCode(); //either transcript or certificate codes
+
+            ReportGradStudentData student = studentMap.get(e.getStudentID());
+            if(student == null) continue;
+            student.setReportingSchoolTypeCode(e.getReportingSchoolTypeCode());
+
+            boolean isStudentDistrictEligible = (yearEndReportRequest.getDistrictIds() == null || yearEndReportRequest.getDistrictIds().isEmpty()) || studentInDistricts(student, yearEndReportRequest.getDistrictIds());
+            boolean isStudentSchoolEligible = (yearEndReportRequest.getSchoolIds() == null || yearEndReportRequest.getSchoolIds().isEmpty()) || studentInSchool(student, yearEndReportRequest.getSchoolIds());
+            boolean isStudentSchoolCategoryCodeEligible = (yearEndReportRequest.getSchoolCategoryCodes() == null || yearEndReportRequest.getSchoolCategoryCodes().isEmpty()) || studentInSchoolCategoryCodes(student, yearEndReportRequest.getSchoolCategoryCodes());
             if(isStudentDistrictEligible && isStudentSchoolEligible  && isStudentSchoolCategoryCodeEligible) {
                 addStudentToResult(student, paperType, certificateTypeCode, result);
             }
@@ -332,5 +365,34 @@ public class CommonService {
             }
         }
         return updatedReportsCount;
+    }
+
+    @Transactional
+    public Integer updateStudentCredentials(List<StudentCredentialDistribution> studentCredentialDistributions, String activityCode) {
+        List<StudentCredentialDistribution> transcriptDistributions = studentCredentialDistributions.stream().filter(item -> item.getPaperType().equals("YED4")).toList();
+        List<StudentCredentialDistribution> certificateDistributions = studentCredentialDistributions.stream().filter(item -> !item.getPaperType().equals("YED4")).toList();
+        String userName = ThreadLocalStateUtil.getCurrentUser();
+        Integer[] processedCounts = {0};
+        //Handle Transcript updates by document status code
+        if(CollectionUtils.isNotEmpty(transcriptDistributions)) {
+            final Map<String, List<StudentCredentialDistribution>> transcriptByDocStatusCode = transcriptDistributions.stream()
+                    .collect(Collectors.groupingBy(StudentCredentialDistribution::getDocumentStatusCode));
+            transcriptByDocStatusCode.forEach((transcriptDocStatus, distributionList) -> {
+                processedCounts[0] = processedCounts[0] + gradStudentTranscriptsRepository.updateStudentDistributionData(new Date(), userName, transcriptDocStatus, distributionList.stream().map(StudentCredentialDistribution::getStudentID).collect(Collectors.toList()));
+            });
+
+        }
+        //Handle Credential updates by credential type and document status code
+        if(CollectionUtils.isNotEmpty(certificateDistributions)) {
+            Map<String,Map<String, List<StudentCredentialDistribution>>> certificateByDocStatusCodeAndCredType = certificateDistributions.stream()
+                    .collect(Collectors.groupingBy(StudentCredentialDistribution::getDocumentStatusCode,
+                            Collectors.groupingBy(StudentCredentialDistribution::getCredentialTypeCode)));
+            certificateByDocStatusCodeAndCredType.forEach((certificateDocStatus, credentialTypeMap) -> {
+                credentialTypeMap.forEach((certificateType, distributionList) -> {
+                    processedCounts[0] = processedCounts[0] + gradStudentCertificatesRepository.updateStudentDistributionData(new Date(), userName, certificateDocStatus, certificateType, activityCode, distributionList.stream().map(StudentCredentialDistribution::getStudentID).collect(Collectors.toList()));
+                });
+            });
+        }
+        return processedCounts[0];
     }
 }

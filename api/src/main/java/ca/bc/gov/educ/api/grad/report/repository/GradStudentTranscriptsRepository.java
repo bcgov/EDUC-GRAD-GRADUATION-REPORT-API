@@ -4,10 +4,12 @@ import ca.bc.gov.educ.api.grad.report.model.dto.SchoolStudentCredentialDistribut
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.entity.GradStudentTranscriptsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,5 +53,9 @@ public interface GradStudentTranscriptsRepository extends JpaRepository<GradStud
 
 	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.SchoolStudentCredentialDistribution(c.id,c.transcriptTypeCode,c.studentID,c.documentStatusCode) from GradStudentTranscriptsEntity c where c.transcriptUpdateDate is null or c.transcriptUpdateDate < c.updateDate")
 	List<SchoolStudentCredentialDistribution> findByTranscriptUpdateDate();
+
+	@Modifying
+	@Query(value="update GradStudentTranscriptsEntity t set t.updateUser = :updateUser, t.updateDate = :currentDate, t.distributionDate = :currentDate where t.documentStatusCode= :documentStatusCode and t.studentID in :studentIDs")
+	Integer updateStudentDistributionData(Date currentDate, String updateUser, String documentStatusCode, List<UUID> studentIDs);
 
 }
