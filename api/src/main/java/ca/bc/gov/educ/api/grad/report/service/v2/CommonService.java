@@ -166,7 +166,7 @@ public class CommonService {
     }
 
     public List<ReportGradStudentData> getYearEndReportGradStudentData(YearEndReportRequest yearEndReportRequest) {
-        logger.debug("getSchoolYearEndReportGradStudentData");
+        logger.debug("getYearEndReportGradStudentData");
         if(!yearEndReportRequest.getStudentList().isEmpty()) {
             return getStudentsFromGradStudentApi(yearEndReportRequest);
         }
@@ -234,9 +234,6 @@ public class CommonService {
         Map<UUID, ReportGradStudentData> studentMap = getReportGradStudentData(studentGuidsInBatch).stream()
                 .collect(Collectors.toMap(ReportGradStudentData::getGraduationStudentRecordId, student -> student));
         for(ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndStudentCredentialDistribution e: yearEndReportRequest.getStudentList()) {
-            String paperType = e.getPaperType();
-            String certificateTypeCode = e.getCertificateTypeCode(); //either transcript or certificate codes
-
             ReportGradStudentData student = studentMap.get(e.getStudentID());
             if(student == null) continue;
             student.setReportingSchoolTypeCode(e.getReportingSchoolTypeCode());
@@ -245,7 +242,7 @@ public class CommonService {
             boolean isStudentSchoolEligible = (yearEndReportRequest.getSchoolIds() == null || yearEndReportRequest.getSchoolIds().isEmpty()) || studentInSchool(student, yearEndReportRequest.getSchoolIds());
             boolean isStudentSchoolCategoryCodeEligible = (yearEndReportRequest.getSchoolCategoryCodes() == null || yearEndReportRequest.getSchoolCategoryCodes().isEmpty()) || studentInSchoolCategoryCodes(student, yearEndReportRequest.getSchoolCategoryCodes());
             if(isStudentDistrictEligible && isStudentSchoolEligible  && isStudentSchoolCategoryCodeEligible) {
-                addStudentToResult(student, paperType, certificateTypeCode, result);
+                addStudentToResult(student, e.getPaperType(), e.getCertificateTypeCode(), result);
             }
         }
         return result;
