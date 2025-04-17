@@ -167,7 +167,7 @@ public class CommonService {
 
     public List<ReportGradStudentData> getYearEndReportGradStudentData(YearEndReportRequest yearEndReportRequest) {
         logger.debug("getYearEndReportGradStudentData");
-        if(!yearEndReportRequest.getStudentList().isEmpty()) {
+        if(yearEndReportRequest.getStudentList() != null && !yearEndReportRequest.getStudentList().isEmpty()) {
             return getStudentsFromGradStudentApi(yearEndReportRequest);
         }
         return getSchoolYearEndReportGradStudentData(yearEndReportRequest);
@@ -183,7 +183,7 @@ public class CommonService {
     private List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students, YearEndReportRequest yearEndReportRequest) {
         List<ReportGradStudentData> result = new ArrayList<>();
         long startTime = System.currentTimeMillis();
-        if(students.hasContent()) {
+        if(students != null && students.hasContent()) {
             PageRequest nextPage;
             result.addAll(getNextPageStudentsFromGradStudentApi(students, yearEndReportRequest));
             final int totalNumberOfPages = students.getTotalPages();
