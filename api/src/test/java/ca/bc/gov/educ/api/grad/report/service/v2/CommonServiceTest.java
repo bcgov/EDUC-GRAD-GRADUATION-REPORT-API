@@ -599,6 +599,140 @@ public class CommonServiceTest {
     }
 
     @Test
+    public void testGetSchoolYearEndReportGradStudentDataWithFilteredStudentList_districtIds() {
+        UUID studentId1 = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        UUID schoolId = UUID.randomUUID();
+        UUID districtId = UUID.randomUUID();
+
+        YearEndStudentCredentialDistribution studentCred1 = YearEndStudentCredentialDistribution.builder().studentID(studentId2).certificateTypeCode("E").reportingSchoolTypeCode(SCHOOL_OF_RECORD.name()).paperType("YED4").build();
+        YearEndStudentCredentialDistribution studentCred2 = YearEndStudentCredentialDistribution.builder().studentID(studentId1).certificateTypeCode("E").reportingSchoolTypeCode(SCHOOL_AT_GRAD.name()).paperType("YED4").build();
+
+        SchoolReportYearEndEntity schoolReportEntity = new SchoolReportYearEndEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId1, "EBDR", "E", SCHOOL_AT_GRAD.name()));
+        SchoolReportYearEndEntity schoolReportEntity2 = new SchoolReportYearEndEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
+
+        School school = new School();
+        school.setDistrictId(districtId.toString());
+        when(schoolCache.getSchool(schoolId)).thenReturn(school);
+
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId1);
+        student1.setSchoolAtGradId(schoolId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+
+        YearEndReportRequest yearEndReportRequest1 = YearEndReportRequest.builder().districtIds(List.of(districtId)).studentList(List.of(studentCred1, studentCred2)).build();
+        List<ReportGradStudentData> result1 = commonService.getYearEndReportGradStudentData(yearEndReportRequest1);
+        assertEquals(1, result1.size());
+
+        YearEndReportRequest yearEndReportRequest2 = YearEndReportRequest.builder().districtIds(null).studentList(List.of(studentCred1, studentCred2)).build();
+        List<ReportGradStudentData> result2 = commonService.getYearEndReportGradStudentData(yearEndReportRequest2);
+        assertEquals(2, result2.size());
+
+        YearEndReportRequest yearEndReportRequest3 = YearEndReportRequest.builder().districtIds(List.of(UUID.randomUUID())).studentList(List.of(studentCred1, studentCred2)).build();
+        List<ReportGradStudentData> result3 = commonService.getYearEndReportGradStudentData(yearEndReportRequest3);
+        assertEquals(0, result3.size());
+    }
+
+    @Test
+    public void testGetSchoolYearEndReportGradStudentDataWithFilteredStudentList_SchoolCategoryCodesInDistrict() {
+        UUID studentId1 = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        UUID schoolId = UUID.randomUUID();
+        UUID districtId = UUID.randomUUID();
+        SchoolReportYearEndEntity schoolReportEntity = new SchoolReportYearEndEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId1, "EBDR", "E", SCHOOL_AT_GRAD.name()));
+        SchoolReportYearEndEntity schoolReportEntity2 = new SchoolReportYearEndEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
+
+        YearEndStudentCredentialDistribution studentCred1 = YearEndStudentCredentialDistribution.builder().studentID(studentId2).certificateTypeCode("E").reportingSchoolTypeCode(SCHOOL_OF_RECORD.name()).paperType("YED4").build();
+        YearEndStudentCredentialDistribution studentCred2 = YearEndStudentCredentialDistribution.builder().studentID(studentId1).certificateTypeCode("E").reportingSchoolTypeCode(SCHOOL_AT_GRAD.name()).paperType("YED4").build();
+
+        School school = new School();
+        school.setSchoolCategoryCode("INDEPEND");
+        school.setDistrictId(districtId.toString());
+        when(schoolCache.getSchool(schoolId)).thenReturn(school);
+
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId1);
+        student1.setSchoolAtGradId(schoolId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+
+        YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolCategoryCodes(List.of("INDEPEND")).districtIds(List.of(districtId)).build();
+        List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
+        assertEquals(1, result.size());
+
+        YearEndReportRequest yearEndReportRequest1 = YearEndReportRequest.builder().schoolCategoryCodes(List.of("INDEPEND")).studentList(List.of(studentCred1, studentCred2)).build();
+        List<ReportGradStudentData> result1 = commonService.getYearEndReportGradStudentData(yearEndReportRequest1);
+        assertEquals(1, result1.size());
+
+        YearEndReportRequest yearEndReportRequest2 = YearEndReportRequest.builder().schoolCategoryCodes(null).studentList(List.of(studentCred1, studentCred2)).build();
+        List<ReportGradStudentData> result2 = commonService.getYearEndReportGradStudentData(yearEndReportRequest2);
+        assertEquals(2, result2.size());
+
+        YearEndReportRequest yearEndReportRequest3 = YearEndReportRequest.builder().schoolCategoryCodes(List.of("")).studentList(List.of(studentCred1, studentCred2)).build();
+        List<ReportGradStudentData> result3 = commonService.getYearEndReportGradStudentData(yearEndReportRequest3);
+        assertEquals(0, result3.size());
+
+    }
+
+    @Test
+    public void testGetSchoolYearEndReportGradStudentDataWithFilteredStudentList_SchoolIds() {
+        UUID studentId1 = UUID.randomUUID();
+        UUID studentId2 = UUID.randomUUID();
+        SchoolReportYearEndEntity schoolReportEntity = new SchoolReportYearEndEntity();
+        schoolReportEntity.setSchoolReportEntityId(new SchoolReportEntityId(studentId1, "EBDR", "E", SCHOOL_AT_GRAD.name()));
+        SchoolReportYearEndEntity schoolReportEntity2 = new SchoolReportYearEndEntity();
+        schoolReportEntity2.setSchoolReportEntityId(new SchoolReportEntityId(studentId2, "YED4", "E", SCHOOL_OF_RECORD.name()));
+        when(schoolReportYearEndRepository.findStudentForSchoolYearEndReport(any())).thenReturn(new PageImpl<>(List.of(schoolReportEntity, schoolReportEntity2), PageRequest.of(0, 1), 1));
+
+        YearEndStudentCredentialDistribution studentCred1 = YearEndStudentCredentialDistribution.builder().studentID(studentId2).certificateTypeCode("E").reportingSchoolTypeCode(SCHOOL_OF_RECORD.name()).paperType("YED4").build();
+        YearEndStudentCredentialDistribution studentCred2 = YearEndStudentCredentialDistribution.builder().studentID(studentId1).certificateTypeCode("E").reportingSchoolTypeCode(SCHOOL_AT_GRAD.name()).paperType("YED4").build();
+
+        UUID schoolId = UUID.randomUUID();
+        List<ReportGradStudentData> reportGradStudentDataList = new ArrayList<>();
+        var student1 = createReportGradStudentData();
+        student1.setGraduationStudentRecordId(studentId1);
+        student1.setSchoolAtGradId(schoolId);
+        reportGradStudentDataList.add(student1);
+        var student2 = createReportGradStudentData();
+        student2.setGraduationStudentRecordId(studentId2);
+        reportGradStudentDataList.add(student2);
+        reportGradStudentDataList.add(createReportGradStudentData());
+
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+
+        YearEndReportRequest yearEndReportRequest1 = YearEndReportRequest.builder().schoolIds(List.of(schoolId)).studentList(List.of(studentCred1, studentCred2)).build();
+        List<ReportGradStudentData> result1 = commonService.getYearEndReportGradStudentData(yearEndReportRequest1);
+        assertEquals(1, result1.size());
+
+        YearEndReportRequest yearEndReportRequest2 = YearEndReportRequest.builder().schoolIds(null).studentList(List.of(studentCred1, studentCred2)).build();
+        List<ReportGradStudentData> result2 = commonService.getYearEndReportGradStudentData(yearEndReportRequest2);
+        assertEquals(2, result2.size());
+
+        YearEndReportRequest yearEndReportRequest3 = YearEndReportRequest.builder().schoolIds(List.of(UUID.randomUUID())).studentList(List.of(studentCred1, studentCred2)).build();
+        List<ReportGradStudentData> result3 = commonService.getYearEndReportGradStudentData(yearEndReportRequest3);
+        assertEquals(0, result3.size());
+
+    }
+
+    @Test
     public void testGetSchoolYearEndReportGradStudentDataWithNoStudentList() {
         UUID studentId1 = UUID.randomUUID();
         UUID studentId2 = UUID.randomUUID();
@@ -660,11 +794,51 @@ public class CommonServiceTest {
         String activityCode="USERDISTOC";
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
         scdSubList.add(new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date()));
-        scdSubList.add(new StudentCredentialDistribution(new UUID(5,4),"E",new UUID(5,5),"YEDR","COMPL", new Date()));
+        scdSubList.add(new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YEDR","COMPL", new Date()));
 
+        Mockito.when(gradStudentTranscriptsRepository.updateStudentDistributionData(any(), any(), any(), any())).thenReturn(1);
+        Mockito.when(gradStudentCertificatesRepository.updateStudentDistributionData(any(), any(), any(), any(), any(), any())).thenReturn(1);
+
+        Integer res = commonService.updateStudentCredentials(scdSubList, activityCode);
+        assertThat(res).isEqualTo(2);
+    }
+
+    @Test
+    public void testupdateStudentCredentials_Nodata() {
+        String activityCode="USERDISTOC";
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
         Integer res = commonService.updateStudentCredentials(scdSubList, activityCode);
         assertThat(res).isZero();
     }
+
+    @Test
+    public void testupdateStudentCredentials_Nulldata() {
+        String activityCode="USERDISTOC";
+        Integer res = commonService.updateStudentCredentials(null, activityCode);
+        assertThat(res).isZero();
+    }
+
+    @Test
+    public void testupdateStudentCredentials_OnlyTranscript() {
+        String activityCode="USERDISTOC";
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
+        scdSubList.add(new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date()));
+        Mockito.when(gradStudentTranscriptsRepository.updateStudentDistributionData(any(), any(), any(), any())).thenReturn(1);
+
+        Integer res = commonService.updateStudentCredentials(scdSubList, activityCode);
+        assertThat(res).isEqualTo(1);
+    }
+    @Test
+    public void testupdateStudentCredentials_OnlyCertificate() {
+        String activityCode="USERDISTOC";
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
+        scdSubList.add(new StudentCredentialDistribution(new UUID(5,4),"E",new UUID(5,5),"YEDR","COMPL", new Date()));
+        Mockito.when(gradStudentCertificatesRepository.updateStudentDistributionData(any(), any(), any(), any(), any(), any())).thenReturn(1);
+
+        Integer res = commonService.updateStudentCredentials(scdSubList, activityCode);
+        assertThat(res).isEqualTo(1);
+    }
+
 
     private ReportGradStudentData createReportGradStudentData() {
         ReportGradStudentData reportGradStudentData = new ReportGradStudentData();
