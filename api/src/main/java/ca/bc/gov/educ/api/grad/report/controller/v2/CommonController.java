@@ -87,7 +87,7 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData(@RequestBody YearEndReportRequest yearEndReportRequest) {
         logger.debug("getAllStudentSchoolYearEndDistribution :");
-        return response.GET(commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest));
+        return response.GET(commonService.getYearEndReportGradStudentData(yearEndReportRequest));
     }
 
     @GetMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_YEAREND_REPORT)
@@ -115,5 +115,14 @@ public class CommonController {
     public ResponseEntity<Integer> archiveReports(@RequestParam long batchId, @RequestParam String reportType, @RequestBody List<UUID> schoolOfRecordIds) {
         logger.debug("Archive Reports for batch {}", batchId);
         return response.GET(commonService.archiveSchoolReports(batchId, schoolOfRecordIds, reportType));
+    }
+
+    @PostMapping(EducGradReportApiConstants.UPDATE_STUDENT_CREDENTIAL)
+    @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
+    @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    public ResponseEntity<Integer> updateStudentCredentials(@RequestParam(required = false) String activityCode, @RequestBody List<StudentCredentialDistribution> studentCredentialDistributions) {
+        logger.debug("updateStudentCredentials : ");
+        return response.GET(commonService.updateStudentCredentials(studentCredentialDistributions, activityCode));
     }
 }
