@@ -103,7 +103,6 @@ public class CommonControllerTest {
 
     @Test
     public void testUpdateStudentCredential() {
-        String batchId ="123456";
         String activityCode="USERDISTOC";
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
         StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date());

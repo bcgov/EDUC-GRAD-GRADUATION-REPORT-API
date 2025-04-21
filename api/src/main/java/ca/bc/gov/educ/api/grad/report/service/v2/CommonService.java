@@ -373,20 +373,14 @@ public class CommonService {
         if(!transcriptDistributions.isEmpty()) {
             final Map<String, List<StudentCredentialDistribution>> transcriptByDocStatusCode = transcriptDistributions.stream()
                     .collect(Collectors.groupingBy(StudentCredentialDistribution::getDocumentStatusCode));
-            transcriptByDocStatusCode.forEach((transcriptDocStatus, distributionList) -> {
-                processedCounts[0] = processedCounts[0] + gradStudentTranscriptsRepository.updateStudentDistributionData(new Date(), userName, transcriptDocStatus, distributionList.stream().map(StudentCredentialDistribution::getStudentID).collect(Collectors.toList()));
-            });
+            transcriptByDocStatusCode.forEach((transcriptDocStatus, distributionList) -> processedCounts[0] = processedCounts[0] + gradStudentTranscriptsRepository.updateStudentDistributionData(new Date(), userName, transcriptDocStatus, distributionList.stream().map(StudentCredentialDistribution::getStudentID).toList()));
         }
         //Handle Credential updates by credential type and document status code
         if(!certificateDistributions.isEmpty()) {
             Map<String,Map<String, List<StudentCredentialDistribution>>> certificateByDocStatusCodeAndCredType = certificateDistributions.stream()
                     .collect(Collectors.groupingBy(StudentCredentialDistribution::getDocumentStatusCode,
                             Collectors.groupingBy(StudentCredentialDistribution::getCredentialTypeCode)));
-            certificateByDocStatusCodeAndCredType.forEach((certificateDocStatus, credentialTypeMap) -> {
-                credentialTypeMap.forEach((certificateType, distributionList) -> {
-                    processedCounts[0] = processedCounts[0] + gradStudentCertificatesRepository.updateStudentDistributionData(new Date(), userName, certificateDocStatus, certificateType, activityCode, distributionList.stream().map(StudentCredentialDistribution::getStudentID).collect(Collectors.toList()));
-                });
-            });
+            certificateByDocStatusCodeAndCredType.forEach((certificateDocStatus, credentialTypeMap) -> credentialTypeMap.forEach((certificateType, distributionList) -> processedCounts[0] = processedCounts[0] + gradStudentCertificatesRepository.updateStudentDistributionData(new Date(), userName, certificateDocStatus, certificateType, activityCode, distributionList.stream().map(StudentCredentialDistribution::getStudentID).toList())));
         }
         return processedCounts[0];
     }
