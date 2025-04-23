@@ -365,23 +365,31 @@ public class CommonService {
 
     @Transactional
     public Integer updateStudentCredentials(List<StudentCredentialDistribution> studentCredentialDistributions, String activityCode) {
-        List<StudentCredentialDistribution> transcriptDistributions = studentCredentialDistributions != null && !studentCredentialDistributions.isEmpty() ? studentCredentialDistributions.stream().filter(item -> item.getPaperType().equals("YED4")).toList() : new ArrayList<>();
-        List<StudentCredentialDistribution> certificateDistributions = studentCredentialDistributions != null && !studentCredentialDistributions.isEmpty() ? studentCredentialDistributions.stream().filter(item -> !item.getPaperType().equals("YED4")).toList() : new ArrayList<>();
-        String userName = ThreadLocalStateUtil.getCurrentUser();
-        Integer[] processedCounts = {0};
-        //Handle Transcript updates by document status code
-        if(!transcriptDistributions.isEmpty()) {
-            final Map<String, List<StudentCredentialDistribution>> transcriptByDocStatusCode = transcriptDistributions.stream()
-                    .collect(Collectors.groupingBy(StudentCredentialDistribution::getDocumentStatusCode));
-            transcriptByDocStatusCode.forEach((transcriptDocStatus, distributionList) -> processedCounts[0] = processedCounts[0] + gradStudentTranscriptsRepository.updateStudentDistributionData(new Date(), userName, transcriptDocStatus, distributionList.stream().map(StudentCredentialDistribution::getStudentID).toList()));
+        try {
+            List<StudentCredentialDistribution> transcriptDistributions = studentCredentialDistributions != null && !studentCredentialDistributions.isEmpty() ? studentCredentialDistributions.stream().filter(item -> item.getPaperType().equals("YED4")).toList() : new ArrayList<>();
+            List<StudentCredentialDistribution> certificateDistributions = studentCredentialDistributions != null && !studentCredentialDistributions.isEmpty() ? studentCredentialDistributions.stream().filter(item -> !item.getPaperType().equals("YED4")).toList() : new ArrayList<>();
+            String userName = ThreadLocalStateUtil.getCurrentUser();
+            Integer[] processedCounts = {0};
+            //Handle Transcript updates by document status code
+            if (!transcriptDistributions.isEmpty()) {
+                final Map<String, List<StudentCredentialDistribution>> transcriptByDocStatusCode = transcriptDistributions.stream()
+                        .collect(Collectors.groupingBy(StudentCredentialDistribution::getDocumentStatusCode));
+                transcriptByDocStatusCode.forEach((transcriptDocStatus, distributionList) -> processedCounts[0] = processedCounts[0] + gradStudentTranscriptsRepository.updateStudentDistributionData(new Date(), userName, transcriptDocStatus, distributionList.stream().map(StudentCredentialDistribution::getStudentID).toList()));
+            }
+            //Handle Credential updates by credential type and document status code
+            if (!certificateDistributions.isEmpty()) {
+                Map<String, Map<String, List<StudentCredentialDistribution>>> certificateByDocStatusCodeAndCredType = certificateDistributions.stream()
+                        .collect(Collectors.groupingBy(StudentCredentialDistribution::getDocumentStatusCode,
+                                Collectors.groupingBy(StudentCredentialDistribution::getCredentialTypeCode)));
+                certificateByDocStatusCodeAndCredType.forEach((certificateDocStatus, credentialTypeMap) -> credentialTypeMap.forEach((certificateType, distributionList) -> processedCounts[0] = processedCounts[0] + gradStudentCertificatesRepository.updateStudentDistributionData(new Date(), userName, certificateDocStatus, certificateType, activityCode, distributionList.stream().map(StudentCredentialDistribution::getStudentID).toList())));
+            }
+           if(processedCounts[0] > 0) {
+               logger.info("Number of student credentials updated : {}", processedCounts[0]);
+           }
+            return studentCredentialDistributions.size();
+        }catch (Exception ex) {
+            logger.error("Exception occurred while updating the student credentials in batch", ex);
+            return 0;
         }
-        //Handle Credential updates by credential type and document status code
-        if(!certificateDistributions.isEmpty()) {
-            Map<String,Map<String, List<StudentCredentialDistribution>>> certificateByDocStatusCodeAndCredType = certificateDistributions.stream()
-                    .collect(Collectors.groupingBy(StudentCredentialDistribution::getDocumentStatusCode,
-                            Collectors.groupingBy(StudentCredentialDistribution::getCredentialTypeCode)));
-            certificateByDocStatusCodeAndCredType.forEach((certificateDocStatus, credentialTypeMap) -> credentialTypeMap.forEach((certificateType, distributionList) -> processedCounts[0] = processedCounts[0] + gradStudentCertificatesRepository.updateStudentDistributionData(new Date(), userName, certificateDocStatus, certificateType, activityCode, distributionList.stream().map(StudentCredentialDistribution::getStudentID).toList())));
-        }
-        return processedCounts[0];
     }
 }
