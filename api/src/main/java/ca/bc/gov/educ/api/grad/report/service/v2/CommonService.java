@@ -386,7 +386,7 @@ public class CommonService {
            if(processedCounts[0] > 0) {
                logger.info("Number of student credentials updated : {}", processedCounts[0]);
            }
-            return studentCredentialDistributions.size();
+            return studentCredentialDistributions != null ? studentCredentialDistributions.size() : 0;
         }catch (Exception ex) {
             logger.error("Exception occurred while updating the student credentials in batch", ex);
             return 0;
