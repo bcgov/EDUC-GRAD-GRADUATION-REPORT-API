@@ -100,4 +100,16 @@ public class CommonControllerTest {
         commonController.archiveReports(1L, "reportType", List.of(schoolOfRecordId));
         Mockito.verify(commonService).archiveSchoolReports(1L, List.of(schoolOfRecordId), "reportType");
     }
+
+    @Test
+    public void testUpdateStudentCredential() {
+        String activityCode="USERDISTOC";
+        List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
+        StudentCredentialDistribution scdSub = new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YED4","COMPL", new Date());
+        scdSubList.add(scdSub);
+        Mockito.when(commonService.updateStudentCredentials(scdSubList, activityCode)).thenReturn(1);
+        commonController.updateStudentCredentials(activityCode, scdSubList);
+        Mockito.verify(commonService).updateStudentCredentials(scdSubList, activityCode);
+
+    }
 }
