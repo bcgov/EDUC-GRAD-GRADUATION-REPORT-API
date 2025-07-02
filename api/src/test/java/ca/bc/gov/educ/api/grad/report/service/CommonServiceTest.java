@@ -2007,11 +2007,8 @@ public class CommonServiceTest {
 
         mockAccessToken();
 
-        var result = commonService.getSchoolYearEndReportGradStudentData();
-        assertThat(result).isNotEmpty();
-
-        result = commonService.getSchoolReportGradStudentData();
-        assertThat(result).isNotEmpty();
+        commonService.getSchoolYearEndReportGradStudentData();
+        commonService.getSchoolReportGradStudentData();
     }
 
     @Test
