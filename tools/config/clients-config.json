@@ -1,0 +1,32 @@
+[
+  {
+    "clientId": "grad-graduation-report-api-client",
+    "scopes": ["ARCHIVE_SCHOOL_REPORT",
+      "CREATE_GRAD_CERTIFICATE_CODE_DATA",
+      "CREATE_GRAD_REPORT_CODE_DATA",
+      "DELETE_GRAD_CERTIFICATE_CODE_DATA",
+      "DELETE_GRAD_REPORT_CODE_DATA",
+      "DELETE_STUDENT_REPORT",
+      "READ_GRAD_CERTIFICATE_CODE_DATA",
+      "READ_GRAD_DOCUMENT_STATUS_CODE_DATA",
+      "READ_GRAD_REPORT_CODE_DATA",
+      "READ_GRAD_STUDENT_CERTIFICATE_DATA",
+      "READ_GRAD_STUDENT_REPORT_DATA",
+      "READ_GRAD_TRANSCRIPT_CODE_DATA",
+      "UPDATE_GRAD_CERTIFICATE_CODE_DATA",
+      "UPDATE_GRAD_REPORT_CODE_DATA",
+      "UPDATE_GRAD_STUDENT_CERTIFICATE_DATA",
+      "UPDATE_GRAD_STUDENT_REPORT_DATA",
+      "READ_GRAD_STUDENT_STATUS_CODE_DATA",
+      "READ_GRAD_GRADUATION_STATUS",
+      "READ_GRAD_SCHOOL_DATA"],
+    "settings": {
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    }
+  }
+]

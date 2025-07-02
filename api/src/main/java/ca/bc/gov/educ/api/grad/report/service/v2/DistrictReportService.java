@@ -10,21 +10,25 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.v2.DistrictReportTransfo
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.BaseService;
+import ca.bc.gov.educ.api.grad.report.service.RESTService;
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@Slf4j
 @Service
 public class DistrictReportService extends BaseService {
   DistrictReportRepository districtReportsRepository;
@@ -32,10 +36,12 @@ public class DistrictReportService extends BaseService {
   DistrictReportTransformer districtReportTransformer;
   InstituteService instituteService;
 
-  private static final Logger logger = LoggerFactory.getLogger(DistrictReportService.class);
-
   @Autowired
-  public DistrictReportService(DistrictReportRepository districtReportsRepository, DistrictReportLightRepository districtReportLightRepository, InstituteService instituteService, DistrictReportTransformer districtReportTransformer) {
+  protected DistrictReportService(EducGradReportApiConstants constants, RESTService restService,
+                                  @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient, DistrictReportRepository districtReportsRepository,
+                                  DistrictReportLightRepository districtReportLightRepository,
+                                  InstituteService instituteService, DistrictReportTransformer districtReportTransformer) {
+    super(constants, restService, graduationServiceWebClient);
     this.districtReportsRepository = districtReportsRepository;
     this.districtReportLightRepository = districtReportLightRepository;
     this.instituteService = instituteService;
@@ -98,13 +104,13 @@ public class DistrictReportService extends BaseService {
   public void deleteDistrictReport(UUID districtId, String reportTypeCode) {
     Optional<DistrictReportEntity> optEntity = districtReportsRepository.findByDistrictIdAndReportTypeCode(districtId, reportTypeCode);
     optEntity.ifPresentOrElse(districtReportsEntity -> districtReportsRepository.delete(districtReportsEntity),
-            () -> logger.warn("No district report found to delete for districtId {} and reportTypeCode {}", districtId, reportTypeCode));
+            () -> log.warn("No district report found to delete for districtId {} and reportTypeCode {}", districtId, reportTypeCode));
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void deleteAllDistrictReportsByType(String reportTypeCode) {
     List<DistrictReportEntity> deletedReports = districtReportsRepository.deleteAllByReportTypeCode(reportTypeCode);
-    logger.debug("Deleted {} district reports with reportTypeCode {}", deletedReports.size(), reportTypeCode);
+    log.debug("Deleted {} district reports with reportTypeCode {}", deletedReports.size(), reportTypeCode);
   }
 
   private List<DistrictReport> populateDistrictReports(List<DistrictReport> reportList) {
@@ -118,7 +124,7 @@ public class DistrictReportService extends BaseService {
           report.setDistrictName(district.getDisplayName());
         }
       } else {
-        logger.warn("populateDistrictReports: Could not set districtName; districtId is null for reportId {}", report.getId() );
+        log.warn("populateDistrictReports: Could not set districtName; districtId is null for reportId {}", report.getId() );
       }
     });
     return reportList;

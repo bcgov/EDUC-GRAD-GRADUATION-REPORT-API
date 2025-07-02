@@ -11,21 +11,25 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.v2.SchoolReportTransform
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.BaseService;
+import ca.bc.gov.educ.api.grad.report.service.RESTService;
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@Slf4j
 @Service
 public class SchoolReportService extends BaseService {
   SchoolReportRepository schoolReportsRepository;
@@ -33,10 +37,12 @@ public class SchoolReportService extends BaseService {
   SchoolReportTransformer schoolReportsTransformer;
   InstituteService instituteService;
 
-  private static final Logger logger = LoggerFactory.getLogger(SchoolReportService.class);
-
   @Autowired
-  public SchoolReportService(SchoolReportRepository schoolReportsRepository, SchoolReportTransformer schoolReportsTransformer, SchoolReportLightRepository schoolReportsLightRepository, InstituteService instituteService) {
+  protected SchoolReportService(EducGradReportApiConstants constants, RESTService restService,
+                                @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient, SchoolReportRepository schoolReportsRepository,
+                                SchoolReportTransformer schoolReportsTransformer,
+                                SchoolReportLightRepository schoolReportsLightRepository, InstituteService instituteService) {
+    super(constants, restService, graduationServiceWebClient);
     this.schoolReportsRepository = schoolReportsRepository;
     this.schoolReportsTransformer = schoolReportsTransformer;
     this.schoolReportsLightRepository = schoolReportsLightRepository;
@@ -108,13 +114,13 @@ public class SchoolReportService extends BaseService {
   public void deleteSchoolReport(UUID schoolOfRecordId, String reportTypeCode) {
     Optional<SchoolReportEntity> optEntity = schoolReportsRepository.findBySchoolOfRecordIdAndReportTypeCode(schoolOfRecordId, reportTypeCode);
     optEntity.ifPresentOrElse(schoolReportsEntity -> schoolReportsRepository.delete(schoolReportsEntity),
-            () -> logger.warn("No school report found to delete for schoolOfRecordId {} and reportTypeCode {}", schoolOfRecordId, reportTypeCode));
+            () -> log.warn("No school report found to delete for schoolOfRecordId {} and reportTypeCode {}", schoolOfRecordId, reportTypeCode));
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void deleteAllSchoolReportsByType(String reportTypeCode) {
     List<SchoolReportEntity> deletedReports = schoolReportsRepository.deleteAllByReportTypeCode(reportTypeCode);
-    logger.debug("Deleted {} school reports with reportTypeCode {}", deletedReports.size(), reportTypeCode);
+    log.debug("Deleted {} school reports with reportTypeCode {}", deletedReports.size(), reportTypeCode);
   }
 
   private List<SchoolReport> populateSchoolReports(List<SchoolReport> reportList) {
@@ -129,7 +135,7 @@ public class SchoolReportService extends BaseService {
           report.setSchoolCategory(schObj.getSchoolCategoryCode());
         }
       } else {
-        logger.warn("populateSchoolReports: Could not set schoolOfRecordName, schoolOfRecordId is null for reportId {}", report.getId() );
+        log.warn("populateSchoolReports: Could not set schoolOfRecordName, schoolOfRecordId is null for reportId {}", report.getId() );
       }
     });
     return reportList;

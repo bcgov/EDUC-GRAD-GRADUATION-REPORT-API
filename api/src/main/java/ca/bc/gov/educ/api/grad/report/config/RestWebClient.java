@@ -3,95 +3,75 @@ package ca.bc.gov.educ.api.grad.report.config;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.LogHelper;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
-import lombok.val;
+import io.netty.handler.logging.LogLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.client.reactive.ClientHttpConnector;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.oauth2.client.*;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
+
+import java.time.Duration;
 
 @Configuration
 @Profile("!test")
 public class RestWebClient {
-    private final DefaultUriBuilderFactory factory;
-    private final ClientHttpConnector connector;
     EducGradReportApiConstants constants;
+    private final HttpClient httpClient;
+
+    LogHelper logHelper;
 
     @Autowired
     public RestWebClient(EducGradReportApiConstants constants) {
         this.constants = constants;
-        this.factory = new DefaultUriBuilderFactory();
-        this.factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
-        final HttpClient client = HttpClient.create().compress(true);
-        client.warmup()
-            .block();
-        this.connector = new ReactorClientHttpConnector(client);
+        this.httpClient = HttpClient.create(ConnectionProvider.create("graduation-report-api")).compress(true)
+                .resolver(spec -> spec.queryTimeout(Duration.ofMillis(200)).trace("DNS", LogLevel.TRACE));
+        this.httpClient.warmup().block();
     }
 
-    @Bean("graduationReportClient")
-    @Autowired
-    WebClient getGraduationReportClient(final WebClient.Builder builder) {
-        val clientRegistryRepo = new InMemoryReactiveClientRegistrationRepository(ClientRegistration
-            .withRegistrationId(this.constants.getGradReportClientUserName())
-            .tokenUri(this.constants.getGradReportClientTokenUrl())
-            .clientId(this.constants.getGradReportClientUserName())
-            .clientSecret(this.constants.getGradReportClientPassword())
-            .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-            .build());
-        val clientService = new InMemoryReactiveOAuth2AuthorizedClientService(clientRegistryRepo);
-        val authorizedClientManager =
-            new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(clientRegistryRepo, clientService);
-        val oauthFilter = new ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
-        oauthFilter.setDefaultClientRegistrationId(this.constants.getGradReportClientUserName());
-        return builder
-            .codecs(configurer -> configurer
-                .defaultCodecs()
-                .maxInMemorySize(100 * 1024 * 1024))
-            .filter(setRequestHeaders()) // Log headers
-            .filter(this.log())
-            .clientConnector(this.connector)
-            .uriBuilderFactory(this.factory)
-            .filter(oauthFilter)
-            .build();
+    @Primary
+    @Bean("graduationReportApiClient")
+    public WebClient getAlgorithmApiClientWebClient(OAuth2AuthorizedClientManager authorizedClientManager) {
+        ServletOAuth2AuthorizedClientExchangeFilterFunction filter = new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
+        filter.setDefaultClientRegistrationId("graduation-report-api-client");
+        DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
+        defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
+        return WebClient.builder()
+                .uriBuilderFactory(defaultUriBuilderFactory)
+                .filter(setRequestHeaders())
+                .exchangeStrategies(ExchangeStrategies
+                        .builder()
+                        .codecs(codecs -> codecs
+                                .defaultCodecs()
+                                .maxInMemorySize(50 * 1024 * 1024))
+                        .build())
+                .apply(filter.oauth2Configuration())
+                .filter(this.log())
+                .build();
     }
 
     @Bean
-    public WebClient webClient() {
-        return WebClient.builder().exchangeStrategies(ExchangeStrategies.builder()
-                .codecs(configurer -> configurer
-                    .defaultCodecs()
-                    .maxInMemorySize(300 * 1024 * 1024))  // 300MB
-                .build())
-            .filter(setRequestHeaders()) // Log headers
-            .filter(this.log())
-            .build();
-    }
+    public OAuth2AuthorizedClientManager authorizedClientManager(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientService clientService) {
+        OAuth2AuthorizedClientProvider authorizedClientProvider =
+                OAuth2AuthorizedClientProviderBuilder.builder()
+                        .clientCredentials()
+                        .build();
+        AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager =
+                new AuthorizedClientServiceOAuth2AuthorizedClientManager(clientRegistrationRepository, clientService);
+        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
 
-    private ExchangeFilterFunction log() {
-        return (clientRequest, next) -> next
-            .exchange(clientRequest)
-            .doOnNext((clientResponse -> LogHelper.logClientHttpReqResponseDetails(
-                clientRequest.method(),
-                clientRequest.url().toString(),
-                //GRAD2-1929 Refactoring/Linting replaced rawStatusCode() with statusCode() as it was deprecated.
-                clientResponse.statusCode().value(),
-                clientRequest.headers().get(EducGradReportApiConstants.CORRELATION_ID),
-                clientRequest.headers().get(EducGradReportApiConstants.REQUEST_SOURCE),
-                constants.isSplunkLogHelperEnabled())
-            ));
+        return authorizedClientManager;
     }
 
     private ExchangeFilterFunction setRequestHeaders() {
@@ -103,5 +83,18 @@ public class RestWebClient {
                     .build();
             return next.exchange(modifiedRequest);
         };
+    }
+
+    private ExchangeFilterFunction log() {
+        return (clientRequest, next) -> next
+                .exchange(clientRequest)
+                .doOnNext((clientResponse -> LogHelper.logClientHttpReqResponseDetails(
+                        clientRequest.method(),
+                        clientRequest.url().toString(),
+                        clientResponse.statusCode().value(),
+                        clientRequest.headers().get(EducGradReportApiConstants.CORRELATION_ID),
+                        clientRequest.headers().get(EducGradReportApiConstants.REQUEST_SOURCE),
+                        constants.isSplunkLogHelperEnabled())
+                ));
     }
 }

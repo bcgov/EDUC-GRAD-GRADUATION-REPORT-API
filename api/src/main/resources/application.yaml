@@ -35,12 +35,12 @@ spring:
           jwk-set-uri: ${TOKEN_ISSUER_URL}/protocol/openid-connect/certs
       client:
         registration:
-          graduation-report-client:
+          graduation-report-api-client:
             client-id: ${GRAD_GRADUATION_REPORT_API_CLIENT_NAME}
             client-secret: ${GRAD_GRADUATION_REPORT_API_CLIENT_SECRET}
             authorization-grant-type: client_credentials
         provider:
-          graduation-report-client:
+          graduation-report-api-client:
             issuer-uri: ${TOKEN_ISSUER_URL}
             token-uri: ${TOKEN_ISSUER_URL}/protocol/openid-connect/token
 
@@ -83,6 +83,11 @@ server:
       io: 16
   #port: ${HTTP_PORT}
   max-http-request-header-size: 20000
+  compression:
+    enabled: ${ENABLE_COMPRESSION}
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,text/javascript,application/javascript
+    min-response-size: 2048
+    excluded-user-agents: MSIE 6.0,UCBrowser
 
 #API Documentation
 springdoc:
@@ -93,8 +98,8 @@ springdoc:
     operationsSorter: alpha
 
 authorization:
-  user: ${GRAD_CLIENT_NAME}
-  password: ${GRAD_CLIENT_SECRET}
+  user: ${GRAD_GRADUATION_REPORT_API_CLIENT_NAME}
+  password: $GRAD_GRADUATION_REPORT_API_CLIENT_SECRET}
   token-expiry-offset: '30'
 
 #Endpoint
