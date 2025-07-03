@@ -1,11 +1,13 @@
 package ca.bc.gov.educ.api.grad.report.controller.v2;
 
 import ca.bc.gov.educ.api.grad.report.EducGradReportApiApplication;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.SchoolReport;
 import ca.bc.gov.educ.api.grad.report.model.entity.v2.SchoolReportEntity;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.v2.InstituteService;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -205,6 +207,29 @@ class SchoolReportsControllerTest {
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void testSaveSchoolReport_givenValidPayload_ReturnOkAndReportSaved() throws Exception {
+    UUID schoolOfRecordId = UUID.randomUUID();
+    String reportTypeCode = "type";
+    SchoolReportEntity schoolReportsEntity = SchoolReportEntity.builder().schoolOfRecordId(schoolOfRecordId).reportTypeCode(reportTypeCode).build();
+    SchoolReport schoolReport = new SchoolReport();
+    schoolReport.setSchoolOfRecordId(schoolOfRecordId);
+    schoolReport.setReportTypeCode(reportTypeCode);
+    ObjectMapper objectMapper = new ObjectMapper();
+    String content = objectMapper.writeValueAsString(schoolReport);
+
+    final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
+    final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
+    mockMvc.perform(post(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
+                    .with(mockAuthority)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content))
+            .andExpect(status().isOk());
+
+    var schoolReports = schoolReportsRepository.save(schoolReportsEntity);
+    assertNotNull(schoolReports);
   }
 
   @Test
