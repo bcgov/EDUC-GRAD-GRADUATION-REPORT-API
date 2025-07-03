@@ -1,11 +1,13 @@
 package ca.bc.gov.educ.api.grad.report.controller.v2;
 
 import ca.bc.gov.educ.api.grad.report.EducGradReportApiApplication;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.DistrictReport;
 import ca.bc.gov.educ.api.grad.report.model.entity.v2.DistrictReportEntity;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.District;
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.v2.InstituteService;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -160,6 +163,29 @@ class DistrictReportsControllerTest {
               String actualBase64Content = Base64.encodeBase64String(actualResponse);
               assertEquals(base64EncodedReport, actualBase64Content, "The decoded report content should match the expected content.");
             });
+  }
+
+  @Test
+  void testSaveDistrictReport_givenValidPayload_ReturnOkAndReportSaved() throws Exception {
+    UUID districtId = UUID.randomUUID();
+    String reportTypeCode = "type";
+    DistrictReportEntity districtReportEntity = DistrictReportEntity.builder().districtId(districtId).reportTypeCode(reportTypeCode).build();
+    DistrictReport districtReport = new DistrictReport();
+    districtReport.setDistrictId(districtId);
+    districtReport.setReportTypeCode(reportTypeCode);
+    ObjectMapper objectMapper = new ObjectMapper();
+    String content = objectMapper.writeValueAsString(districtReport);
+
+    final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
+    final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
+    mockMvc.perform(post(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
+                    .with(mockAuthority)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content))
+            .andExpect(status().isOk());
+
+    var response = districtReportsRepository.save(districtReportEntity);
+    assertNotNull(response);
   }
 
   @Test
