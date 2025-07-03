@@ -13,9 +13,8 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,12 +23,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController("commonControllerV2")
 @RequestMapping(EducGradReportApiConstants.GRAD_REPORT_API_V2_ROOT_MAPPING)
 @OpenAPIDefinition(info = @Info(title = "API for Common v2 endpoints.", description = "This API is for Reading Common endpoints.", version = "2"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_CERTIFICATE_DATA"})})
 public class CommonController {
-
-    private static final Logger logger = LoggerFactory.getLogger(CommonController.class);
 
     final CommonService commonService;
     
@@ -50,7 +48,7 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<StudentCredentialDistribution>> getStudentCredentialsForUserRequestDisRun(
             @PathVariable String credentialType, @RequestBody StudentSearchRequest studentSearchRequest) {
-        logger.debug("getStudentCredentialsForUserRequestDisRun : ");
+        log.debug("getStudentCredentialsForUserRequestDisRun : ");
         boolean isPenNumberSearch = studentSearchRequest.getPens() != null && !studentSearchRequest.getPens().isEmpty()
                 && !studentSearchRequest.getPens().stream().filter(StringUtils::isNotBlank).toList().isEmpty();
         boolean onlyWithNullDistributionDate = !isPenNumberSearch && studentSearchRequest.getGradDateFrom() == null && studentSearchRequest.getGradDateTo() == null && !StringUtils.equalsAnyIgnoreCase(credentialType, "OT", "RT");
@@ -63,7 +61,7 @@ public class CommonController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<StudentCredentialDistribution>> getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(
             @PathVariable String credentialType, @RequestBody StudentSearchRequest studentSearchRequest) {
-        logger.debug("getStudentCredentialsForUserRequestDisRunWithNullDistributionDate : ");
+        log.debug("getStudentCredentialsForUserRequestDisRunWithNullDistributionDate : ");
         boolean isPenNumberSearch = studentSearchRequest.getPens()!= null && !studentSearchRequest.getPens().isEmpty()
                 && !studentSearchRequest.getPens().stream().filter(StringUtils::isNotBlank).toList().isEmpty();
         return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,!isPenNumberSearch));
@@ -86,7 +84,7 @@ public class CommonController {
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData(@RequestBody YearEndReportRequest yearEndReportRequest) {
-        logger.debug("getAllStudentSchoolYearEndDistribution :");
+        log.debug("getAllStudentSchoolYearEndDistribution :");
         return response.GET(commonService.getYearEndReportGradStudentData(yearEndReportRequest));
     }
 
@@ -95,7 +93,7 @@ public class CommonController {
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<ReportGradStudentData>> getSchoolYearEndReportGradStudentData() {
-        logger.debug("getAllStudentSchoolYearEndDistribution : ");
+        log.debug("getAllStudentSchoolYearEndDistribution : ");
         return response.GET(commonService.getSchoolYearEndReportGradStudentData());
     }
 
@@ -104,7 +102,7 @@ public class CommonController {
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<ReportGradStudentData>> getSchoolReportGradStudentData() {
-        logger.debug("getAllStudentSchoolYearEndDistribution : ");
+        log.debug("getAllStudentSchoolYearEndDistribution : ");
         return response.GET(commonService.getSchoolReportGradStudentData());
     }
 
@@ -113,7 +111,7 @@ public class CommonController {
     @Operation(summary = "Archive Reports", description = "Archive Reports", tags = { "Business" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Integer> archiveReports(@RequestParam long batchId, @RequestParam String reportType, @RequestBody List<UUID> schoolOfRecordIds) {
-        logger.debug("Archive Reports for batch {}", batchId);
+        log.debug("Archive Reports for batch {}", batchId);
         return response.GET(commonService.archiveSchoolReports(batchId, schoolOfRecordIds, reportType));
     }
 
@@ -122,7 +120,7 @@ public class CommonController {
     @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<Integer> updateStudentCredentials(@RequestParam(required = false) String activityCode, @RequestBody List<StudentCredentialDistribution> studentCredentialDistributions) {
-        logger.debug("updateStudentCredentials : ");
+        log.debug("updateStudentCredentials : ");
         return response.GET(commonService.updateStudentCredentials(studentCredentialDistributions, activityCode));
     }
 }

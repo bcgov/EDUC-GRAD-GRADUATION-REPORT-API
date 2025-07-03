@@ -12,6 +12,8 @@ import ca.bc.gov.educ.api.grad.report.model.entity.v2.SchoolReportLightEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.v2.SchoolReportTransformer;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
+import ca.bc.gov.educ.api.grad.report.service.RESTService;
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -19,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +31,12 @@ import java.util.UUID;
 class SchoolReportServiceTest {
 
   @Mock
+  protected EducGradReportApiConstants constants;
+  @Mock
+  protected RESTService restService;
+  @Mock
+  WebClient graduationServiceWebClient;
+  @Mock
   private SchoolReportRepository schoolReportsRepository;
   @Mock
   private SchoolReportLightRepository schoolReportsLightRepository;
@@ -36,14 +45,11 @@ class SchoolReportServiceTest {
   private SchoolReportService schoolReportsService;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     MockitoAnnotations.openMocks(this);
     SchoolReportTransformer schoolReportsTransformer = new SchoolReportTransformer( new ModelMapper());
-    schoolReportsService = new SchoolReportService(
-        schoolReportsRepository,
-        schoolReportsTransformer,
-        schoolReportsLightRepository,
-        instituteService
+    schoolReportsService = new SchoolReportService(constants, restService,graduationServiceWebClient,
+        schoolReportsRepository, schoolReportsTransformer, schoolReportsLightRepository, instituteService
     );
   }
 

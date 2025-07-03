@@ -10,9 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +21,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
 @OpenAPIDefinition(info = @Info(title = "API for School Reports endpoints.", description = "This API is for reading and updating endpoints.", version = "2"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_REPORT_DATA","UPDATE_GRAD_STUDENT_REPORT_DATA"})})
 public class SchoolReportController {
-  private static final Logger logger = LoggerFactory.getLogger(SchoolReportController.class);
-
   SchoolReportService service;
   GradValidation validation;
   ResponseHelper response;
@@ -49,7 +47,7 @@ public class SchoolReportController {
           @RequestParam(value = "schoolOfRecordId", required = false) UUID schoolOfRecordId,
           @RequestParam(value = "reportTypeCode", required = false) String reportTypeCode,
           @RequestParam(value = "isLight", defaultValue = "false") boolean isLight) {
-    logger.debug("searchSchoolReports: ");
+    log.debug("searchSchoolReports: ");
     List<SchoolReport> reports = service.searchSchoolReports(schoolOfRecordId, reportTypeCode, isLight);
     return ResponseEntity.ok(reports);
   }
@@ -61,7 +59,7 @@ public class SchoolReportController {
   public ResponseEntity<InputStreamResource> getSchoolReportBySchoolOfRecordIdAndReportType(
           @RequestParam(value = "schoolOfRecordId") UUID schoolOfRecordId,
           @RequestParam(value = "reportTypeCode") String reportTypeCode) {
-    logger.debug("getSchoolReportByType v2: ");
+    log.debug("getSchoolReportByType v2: ");
     var stream = service.getSchoolReportBySchoolOfRecordIdAndReportType(schoolOfRecordId, reportTypeCode);
     return ResponseEntity.ok(stream);
   }
@@ -74,7 +72,7 @@ public class SchoolReportController {
           @ApiResponse(responseCode = "404", description = "Not Found"),
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public ResponseEntity<Void> updateSchoolReport(@PathVariable @NotNull UUID schoolOfRecordId, @PathVariable @NotNull String reportTypeCode) {
-    logger.debug("updateSchoolReport v2: ");
+    log.debug("updateSchoolReport v2: ");
     service.updateSchoolReports(schoolOfRecordId, StringUtils.trim(reportTypeCode));
     return ResponseEntity.noContent().build();
   }
@@ -86,7 +84,7 @@ public class SchoolReportController {
           @ApiResponse(responseCode = "200", description = "OK"),
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public SchoolReport saveSchoolReport(@RequestBody SchoolReport schoolReports) {
-    logger.debug("Save {} School Report for {}",schoolReports.getReportTypeCode(),schoolReports.getSchoolOfRecordId());
+    log.debug("Save {} School Report for {}",schoolReports.getReportTypeCode(),schoolReports.getSchoolOfRecordId());
     validation.requiredField(schoolReports.getSchoolOfRecordId(), "School of Record Id");
     return service.saveSchoolReports(schoolReports);
   }
@@ -98,7 +96,7 @@ public class SchoolReportController {
           @ApiResponse(responseCode = "204", description = "Deleted successfully"),
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public ResponseEntity<Void> deleteSchoolReport(@PathVariable @NotNull UUID schoolOfRecordId, @PathVariable @NotNull String reportTypeCode) {
-    logger.debug("deleteSchoolReport: ");
+    log.debug("deleteSchoolReport: ");
     service.deleteSchoolReport(schoolOfRecordId, StringUtils.trim(reportTypeCode));
     return ResponseEntity.noContent().build();
   }
@@ -110,7 +108,7 @@ public class SchoolReportController {
           @ApiResponse(responseCode = "204", description = "Deleted successfully"),
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public ResponseEntity<Void> deleteSchoolReportsByType(@RequestParam @NotNull String reportTypeCode) {
-    logger.debug("deleteSchoolReportsByType: ");
+    log.debug("deleteSchoolReportsByType: ");
     service.deleteAllSchoolReportsByType(StringUtils.trim(reportTypeCode));
     return ResponseEntity.noContent().build();
   }

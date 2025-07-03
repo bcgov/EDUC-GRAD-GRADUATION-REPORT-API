@@ -1,7 +1,8 @@
-package ca.bc.gov.educ.api.grad.report.service.v2;
+package ca.bc.gov.educ.api.grad.report.service;
 
-import ca.bc.gov.educ.api.grad.report.cache.CacheInitializer;
 import ca.bc.gov.educ.api.grad.report.exception.ServiceException;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.ReportGradStudentData;
+import ca.bc.gov.educ.api.grad.report.service.v2.SchoolCacheService;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import io.netty.channel.ConnectTimeoutException;
 import org.junit.Assert;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -26,6 +28,7 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -37,8 +40,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class RESTServicePOSTTest {
 
+    @MockBean
+    private SchoolCacheService schoolCacheService;
     @Autowired
     private RESTService restService;
+    @MockBean
+    @Qualifier("graduationReportApiClient")
+    WebClient graduationReportApiClient;
 
     @MockBean
     private WebClient.RequestHeadersSpec requestHeadersMock;
@@ -48,52 +56,78 @@ public class RESTServicePOSTTest {
     private WebClient.RequestBodyUriSpec requestBodyUriMock;
     @MockBean
     private WebClient.ResponseSpec responseMock;
-    @MockBean(name = "webClient")
-    WebClient webClient;
-
-    @MockBean
-    @Qualifier("graduationReportClient")
-    WebClient getGraduationReportClient;
 
     @MockBean
     ClientRegistrationRepository clientRegistrationRepository;
 
     @MockBean
     OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
-    @MockBean
-    private CacheInitializer cacheInitializer;
 
     private static final byte[] TEST_BYTES = "The rain in Spain stays mainly on the plain.".getBytes();
     private static final String TEST_BODY = "{test:test}";
     private static final String TEST_URL = "https://fake.url.com";
+    private static final ParameterizedTypeReference<List<ReportGradStudentData>> refType = new ParameterizedTypeReference<List<ReportGradStudentData>>() {};
+
 
     @Before
     public void setUp(){
-        Mockito.reset(webClient, getGraduationReportClient, responseMock, requestHeadersMock, requestBodyMock, requestBodyUriMock);
+        Mockito.reset(graduationReportApiClient, responseMock, requestHeadersMock, requestBodyMock, requestBodyUriMock);
+
         ThreadLocalStateUtil.clear();
-        when(this.webClient.post()).thenReturn(this.requestBodyUriMock);
-        when(this.getGraduationReportClient.post()).thenReturn(this.requestBodyUriMock);
+
+        when(this.graduationReportApiClient.post()).thenReturn(this.requestBodyUriMock);
         when(this.requestBodyUriMock.uri(any(String.class))).thenReturn(this.requestBodyMock);
         when(this.requestBodyMock.headers(any(Consumer.class))).thenReturn(this.requestBodyMock);
         when(this.requestBodyMock.contentType(any())).thenReturn(this.requestBodyMock);
         when(this.requestBodyMock.body(any(BodyInserter.class))).thenReturn(this.requestHeadersMock);
         when(this.requestHeadersMock.retrieve()).thenReturn(this.responseMock);
         when(this.responseMock.bodyToMono(byte[].class)).thenReturn(Mono.just(TEST_BYTES));
+        when(this.responseMock.bodyToMono(refType)).thenReturn(Mono.just(new ArrayList<ReportGradStudentData>()));
     }
 
     @Test
-    public void testPostOverride_GivenProperData_Expect200Response(){
+    public void testPost_GivenProperData_Expect200Response(){
         ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
         ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
-        byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class);
+        byte[] response = this.restService.post(TEST_URL, TEST_BODY, byte[].class, graduationReportApiClient);
         Assert.assertArrayEquals(TEST_BYTES, response);
     }
 
+    @Test
+    public void testPostTypeRef_GivenProperData_Expect200Response(){
+        ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
+        ThreadLocalStateUtil.setCurrentUser("test-user");
+        when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
+        List<ReportGradStudentData> response = this.restService.post(TEST_URL, TEST_BODY, refType, graduationReportApiClient);
+    }
+
     @Test(expected = ServiceException.class)
-    public void testPostOverride_Given4xxErrorFromService_ExpectServiceError() {
-        when(this.responseMock.onStatus(any(), any())).thenThrow(new ServiceException("Error", 500));
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class);
+    public void testPost_Given4xxErrorFromService_ExpectServiceError() {
+        when(this.responseMock.onStatus(any(), any())).thenThrow(new ServiceException());
+        this.restService.post(TEST_URL, TEST_BODY, byte[].class, graduationReportApiClient);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testPost_Given5xxErrorFromService_ExpectWebClientRequestError(){
+        when(requestBodyUriMock.uri(TEST_URL)).thenReturn(requestBodyMock);
+        when(requestBodyMock.retrieve()).thenReturn(responseMock);
+
+        Throwable cause = new RuntimeException("Simulated cause");
+        when(responseMock.bodyToMono(byte[].class)).thenReturn(Mono.error(new WebClientRequestException(cause, HttpMethod.POST, null, new HttpHeaders())));
+        this.restService.post(TEST_URL, TEST_BODY, byte[].class, graduationReportApiClient);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testPostTypeRef_Given5xxErrorFromService_ExpectServiceError(){
+        when(this.responseMock.bodyToMono(refType)).thenThrow(new ServiceException());
+        this.restService.post(TEST_URL, TEST_BODY, refType, graduationReportApiClient);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void testPostTypeRef_Given4xxErrorFromService_ExpectServiceError(){
+        when(this.responseMock.bodyToMono(ServiceException.class)).thenReturn(Mono.just(new ServiceException()));
+        this.restService.post(TEST_URL, TEST_BODY, refType, graduationReportApiClient);
     }
 
     @Test
@@ -104,7 +138,7 @@ public class RESTServicePOSTTest {
         when(this.responseMock.bodyToFlux(String.class)).thenReturn(Flux.fromIterable(expectedResponse));
         when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
 
-        List<String> response = this.restService.postForList(TEST_URL, TEST_BODY, String.class);
+        List<String> response = this.restService.postForList(TEST_URL, TEST_BODY, String.class, graduationReportApiClient);
         Assert.assertEquals(expectedResponse, response);
     }
 
@@ -113,30 +147,7 @@ public class RESTServicePOSTTest {
         ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
         ThreadLocalStateUtil.setCurrentUser("test-user");
         when(this.responseMock.onStatus(any(), any())).thenThrow(new ServiceException("Error", 500));
-        this.restService.postForList(TEST_URL, TEST_BODY, String.class);
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testPost_Given5xxErrorFromService_ExpectConnectionError(){
-        ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
-        ThreadLocalStateUtil.setCurrentUser("test-user");
-        when(requestBodyUriMock.uri(TEST_URL)).thenReturn(requestBodyMock);
-        when(requestBodyMock.retrieve()).thenReturn(responseMock);
-
-        when(responseMock.bodyToMono(byte[].class)).thenReturn(Mono.error(new ConnectTimeoutException("Connection closed")));
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class);
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testPost_Given5xxErrorFromService_ExpectWebClientRequestError(){
-        ThreadLocalStateUtil.setCorrelationID("test-correlation-id");
-        ThreadLocalStateUtil.setCurrentUser("test-user");
-        when(requestBodyUriMock.uri(TEST_URL)).thenReturn(requestBodyMock);
-        when(requestBodyMock.retrieve()).thenReturn(responseMock);
-
-        Throwable cause = new RuntimeException("Simulated cause");
-        when(responseMock.bodyToMono(byte[].class)).thenReturn(Mono.error(new WebClientRequestException(cause, HttpMethod.POST, null, new HttpHeaders())));
-        this.restService.post(TEST_URL, TEST_BODY, byte[].class);
+        this.restService.postForList(TEST_URL, TEST_BODY, String.class, graduationReportApiClient);
     }
 
     @Test
@@ -148,7 +159,7 @@ public class RESTServicePOSTTest {
         when(this.responseMock.onStatus(any(), any())).thenReturn(this.responseMock);
 
         when(responseMock.bodyToMono(byte[].class)).thenReturn(Mono.error(new ConnectTimeoutException("Connection closed")));
-        this.restService.postForList(TEST_URL, TEST_BODY, String.class);
+        this.restService.postForList(TEST_URL, TEST_BODY, String.class, graduationReportApiClient);
     }
 
     @Test
@@ -159,6 +170,6 @@ public class RESTServicePOSTTest {
 
         Throwable cause = new RuntimeException("Simulated cause");
         when(responseMock.bodyToMono(byte[].class)).thenReturn(Mono.error(new WebClientRequestException(cause, HttpMethod.POST, null, new HttpHeaders())));
-        this.restService.postForList(TEST_URL, TEST_BODY, String.class);
+        this.restService.postForList(TEST_URL, TEST_BODY, String.class, graduationReportApiClient);
     }
 }

@@ -8,6 +8,8 @@ import ca.bc.gov.educ.api.grad.report.model.entity.v2.DistrictReportLightEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.v2.DistrictReportTransformer;
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportRepository;
+import ca.bc.gov.educ.api.grad.report.service.RESTService;
+import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -15,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +30,12 @@ import static org.mockito.Mockito.*;
 class DistrictReportsServiceTest {
 
   @Mock
+  protected EducGradReportApiConstants constants;
+  @Mock
+  protected RESTService restService;
+  @Mock
+  WebClient graduationServiceWebClient;
+  @Mock
   private DistrictReportRepository districtReportsRepository;
   @Mock
   private DistrictReportLightRepository districtReportsLightRepository;
@@ -35,14 +44,11 @@ class DistrictReportsServiceTest {
   private DistrictReportService districtReportsService;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     MockitoAnnotations.openMocks(this);
     DistrictReportTransformer districtReportsTransformer = new DistrictReportTransformer(new ModelMapper());
-    districtReportsService = new DistrictReportService(
-        districtReportsRepository,
-        districtReportsLightRepository,
-        instituteService,
-        districtReportsTransformer
+    districtReportsService = new DistrictReportService(constants, restService,graduationServiceWebClient,
+        districtReportsRepository, districtReportsLightRepository, instituteService, districtReportsTransformer
     );
   }
 

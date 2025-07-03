@@ -169,7 +169,6 @@ public class CommonControllerTest {
     public void testSaveStudentTranscript() {
         // ID
         final UUID studentID = UUID.randomUUID();
-        final String pen = "123456789";
         final String reportTypeCode = "TEST";
         boolean isGraduated= false;
         final GradStudentTranscripts gradStudentReport = new GradStudentTranscripts();
@@ -262,7 +261,6 @@ public class CommonControllerTest {
     public void testGetAllStudentTranscriptList() {
         // UUID
         final UUID studentID = UUID.randomUUID();
-        final String pen = "123456789";
         // Certificate Type
         final TranscriptTypes gradCertificateType = new TranscriptTypes();
         gradCertificateType.setCode("TEST");
@@ -447,7 +445,6 @@ public class CommonControllerTest {
     public void testGetAllSchoolReportList() {
         // UUID
         final String mincode = "123123123";
-        final String pen = "123456789";// Certificate Type
         final GradReportTypes gradCertificateType = new GradReportTypes();
         gradCertificateType.setCode("TEST");
         gradCertificateType.setDescription("Test Code Name");
@@ -471,7 +468,7 @@ public class CommonControllerTest {
         Mockito.verify(commonService).getAllSchoolReportListByMincode(mincode);
 
         Mockito.when(commonService.getAllSchoolReportListByReportType(gradCertificateType.getCode(), mincode)).thenReturn(gradStudentReportList);
-        commonController.getSchoolReportsListByReportType(gradCertificateType.getCode(), mincode, "accessToken");
+        commonController.getSchoolReportsListByReportType(gradCertificateType.getCode(), mincode);
         Mockito.verify(commonService).getAllSchoolReportListByReportType(gradCertificateType.getCode(), mincode);
     }
 
@@ -496,7 +493,6 @@ public class CommonControllerTest {
     @Test
     public void testUpdateStudentCredential() {
         final UUID studentID = new UUID(1,1);
-        final String schoolOfRecord = "123456789";
         final String credentialTypeCode = "TEST";
         final String activityCode="USERDISTOC";
         final String paperType = "YED4";
@@ -509,7 +505,6 @@ public class CommonControllerTest {
     @Test
     public void testUpdateStudentCredential_YED2() {
         final UUID studentID = new UUID(1,1);
-        final String schoolOfRecord = "123456789";
         final String credentialTypeCode = "TEST";
         final String activityCode="USERDISTOC";
         final String paperType = "YED2";
@@ -532,9 +527,9 @@ public class CommonControllerTest {
         final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
-        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,false,"accessToken")).thenReturn(list);
-        commonController.getStudentCredentialsForUserRequestDisRun(credentialType,req,"accessToken");
-        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,false,"accessToken");
+        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType, req, false)).thenReturn(list);
+        commonController.getStudentCredentialsForUserRequestDisRun(credentialType, req);
+        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType, req, false);
     }
 
     @Test
@@ -572,9 +567,9 @@ public class CommonControllerTest {
         final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
-        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,req,true,"accessToken")).thenReturn(list);
-        commonController.getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(credentialType,req,"accessToken");
-        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType,req,true,"accessToken");
+        Mockito.when(commonService.getStudentCredentialsForUserRequestDisRun(credentialType, req, true)).thenReturn(list);
+        commonController.getStudentCredentialsForUserRequestDisRunWithNullDistributionDate(credentialType, req);
+        Mockito.verify(commonService).getStudentCredentialsForUserRequestDisRun(credentialType, req, true);
     }
 
 
@@ -586,9 +581,9 @@ public class CommonControllerTest {
         final StudentCredentialDistribution cred = new StudentCredentialDistribution(UUID.randomUUID(),"BC2018-IND",studentID,"YED4","COMPL", new Date());
         list.add(cred);
 
-        Mockito.when(commonService.getAllStudentTranscriptYearlyDistributionList("accessToken")).thenReturn(list);
-        commonController.getAllStudentTranscriptYearlyDistribution("accessToken");
-        Mockito.verify(commonService).getAllStudentTranscriptYearlyDistributionList("accessToken");
+        Mockito.when(commonService.getAllStudentTranscriptYearlyDistributionList()).thenReturn(list);
+        commonController.getAllStudentTranscriptYearlyDistribution();
+        Mockito.verify(commonService).getAllStudentTranscriptYearlyDistributionList();
     }
 
     @Test

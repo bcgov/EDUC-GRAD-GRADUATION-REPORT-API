@@ -7,11 +7,11 @@ import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,20 +25,25 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
 
+@Slf4j
 public abstract class BaseService {
-
-    private static final Logger logger = LoggerFactory.getLogger(BaseService.class);
 
     @PersistenceContext
     EntityManager entityManager;
 
-    @Autowired
-    public EducGradReportApiConstants constants;
-
-    @Autowired
-    public WebClient webClient;
+    protected EducGradReportApiConstants constants;
+    protected RESTService restService;
+    protected WebClient graduationServiceWebClient;
 
     private TokenResponseCached tokenResponseCached;
+
+    @Autowired
+    protected BaseService(EducGradReportApiConstants constants, RESTService restService,
+                       @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient) {
+        this.constants = constants;
+        this.restService = restService;
+        this.graduationServiceWebClient = graduationServiceWebClient;
+    }
 
     protected boolean isClobDataChanged(String currentBase64, String newBase64) {
         if (currentBase64 == null || newBase64 == null) {
@@ -67,13 +72,13 @@ public abstract class BaseService {
                 if(o instanceof Pair<?, ?>) {
                     Pair<PageRequest, List<ReportGradStudentData>> taskResult = (Pair<PageRequest, List<ReportGradStudentData>>) o;
                     result.addAll(taskResult.getRight());
-                    logger.debug("Page {} processed successfully", taskResult.getLeft().getPageNumber());
+                    log.debug("Page {} processed successfully", taskResult.getLeft().getPageNumber());
                 } else {
-                    logger.error("Error during the task execution: {}", f.get());
+                    log.error("Error during the task execution: {}", f.get());
                 }
             }
         } catch (InterruptedException | ExecutionException ex) {
-            logger.error("Multithreading error during the task execution: {}", ex.getLocalizedMessage());
+            log.error("Multithreading error during the task execution: {}", ex.getLocalizedMessage());
             Thread.currentThread().interrupt();
         } finally {
             executorService.shutdown();
@@ -93,7 +98,7 @@ public abstract class BaseService {
                 constants.getUserName(), constants.getPassword());
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "client_credentials");
-        return this.webClient.post().uri(constants.getTokenUrl())
+        return this.graduationServiceWebClient.post().uri(constants.getTokenUrl())
                 .headers(h -> h.addAll(httpHeaders))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(map))

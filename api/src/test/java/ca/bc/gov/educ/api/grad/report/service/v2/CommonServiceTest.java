@@ -10,6 +10,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportYearEndEntity;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
+import ca.bc.gov.educ.api.grad.report.service.RESTService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -90,7 +91,7 @@ public class CommonServiceTest {
         List<UUID> studentList = new ArrayList<>();
         studentList.add(new UUID(1,1));
 
-        when(this.restService.post(any(), any(), any())).thenReturn(res);
+        when(this.restService.post(any(), any(), eq(GraduationStudentRecordSearchResult.class), any())).thenReturn(res);
 
         Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
@@ -123,7 +124,7 @@ public class CommonServiceTest {
         List<UUID> studentList = new ArrayList<>();
         studentList.add(new UUID(1,1));
 
-        when(this.restService.post(any(), any(), any())).thenReturn(res);
+        when(this.restService.post(any(), any(), eq(GraduationStudentRecordSearchResult.class), any())).thenReturn(res);
 
         StudentSearchRequest searchRequest = new StudentSearchRequest();
         searchRequest.setPens(new ArrayList<>());
@@ -166,7 +167,7 @@ public class CommonServiceTest {
         List<UUID> studentList = new ArrayList<>();
         studentList.add(new UUID(1,1));
 
-        when(this.restService.post(any(), any(), any())).thenReturn(res);
+        when(this.restService.post(any(), any(), eq(GraduationStudentRecordSearchResult.class), any())).thenReturn(res);
 
         Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
@@ -194,7 +195,7 @@ public class CommonServiceTest {
         studentList.add(new UUID(1,1));
         res.setStudentIDs(studentList);
 
-        when(this.restService.post(any(), any(), any())).thenReturn(res);
+        when(this.restService.post(any(), any(), eq(GraduationStudentRecordSearchResult.class), any())).thenReturn(res);
 
         List<UUID> result = commonService.getStudentsForSpecialGradRun(req);
         assertThat(result).hasSize(1);
@@ -223,7 +224,7 @@ public class CommonServiceTest {
         penList.add("13123111");
         req.setPens(penList);
 
-        when(this.restService.post(any(), any(), any())).thenReturn(res);
+        when(this.restService.post(any(), any(), eq(GraduationStudentRecordSearchResult.class), any())).thenReturn(res);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
 
@@ -254,7 +255,7 @@ public class CommonServiceTest {
         penList.add("13123111");
         req.setPens(penList);
 
-        when(this.restService.post(any(), any(), any())).thenReturn(res);
+        when(this.restService.post(any(), any(), eq(GraduationStudentRecordSearchResult.class), any())).thenReturn(res);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
 
@@ -286,7 +287,7 @@ public class CommonServiceTest {
         req.setPrograms(pgList);
         req.setPens(new ArrayList<>());
 
-        when(this.restService.post(any(), any(), any())).thenReturn(res);
+        when(this.restService.post(any(), any(), eq(GraduationStudentRecordSearchResult.class), any())).thenReturn(res);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
@@ -318,7 +319,7 @@ public class CommonServiceTest {
         req.setPrograms(pgList);
         req.setPens(new ArrayList<>());
 
-        when(this.restService.post(any(), any(), any())).thenReturn(res);
+        when(this.restService.post(any(), any(), eq(GraduationStudentRecordSearchResult.class), any())).thenReturn(res);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
 
@@ -369,7 +370,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
         List<ReportGradStudentData> result = commonService.getSchoolReportGradStudentData();
         assertEquals(2, result.size());
     }
@@ -394,7 +395,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
         List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData();
         assertEquals(2, result.size());
     }
@@ -420,7 +421,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolIds(List.of(schoolId)).build();
         List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
@@ -453,7 +454,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolCategoryCodes(List.of("INDEPEND")).build();
         List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
@@ -487,7 +488,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolCategoryCodes(List.of("INDEPEND")).districtIds(List.of(districtId)).build();
         List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
@@ -520,7 +521,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolCategoryCodes(List.of("INDEPEND")).districtIds(List.of(UUID.randomUUID())).build();
         List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
@@ -555,7 +556,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().districtIds(List.of(districtId)).build();
         List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
@@ -591,7 +592,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().districtIds(List.of(districtId)).studentList(List.of(studentCred1, studentCred2)).build();
         List<ReportGradStudentData> result = commonService.getYearEndReportGradStudentData(yearEndReportRequest);
@@ -627,7 +628,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest1 = YearEndReportRequest.builder().districtIds(List.of(districtId)).studentList(List.of(studentCred1, studentCred2)).build();
         List<ReportGradStudentData> result1 = commonService.getYearEndReportGradStudentData(yearEndReportRequest1);
@@ -672,7 +673,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().schoolCategoryCodes(List.of("INDEPEND")).districtIds(List.of(districtId)).build();
         List<ReportGradStudentData> result = commonService.getSchoolYearEndReportGradStudentData(yearEndReportRequest);
@@ -716,7 +717,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest1 = YearEndReportRequest.builder().schoolIds(List.of(schoolId)).studentList(List.of(studentCred1, studentCred2)).build();
         List<ReportGradStudentData> result1 = commonService.getYearEndReportGradStudentData(yearEndReportRequest1);
@@ -760,7 +761,7 @@ public class CommonServiceTest {
         reportGradStudentDataList.add(student2);
         reportGradStudentDataList.add(createReportGradStudentData());
 
-        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class))).thenReturn(reportGradStudentDataList);
+        when(restService.postForList(any(), any(), eq(ReportGradStudentData.class), any())).thenReturn(reportGradStudentDataList);
 
         YearEndReportRequest yearEndReportRequest = YearEndReportRequest.builder().districtIds(List.of(districtId)).build();
         List<ReportGradStudentData> result = commonService.getYearEndReportGradStudentData(yearEndReportRequest);
