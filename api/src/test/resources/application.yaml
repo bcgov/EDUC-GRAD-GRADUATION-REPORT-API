@@ -31,12 +31,12 @@ spring:
           jwk-set-uri: https://soam-dev.apps.silver.devops.gov.bc.ca/auth/realms/master/protocol/openid-connect/certs
       client:
         registration:
-          graduation-report-client:
+          graduation-report-api-client:
             client-id: test
             client-secret: test
             authorization-grant-type: client_credentials
         provider:
-          graduation-report-client:
+          graduation-report-api-client:
             issuer-uri: http://test
             token-uri: http://test
 

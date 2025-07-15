@@ -10,18 +10,20 @@ import ca.bc.gov.educ.api.grad.report.model.entity.SchoolReportEntity;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
+import ca.bc.gov.educ.api.grad.report.service.RESTService;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.SCHOOL_AT_GRAD;
 import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.SCHOOL_OF_RECORD;
 
+@Slf4j
 @Service("commonServiceV2")
 public class CommonService {
 
@@ -43,13 +46,19 @@ public class CommonService {
     final RESTService restService;
     final EducGradReportApiConstants constants;
     private final SchoolCacheService schoolCache;
-
-    private static final Logger logger = LoggerFactory.getLogger(CommonService.class);
+    private final WebClient graduationServiceWebClient;
 
     public static final int PAGE_SIZE = 1000;
 
     @Autowired
-    public CommonService(GradStudentCertificatesRepository gradStudentCertificatesRepository, GradStudentTranscriptsRepository gradStudentTranscriptsRepository, GradStudentReportsRepository gradStudentReportsRepository, SchoolReportRepository schoolReportRepository, RESTService restService, SchoolReportYearEndRepository schoolReportYearEndRepository, EducGradReportApiConstants constants, SchoolReportMonthlyRepository schoolReportMonthlyRepository, SchoolReportLightRepository schoolReportLightRepository, SchoolCacheService schoolCache) {
+    public CommonService(GradStudentCertificatesRepository gradStudentCertificatesRepository,
+                         GradStudentTranscriptsRepository gradStudentTranscriptsRepository,
+                         GradStudentReportsRepository gradStudentReportsRepository,
+                         SchoolReportRepository schoolReportRepository, RESTService restService,
+                         SchoolReportYearEndRepository schoolReportYearEndRepository, EducGradReportApiConstants constants,
+                         SchoolReportMonthlyRepository schoolReportMonthlyRepository,
+                         SchoolReportLightRepository schoolReportLightRepository, SchoolCacheService schoolCache,
+                         @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient) {
         this.gradStudentCertificatesRepository = gradStudentCertificatesRepository;
         this.gradStudentTranscriptsRepository = gradStudentTranscriptsRepository;
         this.gradStudentReportsRepository = gradStudentReportsRepository;
@@ -60,6 +69,7 @@ public class CommonService {
         this.restService = restService;
         this.constants = constants;
         this.schoolCache = schoolCache;
+        this.graduationServiceWebClient = graduationServiceWebClient;
     }
 
 
@@ -124,7 +134,8 @@ public class CommonService {
     }
 
     public List<UUID> getStudentsForSpecialGradRun(StudentSearchRequest req) {
-        GraduationStudentRecordSearchResult res = this.restService.post(constants.getGradStudentApiStudentForSpcGradListUrl(), req, GraduationStudentRecordSearchResult.class);
+        GraduationStudentRecordSearchResult res = this.restService.post(constants.getGradStudentApiStudentForSpcGradListUrl(),
+                req, GraduationStudentRecordSearchResult.class, graduationServiceWebClient);
         if (res != null && !res.getStudentIDs().isEmpty())
             return res.getStudentIDs();
         return new ArrayList<>();
@@ -158,14 +169,14 @@ public class CommonService {
     }
 
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(YearEndReportRequest yearEndReportRequest) {
-        logger.debug("getSchoolYearEndReportGradStudentData>");
+        log.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> schoolStudents = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
         return processReportGradStudentDataList(schoolStudents, yearEndReportRequest);
     }
 
     public List<ReportGradStudentData> getYearEndReportGradStudentData(YearEndReportRequest yearEndReportRequest) {
-        logger.debug("getYearEndReportGradStudentData");
+        log.debug("getYearEndReportGradStudentData");
         if(yearEndReportRequest.getStudentList() != null && !yearEndReportRequest.getStudentList().isEmpty()) {
             return getStudentsFromGradStudentApi(yearEndReportRequest);
         }
@@ -173,7 +184,7 @@ public class CommonService {
     }
 
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData() {
-        logger.debug("getSchoolYearEndReportGradStudentData>");
+        log.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
         return processReportGradStudentDataList(students, YearEndReportRequest.builder().build());
@@ -186,7 +197,7 @@ public class CommonService {
             PageRequest nextPage;
             result.addAll(getNextPageStudentsFromGradStudentApi(students, yearEndReportRequest));
             final int totalNumberOfPages = students.getTotalPages();
-            logger.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, students.getTotalElements());
+            log.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, students.getTotalElements());
 
             List<Callable<Object>> tasks = new ArrayList<>();
 
@@ -198,7 +209,7 @@ public class CommonService {
 
             processReportGradStudentDataTasksAsync(tasks, result);
         }
-        logger.debug("Completed in {} sec, total objects acquired {}", (System.currentTimeMillis() - startTime) / 1000, result.size());
+        log.debug("Completed in {} sec, total objects acquired {}", (System.currentTimeMillis() - startTime) / 1000, result.size());
         return result;
     }
 
@@ -292,7 +303,8 @@ public class CommonService {
     }
 
     private synchronized List<ReportGradStudentData> getReportGradStudentData(List<UUID> studentGuids) {
-        return this.restService.postForList(constants.getStudentsForSchoolDistribution(), studentGuids, ReportGradStudentData.class);
+        return this.restService.postForList(constants.getStudentsForSchoolDistribution(), studentGuids,
+                ReportGradStudentData.class, graduationServiceWebClient);
     }
 
     private void processReportGradStudentDataTasksAsync(List<Callable<Object>> tasks, List<ReportGradStudentData> result) {
@@ -306,13 +318,13 @@ public class CommonService {
                 if(o instanceof Pair<?, ?>) {
                     Pair<PageRequest, List<ReportGradStudentData>> taskResult = (Pair<PageRequest, List<ReportGradStudentData>>) o;
                     result.addAll(taskResult.getRight());
-                    logger.debug("Page {} processed successfully", taskResult.getLeft().getPageNumber());
+                    log.debug("Page {} processed successfully", taskResult.getLeft().getPageNumber());
                 } else {
-                    logger.error("Error during the task execution: {}", f.get());
+                    log.error("Error during the task execution: {}", f.get());
                 }
             }
         } catch (InterruptedException | ExecutionException ex) {
-            logger.error("Multithreading error during the task execution: {}", ex.getLocalizedMessage());
+            log.error("Multithreading error during the task execution: {}", ex.getLocalizedMessage());
             Thread.currentThread().interrupt();
         } finally {
             executorService.shutdown();
@@ -357,7 +369,7 @@ public class CommonService {
             updatedReportsCount += schoolReportRepository.archiveSchoolReports(schoolOfRecordIds, reportType, archivedReportType, batchId);
             if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
                 deletedReportsCount += schoolReportRepository.deleteSchoolOfRecordsNotMatchingSchoolReports(reportGuids, schoolOfRecordIds, archivedReportType);
-                logger.debug("{} School Reports deleted", deletedReportsCount);
+                log.debug("{} School Reports deleted", deletedReportsCount);
             }
         }
         return updatedReportsCount;
@@ -384,11 +396,11 @@ public class CommonService {
                 certificateByDocStatusCodeAndCredType.forEach((certificateDocStatus, credentialTypeMap) -> credentialTypeMap.forEach((certificateType, distributionList) -> processedCounts[0] = processedCounts[0] + gradStudentCertificatesRepository.updateStudentDistributionData(new Date(), userName, certificateDocStatus, certificateType, activityCode, distributionList.stream().map(StudentCredentialDistribution::getStudentID).toList())));
             }
            if(processedCounts[0] > 0) {
-               logger.info("Number of student credentials updated : {}", processedCounts[0]);
+               log.info("Number of student credentials updated : {}", processedCounts[0]);
            }
             return studentCredentialDistributions != null ? studentCredentialDistributions.size() : 0;
         }catch (Exception ex) {
-            logger.error("Exception occurred while updating the student credentials in batch", ex);
+            log.error("Exception occurred while updating the student credentials in batch", ex);
             return 0;
         }
     }

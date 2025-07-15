@@ -7,15 +7,14 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.Generated;
-import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -25,7 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -33,53 +32,31 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.Callable;
 
-
+@Slf4j
 @Service
 public class CommonService extends BaseService {
 
-    @Autowired
     GradStudentCertificatesTransformer gradStudentCertificatesTransformer;
-    @Autowired
     GradStudentCertificatesRepository gradStudentCertificatesRepository;
-    @Autowired
     GradStudentReportsTransformer gradStudentReportsTransformer;
-    @Autowired
     GradStudentReportsRepository gradStudentReportsRepository;
-    @Autowired
     GradStudentTranscriptsTransformer gradStudentTranscriptsTransformer;
-    @Autowired
     GradStudentTranscriptsRepository gradStudentTranscriptsRepository;
-    @Autowired
     GradCertificateTypesRepository gradCertificateTypesRepository;
-    @Autowired
     GradCertificateTypesTransformer gradCertificateTypesTransformer;
-    @Autowired
     GradReportTypesRepository gradReportTypesRepository;
-    @Autowired
     GradReportTypesTransformer gradReportTypesTransformer;
-    @Autowired
     DocumentStatusCodeRepository documentStatusCodeRepository;
-    @Autowired
     DocumentStatusCodeTransformer documentStatusCodeTransformer;
-    @Autowired
     TranscriptTypesRepository transcriptTypesRepository;
-    @Autowired
     TranscriptTypesTransformer transcriptTypesTransformer;
-    @Autowired
     SchoolReportsTransformer schoolReportsTransformer;
-    @Autowired
     SchoolReportsRepository schoolReportsRepository;
-    @Autowired
     SchoolReportsLightRepository schoolReportsLightRepository;
-    @Autowired
     SchoolReportYearEndRepository schoolReportYearEndRepository;
-    @Autowired
     SchoolReportMonthlyRepository schoolReportMonthlyRepository;
 
     public static final int PAGE_SIZE = 1000;
-
-    @SuppressWarnings("unused")
-    private static final Logger logger = LoggerFactory.getLogger(CommonService.class);
 
     private static final String CONTENT_DISPOSITION = "Content-Disposition";
     private static final String PDF_FILE_NAME = "inline; filename=student_%s_%s.pdf";
@@ -87,6 +64,51 @@ public class CommonService extends BaseService {
     private static final String COMPLETED = "COMPL";
     private static final String TRAN = "transcript";
     private static final List<String> SCCP_CERT_TYPES = Arrays.asList("SC", "SCF", "SCI");
+
+    @Autowired
+    protected CommonService(EducGradReportApiConstants constants, RESTService restService,
+                            @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient,
+                            GradStudentCertificatesTransformer gradStudentCertificatesTransformer,
+                            GradStudentCertificatesRepository gradStudentCertificatesRepository,
+                            GradStudentReportsTransformer gradStudentReportsTransformer,
+                            GradStudentReportsRepository gradStudentReportsRepository,
+                            GradStudentTranscriptsTransformer gradStudentTranscriptsTransformer,
+                            GradStudentTranscriptsRepository gradStudentTranscriptsRepository,
+                            GradCertificateTypesRepository gradCertificateTypesRepository,
+                            GradCertificateTypesTransformer gradCertificateTypesTransformer,
+                            GradReportTypesRepository gradReportTypesRepository,
+                            GradReportTypesTransformer gradReportTypesTransformer,
+                            DocumentStatusCodeRepository documentStatusCodeRepository,
+                            DocumentStatusCodeTransformer documentStatusCodeTransformer,
+                            TranscriptTypesRepository transcriptTypesRepository,
+                            TranscriptTypesTransformer transcriptTypesTransformer,
+                            SchoolReportsTransformer schoolReportsTransformer,
+                            SchoolReportsRepository schoolReportsRepository,
+                            SchoolReportsLightRepository schoolReportsLightRepository,
+                            SchoolReportYearEndRepository schoolReportYearEndRepository,
+                            SchoolReportMonthlyRepository schoolReportMonthlyRepository
+                            ) {
+        super(constants, restService, graduationServiceWebClient);
+        this.gradStudentCertificatesTransformer = gradStudentCertificatesTransformer;
+        this.gradStudentCertificatesRepository = gradStudentCertificatesRepository;
+        this.gradStudentReportsTransformer = gradStudentReportsTransformer;
+        this.gradStudentReportsRepository = gradStudentReportsRepository;
+        this.gradStudentTranscriptsTransformer = gradStudentTranscriptsTransformer;
+        this.gradStudentTranscriptsRepository = gradStudentTranscriptsRepository;
+        this.gradCertificateTypesRepository = gradCertificateTypesRepository;
+        this.gradCertificateTypesTransformer = gradCertificateTypesTransformer;
+        this.gradReportTypesRepository = gradReportTypesRepository;
+        this.gradReportTypesTransformer = gradReportTypesTransformer;
+        this.documentStatusCodeRepository = documentStatusCodeRepository;
+        this.documentStatusCodeTransformer = documentStatusCodeTransformer;
+        this.transcriptTypesRepository = transcriptTypesRepository;
+        this.transcriptTypesTransformer = transcriptTypesTransformer;
+        this.schoolReportsTransformer = schoolReportsTransformer;
+        this.schoolReportsRepository = schoolReportsRepository;
+        this.schoolReportsLightRepository = schoolReportsLightRepository;
+        this.schoolReportYearEndRepository= schoolReportYearEndRepository;
+        this.schoolReportMonthlyRepository = schoolReportMonthlyRepository;
+    }
 
     @Transactional
     public GradStudentReports saveGradStudentReports(GradStudentReports gradStudentReports, boolean isGraduated) {
@@ -393,7 +415,6 @@ public class CommonService extends BaseService {
     @Generated
     private void populateSchoolReports(List<SchoolReports> reportList) {
         reportList.forEach(rep -> {
-            String accessToken = fetchAccessToken();
             GradReportTypes types = gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.findById(rep.getReportTypeCode()));
             if (types != null)
                 rep.setReportTypeLabel(types.getLabel());
@@ -405,7 +426,7 @@ public class CommonService extends BaseService {
                     rep.setSchoolCategory(schObj.getSchoolCategoryCode());
                 }
             } else if (rep.getSchoolOfRecord() != null) {
-                District distObj = getDistrict(rep.getSchoolOfRecord(), accessToken);
+                District distObj = getDistrict(rep.getSchoolOfRecord());
                 if (distObj != null) {
                     rep.setSchoolOfRecordName(distObj.getDistrictName());
                 }
@@ -426,14 +447,10 @@ public class CommonService extends BaseService {
         return gradStudentTranscriptsRepository.findRecordsForUserRequestByStudentIdOnly(studentIds);
     }
 
-    public List<StudentCredentialDistribution> getAllStudentTranscriptYearlyDistributionList(String accessToken) {
+    public List<StudentCredentialDistribution> getAllStudentTranscriptYearlyDistributionList() {
         List<StudentCredentialDistribution> scdList = gradStudentTranscriptsRepository.findByDocumentStatusCodeAndDistributionDateYearly(COMPLETED);
-        List<UUID> studentList = webClient.get().uri(constants.getStudentsForYearlyDistribution())
-                .headers(h -> {
-                    h.setBearerAuth(accessToken);
-                    h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
-                }).retrieve().bodyToMono(new ParameterizedTypeReference<List<UUID>>() {
-                }).block();
+        List<UUID> studentList = restService.get(constants.getStudentsForYearlyDistribution(), new ParameterizedTypeReference<List<UUID>>(){},
+                graduationServiceWebClient);
         if (studentList != null && !studentList.isEmpty()) {
             int partitionSize = 1000;
             List<List<UUID>> partitions = new LinkedList<>();
@@ -448,7 +465,6 @@ public class CommonService extends BaseService {
             }
         }
         return scdList;
-
     }
 
     @Transactional
@@ -537,14 +553,16 @@ public class CommonService extends BaseService {
         return false;
     }
 
-    public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType, StudentSearchRequest studentSearchRequest, boolean onlyWithNullDistributionDate, String accessToken) {
+    public List<StudentCredentialDistribution> getStudentCredentialsForUserRequestDisRun(String credentialType,
+                                                                                         StudentSearchRequest studentSearchRequest,
+                                                                                         boolean onlyWithNullDistributionDate) {
         List<StudentCredentialDistribution> scdList = new ArrayList<>();
         if(StringUtils.isBlank(studentSearchRequest.getActivityCode())) {
             studentSearchRequest.setActivityCode("USERDIST" + StringUtils.upperCase(credentialType));
         }
         List<UUID> studentIDs = studentSearchRequest.getStudentIDs();
         if(studentIDs == null || studentIDs.isEmpty()) {
-            studentIDs = getStudentsForSpecialGradRun(studentSearchRequest, accessToken);
+            studentIDs = getStudentsForSpecialGradRun(studentSearchRequest);
         }
         if (!studentIDs.isEmpty()) {
             int partitionSize = 1000;
@@ -597,17 +615,9 @@ public class CommonService extends BaseService {
         }
     }
 
-    public List<UUID> getStudentsForSpecialGradRun(StudentSearchRequest req, String accessToken) {
-        GraduationStudentRecordSearchResult res = this.webClient.post()
-                .uri(constants.getGradStudentApiStudentForSpcGradListUrl())
-                .headers(h -> {
-                    h.setBearerAuth(accessToken);
-                    h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
-                })
-                .body(BodyInserters.fromValue(req))
-                .retrieve()
-                .bodyToMono(GraduationStudentRecordSearchResult.class)
-                .block();
+    public List<UUID> getStudentsForSpecialGradRun(StudentSearchRequest req) {
+        GraduationStudentRecordSearchResult res = restService.post(constants.getGradStudentApiStudentForSpcGradListUrl(),
+                        req, GraduationStudentRecordSearchResult.class, graduationServiceWebClient);
         if (res != null && !res.getStudentIDs().isEmpty())
             return res.getStudentIDs();
         return new ArrayList<>();
@@ -659,29 +669,21 @@ public class CommonService extends BaseService {
     @Generated
     public School getSchool(String schoolId) {
         try {
-            return webClient.get()
-                    .uri(String.format(constants.getSchoolClobBySchoolIdUrl(), schoolId))
-                    .headers(h -> h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID()))
-                    .retrieve()
-                    .bodyToMono(School.class)
-                    .block();
+            return restService.get(String.format(constants.getSchoolClobBySchoolIdUrl(), schoolId),
+                    School.class, graduationServiceWebClient);
         } catch (Exception e) {
-            logger.warn("School clob with schoolId={} error {}", schoolId, e.getMessage());
+            log.warn("School clob with schoolId={} error {}", schoolId, e.getMessage());
             return null;
         }
     }
 
     @Generated
-    private District getDistrict(String districtCode, String accessToken) {
+    private District getDistrict(String districtCode) {
         try {
-            return webClient.get()
-                    .uri(String.format(constants.getDistrictByDistrictNumberUrl(), districtCode))
-                    .headers(h -> h.setBearerAuth(accessToken))
-                    .retrieve()
-                    .bodyToMono(District.class)
-                    .block();
+            return restService.get(String.format(constants.getDistrictByDistrictNumberUrl(), districtCode),
+                    District.class, graduationServiceWebClient);
         } catch (Exception e) {
-            logger.warn("Trax District with districtCode {} error {}", districtCode, e.getMessage());
+            log.warn("Trax District with districtCode {} error {}", districtCode, e.getMessage());
             return null;
         }
     }
@@ -726,14 +728,14 @@ public class CommonService extends BaseService {
     }
 
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData() {
-        logger.debug("getSchoolYearEndReportGradStudentData>");
+        log.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
         return processReportGradStudentDataList(students, new ArrayList<>());
     }
 
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(List<String> schools) {
-        logger.debug("getSchoolYearEndReportGradStudentData>");
+        log.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
         return processReportGradStudentDataList(students, schools);
@@ -752,7 +754,7 @@ public class CommonService extends BaseService {
             PageRequest nextPage;
             result.addAll(getNextPageStudentsFromGradStudentApi(students, schools));
             final int totalNumberOfPages = students.getTotalPages();
-            logger.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, students.getTotalElements());
+            log.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, students.getTotalElements());
 
             List<Callable<Object>> tasks = new ArrayList<>();
 
@@ -764,7 +766,7 @@ public class CommonService extends BaseService {
 
             processReportGradStudentDataTasksAsync(tasks, result);
         }
-        logger.debug("Completed in {} sec, total objects acquired {}", (System.currentTimeMillis() - startTime) / 1000, result.size());
+        log.debug("Completed in {} sec, total objects acquired {}", (System.currentTimeMillis() - startTime) / 1000, result.size());
         return result;
     }
 
@@ -772,7 +774,7 @@ public class CommonService extends BaseService {
     private synchronized List<ReportGradStudentData> getNextPageStudentsFromGradStudentApi(Page<SchoolReportEntity> students, List<String> schools) {
         List<ReportGradStudentData> result = new ArrayList<>();
         List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).distinct().toList();
-        List<ReportGradStudentData> studentsInBatch = getReportGradStudentData(fetchAccessToken(), studentGuidsInBatch);
+        List<ReportGradStudentData> studentsInBatch = getReportGradStudentData(studentGuidsInBatch);
         if(studentsInBatch != null && !schools.isEmpty()) {
             boolean isDistrictSchool = schools.get(0).length() == 3;
             if(isDistrictSchool) {
@@ -820,28 +822,19 @@ public class CommonService extends BaseService {
 
     @Generated
     private synchronized ReportGradStudentData getReportGradStudentDataByGraduationStudentRecordIdFromList(UUID id, List<ReportGradStudentData> studentsInBatch) {
-        for(ReportGradStudentData s: studentsInBatch) {
-            if(s.getGraduationStudentRecordId().equals(id)) {
-                return s;
+        if(studentsInBatch != null) {
+            for(ReportGradStudentData s: studentsInBatch) {
+                if(s.getGraduationStudentRecordId().equals(id)) {
+                    return s;
+                }
             }
         }
         return null;
     }
 
     @Generated
-    private synchronized List<ReportGradStudentData> getReportGradStudentData(String accessToken, List<UUID> studentGuids) {
-        final ParameterizedTypeReference<List<ReportGradStudentData>> responseType = new ParameterizedTypeReference<>() {
-        };
-        return this.webClient.post()
-                .uri(constants.getStudentsForSchoolDistribution())
-                .headers(h -> {
-                    h.setBearerAuth(accessToken);
-                    h.set(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID());
-                })
-                .body(BodyInserters.fromValue(studentGuids))
-                .retrieve()
-                .bodyToMono(responseType)
-                .block();
+    private synchronized List<ReportGradStudentData> getReportGradStudentData(List<UUID> studentGuids) {
+        return restService.post(constants.getStudentsForSchoolDistribution(), studentGuids, new ParameterizedTypeReference<>() {}, graduationServiceWebClient);
     }
 
     public Integer countBySchoolOfRecordsAndReportType(List<String> schoolOfRecords, String reportType) {
@@ -905,7 +898,7 @@ public class CommonService extends BaseService {
             updatedReportsCount += schoolReportsRepository.archiveSchoolReports(schoolOfRecords, reportType, archivedReportType, batchId);
             if(updatedReportsCount > 0 && originalReportsCount.equals(updatedReportsCount)) {
                 deletedReportsCount += schoolReportsRepository.deleteSchoolOfRecordsNotMatchingSchoolReports(reportGuids, schoolOfRecords, archivedReportType);
-                logger.debug("{} School Reports deleted", deletedReportsCount);
+                log.debug("{} School Reports deleted", deletedReportsCount);
             }
         }
         return updatedReportsCount;

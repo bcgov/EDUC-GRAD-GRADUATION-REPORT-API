@@ -13,9 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +24,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
 @OpenAPIDefinition(info = @Info(title = "API for District Reports endpoints.", description = "This API is for reading and updating endpoints.", version = "2"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_REPORT_DATA","UPDATE_GRAD_STUDENT_REPORT_DATA"})})
 public class DistrictReportController {
-  private static final Logger logger = LoggerFactory.getLogger(DistrictReportController.class);
-
   DistrictReportService service;
   GradValidation validation;
   ResponseHelper response;
@@ -52,7 +50,7 @@ public class DistrictReportController {
           @RequestParam(value = "districtId", required = false) UUID districtId,
           @RequestParam(value = "reportTypeCode", required = false) String reportTypeCode,
           @RequestParam(value = "isLight", defaultValue = "false") boolean isLight) {
-    logger.debug("searchDistrictReports: ");
+    log.debug("searchDistrictReports: ");
     List<DistrictReport> reports = service.searchDistrictReports(districtId, reportTypeCode, isLight);
     return ResponseEntity.ok(reports);
   }
@@ -64,7 +62,7 @@ public class DistrictReportController {
   public ResponseEntity<InputStreamResource> getDistrictReportByDistrictIdAndReportType(
           @RequestParam(value = "districtId") UUID districtId,
           @RequestParam(value = "reportTypeCode") String reportTypeCode) {
-    logger.debug("getDistrictReportByType v2: ");
+    log.debug("getDistrictReportByType v2: ");
     var stream = service.getDistrictReportByDistrictIdAndReportType(districtId, reportTypeCode);
     return ResponseEntity.ok(stream);
   }
@@ -76,7 +74,7 @@ public class DistrictReportController {
           @ApiResponse(responseCode = "200", description = "OK"),
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public DistrictReport saveDistrictReport(@RequestBody DistrictReport districtReports) {
-    logger.debug("Save {} District Report for {}",districtReports.getReportTypeCode(),districtReports.getDistrictId());
+    log.debug("Save {} District Report for {}",districtReports.getReportTypeCode(),districtReports.getDistrictId());
     validation.requiredField(districtReports.getDistrictId(), "District Id");
     return service.saveDistrictReports(districtReports);
   }
@@ -88,7 +86,7 @@ public class DistrictReportController {
           @ApiResponse(responseCode = "204", description = "Deleted successfully"),
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public ResponseEntity<Void> deleteDistrictReport(@PathVariable @NotNull UUID districtId, @PathVariable @NotNull String reportTypeCode) {
-    logger.debug("deleteDistrictReport: ");
+    log.debug("deleteDistrictReport: ");
     service.deleteDistrictReport(districtId, StringUtils.trim(reportTypeCode));
     return ResponseEntity.noContent().build();
   }
@@ -100,7 +98,7 @@ public class DistrictReportController {
           @ApiResponse(responseCode = "204", description = "Deleted successfully"),
           @ApiResponse(responseCode = "400", description = "Bad request")})
   public ResponseEntity<Void> deleteDistrictReportsByType(@RequestParam @NotNull String reportTypeCode) {
-    logger.debug("deleteDistrictReportsByType: ");
+    log.debug("deleteDistrictReportsByType: ");
     service.deleteAllDistrictReportsByType(StringUtils.trim(reportTypeCode));
     return ResponseEntity.noContent().build();
   }

@@ -14,56 +14,52 @@ import ca.bc.gov.educ.api.grad.report.model.entity.TranscriptTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
-import ca.bc.gov.educ.api.grad.report.util.GradValidation;
 
+@Slf4j
 @Service
 public class CodeService {
 
-	@Autowired
-	private GradCertificateTypesRepository gradCertificateTypesRepository;
-
-	@Autowired
-	private GradCertificateTypesTransformer gradCertificateTypesTransformer;
+	private final GradCertificateTypesRepository gradCertificateTypesRepository;
+	private final GradCertificateTypesTransformer gradCertificateTypesTransformer;
+	private final GradReportTypesRepository gradReportTypesRepository;
+	private final GradReportTypesTransformer gradReportTypesTransformer;
+	private final ProgramCertificateTranscriptRepository programCertificateTranscriptRepository;
+	private final ProgramCertificateTranscriptTransformer programCertificateTranscriptTransformer;
+	private final TranscriptTypesRepository transcriptTypesRepository;
+	private final TranscriptTypesTransformer transcriptTypesTransformer;
+	private final DocumentStatusCodeRepository documentStatusCodeRepository;
+	private final DocumentStatusCodeTransformer documentStatusCodeTransformer;
 	
-	@Autowired
-	private GradReportTypesRepository gradReportTypesRepository;
-
-	@Autowired
-	private GradReportTypesTransformer gradReportTypesTransformer;
-	
-	@Autowired
-	private ProgramCertificateTranscriptRepository programCertificateTranscriptRepository;
-
-	@Autowired
-	private ProgramCertificateTranscriptTransformer programCertificateTranscriptTransformer;
-
-	@Autowired
-	private TranscriptTypesRepository transcriptTypesRepository;
-
-	@Autowired
-	private TranscriptTypesTransformer transcriptTypesTransformer;
-
-	@Autowired
-	private DocumentStatusCodeRepository documentStatusCodeRepository;
-
-	@Autowired
-	private DocumentStatusCodeTransformer documentStatusCodeTransformer;
-	
-	@Autowired
 	GradValidation validation;
 
-	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(CodeService.class);
 	private static final String CREATED_BY="createdBy";
 	private static final String CREATED_TIMESTAMP="createdTimestamp";
+
+	@Autowired
+	public CodeService(GradCertificateTypesRepository gradCertificateTypesRepository, GradCertificateTypesTransformer gradCertificateTypesTransformer,
+					   GradReportTypesRepository gradReportTypesRepository, GradReportTypesTransformer gradReportTypesTransformer,
+					   ProgramCertificateTranscriptRepository programCertificateTranscriptRepository,
+					   ProgramCertificateTranscriptTransformer programCertificateTranscriptTransformer,
+					   TranscriptTypesRepository transcriptTypesRepository, TranscriptTypesTransformer transcriptTypesTransformer,
+					   DocumentStatusCodeRepository documentStatusCodeRepository, DocumentStatusCodeTransformer documentStatusCodeTransformer,
+					   GradValidation validation) {
+		this.gradCertificateTypesRepository = gradCertificateTypesRepository;
+		this.gradCertificateTypesTransformer = gradCertificateTypesTransformer;
+		this.gradReportTypesRepository = gradReportTypesRepository;
+		this.gradReportTypesTransformer = gradReportTypesTransformer;
+		this.programCertificateTranscriptRepository = programCertificateTranscriptRepository;
+		this.programCertificateTranscriptTransformer = programCertificateTranscriptTransformer;
+		this.transcriptTypesRepository = transcriptTypesRepository;
+		this.transcriptTypesTransformer = transcriptTypesTransformer;
+		this.documentStatusCodeRepository = documentStatusCodeRepository;
+		this.documentStatusCodeTransformer = documentStatusCodeTransformer;
+		this.validation = validation;
+	}
 
 	/**
 	 * Get all Programs in Grad Program DTO
