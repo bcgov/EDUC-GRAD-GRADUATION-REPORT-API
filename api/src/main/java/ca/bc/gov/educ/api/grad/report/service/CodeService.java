@@ -212,21 +212,25 @@ public class CodeService {
 	}
 
 	public ProgramCertificateTranscript getProgramTranscript(ProgramCertificateReq programCertificateReq) {
-		ProgramCertificateTranscript pcObj = programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findTranscript(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolCategoryCode()));
-		if(pcObj.getTranscriptTypeCode() != null) {
-			TranscriptTypes tTypes = transcriptTypesTransformer.transformToDTO(transcriptTypesRepository.findById(pcObj.getTranscriptTypeCode()));
-			if(tTypes != null) {
-				pcObj.setTranscriptPaperType(tTypes.getPaperType());
-				pcObj.setTranscriptTypeLabel(tTypes.getLabel());
+		var transcript = programCertificateTranscriptRepository.findTranscript(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolCategoryCode());
+		if(transcript != null) {
+			ProgramCertificateTranscript pcObj = programCertificateTranscriptTransformer.transformToDTO(programCertificateTranscriptRepository.findTranscript(programCertificateReq.getProgramCode(),programCertificateReq.getSchoolCategoryCode()));
+			if(pcObj.getTranscriptTypeCode() != null) {
+				TranscriptTypes tTypes = transcriptTypesTransformer.transformToDTO(transcriptTypesRepository.findById(pcObj.getTranscriptTypeCode()));
+				if(tTypes != null) {
+					pcObj.setTranscriptPaperType(tTypes.getPaperType());
+					pcObj.setTranscriptTypeLabel(tTypes.getLabel());
+				}
 			}
-		}
-		if(pcObj.getCertificateTypeCode() != null) {
-			GradCertificateTypes cTypes = gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.findById(pcObj.getCertificateTypeCode()));
-			if(cTypes != null) {
-				pcObj.setCertificatePaperType(cTypes.getPaperType());
-				pcObj.setCertificateTypeLabel(cTypes.getLabel());
+			if(pcObj.getCertificateTypeCode() != null) {
+				GradCertificateTypes cTypes = gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.findById(pcObj.getCertificateTypeCode()));
+				if(cTypes != null) {
+					pcObj.setCertificatePaperType(cTypes.getPaperType());
+					pcObj.setCertificateTypeLabel(cTypes.getLabel());
+				}
 			}
+			return pcObj;
 		}
-		return pcObj;
+		return null;
 	}
 }
