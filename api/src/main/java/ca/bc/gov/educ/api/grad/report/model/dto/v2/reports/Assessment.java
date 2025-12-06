@@ -1,0 +1,38 @@
+package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
+
+import ca.bc.gov.educ.grad.report.api.client.utils.AssessmentResultListDeserializer;
+import ca.bc.gov.educ.grad.report.api.util.ReportApiConstants;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+
+public class Assessment implements Serializable {
+
+    private Date issueDate;
+    private List<AssessmentResult> results = new ArrayList<>();
+
+    @JsonFormat(pattern= ReportApiConstants.DEFAULT_DATE_FORMAT)
+    public Date getIssueDate() {
+        return issueDate;
+    }
+
+    public void setIssueDate(Date value) {
+        this.issueDate = value;
+    }
+
+    @JsonProperty("results")
+    @JsonDeserialize(using = AssessmentResultListDeserializer.class)
+    public List<AssessmentResult> getResults() {
+        return results;
+    }
+
+    public void setResults(List<AssessmentResult> value) {
+        this.results = value;
+    }
+}

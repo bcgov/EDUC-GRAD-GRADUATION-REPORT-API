@@ -22,4 +22,7 @@ public interface ProgramCertificateTranscriptRepository extends JpaRepository<Pr
 
     @Query(value="select * from program_certificate_transcript where graduation_program_code = :programCode and school_category_code = :schoolFundingCode",nativeQuery = true)
     ProgramCertificateTranscriptEntity findTranscript(@Param("programCode") String programCode,@Param("schoolFundingCode") String schoolFundingCode);
+
+    @Query("select c from ProgramCertificateTranscriptEntity c where c.transcriptTypeCode=:transcriptTypeCode")
+    List<ProgramCertificateTranscriptEntity> findByTranscriptTypeCode(String transcriptTypeCode);
 }

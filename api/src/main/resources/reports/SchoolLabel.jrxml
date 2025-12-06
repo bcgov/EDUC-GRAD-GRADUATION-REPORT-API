@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SchoolLabelsReport" pageWidth="612" pageHeight="792" columnWidth="590" leftMargin="11" rightMargin="11" topMargin="18" bottomMargin="18" uuid="635c3496-e99f-4205-93b8-cf5b07ae8dcb">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<style name="GeneratedText" fontName="BCSans" fontSize="9"/>
+	<style name="StaticText" isDefault="true" vTextAlign="Middle" fontName="BCSans"/>
+	<style name="Title" style="StaticText" fontSize="12" isBold="true"/>
+	<style name="StaticTextGen" fontName="BCSans" fontSize="9"/>
+	<style name="Zebra" style="GeneratedText" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 1]]></conditionExpression>
+			<style backcolor="#F2F2F2"/>
+		</conditionalStyle>
+	</style>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF"/>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF"/>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF"/>
+	<subDataset name="schoolsDataset" uuid="4816c7e1-6c7c-4be3-97ea-75677761dc8b">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="typeBannerLeft" class="java.lang.String">
+			<fieldDescription><![CDATA[left.typeBanner]]></fieldDescription>
+		</field>
+		<field name="mincodeLeft" class="java.lang.String">
+			<fieldDescription><![CDATA[left.mincode]]></fieldDescription>
+		</field>
+		<field name="nameLeft" class="java.lang.String">
+			<fieldDescription><![CDATA[left.name]]></fieldDescription>
+		</field>
+		<field name="streetLine1Left" class="java.lang.String">
+			<fieldDescription><![CDATA[left.address.streetLine1]]></fieldDescription>
+		</field>
+		<field name="streetLine2Left" class="java.lang.String">
+			<fieldDescription><![CDATA[left.address.streetLine2]]></fieldDescription>
+		</field>
+		<field name="streetLine3Left" class="java.lang.String">
+			<fieldDescription><![CDATA[left.address.streetLine3]]></fieldDescription>
+		</field>
+		<field name="cityLeft" class="java.lang.String">
+			<fieldDescription><![CDATA[left.address.city]]></fieldDescription>
+		</field>
+		<field name="regionLeft" class="java.lang.String">
+			<fieldDescription><![CDATA[left.address.region]]></fieldDescription>
+		</field>
+		<field name="codeLeft" class="java.lang.String">
+			<fieldDescription><![CDATA[left.address.postalCode]]></fieldDescription>
+		</field>
+		<field name="countryLeft" class="java.lang.String">
+			<fieldDescription><![CDATA[left.address.countryCode]]></fieldDescription>
+		</field>
+		<field name="formattedAddressLeft" class="java.lang.String">
+			<fieldDescription><![CDATA[left.address.formattedAddressForLabels]]></fieldDescription>
+		</field>
+		<field name="typeBannerRight" class="java.lang.String">
+			<fieldDescription><![CDATA[right.typeBanner]]></fieldDescription>
+		</field>
+		<field name="mincodeRight" class="java.lang.String">
+			<fieldDescription><![CDATA[right.mincode]]></fieldDescription>
+		</field>
+		<field name="nameRight" class="java.lang.String">
+			<fieldDescription><![CDATA[right.name]]></fieldDescription>
+		</field>
+		<field name="streetLine1Right" class="java.lang.String">
+			<fieldDescription><![CDATA[right.address.streetLine1]]></fieldDescription>
+		</field>
+		<field name="streetLine2Right" class="java.lang.String">
+			<fieldDescription><![CDATA[right.address.streetLine2]]></fieldDescription>
+		</field>
+		<field name="streetLine3Right" class="java.lang.String">
+			<fieldDescription><![CDATA[right.address.streetLine3]]></fieldDescription>
+		</field>
+		<field name="cityRight" class="java.lang.String">
+			<fieldDescription><![CDATA[right.address.city]]></fieldDescription>
+		</field>
+		<field name="regionRight" class="java.lang.String">
+			<fieldDescription><![CDATA[right.address.region]]></fieldDescription>
+		</field>
+		<field name="codeRight" class="java.lang.String">
+			<fieldDescription><![CDATA[right.address.postalCode]]></fieldDescription>
+		</field>
+		<field name="countryRight" class="java.lang.String">
+			<fieldDescription><![CDATA[right.address.countryCode]]></fieldDescription>
+		</field>
+		<field name="formattedAddressRight" class="java.lang.String">
+			<fieldDescription><![CDATA[right.address.formattedAddressForLabels]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="P_REPORT_BASE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/reports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_REPORT_RESOURCES_PATH" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{P_REPORT_BASE} + "resources/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_REPORT_IMAGES_PATH" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{P_REPORT_RESOURCES_PATH} + "images/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_REPORT_PREVIEW" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="orgCode" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="orgImage" class="java.io.InputStream"/>
+	<parameter name="reportNumber" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="schools" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource" isForPrompting="false"/>
+	<parameter name="hasSchools" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["false"]]></defaultValueExpression>
+	</parameter>
+	<variable name="V_LOGO_CODE" class="java.lang.String">
+		<variableExpression><![CDATA[$P{orgCode}]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{orgCode}]]></initialValueExpression>
+	</variable>
+	<variable name="V_LOGO_FILE" class="java.lang.String">
+		<variableExpression><![CDATA[$P{P_REPORT_IMAGES_PATH} + "logo_" + $V{V_LOGO_CODE}.trim().toLowerCase()]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{P_REPORT_IMAGES_PATH} + "logo_" + $V{V_LOGO_CODE}.trim().toLowerCase()]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="106" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<componentElement>
+				<reportElement stretchType="ContainerHeight" mode="Opaque" x="0" y="0" width="590" height="106" isPrintWhenDetailOverflows="true" uuid="6dfd45d5-681e-4159-a41f-2c558c482172">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA["true".equalsIgnoreCase($P{hasSchools})]]></printWhenExpression>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="schoolsDataset" uuid="5614a4c2-839f-425f-99e6-f6099ccb7441">
+						<dataSourceExpression><![CDATA[$P{schools}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="288" uuid="422fa4e7-6006-46cc-aefc-b6ab997fb49a">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:detailCell style="Table_TD" height="106">
+							<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+								<reportElement mode="Opaque" x="0" y="0" width="210" height="22" uuid="80505548-4897-41a1-8bed-36b0b22fe73a">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<box topPadding="5" leftPadding="5">
+									<topPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<leftPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<bottomPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<rightPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+								</box>
+								<textElement verticalAlignment="Top">
+									<font size="12"/>
+									<paragraph lineSpacing="Proportional" leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{typeBannerLeft}.toUpperCase()]]></textFieldExpression>
+							</textField>
+							<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+								<reportElement mode="Opaque" x="0" y="22" width="288" height="84" uuid="f3a1d85a-680f-4efc-baed-59855c8ea819">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<box leftPadding="5">
+									<topPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<leftPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<bottomPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<rightPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+								</box>
+								<textElement textAlignment="Left" verticalAlignment="Top">
+									<font size="12"/>
+									<paragraph lineSpacing="Proportional" leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{nameLeft}.toUpperCase() + "\n" + $F{formattedAddressLeft}.toUpperCase()]]></textFieldExpression>
+							</textField>
+							<textField textAdjust="ScaleFont" evaluationTime="Auto" isBlankWhenNull="true">
+								<reportElement mode="Opaque" x="210" y="0" width="78" height="22" uuid="b70e039d-6c60-45bf-90e0-5e5f4836618a">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<box topPadding="5">
+									<topPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<leftPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<bottomPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<rightPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+								</box>
+								<textElement textAlignment="Left" verticalAlignment="Top">
+									<font size="12"/>
+									<paragraph lineSpacing="Proportional" leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{mincodeLeft}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="14" uuid="dc4371bf-1aa8-49a0-8281-75ee1021517c">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+						<jr:detailCell style="Table_TD" height="106">
+							<textField textAdjust="ScaleFont" evaluationTime="Auto" isBlankWhenNull="true">
+								<reportElement mode="Opaque" x="0" y="0" width="14" height="105" uuid="b70e039d-6c60-45bf-90e0-5e5f4836618a">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<box>
+									<topPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<leftPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<bottomPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<rightPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Top"/>
+								<textFieldExpression><![CDATA[""]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="288" uuid="422fa4e7-6006-46cc-aefc-b6ab997fb49a">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:detailCell style="Table_TD" height="106">
+							<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+								<reportElement mode="Opaque" x="0" y="0" width="210" height="22" uuid="80505548-4897-41a1-8bed-36b0b22fe73a">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<box topPadding="5" leftPadding="5">
+									<topPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<leftPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<bottomPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<rightPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+								</box>
+								<textElement verticalAlignment="Top">
+									<font size="12"/>
+									<paragraph lineSpacing="Proportional" leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{typeBannerRight}.toUpperCase()]]></textFieldExpression>
+							</textField>
+							<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+								<reportElement mode="Opaque" x="0" y="22" width="288" height="84" uuid="f3a1d85a-680f-4efc-baed-59855c8ea819">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<box leftPadding="5">
+									<topPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<leftPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<bottomPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<rightPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+								</box>
+								<textElement textAlignment="Left" verticalAlignment="Top">
+									<font size="12"/>
+									<paragraph lineSpacing="Proportional" leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{nameRight}.toUpperCase() + "\n" + $F{formattedAddressRight}.toUpperCase()]]></textFieldExpression>
+							</textField>
+							<textField textAdjust="ScaleFont" evaluationTime="Auto" isBlankWhenNull="true">
+								<reportElement mode="Opaque" x="210" y="0" width="78" height="22" uuid="b70e039d-6c60-45bf-90e0-5e5f4836618a">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+									<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+								</reportElement>
+								<box topPadding="5">
+									<topPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<leftPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<bottomPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+									<rightPen lineWidth="0.0" lineStyle="Dashed" lineColor="#DBDBDB"/>
+								</box>
+								<textElement textAlignment="Left" verticalAlignment="Top">
+									<font size="12"/>
+									<paragraph lineSpacing="Proportional" leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{mincodeRight}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
