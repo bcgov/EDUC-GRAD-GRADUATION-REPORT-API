@@ -8,8 +8,8 @@ import jakarta.validation.Valid;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradCertificateTypesEntity;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.CertificateTypeCodeEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.ReportTypeCodeEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.TranscriptTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
@@ -75,7 +75,7 @@ public class CodeService {
 
 	@Transactional
 	public GradCertificateTypes getSpecificCertificateTypeCode(String provCode) {
-		Optional<GradCertificateTypesEntity> entity = gradCertificateTypesRepository.findById(StringUtils.toRootUpperCase(provCode));
+		Optional<CertificateTypeCodeEntity> entity = gradCertificateTypesRepository.findById(StringUtils.toRootUpperCase(provCode));
 		if (entity.isPresent()) {
 			return gradCertificateTypesTransformer.transformToDTO(entity);
 		} else {
@@ -84,8 +84,8 @@ public class CodeService {
 	}
 	
 	public GradCertificateTypes createGradCertificateTypes(@Valid GradCertificateTypes gradCertificateTypes) {
-		GradCertificateTypesEntity toBeSavedObject = gradCertificateTypesTransformer.transformToEntity(gradCertificateTypes);
-		Optional<GradCertificateTypesEntity> existingObjectCheck = gradCertificateTypesRepository.findById(gradCertificateTypes.getCode());
+		CertificateTypeCodeEntity toBeSavedObject = gradCertificateTypesTransformer.transformToEntity(gradCertificateTypes);
+		Optional<CertificateTypeCodeEntity> existingObjectCheck = gradCertificateTypesRepository.findById(gradCertificateTypes.getCode());
 		if(existingObjectCheck.isPresent()) {
 			validation.addErrorAndStop(String.format("Certificate Type [%s] already exists",gradCertificateTypes.getCode()));
 			return gradCertificateTypes;			
@@ -95,10 +95,10 @@ public class CodeService {
 	}
 
 	public GradCertificateTypes updateGradCertificateTypes(@Valid GradCertificateTypes gradCertificateTypes) {
-		Optional<GradCertificateTypesEntity> gradCertificateTypesOptional = gradCertificateTypesRepository.findById(gradCertificateTypes.getCode());
-		GradCertificateTypesEntity sourceObject = gradCertificateTypesTransformer.transformToEntity(gradCertificateTypes);
+		Optional<CertificateTypeCodeEntity> gradCertificateTypesOptional = gradCertificateTypesRepository.findById(gradCertificateTypes.getCode());
+		CertificateTypeCodeEntity sourceObject = gradCertificateTypesTransformer.transformToEntity(gradCertificateTypes);
 		if(gradCertificateTypesOptional.isPresent()) {
-			GradCertificateTypesEntity gradEnity = gradCertificateTypesOptional.get();			
+			CertificateTypeCodeEntity gradEnity = gradCertificateTypesOptional.get();			
 			BeanUtils.copyProperties(sourceObject,gradEnity,CREATED_BY,CREATED_TIMESTAMP);
     		return gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.save(gradEnity));
 		}else {
@@ -108,7 +108,7 @@ public class CodeService {
 	}
 
 	public int deleteGradCertificateTypes(@Valid String certificateType) {
-		Optional<GradCertificateTypesEntity> entity = gradCertificateTypesRepository.findById(certificateType);
+		Optional<CertificateTypeCodeEntity> entity = gradCertificateTypesRepository.findById(certificateType);
 		if(entity.isPresent()) {
 			gradCertificateTypesRepository.deleteById(certificateType);
 			return 1;
@@ -123,7 +123,7 @@ public class CodeService {
 
 	@Transactional
 	public GradReportTypes getSpecificReportTypeCode(String provCode) {
-		Optional<GradReportTypesEntity> entity = gradReportTypesRepository.findById(StringUtils.toRootUpperCase(provCode));
+		Optional<ReportTypeCodeEntity> entity = gradReportTypesRepository.findById(StringUtils.toRootUpperCase(provCode));
 		if (entity.isPresent()) {
 			return gradReportTypesTransformer.transformToDTO(entity);
 		} else {
@@ -132,8 +132,8 @@ public class CodeService {
 	}
 	
 	public GradReportTypes createGradReportTypes(@Valid GradReportTypes gradReportTypes) {
-		GradReportTypesEntity toBeSavedObject = gradReportTypesTransformer.transformToEntity(gradReportTypes);
-		Optional<GradReportTypesEntity> existingObjectCheck = gradReportTypesRepository.findById(gradReportTypes.getCode());
+		ReportTypeCodeEntity toBeSavedObject = gradReportTypesTransformer.transformToEntity(gradReportTypes);
+		Optional<ReportTypeCodeEntity> existingObjectCheck = gradReportTypesRepository.findById(gradReportTypes.getCode());
 		if(existingObjectCheck.isPresent()) {
 			validation.addErrorAndStop(String.format("Report Type [%s] already exists",gradReportTypes.getCode()));
 			return gradReportTypes;			
@@ -143,10 +143,10 @@ public class CodeService {
 	}
 
 	public GradReportTypes updateGradReportTypes(@Valid GradReportTypes gradReportTypes) {
-		Optional<GradReportTypesEntity> gradReportTypesOptional = gradReportTypesRepository.findById(gradReportTypes.getCode());
-		GradReportTypesEntity sourceObject = gradReportTypesTransformer.transformToEntity(gradReportTypes);
+		Optional<ReportTypeCodeEntity> gradReportTypesOptional = gradReportTypesRepository.findById(gradReportTypes.getCode());
+		ReportTypeCodeEntity sourceObject = gradReportTypesTransformer.transformToEntity(gradReportTypes);
 		if(gradReportTypesOptional.isPresent()) {
-			GradReportTypesEntity gradEnity = gradReportTypesOptional.get();			
+			ReportTypeCodeEntity gradEnity = gradReportTypesOptional.get();			
 			BeanUtils.copyProperties(sourceObject,gradEnity,CREATED_BY,CREATED_TIMESTAMP);
     		return gradReportTypesTransformer.transformToDTO(gradReportTypesRepository.save(gradEnity));
 		}else {
@@ -156,7 +156,7 @@ public class CodeService {
 	}
 
 	public int deleteGradReportTypes(@Valid String reportType) {
-		Optional<GradReportTypesEntity> entity = gradReportTypesRepository.findById(reportType);
+		Optional<ReportTypeCodeEntity> entity = gradReportTypesRepository.findById(reportType);
 		if(entity.isPresent()) {
 			gradReportTypesRepository.deleteById(reportType);
 			return 1;

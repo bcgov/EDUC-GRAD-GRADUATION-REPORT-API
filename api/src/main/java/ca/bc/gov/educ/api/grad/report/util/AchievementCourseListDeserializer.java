@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.util;
 
 
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.AchievementCourse;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.AchievementCourse;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;

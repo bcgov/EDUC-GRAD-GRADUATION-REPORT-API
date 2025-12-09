@@ -55,17 +55,17 @@ public class CodeServiceTest {
 	
 	@Test
 	public void testGetAllCertificateTypesCodeList() {
-		List<GradCertificateTypesEntity> gradCertificateTypeList = new ArrayList<>();
-		GradCertificateTypesEntity obj = new GradCertificateTypesEntity();
-		obj.setCode("E");
+		List<CertificateTypeCodeEntity> gradCertificateTypeList = new ArrayList<>();
+		CertificateTypeCodeEntity obj = new CertificateTypeCodeEntity();
+		obj.setCertificateTypeCode("E");
 		obj.setDescription("English Dogwood");
 		obj.setCreateUser("GRADUATION");
 		obj.setUpdateUser("GRADUATION");
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		gradCertificateTypeList.add(obj);
-		obj = new GradCertificateTypesEntity();
-		obj.setCode("F");
+		obj = new CertificateTypeCodeEntity();
+		obj.setCertificateTypeCode("F");
 		obj.setDescription("French Dogwood");
 		obj.setCreateUser("GRADUATION");
 		obj.setUpdateUser("GRADUATION");
@@ -87,14 +87,14 @@ public class CodeServiceTest {
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		obj.toString();
-		GradCertificateTypesEntity objEntity = new GradCertificateTypesEntity();
-		objEntity.setCode("E");
+		CertificateTypeCodeEntity objEntity = new CertificateTypeCodeEntity();
+		objEntity.setCertificateTypeCode("E");
 		objEntity.setDescription("English Dogwood");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
 		objEntity.setCreateDate(new Date(System.currentTimeMillis()));
 		objEntity.setUpdateDate(new Date(System.currentTimeMillis()));
-		Optional<GradCertificateTypesEntity> ent = Optional.of(objEntity);
+		Optional<CertificateTypeCodeEntity> ent = Optional.of(objEntity);
 		Mockito.when(gradCertificateTypesRepository.findById(certCode)).thenReturn(ent);
 		codeService.getSpecificCertificateTypeCode(certCode);
 	}
@@ -108,8 +108,8 @@ public class CodeServiceTest {
 	
 	@Test
 	public void testGetAllReportTypesCodeList() {
-		List<GradReportTypesEntity> gradReportTypeList = new ArrayList<>();
-		GradReportTypesEntity obj = new GradReportTypesEntity();
+		List<ReportTypeCodeEntity> gradReportTypeList = new ArrayList<>();
+		ReportTypeCodeEntity obj = new ReportTypeCodeEntity();
 		obj.setCode("TRAN");
 		obj.setDescription("Transcript");
 		obj.setCreateUser("GRADUATION");
@@ -117,7 +117,7 @@ public class CodeServiceTest {
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		gradReportTypeList.add(obj);
-		obj = new GradReportTypesEntity();
+		obj = new ReportTypeCodeEntity();
 		obj.setCode("ACHV");
 		obj.setDescription("Achievement");
 		obj.setCreateUser("GRADUATION");
@@ -140,14 +140,14 @@ public class CodeServiceTest {
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		obj.toString();
-		GradReportTypesEntity objEntity = new GradReportTypesEntity();
+		ReportTypeCodeEntity objEntity = new ReportTypeCodeEntity();
 		objEntity.setCode("TRAN");
 		objEntity.setDescription("Transcript");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
 		objEntity.setCreateDate(new Date(System.currentTimeMillis()));
 		objEntity.setUpdateDate(new Date(System.currentTimeMillis()));
-		Optional<GradReportTypesEntity> ent = Optional.of(objEntity);
+		Optional<ReportTypeCodeEntity> ent = Optional.of(objEntity);
 		Mockito.when(gradReportTypesRepository.findById(reportCode)).thenReturn(ent);
 		codeService.getSpecificReportTypeCode(reportCode);
 	}
@@ -168,8 +168,8 @@ public class CodeServiceTest {
 		obj.setUpdateUser("GRADUATION");
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
-		GradCertificateTypesEntity objEntity = new GradCertificateTypesEntity();
-		objEntity.setCode("DC");
+		CertificateTypeCodeEntity objEntity = new CertificateTypeCodeEntity();
+		objEntity.setCertificateTypeCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
@@ -190,14 +190,14 @@ public class CodeServiceTest {
 		obj.setUpdateUser("GRADUATION");
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
-		GradCertificateTypesEntity objEntity = new GradCertificateTypesEntity();
-		objEntity.setCode("DC");
+		CertificateTypeCodeEntity objEntity = new CertificateTypeCodeEntity();
+		objEntity.setCertificateTypeCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
 		objEntity.setCreateDate(new Date(System.currentTimeMillis()));
 		objEntity.setUpdateDate(new Date(System.currentTimeMillis()));
-		Optional<GradCertificateTypesEntity> ent = Optional.of(objEntity);
+		Optional<CertificateTypeCodeEntity> ent = Optional.of(objEntity);
 		Mockito.when(gradCertificateTypesRepository.findById(obj.getCode())).thenReturn(ent);
 		codeService.createGradCertificateTypes(obj);
 		
@@ -212,14 +212,14 @@ public class CodeServiceTest {
 		obj.setUpdateUser("GRADUATION");
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
-		GradCertificateTypesEntity objEntity = new GradCertificateTypesEntity();
-		objEntity.setCode("DC");
+		CertificateTypeCodeEntity objEntity = new CertificateTypeCodeEntity();
+		objEntity.setCertificateTypeCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
 		objEntity.setCreateDate(new Date(System.currentTimeMillis()));
 		objEntity.setUpdateDate(new Date(System.currentTimeMillis()));
-		Optional<GradCertificateTypesEntity> ent = Optional.of(objEntity);
+		Optional<CertificateTypeCodeEntity> ent = Optional.of(objEntity);
 		Mockito.when(gradCertificateTypesRepository.findById(obj.getCode())).thenReturn(ent);
 		Mockito.when(gradCertificateTypesRepository.save(objEntity)).thenReturn(objEntity);
 		codeService.updateGradCertificateTypes(obj);		
@@ -235,8 +235,8 @@ public class CodeServiceTest {
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		obj.toString();
-		GradCertificateTypesEntity objEntity = new GradCertificateTypesEntity();
-		objEntity.setCode("DC");
+		CertificateTypeCodeEntity objEntity = new CertificateTypeCodeEntity();
+		objEntity.setCertificateTypeCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
@@ -256,7 +256,7 @@ public class CodeServiceTest {
 		obj.setUpdateUser("GRADUATION");
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
-		GradReportTypesEntity objEntity = new GradReportTypesEntity();
+		ReportTypeCodeEntity objEntity = new ReportTypeCodeEntity();
 		objEntity.setCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
@@ -278,14 +278,14 @@ public class CodeServiceTest {
 		obj.setUpdateUser("GRADUATION");
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
-		GradReportTypesEntity objEntity = new GradReportTypesEntity();
+		ReportTypeCodeEntity objEntity = new ReportTypeCodeEntity();
 		objEntity.setCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
 		objEntity.setCreateDate(new Date(System.currentTimeMillis()));
 		objEntity.setUpdateDate(new Date(System.currentTimeMillis()));
-		Optional<GradReportTypesEntity> ent = Optional.of(objEntity);
+		Optional<ReportTypeCodeEntity> ent = Optional.of(objEntity);
 		Mockito.when(gradReportTypesRepository.findById(obj.getCode())).thenReturn(ent);
 		codeService.createGradReportTypes(obj);
 		
@@ -300,14 +300,14 @@ public class CodeServiceTest {
 		obj.setUpdateUser("GRADUATION");
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
-		GradReportTypesEntity objEntity = new GradReportTypesEntity();
+		ReportTypeCodeEntity objEntity = new ReportTypeCodeEntity();
 		objEntity.setCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
 		objEntity.setCreateDate(new Date(System.currentTimeMillis()));
 		objEntity.setUpdateDate(new Date(System.currentTimeMillis()));
-		Optional<GradReportTypesEntity> ent = Optional.of(objEntity);
+		Optional<ReportTypeCodeEntity> ent = Optional.of(objEntity);
 		Mockito.when(gradReportTypesRepository.findById(obj.getCode())).thenReturn(ent);
 		Mockito.when(gradReportTypesRepository.save(objEntity)).thenReturn(objEntity);
 		codeService.updateGradReportTypes(obj);
@@ -323,7 +323,7 @@ public class CodeServiceTest {
 		obj.setUpdateUser("GRADUATION");
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
-		GradReportTypesEntity objEntity = new GradReportTypesEntity();
+		ReportTypeCodeEntity objEntity = new ReportTypeCodeEntity();
 		objEntity.setCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
@@ -425,8 +425,8 @@ public class CodeServiceTest {
 		req.setOptionalProgram(null);
 		req.setSchoolCategoryCode("02");
 
-		GradCertificateTypesEntity tTypes = new GradCertificateTypesEntity();
-		tTypes.setCode("E");
+		CertificateTypeCodeEntity tTypes = new CertificateTypeCodeEntity();
+		tTypes.setCertificateTypeCode("E");
 		tTypes.setPaperType("YED2");
 
 		List<ProgramCertificateTranscriptEntity> pList = new ArrayList<>();
@@ -482,7 +482,7 @@ public class CodeServiceTest {
 	public void testGetAllReportTypesDocumentStatusCodeList() {
 		List<DocumentStatusCodeEntity> documentStatusCodeList = new ArrayList<>();
 		DocumentStatusCodeEntity obj = new DocumentStatusCodeEntity();
-		obj.setCode("TRAN");
+		obj.setDocumentStatusCode("TRAN");
 		obj.setDescription("Transcript");
 		obj.setCreateUser("GRADUATION");
 		obj.setUpdateUser("GRADUATION");
@@ -490,7 +490,7 @@ public class CodeServiceTest {
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		documentStatusCodeList.add(obj);
 		obj = new DocumentStatusCodeEntity();
-		obj.setCode("ACHV");
+		obj.setDocumentStatusCode("ACHV");
 		obj.setDescription("Achievement");
 		obj.setCreateUser("GRADUATION");
 		obj.setUpdateUser("GRADUATION");
@@ -515,7 +515,7 @@ public class CodeServiceTest {
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		obj.toString();
 		DocumentStatusCodeEntity objEntity = new DocumentStatusCodeEntity();
-		objEntity.setCode("TRAN");
+		objEntity.setDocumentStatusCode("TRAN");
 		objEntity.setDescription("Transcript");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");

@@ -3,6 +3,8 @@ package ca.bc.gov.educ.api.grad.report.service.v2;
 import ca.bc.gov.educ.api.grad.report.exception.DomainServiceException;
 import ca.bc.gov.educ.api.grad.report.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.ReportData;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.CanadianPostalAddressImpl;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
 import ca.bc.gov.educ.api.grad.report.transformer.GradDataConvertionBean;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
@@ -23,6 +25,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static ca.bc.gov.educ.api.grad.report.reporting.adapter.BusinessEntityAdapter.validate;
 import static java.lang.Integer.parseInt;
 import static java.util.Locale.CANADA;
 
@@ -299,8 +302,7 @@ public abstract class GradReportService {
         student.setSignatureBlockTypes(signatureBlockTypes);
 
         validate(student, "student");
-
-
+        
         return student;
     }
 
@@ -310,10 +312,7 @@ public abstract class GradReportService {
      * @param studentInfo Student Info
      */
     School adaptSchool(final StudentInfo studentInfo, boolean checkEligibility) {
-        final String m_ = "adaptSchool(StudentInfo)";
-        log.trace("Entering {} with {}", m_, studentInfo);
-
-        SchoolImpl school = new SchoolImpl();
+        School school = new School();
         if(checkEligibility) {
             TraxSchool traxSchool = getSchool(studentInfo.getSchoolId());
             if (traxSchool != null && "N".equalsIgnoreCase(traxSchool.getTranscriptEligibility())) {
@@ -335,11 +334,10 @@ public abstract class GradReportService {
             populateSchoolFromStudentInfo(school, studentInfo);
         }
 
-        log.trace(LOG_TRACE_EXITING, m_);
         return school;
     }
 
-    void populateSchoolFromStudentInfo(SchoolImpl school, StudentInfo studentInfo) {
+    void populateSchoolFromStudentInfo(School school, StudentInfo studentInfo) {
         school.setSchoolId(studentInfo.getSchoolId());
         school.setMincode(studentInfo.getMincode());
         school.setName(studentInfo.getSchoolName());
@@ -357,7 +355,7 @@ public abstract class GradReportService {
         school.setAddress(address);
     }
 
-    void populateSchoolFromTraxSchool(SchoolImpl school, TraxSchool traxSchool) {
+    void populateSchoolFromTraxSchool(School school, TraxSchool traxSchool) {
         school.setSchoolCategoryCode(traxSchool.getSchoolCategoryLegacyCode());
         school.setSchoolId(traxSchool.getSchoolId());
         school.setMincode(traxSchool.getMinCode());

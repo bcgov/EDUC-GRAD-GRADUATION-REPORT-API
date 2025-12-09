@@ -2,53 +2,24 @@ package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
 import ca.bc.gov.educ.api.grad.report.constants.GraduationProgramCode;
 
-public final class GradProgram extends AbstractDomainEntity {
+public interface GradProgram extends DomainEntity {
 
-    private static final long serialVersionUID = 3L;
+    /**
+     * Returns the graduation program code (also known as the requirement year).
+     * See GraduationProgramCode for a list of possible values.
+     *
+     * @return A non-null String, never empty.
+     */
+    GraduationProgramCode getCode();
 
-    private GraduationProgramCode code;
-    private String programCode;
-    private String programName;
-    private String expiryDate;
+    /**
+     * Changes the graduation program code.
+     *
+     * @param code The new graduation program code.
+     */
+    void setCode(GraduationProgramCode code);
 
-    public GradProgram() {
+    public String getExpiryDate();
 
-    }
-
-    public GradProgram(GraduationProgramCode code, String expiryDate) {
-        setCode(code);
-        setExpiryDate(expiryDate);
-    }
-    
-    public GraduationProgramCode getCode() {
-        return this.code;
-    }
-    
-    public void setCode(final GraduationProgramCode code) {
-        this.code = code;
-    }
-    
-    public Long getId() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setCode() {
-        this.code = GraduationProgramCode.valueFrom(programCode, programName);
-    }
-
-    public void setProgramCode(String programCode) {
-        this.programCode = programCode;
-    }
-
-    public void setProgramName(String programName) {
-        this.programName = programName;
-    }
-    
-    public String getExpiryDate() {
-        return expiryDate;
-    }
-    
-    public void setExpiryDate(String value) {
-        this.expiryDate = value;
-    }
+    public void setExpiryDate(String value);
 }

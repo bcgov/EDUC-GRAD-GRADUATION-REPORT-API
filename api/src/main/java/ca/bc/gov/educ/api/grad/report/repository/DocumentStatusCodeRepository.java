@@ -3,6 +3,7 @@ package ca.bc.gov.educ.api.grad.report.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
@@ -11,5 +12,8 @@ import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
 public interface DocumentStatusCodeRepository extends JpaRepository<DocumentStatusCodeEntity, String> {
 
     List<DocumentStatusCodeEntity> findAll();
+
+    @Query("select c from DocumentStatusCodeEntity c where c.documentStatusCode=:code")
+    DocumentStatusCodeEntity findByDocumentStatusCode(String code);
 
 }

@@ -1,43 +1,20 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
-import org.apache.commons.lang3.StringUtils;
+public interface NonGradReason extends DomainEntity {
 
-import java.io.Serializable;
+    /**
+     * Returns the code that represents why the student did not fulfill their
+     * graduation requirements.
+     *
+     * @return A non-null String, should not be empty.
+     */
+    String getCode();
 
-public class NonGradReason extends AbstractDomainEntity implements Serializable {
-
-    private static final long serialVersionUID = 3L;
-
-    private String code;
-    private String description;
-
-    public NonGradReason() {}
-
-
-    public String getCode() {
-        return StringUtils.startsWith(code, "!") ? "" : code;
-    }
-
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
-    public Long getId() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
-    public String toString() {
-        return getDescription();
-    }
+    /**
+     * Returns the description of why the student did not fulfill their
+     * graduation requirements.
+     *
+     * @return A non-null String, should not be empty.
+     */
+    String getDescription();
 }

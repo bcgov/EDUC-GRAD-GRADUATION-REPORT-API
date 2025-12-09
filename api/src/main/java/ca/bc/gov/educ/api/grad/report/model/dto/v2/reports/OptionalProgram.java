@@ -1,89 +1,34 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
-import ca.bc.gov.educ.api.grad.report.util.DateUtils;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import java.util.List;
+public interface OptionalProgram {
+    JRBeanCollectionDataSource getRequirementMetdataSource();
 
-public class OptionalProgram  {
+    JRBeanCollectionDataSource getNonGradReasonsdataSource();
 
-    private String optionalProgramCode;
-    private String optionalProgramName;
-    private String programCompletionDate;
-    private String hasRequirementMet;
-    private List<GradRequirement> requirementMet;
-    private List<NonGradReason> nonGradReasons;
+    String getOptionalProgramCode();
 
-    public OptionalProgram() {}
+    String getOptionalProgramName();
 
+    String getProgramCompletionDate();
 
-    public String getOptionalProgramCode() {
-        return optionalProgramCode;
-    }
+    String getHasRequirementMet();
 
+    java.util.List<GradRequirement> getRequirementMet();
 
-    public void setOptionalProgramCode(String optionalProgramCode) {
-        this.optionalProgramCode = optionalProgramCode;
-    }
+    java.util.List<NonGradReason> getNonGradReasons();
 
+    void setOptionalProgramCode(String optionalProgramCode);
 
-    public String getOptionalProgramName() {
-        return optionalProgramName;
-    }
+    void setOptionalProgramName(String optionalProgramName);
 
+    void setProgramCompletionDate(String programCompletionDate);
 
-    public void setOptionalProgramName(String optionalProgramName) {
-        this.optionalProgramName = optionalProgramName;
-    }
+    void setHasRequirementMet(String hasRequirementMet);
 
+    void setRequirementMet(java.util.List<GradRequirement> requirementMet);
 
-    public String getProgramCompletionDate() {
-        return DateUtils.formatProgramCompletionDate(programCompletionDate);
-    }
-
-
-    public void setProgramCompletionDate(String programCompletionDate) {
-        this.programCompletionDate = programCompletionDate;
-    }
-
-
-    public String getHasRequirementMet() {
-        return hasRequirementMet;
-    }
-
-
-    public void setHasRequirementMet(String hasRequirementMet) {
-        this.hasRequirementMet = hasRequirementMet;
-    }
-
-
-    public List<GradRequirement> getRequirementMet() {
-        return requirementMet;
-    }
-
-
-    public void setRequirementMet(List<GradRequirement> requirementMet) {
-        this.requirementMet = requirementMet;
-    }
-
-
-    public List<NonGradReason> getNonGradReasons() {
-        return nonGradReasons;
-    }
-
-
-    public void setNonGradReasons(List<NonGradReason> nonGradReasons) {
-        this.nonGradReasons = nonGradReasons;
-    }
-
-
-    public JRBeanCollectionDataSource getRequirementMetdataSource() {
-        return new JRBeanCollectionDataSource(requirementMet, false);
-    }
-
-
-    public JRBeanCollectionDataSource getNonGradReasonsdataSource() {
-        return new JRBeanCollectionDataSource(nonGradReasons, false);
-    }
+    void setNonGradReasons(java.util.List<NonGradReason> nonGradReasons);
 
 }

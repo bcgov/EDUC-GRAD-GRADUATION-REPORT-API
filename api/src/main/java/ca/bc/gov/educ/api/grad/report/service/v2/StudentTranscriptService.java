@@ -25,6 +25,10 @@ import ca.bc.gov.educ.api.grad.report.exception.DataException;
 import ca.bc.gov.educ.api.grad.report.exception.DomainServiceException;
 import ca.bc.gov.educ.api.grad.report.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.GraduationData;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.NonGradReason;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.ReportData;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.MarkImpl;
 import ca.bc.gov.educ.api.grad.report.model.entity.ProgramCertificateTranscriptEntity;
 import ca.bc.gov.educ.api.grad.report.repository.ProgramCertificateTranscriptRepository;
 import ca.bc.gov.educ.api.grad.report.repository.StudentTranscriptRepository;
@@ -53,7 +57,7 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
 @Slf4j
 @Service
-public class StudentTranscriptService extends GradReportService{
+public class StudentTranscriptService extends GradReportService {
 
     @Serial
     private static final long serialVersionUID = 5L;
@@ -282,7 +286,7 @@ public class StudentTranscriptService extends GradReportService{
                 final String interimPct = transcriptCourse.getInterimMark();
                 final String interimLetterGrade = transcriptCourse.getInterimLetterGrade();
 
-                final Mark mark = new Mark();
+                final MarkImpl mark = new MarkImpl();
                 mark.setSchoolPercent(schoolPct);
                 mark.setExamPercent(examPct);
 

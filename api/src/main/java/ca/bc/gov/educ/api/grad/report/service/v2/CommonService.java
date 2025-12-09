@@ -36,7 +36,7 @@ import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.
 @Service("commonServiceV2")
 public class CommonService {
 
-    final GradStudentCertificatesRepository gradStudentCertificatesRepository;
+    final StudentCertificateRepository studentCertificateRepository;
     final GradStudentTranscriptsRepository gradStudentTranscriptsRepository;
     final GradStudentReportsRepository gradStudentReportsRepository;
     final SchoolReportRepository schoolReportRepository;
@@ -51,7 +51,7 @@ public class CommonService {
     public static final int PAGE_SIZE = 1000;
 
     @Autowired
-    public CommonService(GradStudentCertificatesRepository gradStudentCertificatesRepository,
+    public CommonService(StudentCertificateRepository studentCertificateRepository,
                          GradStudentTranscriptsRepository gradStudentTranscriptsRepository,
                          GradStudentReportsRepository gradStudentReportsRepository,
                          SchoolReportRepository schoolReportRepository, RESTService restService,
@@ -59,7 +59,7 @@ public class CommonService {
                          SchoolReportMonthlyRepository schoolReportMonthlyRepository,
                          SchoolReportLightRepository schoolReportLightRepository, SchoolCacheService schoolCache,
                          @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient) {
-        this.gradStudentCertificatesRepository = gradStudentCertificatesRepository;
+        this.studentCertificateRepository = studentCertificateRepository;
         this.gradStudentTranscriptsRepository = gradStudentTranscriptsRepository;
         this.gradStudentReportsRepository = gradStudentReportsRepository;
         this.schoolReportRepository = schoolReportRepository;
@@ -102,12 +102,12 @@ public class CommonService {
             List<StudentCredentialDistribution> scdSubList;
             if (studentSearchRequest != null && studentSearchRequest.getPens() != null && !studentSearchRequest.getPens().isEmpty()) {
                 scdSubList = onlyWithNullDistributionDate?
-                        gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(subList) :
-                        gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(subList);
+                        studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(subList) :
+                        studentCertificateRepository.findRecordsForUserRequestByStudentIdOnly(subList);
             } else {
                 scdSubList = onlyWithNullDistributionDate?
-                        gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
-                        : gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
+                        studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
+                        : studentCertificateRepository.findRecordsForUserRequest(subList);
             }
             if (!scdSubList.isEmpty()) {
                 scdList.addAll(scdSubList);
@@ -393,7 +393,7 @@ public class CommonService {
                 Map<String, Map<String, List<StudentCredentialDistribution>>> certificateByDocStatusCodeAndCredType = certificateDistributions.stream()
                         .collect(Collectors.groupingBy(StudentCredentialDistribution::getDocumentStatusCode,
                                 Collectors.groupingBy(StudentCredentialDistribution::getCredentialTypeCode)));
-                certificateByDocStatusCodeAndCredType.forEach((certificateDocStatus, credentialTypeMap) -> credentialTypeMap.forEach((certificateType, distributionList) -> processedCounts[0] = processedCounts[0] + gradStudentCertificatesRepository.updateStudentDistributionData(new Date(), userName, certificateDocStatus, certificateType, activityCode, distributionList.stream().map(StudentCredentialDistribution::getStudentID).toList())));
+                certificateByDocStatusCodeAndCredType.forEach((certificateDocStatus, credentialTypeMap) -> credentialTypeMap.forEach((certificateType, distributionList) -> processedCounts[0] = processedCounts[0] + studentCertificateRepository.updateStudentDistributionData(new Date(), userName, certificateDocStatus, certificateType, activityCode, distributionList.stream().map(StudentCredentialDistribution::getStudentID).toList())));
             }
            if(processedCounts[0] > 0) {
                log.info("Number of student credentials updated : {}", processedCounts[0]);

@@ -1,109 +1,47 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
-import ca.bc.gov.educ.grad.report.utils.DateUtils;
+public interface GraduationStatus {
+    String getProgramCompletionDate();
 
-import java.io.Serializable;
+    String getHonours();
 
+    String getGpa();
 
-public class GraduationStatus implements Serializable {
+    String getStudentGrade();
 
-    private String programCompletionDate = "";
-    private String honours = "";
-    private String gpa = "";
-    private String studentGrade = "";
-    private String studentStatus = "";
-    private String studentStatusName = "";
-    private String schoolAtGrad = "";
-    private String schoolOfRecord = "";
-    private String certificates = "";
-    private String graduationMessage = "";
-    private String programName = "";
+    String getStudentStatus();
 
-    public String getProgramCompletionDate() {
-        return DateUtils.formatProgramCompletionDate(programCompletionDate);
-    }
+    String getStudentStatusName();
 
-    public void setProgramCompletionDate(String programCompletionDate) {
-        this.programCompletionDate = programCompletionDate;
-    }
+    String getSchoolAtGrad();
 
-    public String getHonours() {
-        return honours;
-    }
+    String getSchoolOfRecord();
 
-    public void setHonours(String honours) {
-        this.honours = honours;
-    }
+    String getCertificates();
 
-    public String getGpa() {
-        return gpa;
-    }
+    String getGraduationMessage();
 
-    public void setGpa(String gpa) {
-        this.gpa = gpa;
-    }
+    String getProgramName();
 
-    public String getStudentGrade() {
-        return studentGrade;
-    }
+    void setProgramCompletionDate(String programCompletionDate);
 
-    public void setStudentGrade(String studentGrade) {
-        this.studentGrade = studentGrade;
-    }
+    void setHonours(String honours);
 
-    public String getStudentStatus() {
-        return studentStatus;
-    }
+    void setGpa(String gpa);
 
-    public void setStudentStatus(String studentStatus) {
-        this.studentStatus = studentStatus;
-    }
+    void setStudentGrade(String studentGrade);
 
-    public String getStudentStatusName() {
-        return studentStatusName;
-    }
+    void setStudentStatus(String studentStatus);
 
-    public void setStudentStatusName(String studentStatusName) {
-        this.studentStatusName = studentStatusName;
-    }
+    void setStudentStatusName(String studentStatusName);
 
-    public String getSchoolAtGrad() {
-        return schoolAtGrad;
-    }
+    void setSchoolAtGrad(String schoolAtGrad);
 
-    public void setSchoolAtGrad(String schoolAtGrad) {
-        this.schoolAtGrad = schoolAtGrad;
-    }
+    void setSchoolOfRecord(String schoolOfRecord);
 
-    public String getSchoolOfRecord() {
-        return schoolOfRecord;
-    }
+    void setCertificates(String certificates);
 
-    public void setSchoolOfRecord(String schoolOfRecord) {
-        this.schoolOfRecord = schoolOfRecord;
-    }
+    void setGraduationMessage(String graduationMessage);
 
-    public String getCertificates() {
-        return certificates;
-    }
-
-    public void setCertificates(String certificates) {
-        this.certificates = certificates;
-    }
-
-    public String getGraduationMessage() {
-        return graduationMessage;
-    }
-
-    public void setGraduationMessage(String graduationMessage) {
-        this.graduationMessage = graduationMessage;
-    }
-
-    public String getProgramName() {
-        return programName;
-    }
-
-    public void setProgramName(String programName) {
-        this.programName = programName;
-    }
+    void setProgramName(String programName);
 }

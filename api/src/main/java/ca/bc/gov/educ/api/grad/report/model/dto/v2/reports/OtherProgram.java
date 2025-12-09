@@ -1,26 +1,11 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
-import java.io.Serializable;
+public interface OtherProgram {
+    String getProgramCode();
 
+    String getProgramName();
 
-public class OtherProgram implements Serializable {
+    void setProgramCode(String programCode);
 
-    private String programCode = "";
-    private String programName = "";
-
-    public String getProgramCode() {
-        return programCode;
-    }
-
-    public void setProgramCode(String programCode) {
-        this.programCode = programCode;
-    }
-
-    public String getProgramName() {
-        return programName;
-    }
-
-    public void setProgramName(String programName) {
-        this.programName = programName;
-    }
+    void setProgramName(String programName);
 }

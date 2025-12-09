@@ -1,0 +1,27 @@
+package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
+
+public interface PostalDeliveryInfo extends PostalAddress {
+
+    String getName();
+
+    void setName(String name);
+
+    String getAttentionTo();
+
+    void setAttentionTo(String attentionTo);
+
+    void setStreetLine1(String streetLine1);
+
+    void setStreetLine2(String streetLine2);
+
+    void setStreetLine3(String streetLine3);
+
+    void setCity(String city);
+
+    void setRegion(String region);
+
+    void setCountryCode(String countryCode);
+
+    void setPostalCode(String code);
+}
+

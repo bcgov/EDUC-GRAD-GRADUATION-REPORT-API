@@ -1,69 +1,76 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
-import ca.bc.gov.educ.grad.report.api.util.ReportApiConstants;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
+public interface GraduationData extends DomainEntity {
 
-public class GraduationData implements Serializable {
-    private LocalDate graduationDate;
-    private boolean honorsFlag;
-    private boolean dogwoodFlag;
-    private List<String> programCodes = new ArrayList<>();
-    private List<String> programNames = new ArrayList<>();
-    private String totalCreditsUsedForGrad = "";
+    /**
+     * Returns true iff the student has graduated. When this returns false, the
+     * graduation date will not contain valid data.
+     *
+     * @return false The student has not graduated.
+     */
+    boolean hasGraduated();
 
-    @JsonFormat(pattern= ReportApiConstants.DEFAULT_DATE_FORMAT)
-    public LocalDate getGraduationDate() {
-        return graduationDate;
-    }
+    /**
+     * Get the date the student graduated. This will return the current date if
+     * the user has not graduated.
+     *
+     * @return Date of graduation.
+     */
+    LocalDate getGraduationDate();
 
-    public void setGraduationDate(LocalDate value) {
-        this.graduationDate = value;
-    }
+    /**
+     * Get the truncated date the student graduated in the form of yyyy/MM. This will return the current date if
+     * the user has not graduated.
+     *
+     * @return Date of graduation.
+     */
+    String getTruncatedGraduationDate();
 
-    public boolean getHonorsFlag() {
-        return honorsFlag;
-    }
+    /**
+     * Get the full date the student graduated in the form of yyyy-MM-dd. This will return the current date if
+     * the user has not graduated.
+     *
+     * @return Date of graduation.
+     */
+    String getFullGraduationDate();
 
-    public void setHonorsFlag(boolean value) {
-        this.honorsFlag = value;
-    }
+    /**
+     * Get the honours flag.
+     *
+     * @return
+     */
+    Boolean getHonorsFlag();
 
-    public boolean getDogwoodFlag() {
-        return dogwoodFlag;
-    }
+    /**
+     * Get the dogwood flag
+     *
+     * @return
+     */
+    Boolean getDogwoodFlag();
 
-    public void setDogwoodFlag(boolean value) {
-        this.dogwoodFlag = value;
-    }
+    /**
+     * Get the total credits used for graduation
+     *
+     * @return
+     */
+    String getTotalCreditsUsedForGrad();
 
-    public List<String> getProgramCodes() {
-        return programCodes;
-    }
 
-    public void setProgramCodes(List<String> value) {
-        this.programCodes = value;
-    }
+    /**
+     * Get the list of program codes.
+     *
+     * @return
+     */
+    List<String> getProgramCodes();
 
-    public List<String> getProgramNames() {
-        return programNames;
-    }
-
-    public void setProgramNames(List<String> value) {
-        this.programNames = value;
-    }
-
-    public String getTotalCreditsUsedForGrad() {
-        return totalCreditsUsedForGrad;
-    }
-
-    public void setTotalCreditsUsedForGrad(String value) {
-        this.totalCreditsUsedForGrad = value;
-    }
+    /**
+     * Get the list of program code Names.
+     *
+     * @return
+     */
+    List<String> getProgramNames();
 
 }

@@ -1,0 +1,566 @@
+package ca.bc.gov.educ.api.grad.report.reporting.adapter;
+
+import ca.bc.gov.educ.api.grad.report.constants.GraduationProgramCode;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Student;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.AcademicAward;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.AcademicSession;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.AcademicSessionDetail;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.AchievementResult;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Certificate;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.DistrictOrganisation;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Grade;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.GraduationProgram;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.IncompletionReason;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Mark;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.PackingSlipDetails;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.PostalAddress;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.School;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Status;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.TranscriptResult;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.NonGradReason;
+import ca.bc.gov.educ.api.grad.report.util.DateUtils;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static ca.bc.gov.educ.api.grad.report.constants.Constants.*;
+import static ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.BusinessEntity.nullSafe;
+import static ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.DistrictOrganisation.LOGO_CODE_BC;
+import static java.lang.String.format;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
+
+
+public class BusinessEntityAdapter {
+
+    private static final String CLASSNAME = BusinessEntityAdapter.class.getName();
+    private static final Logger LOG = Logger.getLogger(CLASSNAME);
+    private static final int COURSE_LENGTH = 5;
+
+    /**
+     * Creates and populates a Certificate instance.
+     *
+     * @param certificate The data to adapt for reports.
+     * @return A new Certificate instance populated with data.
+     */
+    public static Certificate adapt(
+            final Certificate certificate) {
+        return new Certificate.Builder()
+                .withIssueDate(certificate.getIssued())
+                .withSignatureBlockTypes(certificate.getSignatureBlockTypes())
+                .build();
+    }
+
+    /**
+     * Creates and populates a Student instance.
+     *
+     * @param student The data to adapt for reports.
+     * @return A new Student instance populated with data.
+     */
+    public static ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student adapt(
+            final Student student) {
+        validate(student, "student");
+
+        final PostalAddress address = adapt(student.getCurrentMailingAddress());
+
+        ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student std = new ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student.Builder()
+                .withCreatedOn(student.getCreatedOn())
+                .withPEN(student.getPen().getValue())
+                .withBirthdate(student.getBirthdate())
+                .withCitizenship(student.getCitizenship())
+                .withFirstName(student.getFirstName())
+                .withLastName(student.getLastName())
+                .withMiddleNames(student.getMiddleName())
+                .withGrade(student.getGrade())
+                .withAddress(address)
+                .withSignatureBlockTypes(student.getSignatureBlockTypes())
+                .build();
+
+        return std;
+    }
+
+    /**
+     * Maps school information to a School instance.
+     *
+     * @param school The data to adapt for reports.
+     * @param logoCode The district organization logo code.
+     * @return A new School instance populated with data from studentInfo.
+     */
+    public static School adapt(
+            final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.School school,
+            final String logoCode) {
+        validate(school, "school");
+
+        final DistrictOrganisation org = new DistrictOrganisation.Builder()
+                .withLogoCode(logoCode)
+                .build();
+
+        return new School.Builder()
+                .withMinistryCode(school.getMinistryCode())
+                .withName(school.getName())
+                .withTypeIndicator(school.getTypeIndicator())
+                .withTypeBanner(school.getTypeBanner())
+                .withAddress(adapt(school.getAddress()))
+                .withDistrictOrganisation(org)
+                .build();
+    }
+    
+    public static School adapt(
+            final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.School school) {
+        return adapt(school, LOGO_CODE_BC);
+    }
+
+    /**
+     * Maps address information to an Address instance.
+     *
+     * @param address The data to adapt for reports.
+     * @return A new Address instance populated with data.
+     */
+    private static PostalAddress adapt(
+            final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.PostalAddress address) {
+        validate(address, "address");
+
+        return new PostalAddress.Builder()
+                .withStreetLine1(address.getStreetLine1())
+                .withStreetLine2(address.getStreetLine2())
+                .withStreetLine3(address.getStreetLine3())
+                .withCity(address.getCity())
+                .withRegion(address.getRegion())
+                .withPostalCode(address.getPostalCode())
+                .withCountryCode(address.getCountryCode())
+                .build();
+    }
+
+    /**
+     * Maps a transcript instance to a student's set of transcript result
+     * instances. The XML transcript requires that the courses are grouped by
+     * academic session.
+     *
+     * @param transcript The data to adapt for reports.
+     * @param student The student to populate.
+     */
+    public static void adapt(
+            final Transcript transcript,
+            final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student student) {
+        validate(transcript, "transcript for student");
+        validate(student, "student");
+
+        final Map<String, AcademicSession> aSMap = new HashMap<>();
+
+        final GraduationProgram gp = student.getGraduationProgram();
+        final GraduationProgramCode code = gp.getCode();
+
+        for (final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.TranscriptResult result : transcript.getResults(code)) {
+            // Transcipt results immeadiately added to student for report generation.
+            final TranscriptResult tr = adapt(result);
+            student.addTranscriptResult(tr);
+
+            // Building of Academic session data for results required for XML structure.
+            final String formatDate = formatSessionDate(tr.getSessionDate());
+
+            if (!aSMap.containsKey(formatDate)) {
+                // Build Academic session
+                final AcademicSession newSession = createAcademicSession(formatDate);
+                // Add course
+                newSession.addTranscriptResult(tr);
+                // Put Academic session and date string to map
+                aSMap.put(formatDate, newSession);
+            } else {
+                // Get academic session
+                final AcademicSession fetchedSession = aSMap.get(formatDate);
+                // Add course to session
+                fetchedSession.addTranscriptResult(tr);
+            }
+        }
+
+        // For each academic session in list add to the student.
+        for (final Map.Entry<String, AcademicSession> entry : aSMap.entrySet()) {
+            student.addAcademicSession(entry.getValue());
+        }
+    }
+
+    /**
+     * Maps a transcript instance to a student's set of transcript result
+     * instances. The XML transcript requires that the courses are grouped by
+     * academic session.
+     *
+     * @param achievement The data to adapt for reports.
+     * @param student The student to populate.
+     */
+    public static void adapt(
+            final Achievement achievement,
+            final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student student) {
+        validate(achievement, "achievement for student");
+        validate(student, "student");
+
+        final Map<String, AcademicSession> aSMap = new HashMap<>();
+
+        final GraduationProgram gp = student.getGraduationProgram();
+        final GraduationProgramCode code = gp.getCode();
+
+        for (final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.AchievementResult result : achievement.getResults(code)) {
+            // Transcipt results immeadiately added to student for report generation.
+            final AchievementResult tr = adapt(result);
+            student.addAchievementResult(tr);
+
+            // Building of Academic session data for results required for XML structure.
+            final String formatDate = formatSessionDate(tr.getSessionDate());
+
+            if (!aSMap.containsKey(formatDate)) {
+                // Build Academic session
+                final AcademicSession newSession = createAcademicSession(formatDate);
+                // Add course
+                newSession.addAchievementResult(tr);
+                // Put Academic session and date string to map
+                aSMap.put(formatDate, newSession);
+            } else {
+                // Get academic session
+                final AcademicSession fetchedSession = aSMap.get(formatDate);
+                // Add course to session
+                fetchedSession.addAchievementResult(tr);
+            }
+        }
+
+        // For each academic session in list add to the student.
+        for (final Map.Entry<String, AcademicSession> entry : aSMap.entrySet()) {
+            student.addAcademicSession(entry.getValue());
+        }
+    }
+
+    /**
+     * Maps transcript results (marks and courses) to a flatter hierarchy for
+     * reports. A transcript result in the reports contains all the information
+     * needed to populate a single row of data in the report.
+     *
+     * @param tr The data to adapt for reports.
+     */
+    private static TranscriptResult adapt(
+            final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.TranscriptResult tr) {
+        validate(tr, "transcript result");
+
+        final Course c = tr.getCourse();
+        final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Mark m = tr.getMark();
+
+        // TODO: Add to builder?
+        final String originalCourseId
+                = getOriginalCourseId(c.getRelatedCourse(), c.getRelatedLevel());
+
+        return new TranscriptResult.Builder()
+                .withCourseCode(c.getCode())
+                .withCourseLevel(c.getLevel())
+                .withCourseName(c.getName())
+                .withCredits(c.getCredits())
+                .withSessionDate(c.getSessionDate())
+                .withReportCourseType(c.getType())
+                .withBestExamPercent(m.getExamPercent())
+                .withBestSchoolPercent(m.getSchoolPercent())
+                .withFinalGrade(createGrade(m.getFinalPercent(), m.getFinalLetterGrade()))
+                .withInterimGrade(createGrade(m.getInterimPercent(), m.getInterimLetterGrade()))
+                .withEquivalencyChallenge(tr.getEquivalencyChallenge())
+                .withRequirementMet(tr.getRequirementMet())
+                .withRequirementMetName(tr.getRequirementMetName())
+                .withUsedForGrad(tr.getUsedForGrad())
+                .withOriginalCourseId(originalCourseId)
+                .build();
+    }
+
+    /**
+     * Maps transcript results (marks and courses) to a flatter hierarchy for
+     * reports. A transcript result in the reports contains all the information
+     * needed to populate a single row of data in the report.
+     *
+     * @param tr The data to adapt for reports.
+     */
+    private static AchievementResult adapt(
+            final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.AchievementResult tr) {
+        validate(tr, "achievement result");
+
+        final Course c = tr.getCourse();
+        final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Mark m = tr.getMark();
+
+        // TODO: Add to builder?
+        final String originalCourseId
+                = getOriginalCourseId(c.getRelatedCourse(), c.getRelatedLevel());
+
+        return new AchievementResult.Builder()
+                .withCourseCode(c.getCode())
+                .withCourseLevel(c.getLevel())
+                .withCourseName(c.getName())
+                .withCredits(c.getCredits())
+                .withSessionDate(c.getSessionDate())
+                .withReportCourseType(c.getType())
+                .withBestExamPercent(m.getExamPercent())
+                .withBestSchoolPercent(m.getSchoolPercent())
+                .withFinalGrade(createGrade(m.getFinalPercent(), m.getFinalLetterGrade()))
+                .withInterimGrade(createGrade(m.getInterimPercent(), m.getInterimLetterGrade()))
+                .withEquivalencyChallenge(tr.getEquivalencyChallenge())
+                .withRequirementMet(tr.getRequirementMet())
+                .withRequirementMetName(tr.getRequirementMetName())
+                .withUsedForGrad(tr.getUsedForGrad())
+                .withOriginalCourseId(originalCourseId)
+                .build();
+    }
+
+    /**
+     * Maps student status information (graduation notes, former/current state,
+     * etc.).
+     *
+     * @param nonGradReasons The data to adapt for reports.
+     * @param graduationMessageText Description of why the student graduated.
+     * @return A Status instance, never null.
+     */
+    public static Status adapt(
+            final List<NonGradReason> nonGradReasons,
+            final String graduationMessageText) {
+        final List<IncompletionReason> irs = adapt(nonGradReasons);
+
+        return new Status.Builder()
+                .withIncompletionReasons(irs)
+                .withGraduationMessage(graduationMessageText)
+                .build();
+    }
+
+    /**
+     * Helper method to adapt non-grad reasons to incompletion reasons.
+     *
+     * @param nonGradReasons The data to adapt.
+     * @return A new list of incompletion reasons populated with data from the
+     * parameter.
+     */
+    private static List<IncompletionReason> adapt(
+            final List<NonGradReason> nonGradReasons) {
+        final List<IncompletionReason> incompletionReasons = new ArrayList<>();
+
+        for (final NonGradReason ngr : nonGradReasons) {
+            final IncompletionReason incompletion = new IncompletionReason.Builder()
+                    .withCode(ngr.getCode())
+                    .withDescription(ngr.getDescription())
+                    .build();
+            incompletionReasons.add(incompletion);
+        }
+
+        return incompletionReasons;
+    }
+
+    /**
+     * Maps a student's graduation program to a report graduation program
+     * instance.
+     *
+     * @param gradProgram Student information containing a graduation program
+     * code.
+     * @return A GraduationProgram instance with a description that corresponds
+     * to the code.
+     */
+    public static GraduationProgram adapt(final GradProgram gradProgram) {
+        validate(gradProgram, "graduation program");
+
+        return new GraduationProgram.Builder()
+                .withCode(gradProgram.getCode().toString(), gradProgram.getCode().getDescription())
+                .build();
+    }
+
+    /**
+     * Maps the GraduationData to a Student to be used in constructing
+     * graduation program data.
+     *
+     * TODO: Parameter comments should add information.
+     *
+     * @param academicAward The students graduation program data.
+     * @param student The student.
+     * @param graduationProgramCode The graduation program code.
+     * @return
+     */
+    public static AcademicAward adapt(
+            final GraduationData academicAward,
+            final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student student, final GraduationProgramCode graduationProgramCode) {
+        validate(academicAward, "academic award");
+        validate(student, "student");
+        validate(graduationProgramCode, "graduation program code");
+
+        final SimpleDateFormat sdf = new SimpleDateFormat(DATE_ISO_8601_YMD);
+        final LocalDate graduationDate = academicAward.getGraduationDate();
+
+        // When empty, the corresponding PESC XML document element is suppressed.
+        final String graduationDateFormatted = academicAward.hasGraduated() ? sdf.format(DateUtils.toDate(graduationDate)) : "";
+
+        return new AcademicAward.Builder()
+                .withGraduationDate(graduationDateFormatted)
+                .withHonoursFlag(academicAward.getHonorsFlag())
+                .withDogwoodFlag(academicAward.getDogwoodFlag())
+                .withTotalCredUFG(academicAward.getTotalCreditsUsedForGrad(), student.getGraduationProgram())
+                .withProgramCodeNames(academicAward.getProgramNames())
+                .build();
+    }
+
+    /**
+     * Creates a new grade instance based on the given percent and letter
+     * grades.
+     *
+     * @param percent The percentage (or three-letter code) a student received
+     * as the mark for a course.
+     * @param letter The corresponding letter grade.
+     * @return A new instance that encapsulates both values.
+     */
+    private static Grade createGrade(final String percent, final String letter) {
+        return new Grade(percent, letter);
+    }
+
+    /**
+     * TODO: Document and use dates/calendar instances, rather than string
+     * manipulations and integers (e.g., Calendar.SEPTEMBER).
+     *
+     * @param sessionDate The TRAX date for the academic session.
+     * @return An academic session record.
+     */
+    private static AcademicSession createAcademicSession(final String sessionDate) {
+        final AcademicSession as = new AcademicSession();
+        final AcademicSessionDetail asd = new AcademicSessionDetail();
+        asd.setSessionDesignator(sessionDate);
+        asd.setSessionName(sessionDate);
+        asd.setSessionSchoolYear(createSessionSchoolYear(sessionDate));
+
+        as.setAcademicSessionDetail(asd);
+
+        return as;
+    }
+
+    /**
+     * The PESC format requires session years to be in YYYY-YYYY format, where
+     * the years indicate when the session started and ended.
+     *
+     * @param sessionDate The TRAX date for the academic session.
+     * @return A non-null String.
+     */
+    protected static String createSessionSchoolYear(final String sessionDate) {
+        validate(sessionDate, "session date");
+
+        final DateFormat df = new SimpleDateFormat(DATE_YEAR_MONTH);
+        String result = nullSafe(sessionDate);
+
+        try {
+            if (!result.isEmpty()) {
+                final Date date = df.parse(sessionDate);
+                final Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+
+                final int year = calendar.get(YEAR);
+                final int month = calendar.get(MONTH);
+                int sessionBegan = year;
+                int sessionEnded = year + 1;
+
+                if (month < Calendar.SEPTEMBER) {
+                    sessionBegan = year - 1;
+                    sessionEnded = year;
+                }
+
+                result = format("%s-%s", sessionBegan, sessionEnded);
+            }
+        } catch (final ParseException e) {
+            LOG.log(Level.WARNING, "Could not parse session date: <{0}>", sessionDate);
+            result = "FORMAT ERROR (" + sessionDate + ") " + e.getMessage();
+        }
+
+        return result;
+    }
+
+    /**
+     *
+     * @param relatedCourse
+     * @param relatedLevel
+     * @return originalCourseId
+     */
+    private static String getOriginalCourseId(
+            final String relatedCourse, final String relatedLevel) {
+        String course = nullSafe(relatedCourse).trim();
+        final String level = nullSafe(relatedLevel).trim();
+        int length = COURSE_LENGTH - course.length();
+        if (length >= 0) {
+            for (int i = 0; i < length; i++) {
+                course = course + " ";
+            }
+        }
+
+        final String result = (course + level);
+        return result;
+    }
+
+    /**
+     * Throws an illegal argument exception if the given object is null.
+     *
+     * @param o The object to check against null.
+     * @param message The human-readable name for the object to include in the
+     * error message passed into the exception.
+     *
+     * @throws IllegalArgumentException when o == null.
+     */
+    public static synchronized boolean validate(final Object o, final String message) {
+        if (o == null) {
+            final String msg = "The " + message + " is null.";
+            throw new IllegalArgumentException(msg);
+        }
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<Object>> violations = validator.validate(o);
+        boolean isValidObject = violations.isEmpty();
+        for (ConstraintViolation<Object> violation : violations) {
+            LOG.log(Level.WARNING, "Validation of {0} failed with the error: \"{1}\"", new Object[] {message, violation.getMessage()});
+        }
+        return isValidObject;
+    }
+
+    /**
+     * This method converts a TRAX-specific date format into the PESC standard
+     * date format for sessions.
+     *
+     * @param sessionDate formatted date.
+     * @return PESC-formatted date, or FORMAT ERROR message.
+     */
+    private static String formatSessionDate(final String sessionDate) {
+        String result = nullSafe(sessionDate);
+
+        try {
+            if (!result.isEmpty()) {
+                final DateFormat traxSdf = new SimpleDateFormat(DATE_TRAX_YM);
+                final DateFormat ymFormat = new SimpleDateFormat(DATE_YEAR_MONTH);
+
+                final Date date = traxSdf.parse(sessionDate);
+                result = ymFormat.format(date);
+            }
+        } catch (final ParseException ex) {
+            LOG.log(Level.WARNING, "Could not parse session date: <{0}>", sessionDate);
+            result = "FORMAT ERROR (" + sessionDate + ") " + ex.getMessage();
+        }
+
+        return result;
+    }
+
+    public static PackingSlipDetails adapt(
+            final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.PackingSlipDetails details) {
+        validate(details, "packing slip details");
+
+        return new PackingSlipDetails.Builder()
+                .withAddress(adapt(details.getAddress()))
+                .withDocumentsShipped(details.getDocumentsShipped())
+                .withCurrentSlip(details.getCurrentSlip())
+                .withTotalSlips(details.getTotalSlips())
+                .withAttentionTo(details.getAttentionTo())
+                .withPaperTypeCode(details.getPaperType().getMediaType())
+                .withRecipient(details.getRecipient())
+                .withOrderedByName(details.getOrderedByName())
+                .withOrderNumber(details.getOrderNumber())
+                .withOrderDate(details.getOrderDate())
+                .withDestinationType(details.getDestinationType())
+                .build();
+    }
+}

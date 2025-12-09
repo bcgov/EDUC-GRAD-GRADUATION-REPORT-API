@@ -1,0 +1,11 @@
+package ca.bc.gov.educ.api.grad.report.repository;
+
+import ca.bc.gov.educ.api.grad.report.model.entity.ReportTypeCodeEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+public interface ReportTypeCodeRepository extends JpaRepository<ReportTypeCodeEntity, String> {
+
+    @Query("select c from ReportTypeCodeEntity c where c.code=:code")
+    ReportTypeCodeEntity findByReportTypeCode(String code);
+}

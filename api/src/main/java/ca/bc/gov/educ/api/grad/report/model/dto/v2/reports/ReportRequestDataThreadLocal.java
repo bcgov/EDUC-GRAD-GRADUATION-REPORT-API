@@ -1,6 +1,8 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
 
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.ReportData;
+
 public class ReportRequestDataThreadLocal {
 
     private static final InheritableThreadLocal<ReportData> reportDataThread = new InheritableThreadLocal<ReportData>();

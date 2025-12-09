@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.model.transformer;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.GradReportTypes;
-import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.ReportTypeCodeEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,27 +17,27 @@ public class GradReportTypesTransformer {
     @Autowired
     ModelMapper modelMapper;
 
-    public GradReportTypes transformToDTO (GradReportTypesEntity gradReportTypesEntity) {
-    	return modelMapper.map(gradReportTypesEntity, GradReportTypes.class);
+    public GradReportTypes transformToDTO (ReportTypeCodeEntity reportTypeCodeEntity) {
+    	return modelMapper.map(reportTypeCodeEntity, GradReportTypes.class);
     }
 
-    public GradReportTypes transformToDTO ( Optional<GradReportTypesEntity> gradReportTypesEntity ) {
-    	GradReportTypesEntity cae = new GradReportTypesEntity();
+    public GradReportTypes transformToDTO ( Optional<ReportTypeCodeEntity> gradReportTypesEntity ) {
+    	ReportTypeCodeEntity cae = new ReportTypeCodeEntity();
         if (gradReportTypesEntity.isPresent())
             cae = gradReportTypesEntity.get();
         return modelMapper.map(cae, GradReportTypes.class);
     }
 
-	public List<GradReportTypes> transformToDTO (Iterable<GradReportTypesEntity> gradReportTypesEntities ) {
+	public List<GradReportTypes> transformToDTO (Iterable<ReportTypeCodeEntity> gradReportTypesEntities ) {
 		List<GradReportTypes> gradReportTypesList = new ArrayList<>();
-        for (GradReportTypesEntity gradReportTypesEntity : gradReportTypesEntities) {
-            GradReportTypes gradReportTypes = modelMapper.map(gradReportTypesEntity, GradReportTypes.class);
+        for (ReportTypeCodeEntity reportTypeCodeEntity : gradReportTypesEntities) {
+            GradReportTypes gradReportTypes = modelMapper.map(reportTypeCodeEntity, GradReportTypes.class);
         	gradReportTypesList.add(gradReportTypes);
         }
         return gradReportTypesList;
     }
 
-    public GradReportTypesEntity transformToEntity(GradReportTypes gradReportTypes) {
-        return modelMapper.map(gradReportTypes, GradReportTypesEntity.class);
+    public ReportTypeCodeEntity transformToEntity(GradReportTypes gradReportTypes) {
+        return modelMapper.map(gradReportTypes, ReportTypeCodeEntity.class);
     }
 }

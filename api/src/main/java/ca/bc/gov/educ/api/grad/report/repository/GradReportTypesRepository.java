@@ -1,14 +1,14 @@
 package ca.bc.gov.educ.api.grad.report.repository;
 
-import ca.bc.gov.educ.api.grad.report.model.entity.GradReportTypesEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.ReportTypeCodeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface GradReportTypesRepository extends JpaRepository<GradReportTypesEntity, String> {
+public interface GradReportTypesRepository extends JpaRepository<ReportTypeCodeEntity, String> {
 
-    List<GradReportTypesEntity> findAll();
+    List<ReportTypeCodeEntity> findAll();
 
 }

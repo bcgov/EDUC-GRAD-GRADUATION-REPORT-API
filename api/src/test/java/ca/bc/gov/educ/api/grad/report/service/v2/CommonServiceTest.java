@@ -42,7 +42,7 @@ public class CommonServiceTest {
     CommonService commonService;
 
     @MockBean
-    GradStudentCertificatesRepository gradStudentCertificatesRepository;
+    StudentCertificateRepository studentCertificateRepository;
 
     @MockBean
     GradStudentTranscriptsRepository gradStudentTranscriptsRepository;
@@ -93,10 +93,10 @@ public class CommonServiceTest {
 
         when(this.restService.post(any(), any(), eq(GraduationStudentRecordSearchResult.class), any())).thenReturn(res);
 
-        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
@@ -130,10 +130,10 @@ public class CommonServiceTest {
         searchRequest.setPens(new ArrayList<>());
         searchRequest.getPens().add("12345678");
 
-        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
@@ -169,8 +169,8 @@ public class CommonServiceTest {
 
         when(this.restService.post(any(), any(), eq(GraduationStudentRecordSearchResult.class), any())).thenReturn(res);
 
-        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
@@ -798,7 +798,7 @@ public class CommonServiceTest {
         scdSubList.add(new StudentCredentialDistribution(new UUID(4,4),"E",new UUID(5,5),"YEDR","COMPL", new Date()));
 
         Mockito.when(gradStudentTranscriptsRepository.updateStudentDistributionData(any(), any(), any(), any())).thenReturn(1);
-        Mockito.when(gradStudentCertificatesRepository.updateStudentDistributionData(any(), any(), any(), any(), any(), any())).thenReturn(1);
+        Mockito.when(studentCertificateRepository.updateStudentDistributionData(any(), any(), any(), any(), any(), any())).thenReturn(1);
 
         Integer res = commonService.updateStudentCredentials(scdSubList, activityCode);
         assertThat(res).isEqualTo(2);
@@ -834,7 +834,7 @@ public class CommonServiceTest {
         String activityCode="USERDISTOC";
         List<StudentCredentialDistribution> scdSubList = new ArrayList<>();
         scdSubList.add(new StudentCredentialDistribution(new UUID(5,4),"E",new UUID(5,5),"YEDR","COMPL", new Date()));
-        Mockito.when(gradStudentCertificatesRepository.updateStudentDistributionData(any(), any(), any(), any(), any(), any())).thenReturn(1);
+        Mockito.when(studentCertificateRepository.updateStudentDistributionData(any(), any(), any(), any(), any(), any())).thenReturn(1);
 
         Integer res = commonService.updateStudentCredentials(scdSubList, activityCode);
         assertThat(res).isEqualTo(1);

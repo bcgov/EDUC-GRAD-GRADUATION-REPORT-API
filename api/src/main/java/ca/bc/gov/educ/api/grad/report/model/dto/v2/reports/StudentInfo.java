@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
 import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.OtherProgram;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 

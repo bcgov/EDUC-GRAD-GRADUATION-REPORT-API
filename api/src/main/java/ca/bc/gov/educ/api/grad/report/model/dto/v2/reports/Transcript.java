@@ -1,107 +1,66 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
 import ca.bc.gov.educ.api.grad.report.constants.GraduationProgramCode;
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.constants.TranscriptTypeCode;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * A container for a list of transcript courses associated with a student.
- *
- * @author CGI Information Management Consultants Inc.
- */
-
-public class Transcript extends AbstractDomainEntity implements Serializable {
-
-    private static final long serialVersionUID = 3L;
-
-    private boolean interim;
-    private boolean blank;
-    private Date issueDate;
-    private TranscriptTypeCode transcriptTypeCode;
-    private List<TranscriptResult> results = new ArrayList<>();
-    
-    public List<TranscriptResult> getResults() {
-        return this.results;
-    }
-
-
-    @JsonIgnore
-    public List<TranscriptResult> getResults(final GraduationProgramCode code) {
-        return getResults();
-    }
-    
-    @JsonFormat(pattern= ReportApiConstants.DEFAULT_DATE_FORMAT)
-    public Date getIssueDate() {
-        return this.issueDate;
-    }
-
-    public boolean isEmpty() {
-        return getResults().isEmpty();
-    }
+public interface Transcript extends DomainEntity {
 
     /**
+     * Returns a list of results that contains courses and associated marks a
+     * student achieved.
      *
-     * @param issueDate
+     * @return The list of marks for a student transcript.
      */
-    public void setIssueDate(Date issueDate) {
-        this.issueDate = issueDate;
-    }
+    List<TranscriptResult> getResults();
 
     /**
-     * Set an entire collection of transcript results.
+     * Sorts the transcript results.
      *
-     * @param results
+     * @param graduationProgramCode The student's graduation program code used
+     * to determine how to sort the results.
+     * @return The list of results, sorted according to the program code
+     * requirements.
      */
-    public void setResults(List<TranscriptResult> results) {
-        // Prevents resetting the list to empty.
-        if (results != null && !results.isEmpty()) {
-            this.results = results;
-        }
-    }
+    List<TranscriptResult> getResults(GraduationProgramCode graduationProgramCode);
 
     /**
-     * Add an individual course to the transcript results list.
+     * Returns the date that the transcript was issued. On the transcript
+     * report, this is the report date.
      *
-     * @param result A transcript result to add to the list.
+     * @return Date that the transcript was issued.
      */
-    public void addResult(TranscriptResult result) {
-        if (result != null) {
-            getResults().add(result);
-        }
-    } 
-    
-    public Long getId() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    Date getIssueDate();
 
-    public void setInterim(boolean interim) {
-        this.interim = interim;
-    }
-    
-    public boolean getInterim() {
-        return this.interim;
-    }
-    
-    public boolean getBlank() {
-        return blank;
-    }
+    /**
+     * Convenience method that answers whether the transcript has any transcript
+     * results.
+     *
+     * @return true iff getResults().isEmpty() == true.
+     */
+    boolean isEmpty();
 
-    public void setBlank(boolean blank) {
-        this.blank = blank;
-    }
-    
-    public TranscriptTypeCode getTranscriptTypeCode() {
-        return transcriptTypeCode;
-    }
+    /**
+     * Convenience method that answers whether the transcript is interim.
+     *
+     * @return true iff getResults().isEmpty() == true.
+     */
+    boolean getInterim();
 
-    public void setTranscriptTypeCode(TranscriptTypeCode transcriptTypeCode) {
-        this.transcriptTypeCode = transcriptTypeCode;
-    }
+    /**
+     * Convenience method that answers whether the transcript is blank.
+     *
+     * @return true iff getResults().isEmpty() == true.
+     */
+    boolean getBlank();
+
+    /**
+     * Returns the type of the transcript
+     *
+     * @return transcript type
+     */
+    TranscriptTypeCode getTranscriptTypeCode();
+
 }

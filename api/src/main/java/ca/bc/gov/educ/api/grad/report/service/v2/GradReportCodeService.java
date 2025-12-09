@@ -1,7 +1,15 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
-import ca.bc.gov.educ.api.grad.report.repository.DocumentStatusCodeRepository;
+import ca.bc.gov.educ.api.grad.report.constants.TranscriptTypeCode;
+import ca.bc.gov.educ.api.grad.report.exception.GradReportAPIRuntimeException;
+import ca.bc.gov.educ.api.grad.report.model.dto.DocumentStatusCode;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.CertificateTypeCode;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.ReportTypeCode;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.SignatureBlockTypeCode;
+import ca.bc.gov.educ.api.grad.report.model.entity.*;
+import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.transformer.*;
+import ca.bc.gov.educ.api.grad.report.util.SerializableMap;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static ca.bc.gov.educ.api.grad.report.constants.Constants.DEBUG_LOG_PATTERN;
 
 @Slf4j
 @Service
@@ -26,7 +36,7 @@ public class GradReportCodeService {
     @Autowired
     SignatureBlockTypeRepository signatureBlockTypeRepository;
     @Autowired
-    TranscriptTypeCodeRepository transcriptTypeCodeRepository;
+    TranscriptTypesRepository transcriptTypeCodeRepository;
 
     @Autowired
     GradReportCertificateTypeCodeTransformer gradReportCertificateTypeCodeTransformer;
@@ -50,7 +60,7 @@ public class GradReportCodeService {
             result = gradReportCertificateTypeCodeTransformer.transformToDTO(dtos);
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "List<CertificateTypeCode>"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "List<CertificateTypeCode>"), e);
         }
 
         return result;
@@ -69,7 +79,7 @@ public class GradReportCodeService {
             result = gradReportCertificateTypeCodeTransformer.transformToDTO(dto);
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "CertificateTypeCode"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "CertificateTypeCode"), e);
         }
 
         return result;
@@ -84,11 +94,11 @@ public class GradReportCodeService {
 
         try {
 
-            List<TranscriptTypeCodeEntity> dtos = transcriptTypeCodeRepository.findAll();
+            List<TranscriptTypesEntity> dtos = transcriptTypeCodeRepository.findAll();
             result = gradReportTranscriptTypeCodeTransformer.transformToDTO(dtos);
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "List<TranscriptTypeCode>"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "List<TranscriptTypeCode>"), e);
         }
 
         return result;
@@ -103,11 +113,11 @@ public class GradReportCodeService {
 
         try {
 
-            TranscriptTypeCodeEntity dto = transcriptTypeCodeRepository.findByTranscriptCode(code);
+            TranscriptTypesEntity dto = transcriptTypeCodeRepository.findByTranscriptCode(code);
             result = gradReportTranscriptTypeCodeTransformer.transformToDTO(dto);
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "TranscriptTypeCode"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "TranscriptTypeCode"), e);
         }
 
         return result;
@@ -126,7 +136,7 @@ public class GradReportCodeService {
             result = gradReportSignatureBlockTypeCodeTransformer.transformToDTO(dtos);
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "List<SignatureBlockTypeCode>"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "List<SignatureBlockTypeCode>"), e);
         }
 
         return result;
@@ -147,7 +157,7 @@ public class GradReportCodeService {
             }
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "Map<String, SignatureBlockTypeCode>"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "Map<String, SignatureBlockTypeCode>"), e);
         }
 
         return result;
@@ -166,7 +176,7 @@ public class GradReportCodeService {
             result = gradReportSignatureBlockTypeCodeTransformer.transformToDTO(dto);
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "SignatureBlockTypeCode"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "SignatureBlockTypeCode"), e);
         }
 
         return result;
@@ -200,7 +210,7 @@ public class GradReportCodeService {
             result = gradReportDocumentStatusCodeTransformer.transformToDTO(dtos);
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "List<DocumentStatusCode>"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "List<DocumentStatusCode>"), e);
         }
 
         return result;
@@ -219,7 +229,7 @@ public class GradReportCodeService {
             result = gradReportDocumentStatusCodeTransformer.transformToDTO(dto);
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "DocumentStatusCode"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "DocumentStatusCode"), e);
         }
 
         return result;
@@ -238,7 +248,7 @@ public class GradReportCodeService {
             result = gradReportReportTypeCodeTransformer.transformToDTO(dtos);
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "List<ReportTypeCode>"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "List<ReportTypeCode>"), e);
         }
 
         return result;
@@ -257,7 +267,7 @@ public class GradReportCodeService {
             result = gradReportReportTypeCodeTransformer.transformToDTO(dto);
 
         } catch (Exception e) {
-            throw new ReportApiServiceException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "ReportTypeCode"), e);
+            throw new GradReportAPIRuntimeException(String.format(UNABLE_TO_RETRIEVE_RESOURCE, "ReportTypeCode"), e);
         }
 
         return result;

@@ -5,6 +5,8 @@ import lombok.Getter;
 @Getter
 public class PersonalEducationNumber {
 
+    public static final PersonalEducationNumber NULL = new PersonalEducationNumber("", "");
+    
     private String pen;
     private String entityId;
 

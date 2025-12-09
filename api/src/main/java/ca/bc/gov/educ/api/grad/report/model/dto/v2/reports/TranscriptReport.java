@@ -1,12 +1,9 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.NonGradReason;
+
 import java.util.List;
 
-/**
- * Represents information required to generate a student transcript report.
- *
- * @author CGI Information Management Consultants Inc.
- */
 public interface TranscriptReport extends StudentReport {
 
     /**

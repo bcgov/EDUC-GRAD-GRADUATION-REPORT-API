@@ -1,0 +1,69 @@
+/*
+ * *********************************************************************
+ *  Copyright (c) 2016, Ministry of Education and Child Care, BC.
+ *
+ *  All rights reserved.
+ *    This information contained herein may not be used in whole
+ *    or in part without the express written consent of the
+ *    Government of British Columbia, Canada.
+ *
+ *  Revision Control Information
+ *  File:                $Id::                                                 $
+ *  Date of Last Commit: $Date::                                               $
+ *  Revision Number:     $Rev::                                                $
+ *  Last Commit by:      $Author::                                             $
+ *
+ * ***********************************************************************
+ */
+package ca.bc.gov.educ.api.grad.report.reporting.jasper.impl;
+
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student;
+import jakarta.xml.bind.JAXBException;
+import lombok.extern.slf4j.Slf4j;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.beans.XMLEncoder;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.logging.Logger;
+
+@Slf4j
+public class XmlConverterUtil {
+
+    private static final String CLASSNAME = XmlConverterUtil.class.getName();
+    private static transient final Logger LOG = Logger.getLogger(CLASSNAME);
+
+    public XmlConverterUtil() {
+    }
+
+    public Element marshalStudentToElement(final Student student) throws JAXBException, ParserConfigurationException, SAXException, IOException {
+        Element dataSourceRootElement = null;
+
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (final XMLEncoder xmlEncoder = new XMLEncoder(baos)) {
+                xmlEncoder.writeObject(student);
+            }
+
+            final DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+
+            final InputSource is = new InputSource();
+            final String xml = baos.toString();
+            is.setCharacterStream(new StringReader(xml));
+
+            final Document doc = db.parse(is);
+            dataSourceRootElement = (Element) doc.getFirstChild();
+        } catch (final ParserConfigurationException | SAXException | IOException ex) {
+            log.error(ex.getMessage(), ex);
+            throw ex;
+        }
+
+        return dataSourceRootElement;
+    }
+}

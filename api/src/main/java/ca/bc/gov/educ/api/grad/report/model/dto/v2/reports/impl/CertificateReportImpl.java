@@ -1,0 +1,285 @@
+package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl;
+
+import ca.bc.gov.educ.api.grad.report.constants.CertificateSubType;
+import ca.bc.gov.educ.api.grad.report.constants.CertificateType;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Signatories;
+import ca.bc.gov.educ.api.grad.report.reporting.adapter.BusinessEntityAdapter;
+import ca.bc.gov.educ.api.grad.report.service.v2.GradReportSignatureService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.ByteArrayInputStream;
+import java.util.function.Consumer;
+
+import static ca.bc.gov.educ.api.grad.report.constants.CertificateSubType.REPRINT;
+import static ca.bc.gov.educ.api.grad.report.constants.CertificateType.SC;
+import static java.lang.Boolean.FALSE;
+import static java.util.Locale.CANADA_FRENCH;
+import static java.util.Locale.ENGLISH;
+
+@Slf4j
+public final class CertificateReportImpl extends StudentReportImpl implements CertificateReport {
+
+    private static final long serialVersionUID = 7L;
+
+    private static final String CLASSNAME = CertificateReportImpl.class.getName();
+
+    public static final String REPORT_NAME = "Certificate";
+
+    private static final String P_REPORT_SUBTYPE = "P_REPORT_SUBTYPE";
+
+    /**
+     * Contains the student, school, issue date, and signature set.
+     */
+    private Certificate certificate;
+    private CertificateType certificateType = SC;
+    private CertificateSubType certificateSubType = REPRINT;
+
+    private Boolean independentSchool = FALSE;
+    private String schoolSignatureCode = "";
+    private final GradReportSignatureService gradReportSignatureService;
+
+    /**
+     * Constructs a new report using the default report template for
+     * certificates. The default is an SCCP report.
+     */
+    public CertificateReportImpl(GradReportSignatureService gradReportSignatureService) {
+        super(REPORT_NAME);
+        this.gradReportSignatureService = gradReportSignatureService;
+    }
+
+    /**
+     * Returns the main object used to fill the report.
+     *
+     * @return this.certificate
+     */
+    @Override
+    public Object getDataSource() {
+        return this.certificate;
+    }
+
+    @Override
+    public boolean isPreview() {
+        return false;
+    }
+
+    /**
+     * Sets the report date (the certificate's issue date), report type, and
+     * report subtype.
+     */
+    @Override
+    public void preprocessParameters() {
+        super.preprocessParameters();
+
+        // Redundant call (not used by the certificate report); needed to
+        // succesfully run superclass's export method. The certificate report
+        // extracts the issue date from the corresponding certificate instance
+        // field. Eats a few CPU cycles, but otherwise harmless.
+        setReportDate(getCertificate().getIssued());
+
+        setParameter(P_REPORT_TYPE, getReportType());
+        setParameter(P_REPORT_SUBTYPE, getReportSubtype());
+
+        processSignatories();
+    }
+
+    /**
+     * Called to set the signatories associated with the certificate. This will
+     * apply school signatures to a certificate based on the logic inside the
+     * applySchoolSignatory method.
+     */
+    private void processSignatories() {
+        final Signatories signatories = new Signatories();
+        String code = getSchoolSignatureCode();
+
+        GradReportSignatureImage schoolSignatureImage = gradReportSignatureService.getSignatureImageByCode(code);
+        GradReportSignatureImage ministerSignatureImage = gradReportSignatureService.getSignatureImageByCode("MOE");
+        GradReportSignatureImage advancedSignatureImage = gradReportSignatureService.getSignatureImageByCode("MOAE");
+        GradReportSignatureImage admSignatureImage = gradReportSignatureService.getSignatureImageByCode("MOE_ADM");
+        setSignature(ministerSignatureImage, signatories::setMinisterOfEducation, "MOE");
+        setSignature(advancedSignatureImage, signatories::setMinisterOfAdvancedEducation, "MOAE");
+        setSignature(admSignatureImage, signatories::setAssistantDeputyMinister, "MOE_ADM");
+        setSignature(schoolSignatureImage, signatories::setSchoolSignatory, code);
+        getCertificate().setSignatories(signatories);
+    }
+
+    private void setSignature(GradReportSignatureImage signatureImage, Consumer<ByteArrayInputStream> setter, String code) {
+        if (signatureImage == null) {
+            setter.accept(new ByteArrayInputStream(new byte[0]));
+        } else {
+            setter.accept(new ByteArrayInputStream(signatureImage.getSignatureContent()));
+        }
+    }
+
+    /**
+     * Sets the information to write on the certificate.
+     *
+     * @param certificate Certificate information to adapt for this report.
+     */
+    @Override
+    public void setCertificate(
+            final Certificate certificate) {
+        if(!certificate.getCertStyle().equalsIgnoreCase("Blank"))
+            ensureValidStudent("setCertificate");
+
+        this.certificate = BusinessEntityAdapter.adapt(certificate);
+        this.certificate.setStudent(getStudent());
+    }
+
+    /**
+     * Sets the school and consequently signing authority for the school.
+     *
+     * @param school The school with a mincode used to derive the signature
+     * code.
+     */
+    @Override
+    public void setSchool(
+            final School school,
+            final String logoCode) {
+        super.setSchool(school, logoCode);
+        ensureValidCertificate("setSchool");
+        setIndependentSchool(school.isIndependent());
+        setSchoolSignatureCode(school.getSignatureCode());
+    }
+
+    /**
+     * Helper method.
+     *
+     * @param method The name of the method that cannot be called prior to
+     * calling setCertificate.
+     */
+    protected final void ensureValidCertificate(final String method) {
+        validate(getCertificate(), "setCertificate", method);
+    }
+
+    /**
+     * Returns the main type of certificate to generate.
+     *
+     * @return The certificate report type as a String, never null, never empty.
+     */
+    private String getReportType() {
+        return this.certificateType.toString();
+    }
+
+    /**
+     * Sets the report type name from the enumeration.
+     *
+     * @param certificateType The enumerated type that represents the
+     * certificate type to generate.
+     */
+    @Override
+    public void setReportType(
+            final CertificateType certificateType) {
+        this.certificateType = certificateType;
+    }
+
+    /**
+     * Returns the subtype of certificate to generate.
+     *
+     * @return The certificate report subtype as a String, never null, possibly
+     * empty.
+     */
+    private String getReportSubtype() {
+        return this.certificateSubType.toString();
+    }
+
+    /**
+     * Sets the report subtype name from the enumeration.
+     *
+     * @param certificateSubtype The enumerated type that represents the
+     * certificate subtype to generate.
+     */
+    @Override
+    public void setReportSubtype(
+            final CertificateSubType certificateSubtype) {
+        this.certificateSubType = certificateSubtype;
+    }
+    
+    private Certificate getCertificate() {
+        return this.certificate;
+    }
+
+    /**
+     * Returns the portion of the file name to add the start of the filename,
+     * before the suffix.
+     *
+     * @return The name hyphenated with the report type.
+     */
+    @Override
+    protected String getFilenameSuffix() {
+        final String language = "-" + getLocale().getLanguage().toLowerCase(ENGLISH);
+        final String type = "-" + getReportType();
+        String subtype = getReportSubtype();
+
+        subtype = "-" + (subtype.isEmpty() ? "default" : subtype);
+
+        return language + type + subtype;
+    }
+
+    private boolean isSCCProgram() {
+        return isCertificateType(SC);
+    }
+
+    private boolean isFrenchProgram() {
+        // Returns true for "S" or "F" certificate codes.
+        return getLocale() == CANADA_FRENCH;
+    }
+
+    private boolean isCertificateType(final CertificateType ct) {
+        return getCertificateType() == ct;
+    }
+
+    private boolean isCertificateSubtype(final CertificateSubType ct) {
+        return getCertificateSubType() == ct;
+    }
+
+    private CertificateType getCertificateType() {
+        return this.certificateType;
+    }
+
+    private CertificateSubType getCertificateSubType() {
+        return this.certificateSubType;
+    }
+
+    private Boolean isIndependentSchool() {
+        return this.independentSchool;
+    }
+
+    private void setIndependentSchool(final Boolean independentSchool) {
+        this.independentSchool = independentSchool;
+    }
+
+    private String getSchoolSignatureCode() {
+        return StringUtils.startsWithIgnoreCase(certificateType.getReportName(), "AI")
+                || StringUtils.startsWithIgnoreCase(certificateType.getReportName(), "EI")
+                || StringUtils.startsWithIgnoreCase(certificateType.getReportName(), "SCI") ? "INDEP" :
+               StringUtils.startsWithIgnoreCase(certificateType.getReportName(), "FN")
+                || StringUtils.startsWithIgnoreCase(certificateType.getReportName(), "SCFN") ? "FIRST_NATIONS" :
+                this.schoolSignatureCode;
+    }
+
+    private void setSchoolSignatureCode(final String schoolSignatureCode) {
+        this.schoolSignatureCode = schoolSignatureCode;
+    }
+
+    /**
+     * Returns a description of this report (name, media type, etc.).
+     *
+     * @return The report description.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(256);
+        sb.append(super.toString());
+        sb.append("; signature code: <");
+        sb.append(getSchoolSignatureCode());
+        sb.append(">; certificate type: <");
+        sb.append(getCertificateType());
+        sb.append(">; certificate subtype: <");
+        sb.append(getCertificateSubType());
+        sb.append(">");
+
+        return sb.toString();
+    }
+}

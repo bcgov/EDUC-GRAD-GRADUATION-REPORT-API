@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.transformer;
 
-import ca.bc.gov.educ.grad.report.dto.DocumentStatusCode;
-import ca.bc.gov.educ.grad.report.entity.DocumentStatusCodeEntity;
+import ca.bc.gov.educ.api.grad.report.model.dto.DocumentStatusCode;
+import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

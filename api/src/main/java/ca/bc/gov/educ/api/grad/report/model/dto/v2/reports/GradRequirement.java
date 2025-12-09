@@ -1,39 +1,22 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
-import ca.bc.gov.educ.api.grad.report.util.AchievementCourseListDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import java.io.Serializable;
-import java.util.List;
+public interface GradRequirement {
 
+    JRBeanCollectionDataSource getCourseDetailsdataSource();
 
-public class GradRequirement implements Serializable {
-    private String code;
-    private String description;
-    private List<AchievementCourse> courseDetails;
+    String getCode();
 
-    public String getCode() {
-        return code;
-    }
+    String getDescription();
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+    java.util.List<AchievementCourse> getCourseDetails();
 
-    public String getDescription() {
-        return description;
-    }
+    void setCode(String code);
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    void setDescription(String description);
 
-    @JsonDeserialize(using = AchievementCourseListDeserializer.class)
-    public List<AchievementCourse> getCourseDetails() {
-        return courseDetails;
-    }
+    void setCourseDetails(java.util.List<AchievementCourse> courseDetails);
 
-    public void setCourseDetails(List<AchievementCourse> courseDetails) {
-        this.courseDetails = courseDetails;
-    }
+    void setCourseDetailsdataSource(JRBeanCollectionDataSource courseDetailsdataSource);
 }

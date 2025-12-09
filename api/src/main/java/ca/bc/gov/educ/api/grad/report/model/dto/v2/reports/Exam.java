@@ -1,143 +1,61 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
-import java.io.Serializable;
+public interface Exam {
+    String getCourseCode();
 
+    String getCourseName();
 
-public class Exam implements Serializable {
+    String getCourseLevel();
 
-    private String courseCode = "";
-    private String courseName = "";
-    private String courseLevel = "";
-    private String sessionDate = "";
-    private String gradReqMet = "";
-    private Boolean projected;
-    private String completedCoursePercentage = "";
-    private String completedCourseLetterGrade = "";
-    private String bestSchoolPercent = "";
-    private String bestExamPercent = "";
-    private String interimPercent = "";
-    private String equivOrChallenge = "";
-    private String metLitNumRequirement = "";
-    private String credits = "";
-    private Integer creditsUsedForGrad;
+    String getSessionDate();
 
-    public String getCourseCode() {
-        return courseCode;
-    }
+    String getGradReqMet();
 
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-    }
+    Boolean getProjected();
 
-    public String getCourseName() {
-        return courseName;
-    }
+    String getCompletedCoursePercentage();
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
+    String getCompletedCourseLetterGrade();
 
-    public String getCourseLevel() {
-        return courseLevel;
-    }
+    String getBestSchoolPercent();
 
-    public void setCourseLevel(String courseLevel) {
-        this.courseLevel = courseLevel;
-    }
+    String getBestExamPercent();
 
-    public String getSessionDate() {
-        return sessionDate;
-    }
+    String getInterimPercent();
 
-    public void setSessionDate(String sessionDate) {
-        this.sessionDate = sessionDate;
-    }
+    String getEquivOrChallenge();
 
-    public String getGradReqMet() {
-        return gradReqMet;
-    }
+    String getMetLitNumRequirement();
 
-    public void setGradReqMet(String gradReqMet) {
-        this.gradReqMet = gradReqMet;
-    }
+    String getCredits();
 
-    public Boolean getProjected() {
-        return projected;
-    }
+    Integer getCreditsUsedForGrad();
 
-    public void setProjected(Boolean projected) {
-        this.projected = projected;
-    }
+    void setCourseCode(String courseCode);
 
-    public String getCompletedCoursePercentage() {
-        return completedCoursePercentage;
-    }
+    void setCourseName(String courseName);
 
-    public void setCompletedCoursePercentage(String completedCoursePercentage) {
-        this.completedCoursePercentage = completedCoursePercentage;
-    }
+    void setCourseLevel(String courseLevel);
 
-    public String getCompletedCourseLetterGrade() {
-        return completedCourseLetterGrade;
-    }
+    void setSessionDate(String sessionDate);
 
-    public void setCompletedCourseLetterGrade(String completedCourseLetterGrade) {
-        this.completedCourseLetterGrade = completedCourseLetterGrade;
-    }
+    void setGradReqMet(String gradReqMet);
 
-    public String getBestSchoolPercent() {
-        return bestSchoolPercent;
-    }
+    void setProjected(Boolean projected);
 
-    public void setBestSchoolPercent(String bestSchoolPercent) {
-        this.bestSchoolPercent = bestSchoolPercent;
-    }
+    void setCompletedCoursePercentage(String completedCoursePercentage);
 
-    public String getBestExamPercent() {
-        return bestExamPercent;
-    }
+    void setCompletedCourseLetterGrade(String completedCourseLetterGrade);
 
-    public void setBestExamPercent(String bestExamPercent) {
-        this.bestExamPercent = bestExamPercent;
-    }
+    void setBestSchoolPercent(String bestSchoolPercent);
 
-    public String getInterimPercent() {
-        return interimPercent;
-    }
+    void setBestExamPercent(String bestExamPercent);
 
-    public void setInterimPercent(String interimPercent) {
-        this.interimPercent = interimPercent;
-    }
+    void setEquivOrChallenge(String equivOrChallenge);
 
-    public String getEquivOrChallenge() {
-        return equivOrChallenge;
-    }
+    void setMetLitNumRequirement(String metLitNumRequirement);
 
-    public void setEquivOrChallenge(String equivOrChallenge) {
-        this.equivOrChallenge = equivOrChallenge;
-    }
+    void setCredits(String credits);
 
-    public String getMetLitNumRequirement() {
-        return metLitNumRequirement;
-    }
-
-    public void setMetLitNumRequirement(String metLitNumRequirement) {
-        this.metLitNumRequirement = metLitNumRequirement;
-    }
-
-    public String getCredits() {
-        return credits;
-    }
-
-    public void setCredits(String credits) {
-        this.credits = credits;
-    }
-
-    public Integer getCreditsUsedForGrad() {
-        return creditsUsedForGrad;
-    }
-
-    public void setCreditsUsedForGrad(Integer creditsUsedForGrad) {
-        this.creditsUsedForGrad = creditsUsedForGrad;
-    }
+    void setCreditsUsedForGrad(Integer creditsUsedForGrad);
 }

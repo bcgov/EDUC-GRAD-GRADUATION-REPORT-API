@@ -37,7 +37,7 @@ import java.util.concurrent.Callable;
 public class CommonService extends BaseService {
 
     GradStudentCertificatesTransformer gradStudentCertificatesTransformer;
-    GradStudentCertificatesRepository gradStudentCertificatesRepository;
+    StudentCertificateRepository studentCertificateRepository;
     GradStudentReportsTransformer gradStudentReportsTransformer;
     GradStudentReportsRepository gradStudentReportsRepository;
     GradStudentTranscriptsTransformer gradStudentTranscriptsTransformer;
@@ -69,7 +69,7 @@ public class CommonService extends BaseService {
     protected CommonService(EducGradReportApiConstants constants, RESTService restService,
                             @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient,
                             GradStudentCertificatesTransformer gradStudentCertificatesTransformer,
-                            GradStudentCertificatesRepository gradStudentCertificatesRepository,
+                            StudentCertificateRepository studentCertificateRepository,
                             GradStudentReportsTransformer gradStudentReportsTransformer,
                             GradStudentReportsRepository gradStudentReportsRepository,
                             GradStudentTranscriptsTransformer gradStudentTranscriptsTransformer,
@@ -90,7 +90,7 @@ public class CommonService extends BaseService {
                             ) {
         super(constants, restService, graduationServiceWebClient);
         this.gradStudentCertificatesTransformer = gradStudentCertificatesTransformer;
-        this.gradStudentCertificatesRepository = gradStudentCertificatesRepository;
+        this.studentCertificateRepository = studentCertificateRepository;
         this.gradStudentReportsTransformer = gradStudentReportsTransformer;
         this.gradStudentReportsRepository = gradStudentReportsRepository;
         this.gradStudentTranscriptsTransformer = gradStudentTranscriptsTransformer;
@@ -205,7 +205,7 @@ public class CommonService extends BaseService {
     }
 
     public boolean getStudentCertificate(String certificateType) {
-        List<GradStudentCertificatesEntity> gradList = gradStudentCertificatesRepository.existsByCertificateTypeCode(certificateType);
+        List<StudentCertificateEntity> gradList = studentCertificateRepository.existsByCertificateTypeCode(certificateType);
         return !gradList.isEmpty();
     }
 
@@ -215,30 +215,30 @@ public class CommonService extends BaseService {
     }
 
     public boolean checkStudentCertificateExistsForSCCP(UUID studentID) {
-        List<GradStudentCertificatesEntity> gradList = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeIn(studentID, SCCP_CERT_TYPES);
+        List<StudentCertificateEntity> gradList = studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeIn(studentID, SCCP_CERT_TYPES);
         return !gradList.isEmpty();
     }
 
     @Transactional
     public GradStudentCertificates saveGradCertificates(GradStudentCertificates gradStudentCertificates) {
         if (gradStudentCertificates.isOverwrite()) {
-            gradStudentCertificatesRepository.deleteByStudentID(gradStudentCertificates.getStudentID());
+            studentCertificateRepository.deleteByStudentID(gradStudentCertificates.getStudentID());
         }
-        GradStudentCertificatesEntity toBeSaved = gradStudentCertificatesTransformer.transformToEntity(gradStudentCertificates);
-        Optional<GradStudentCertificatesEntity> existingEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode(), COMPLETED);
+        StudentCertificateEntity toBeSaved = gradStudentCertificatesTransformer.transformToEntity(gradStudentCertificates);
+        Optional<StudentCertificateEntity> existingEntity = studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(gradStudentCertificates.getStudentID(), gradStudentCertificates.getGradCertificateTypeCode(), COMPLETED);
         if (existingEntity.isPresent()) {
-            GradStudentCertificatesEntity gradEntity = existingEntity.get();
+            StudentCertificateEntity gradEntity = existingEntity.get();
             if (gradStudentCertificates.getCertificate() != null)
                 gradEntity.setCertificate(gradStudentCertificates.getCertificate());
-            return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.save(gradEntity));
+            return gradStudentCertificatesTransformer.transformToDTO(studentCertificateRepository.save(gradEntity));
         } else {
-            return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.save(toBeSaved));
+            return gradStudentCertificatesTransformer.transformToDTO(studentCertificateRepository.save(toBeSaved));
         }
     }
 
     @Transactional
     public GradStudentCertificates getStudentCertificateObjectByType(UUID studentID, String certificateType, String documentStatusCode) {
-        return gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, certificateType, documentStatusCode));
+        return gradStudentCertificatesTransformer.transformToDTO(studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, certificateType, documentStatusCode));
     }
 
     @Transactional
@@ -259,7 +259,7 @@ public class CommonService extends BaseService {
     }
 
     public List<GradStudentCertificates> getAllStudentCertificateList(UUID studentID) {
-        List<GradStudentCertificates> certList = gradStudentCertificatesTransformer.transformToDTO(gradStudentCertificatesRepository.findByStudentID(studentID));
+        List<GradStudentCertificates> certList = gradStudentCertificatesTransformer.transformToDTO(studentCertificateRepository.findByStudentID(studentID));
         certList.forEach(cert -> {
             GradCertificateTypes types = gradCertificateTypesTransformer.transformToDTO(gradCertificateTypesRepository.findById(cert.getGradCertificateTypeCode()));
             if (types != null)
@@ -295,12 +295,12 @@ public class CommonService extends BaseService {
             gradStudentReportsRepository.deleteAll(repList);
             hasDocuments = true;
         }
-        List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
+        List<StudentCertificateEntity> certList = studentCertificateRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
         if (!certList.isEmpty()) {
             hasDocuments = true;
             certList.forEach(cert -> {
                 cert.setDocumentStatusCode("ARCH");
-                gradStudentCertificatesRepository.save(cert);
+                studentCertificateRepository.save(cert);
             });
         }
         List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
@@ -324,10 +324,10 @@ public class CommonService extends BaseService {
             gradStudentReportsRepository.deleteAll(repList);
             hasDocuments = true;
         }
-        List<GradStudentCertificatesEntity> certList = gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
+        List<StudentCertificateEntity> certList = studentCertificateRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
         if (!certList.isEmpty()) {
             hasDocuments = true;
-            gradStudentCertificatesRepository.deleteAll(certList);
+            studentCertificateRepository.deleteAll(certList);
         }
         List<GradStudentTranscriptsEntity> tranList = gradStudentTranscriptsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID, "ARCH");
         if (!tranList.isEmpty()) {
@@ -435,11 +435,11 @@ public class CommonService extends BaseService {
     }
 
     public List<StudentCredentialDistribution> getAllStudentCertificateDistributionList() {
-        return gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate(COMPLETED);
+        return studentCertificateRepository.findByDocumentStatusCodeAndNullDistributionDate(COMPLETED);
     }
 
     public List<StudentCredentialDistribution> getAllStudentTranscriptDistributionList() {
-        List<StudentCredentialDistribution> certificates = gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate(COMPLETED);
+        List<StudentCredentialDistribution> certificates = studentCertificateRepository.findByDocumentStatusCodeAndNullDistributionDate(COMPLETED);
         List<UUID> studentIds = new ArrayList<>();
         for (StudentCredentialDistribution c : certificates) {
             studentIds.add(c.getStudentID());
@@ -513,15 +513,15 @@ public class CommonService extends BaseService {
                 return true;
             }
         } else {
-            Optional<GradStudentCertificatesEntity> optEntity = gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, credentialTypeCode, documentStatusCode);
+            Optional<StudentCertificateEntity> optEntity = studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, credentialTypeCode, documentStatusCode);
             if (optEntity.isPresent()) {
-                GradStudentCertificatesEntity ent = optEntity.get();
+                StudentCertificateEntity ent = optEntity.get();
                 ent.setUpdateDate(null);
                 ent.setUpdateUser(null);
                 if (ent.getDistributionDate() == null && !"USERDISTRC".equalsIgnoreCase(activityCode)) {
                     ent.setDistributionDate(new Date());
                 }
-                gradStudentCertificatesRepository.save(ent);
+                studentCertificateRepository.save(ent);
                 return true;
             }
         }
@@ -584,12 +584,12 @@ public class CommonService extends BaseService {
             List<StudentCredentialDistribution> scdSubList;
             if (studentSearchRequest != null && studentSearchRequest.getPens() != null && !studentSearchRequest.getPens().isEmpty()) {
                 scdSubList = onlyWithNullDistributionDate?
-                        gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(subList) :
-                        gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(subList);
+                        studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(subList) :
+                        studentCertificateRepository.findRecordsForUserRequestByStudentIdOnly(subList);
             } else {
                 scdSubList = onlyWithNullDistributionDate?
-                        gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
-                        : gradStudentCertificatesRepository.findRecordsForUserRequest(subList);
+                        studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequest(subList)
+                        : studentCertificateRepository.findRecordsForUserRequest(subList);
             }
             if (!scdSubList.isEmpty()) {
                 scdList.addAll(scdSubList);

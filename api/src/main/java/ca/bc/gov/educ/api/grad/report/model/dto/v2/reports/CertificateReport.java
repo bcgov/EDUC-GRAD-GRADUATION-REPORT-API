@@ -1,29 +1,9 @@
-/* *********************************************************************
- *  Copyright (c) 2016, Ministry of Education and Child Care, BC.
- *
- *  All rights reserved.
- *    This information contained herein may not be used in whole
- *    or in part without the express written consent of the
- *    Government of British Columbia, Canada.
- *
- *  Revision Control Information
- *  File:                $Id:: CertificateReport.java 4514 2016-10-20 18:38:12#$
- *  Date of Last Commit: $Date:: 2016-10-20 11:38:12 -0700 (Thu, 20 Oct 2016)  $
- *  Revision Number:     $Rev:: 4514                                           $
- *  Last Commit by:      $Author:: cprince                                     $
- *
- * ********************************************************************** */
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
-import ca.bc.gov.educ.grad.report.model.cert.Certificate;
-import ca.bc.gov.educ.grad.report.model.cert.CertificateSubType;
-import ca.bc.gov.educ.grad.report.model.cert.CertificateType;
 
-/**
- * Represents information required to generate a certificate for a student.
- *
- * @author CGI Information Management Consultants Inc.
- */
+import ca.bc.gov.educ.api.grad.report.constants.CertificateSubType;
+import ca.bc.gov.educ.api.grad.report.constants.CertificateType;
+
 public interface CertificateReport extends StudentReport {
 
     /**

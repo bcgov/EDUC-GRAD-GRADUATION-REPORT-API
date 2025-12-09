@@ -1,48 +1,50 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
-import ca.bc.gov.educ.grad.report.api.util.ReportApiConstants;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import ca.bc.gov.educ.api.grad.report.constants.CertificateType;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
+public interface Certificate {
 
-public class Certificate implements Serializable {
-    private Date issued;
-    private String certStyle;
-    private OrderType orderType;
-    private boolean isOrigin;
+    public static final String CERT_STYLE_ORIGINAL = "Original";
+    public static final String CERT_STYLE_REPRINT = "Reprint";
+    public static final String CERT_STYLE_BLANK = "Blank";
 
-    @JsonFormat(pattern= ReportApiConstants.DEFAULT_DATE_FORMAT)
-    public Date getIssued() {
-        return issued;
-    }
+    /**
+     * Returns the date (year and month) when the certificate was issued to the
+     * student.
+     *
+     * @return A non-null Date instance.
+     */
+    Date getIssued();
 
-    public void setIssued(Date value) {
-        this.issued = value;
-    }
+    /**
+     * Returns the flag if the certificate is origin or replacement
+     *
+     * @return A non-null Date instance.
+     */
+    String getCertStyle();
 
-    public OrderType getOrderType() {
-        return orderType;
-    }
+    /**
+     * Gets certificate type.
+     *
+     * @return the certificate type
+     */
+    OrderType getOrderType();
 
-    public void setOrderType(OrderType value) {
-        this.orderType = value;
-    }
+    /**
+     * Gets signature block types.
+     *
+     * @return the Map of SignatureBlockType types
+     */
 
-    public boolean getIsOrigin() {
-        return isOrigin;
-    }
+    Map<String, SignatureBlockType> getSignatureBlockTypes();
 
-    public void setIsOrigin(boolean origin) {
-        isOrigin = origin;
-    }
-
-    public String getCertStyle() {
-        return certStyle;
-    }
-
-    public void setCertStyle(String certStyle) {
-        this.certStyle = certStyle;
-    }
+    /**
+     * Gets certificate type.
+     *
+     * @return the CertificateType
+     */
+    CertificateType getCertificateType();
 }

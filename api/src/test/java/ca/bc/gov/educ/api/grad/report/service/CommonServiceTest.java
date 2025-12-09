@@ -46,7 +46,8 @@ public class CommonServiceTest {
 
     @Autowired EducGradReportApiConstants constants;
     @Autowired CommonService commonService;
-    @MockBean GradStudentCertificatesRepository gradStudentCertificatesRepository;
+    @MockBean
+    StudentCertificateRepository studentCertificateRepository;
     @MockBean GradStudentReportsRepository gradStudentReportsRepository;
     @MockBean GradStudentTranscriptsRepository gradStudentTranscriptsRepository;
     @MockBean GradCertificateTypesRepository gradCertificateTypesRepository;
@@ -91,15 +92,15 @@ public class CommonServiceTest {
         gradCertificateType.setDescription("Test Code Name");
 
         // Student Certificate Types
-        final List<GradStudentCertificatesEntity> gradStudentCertificatesList = new ArrayList<>();
-        final GradStudentCertificatesEntity studentCertificate = new GradStudentCertificatesEntity();
+        final List<StudentCertificateEntity> gradStudentCertificatesList = new ArrayList<>();
+        final StudentCertificateEntity studentCertificate = new StudentCertificateEntity();
         studentCertificate.setId(UUID.randomUUID());
         studentCertificate.setPen(pen);
         studentCertificate.setStudentID(studentID);
         studentCertificate.setGradCertificateTypeCode(gradCertificateType.getCode());
         gradStudentCertificatesList.add(studentCertificate);
 
-        when(gradStudentCertificatesRepository.existsByCertificateTypeCode(gradCertificateType.getCode())).thenReturn(gradStudentCertificatesList);
+        when(studentCertificateRepository.existsByCertificateTypeCode(gradCertificateType.getCode())).thenReturn(gradStudentCertificatesList);
         var result = commonService.getStudentCertificate(gradCertificateType.getCode());
         assertThat(result).isTrue();
     }
@@ -127,16 +128,16 @@ public class CommonServiceTest {
         studentCertificate.setOverwrite(true);
 
         // Student Certificate Types Entity
-        final GradStudentCertificatesEntity studentCertificateEntity = new GradStudentCertificatesEntity();
+        final StudentCertificateEntity studentCertificateEntity = new StudentCertificateEntity();
         studentCertificateEntity.setPen(pen);
         studentCertificateEntity.setStudentID(studentID);
         studentCertificateEntity.setCertificate("Test Certificate Body");
         studentCertificateEntity.setGradCertificateTypeCode(gradCertificateType.getCode());
 
-        final Optional<GradStudentCertificatesEntity> optionalEmpty = Optional.empty();
+        final Optional<StudentCertificateEntity> optionalEmpty = Optional.empty();
 
-        when(this.gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, gradCertificateType.getCode(),documentStatus.getCode())).thenReturn(optionalEmpty);
-        when(this.gradStudentCertificatesRepository.save(studentCertificateEntity)).thenReturn(studentCertificateEntity);
+        when(this.studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, gradCertificateType.getCode(),documentStatus.getCode())).thenReturn(optionalEmpty);
+        when(this.studentCertificateRepository.save(studentCertificateEntity)).thenReturn(studentCertificateEntity);
 
         var result = commonService.saveGradCertificates(studentCertificate);
 
@@ -167,16 +168,16 @@ public class CommonServiceTest {
         studentCertificate.setDocumentStatusCode("COMPL");
 
         // Student Certificate Types Entity
-        final GradStudentCertificatesEntity studentCertificateEntity = new GradStudentCertificatesEntity();
+        final StudentCertificateEntity studentCertificateEntity = new StudentCertificateEntity();
         studentCertificateEntity.setPen(pen);
         studentCertificateEntity.setStudentID(studentID);
         studentCertificateEntity.setGradCertificateTypeCode(gradCertificateType.getCode());
         studentCertificateEntity.setDocumentStatusCode("COMPL");
 
-        final Optional<GradStudentCertificatesEntity> optional = Optional.of(studentCertificateEntity);
+        final Optional<StudentCertificateEntity> optional = Optional.of(studentCertificateEntity);
 
-        when(this.gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, gradCertificateType.getCode(),documentStatus.getCode())).thenReturn(optional);
-        when(this.gradStudentCertificatesRepository.save(studentCertificateEntity)).thenReturn(studentCertificateEntity);
+        when(this.studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, gradCertificateType.getCode(),documentStatus.getCode())).thenReturn(optional);
+        when(this.studentCertificateRepository.save(studentCertificateEntity)).thenReturn(studentCertificateEntity);
 
         var result = commonService.saveGradCertificates(studentCertificate);
 
@@ -385,7 +386,7 @@ public class CommonServiceTest {
         gradCertificateType.setDescription("Test Code Name");
 
         // Student Certificate Types
-        final GradStudentCertificatesEntity studentCertificate = new GradStudentCertificatesEntity();
+        final StudentCertificateEntity studentCertificate = new StudentCertificateEntity();
         studentCertificate.setId(UUID.randomUUID());
         studentCertificate.setPen(pen);
         studentCertificate.setStudentID(studentID);
@@ -397,14 +398,14 @@ public class CommonServiceTest {
         documentStatus.setCode("COMP");
         documentStatus.setDescription("Test Code Name");
         
-        when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, gradCertificateType.getCode(),documentStatus.getCode())).thenReturn(Optional.of(studentCertificate));
+        when(studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, gradCertificateType.getCode(),documentStatus.getCode())).thenReturn(Optional.of(studentCertificate));
         var result = commonService.getStudentCertificateByType(studentID, gradCertificateType.getCode(),documentStatus.getCode());
         assertThat(result).isNotNull();
         assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_TEST_certificate.pdf]");
         assertThat(result.getBody()).isNotNull();
 
         studentCertificate.setCertificate(null);
-        when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, gradCertificateType.getCode(),documentStatus.getCode())).thenReturn(Optional.of(studentCertificate));
+        when(studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentID, gradCertificateType.getCode(),documentStatus.getCode())).thenReturn(Optional.of(studentCertificate));
         result = commonService.getStudentCertificateByType(studentID, gradCertificateType.getCode(),documentStatus.getCode());
         assertThat(result).isNull();
     }
@@ -420,7 +421,7 @@ public class CommonServiceTest {
         gradCertificateType.setDescription("School Completion Certificate");
 
         final DocumentStatusCodeEntity documentStatusCodeEntity = new DocumentStatusCodeEntity();
-        documentStatusCodeEntity.setCode("COMPL");
+        documentStatusCodeEntity.setDocumentStatusCode("COMPL");
         documentStatusCodeEntity.setDescription("School Completion Certificate");
         
         final DocumentStatusCode documentStatusCode = new DocumentStatusCode();
@@ -428,26 +429,26 @@ public class CommonServiceTest {
         documentStatusCode.setDescription("School Completion Certificate");
         
         // Student Certificate Types
-        final List<GradStudentCertificatesEntity> gradStudentCertificatesList = new ArrayList<>();
-        final GradStudentCertificatesEntity studentCertificate1 = new GradStudentCertificatesEntity();
+        final List<StudentCertificateEntity> gradStudentCertificatesList = new ArrayList<>();
+        final StudentCertificateEntity studentCertificate1 = new StudentCertificateEntity();
         studentCertificate1.setId(UUID.randomUUID());
         studentCertificate1.setPen(pen);
         studentCertificate1.setStudentID(studentID);
         studentCertificate1.setGradCertificateTypeCode(gradCertificateType.getCode());
         gradStudentCertificatesList.add(studentCertificate1);
 
-        final GradStudentCertificatesEntity studentCertificate2 = new GradStudentCertificatesEntity();
+        final StudentCertificateEntity studentCertificate2 = new StudentCertificateEntity();
         studentCertificate2.setId(UUID.randomUUID());
         studentCertificate2.setPen(pen);
         studentCertificate2.setStudentID(studentID);
         studentCertificate2.setGradCertificateTypeCode(gradCertificateType.getCode());
         gradStudentCertificatesList.add(studentCertificate2);
-        final GradCertificateTypesEntity gradCertificateTypesEntity = new GradCertificateTypesEntity();
-        gradCertificateTypesEntity.setCode("SC");
-        gradCertificateTypesEntity.setDescription("School Completion Certificate");
+        final CertificateTypeCodeEntity certificateTypeCodeEntity = new CertificateTypeCodeEntity();
+        certificateTypeCodeEntity.setCertificateTypeCode("SC");
+        certificateTypeCodeEntity.setDescription("School Completion Certificate");
         
-        when(gradStudentCertificatesRepository.findByStudentID(studentID)).thenReturn(gradStudentCertificatesList);
-        when(gradCertificateTypesRepository.findById(gradCertificateType.getCode())).thenReturn(Optional.of(gradCertificateTypesEntity));
+        when(studentCertificateRepository.findByStudentID(studentID)).thenReturn(gradStudentCertificatesList);
+        when(gradCertificateTypesRepository.findById(gradCertificateType.getCode())).thenReturn(Optional.of(certificateTypeCodeEntity));
         when(documentStatusCodeRepository.findById(documentStatusCode.getCode())).thenReturn(Optional.of(documentStatusCodeEntity));
         var result = commonService.getAllStudentCertificateList(studentID);
 
@@ -490,16 +491,16 @@ public class CommonServiceTest {
         studentReport2.setDocumentStatusCode("IP");
         gradStudentReportsList.add(studentReport2);
         
-        final GradReportTypesEntity gradReportTypesEntity = new GradReportTypesEntity();
-        gradReportTypesEntity.setCode("SC");
-        gradReportTypesEntity.setDescription("School Completion Certificate");
+        final ReportTypeCodeEntity reportTypeCodeEntity = new ReportTypeCodeEntity();
+        reportTypeCodeEntity.setCode("SC");
+        reportTypeCodeEntity.setDescription("School Completion Certificate");
         
         final DocumentStatusCodeEntity documentStatusCodeEntity = new DocumentStatusCodeEntity();
-        documentStatusCodeEntity.setCode("COMPL");
+        documentStatusCodeEntity.setDocumentStatusCode("COMPL");
         documentStatusCodeEntity.setDescription("School Completion Certificate");
         
         when(gradStudentReportsRepository.findByStudentID(studentID)).thenReturn(gradStudentReportsList);
-        when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
+        when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(reportTypeCodeEntity));
         when(documentStatusCodeRepository.findById(documentStatusCode.getCode())).thenReturn(Optional.of(documentStatusCodeEntity));
 
         var result = commonService.getAllStudentReportList(studentID);
@@ -535,8 +536,8 @@ public class CommonServiceTest {
         studentReport1.setDocumentStatusCode("COMP");
         gradStudentReportsList.add(studentReport1);
         
-        final List<GradStudentCertificatesEntity> gradStudentCertificatesList = new ArrayList<>();
-        final GradStudentCertificatesEntity studentCertificate1 = new GradStudentCertificatesEntity();
+        final List<StudentCertificateEntity> gradStudentCertificatesList = new ArrayList<>();
+        final StudentCertificateEntity studentCertificate1 = new StudentCertificateEntity();
         studentCertificate1.setId(UUID.randomUUID());        
         studentCertificate1.setStudentID(studentID);
         studentCertificate1.setGradCertificateTypeCode(gradCertificateType.getCode());
@@ -544,12 +545,12 @@ public class CommonServiceTest {
         gradStudentCertificatesList.add(studentCertificate1);  
 
     	Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentReportsList);
-    	Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentCertificatesList);
+    	Mockito.when(studentCertificateRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentCertificatesList);
     	int res = commonService.deleteAllStudentAchievement(studentID);
         assertThat(res).isEqualTo(1);
 
         Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
-        Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
+        Mockito.when(studentCertificateRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
         res = commonService.deleteAllStudentAchievement(studentID);
         assertThat(res).isZero();
     }
@@ -696,7 +697,7 @@ public class CommonServiceTest {
         gradCertificateType.setDescription("School Completion Certificate");
 
         final DocumentStatusCodeEntity documentStatusCodeEntity = new DocumentStatusCodeEntity();
-        documentStatusCodeEntity.setCode("COMPL");
+        documentStatusCodeEntity.setDocumentStatusCode("COMPL");
         documentStatusCodeEntity.setDescription("School Completion Certificate");
 
         final DocumentStatusCode documentStatusCode = new DocumentStatusCode();
@@ -809,7 +810,7 @@ public class CommonServiceTest {
         final StudentCredentialDistribution certificateCredentialDistribution = new StudentCredentialDistribution(UUID.randomUUID(),"E",studentID,"YED2","COMPL", new Date());
         certificates.add(certificateCredentialDistribution);
 
-        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(certificates);
+        when(studentCertificateRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(certificates);
 
         // Student Certificate Types
         final List<StudentCredentialDistribution> transcripts = new ArrayList<>();
@@ -835,7 +836,7 @@ public class CommonServiceTest {
         list.add(credentialDistribution);
 
 
-        when(gradStudentCertificatesRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(list);
+        when(studentCertificateRepository.findByDocumentStatusCodeAndNullDistributionDate("COMPL")).thenReturn(list);
         var result = commonService.getAllStudentCertificateDistributionList();
 
         assertThat(result).isNotNull().hasSize(1);
@@ -890,14 +891,14 @@ public class CommonServiceTest {
         String credentialTypeCode = "E";
         String activityCode="USERDISTOC";
         String paperType="YED2";
-        GradStudentCertificatesEntity ent = new GradStudentCertificatesEntity();
+        StudentCertificateEntity ent = new StudentCertificateEntity();
         ent.setStudentID(studentId);
         ent.setCertificate("dfd");
         ent.setId(new UUID(1,2));
         ent.setGradCertificateTypeCode("E");
         ent.setDocumentStatusCode("COMPL");
 
-        when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
+        when(studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeAndDocumentStatusCode(studentId,credentialTypeCode,"COMPL")).thenReturn(Optional.of(ent));
         boolean res = commonService.updateStudentCredential(studentId,credentialTypeCode,paperType,"COMPL", activityCode);
         assertThat(res).isTrue();
     }
@@ -925,10 +926,10 @@ public class CommonServiceTest {
         when(restService.post(eq(constants.getGradStudentApiStudentForSpcGradListUrl()),
                 any(), eq(GraduationStudentRecordSearchResult.class), eq(webClient))).thenReturn(res);
 
-        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
@@ -966,10 +967,10 @@ public class CommonServiceTest {
         searchRequest.setPens(new ArrayList<>());
         searchRequest.getPens().add("12345678");
 
-        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
@@ -1009,8 +1010,8 @@ public class CommonServiceTest {
         when(restService.post(eq(constants.getGradStudentApiStudentForSpcGradListUrl()),
                 any(), eq(GraduationStudentRecordSearchResult.class), eq(webClient))).thenReturn(res);
 
-        Mockito.when(gradStudentCertificatesRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
-        Mockito.when(gradStudentCertificatesRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
+        Mockito.when(studentCertificateRepository.findRecordsForUserRequestByStudentIdOnly(studentList)).thenReturn(scdSubList);
 
         Mockito.when(gradStudentTranscriptsRepository.findRecordsWithNullDistributionDateForUserRequest(studentList)).thenReturn(scdSubList);
         Mockito.when(gradStudentTranscriptsRepository.findRecordsForUserRequest(studentList)).thenReturn(scdSubList);
@@ -1209,8 +1210,8 @@ public class CommonServiceTest {
         studentReport1.setDocumentStatusCode("COMP");
         gradStudentReportsList.add(studentReport1);
 
-        final List<GradStudentCertificatesEntity> gradStudentCertificatesList = new ArrayList<>();
-        final GradStudentCertificatesEntity studentCertificate1 = new GradStudentCertificatesEntity();
+        final List<StudentCertificateEntity> gradStudentCertificatesList = new ArrayList<>();
+        final StudentCertificateEntity studentCertificate1 = new StudentCertificateEntity();
         studentCertificate1.setId(UUID.randomUUID());
         studentCertificate1.setStudentID(studentID);
         studentCertificate1.setGradCertificateTypeCode(gradCertificateType.getCode());
@@ -1218,12 +1219,12 @@ public class CommonServiceTest {
         gradStudentCertificatesList.add(studentCertificate1);
 
         Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentReportsList);
-        Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentCertificatesList);
+        Mockito.when(studentCertificateRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(gradStudentCertificatesList);
         int res = commonService.archiveAllStudentAchievements(studentID);
         assertThat(res).isEqualTo(1);
 
         Mockito.when(gradStudentReportsRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
-        Mockito.when(gradStudentCertificatesRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
+        Mockito.when(studentCertificateRepository.findByStudentIDAndDocumentStatusCodeNot(studentID,"ARCH")).thenReturn(List.of());
         res = commonService.archiveAllStudentAchievements(studentID);
         assertThat(res).isZero();
     }
@@ -1313,9 +1314,9 @@ public class CommonServiceTest {
         schObj.setMinCode(mincode2);
         schObj.setSchoolName("aadada");
 
-        final GradReportTypesEntity gradReportTypesEntity = new GradReportTypesEntity();
-        gradReportTypesEntity.setCode("NONGRADPRJ");
-        gradReportTypesEntity.setDescription("non grad projected");
+        final ReportTypeCodeEntity reportTypeCodeEntity = new ReportTypeCodeEntity();
+        reportTypeCodeEntity.setCode("NONGRADPRJ");
+        reportTypeCodeEntity.setDescription("non grad projected");
 
         final SchoolReportsLightEntity schoolReports3 = new SchoolReportsLightEntity();
         schoolReports3.setId(UUID.randomUUID());
@@ -1352,7 +1353,7 @@ public class CommonServiceTest {
         when(schoolReportsRepository.findBySchoolOfRecordContainsOrderBySchoolOfRecord("123456")).thenReturn(schoolReportsEntityList);
         when(schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(gradReportTypes.getCode(), mincode2)).thenReturn(schoolReportsLightEntityList);
         when(schoolReportsLightRepository.findByReportTypeCodeAndSchoolOfRecord(gradReportTypes.getCode(), "")).thenReturn(schoolReportsLightEntityList);
-        when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
+        when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(reportTypeCodeEntity));
 
         var result = commonService.getAllSchoolReportListByMincode(mincode);
 
@@ -1414,9 +1415,9 @@ public class CommonServiceTest {
         schObj.setMinCode(mincode2);
         schObj.setSchoolName("aadada");
 
-        final GradReportTypesEntity gradReportTypesEntity = new GradReportTypesEntity();
-        gradReportTypesEntity.setCode("NONGRADPRJ");
-        gradReportTypesEntity.setDescription("non grad projected");
+        final ReportTypeCodeEntity reportTypeCodeEntity = new ReportTypeCodeEntity();
+        reportTypeCodeEntity.setCode("NONGRADPRJ");
+        reportTypeCodeEntity.setDescription("non grad projected");
 
         mockAccessToken();
 
@@ -1427,7 +1428,7 @@ public class CommonServiceTest {
         when(this.responseMock.bodyToMono(School.class)).thenReturn(Mono.just(schObj));
 
         when(schoolReportsRepository.findBySchoolOfRecordOrderBySchoolOfRecord("12345631231")).thenReturn(schoolReportsEntityList);
-        when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(gradReportTypesEntity));
+        when(gradReportTypesRepository.findById(gradReportTypes.getCode())).thenReturn(Optional.of(reportTypeCodeEntity));
 
         var result = commonService.getAllSchoolReportListByMincode(mincode);
 
@@ -1604,7 +1605,7 @@ public class CommonServiceTest {
         // UUID
         final UUID studentID = UUID.randomUUID();
 
-        when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeIn(eq(studentID), any())).thenReturn(new ArrayList<>());
+        when(studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeIn(eq(studentID), any())).thenReturn(new ArrayList<>());
 
         var result = commonService.checkStudentCertificateExistsForSCCP(studentID);
         assertThat(result).isFalse();
@@ -1615,12 +1616,12 @@ public class CommonServiceTest {
         // UUID
         final UUID studentID = UUID.randomUUID();
 
-        GradStudentCertificatesEntity gradStudentCertificates = new GradStudentCertificatesEntity();
+        StudentCertificateEntity gradStudentCertificates = new StudentCertificateEntity();
         gradStudentCertificates.setId(UUID.randomUUID());
         gradStudentCertificates.setStudentID(studentID);
         gradStudentCertificates.setGradCertificateTypeCode("SC");
 
-        when(gradStudentCertificatesRepository.findByStudentIDAndGradCertificateTypeCodeIn(eq(studentID), any())).thenReturn(Arrays.asList(gradStudentCertificates));
+        when(studentCertificateRepository.findByStudentIDAndGradCertificateTypeCodeIn(eq(studentID), any())).thenReturn(Arrays.asList(gradStudentCertificates));
 
         var result = commonService.checkStudentCertificateExistsForSCCP(studentID);
         assertThat(result).isTrue();
