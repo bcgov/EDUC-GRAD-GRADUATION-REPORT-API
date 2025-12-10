@@ -36,12 +36,12 @@ jobs:
       TARGET_ENV: dev
       KEYCLOAK_URL: ${{ secrets.KEYCLOAK_URL }}
       KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
-      MIN_CPU: "20m"
-      MAX_CPU: "120m"
+      MIN_CPU: "200m"
+      MAX_CPU: "300m"
       MIN_MEM: "256Mi"
       MAX_MEM: "1024Mi"
-      MIN_REPLICAS: "3"
-      MAX_REPLICAS: "5"
+      MIN_REPLICAS: "1"
+      MAX_REPLICAS: "2"
 
     steps:
       - name: Check out repository
