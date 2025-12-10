@@ -707,9 +707,12 @@ public class CommonService extends BaseService {
     @Transactional
     public ResponseEntity<InputStreamResource> getStudentCredentialByType(UUID studentID, String type) {
         if (type.equalsIgnoreCase("TRAN")) {
-            List<GradStudentTranscripts> studentTranscript = gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.findByStudentID(studentID));
-            if (studentTranscript != null && !studentTranscript.isEmpty() && studentTranscript.get(0).getTranscript() != null) {
-                byte[] credentialByte = Base64.decodeBase64(studentTranscript.get(0).getTranscript().getBytes(StandardCharsets.US_ASCII));
+            var pen = new PersonalEducationNumber();
+            var student = studentTranscriptService.getStudentByIDFromStudentApi(studentID.toString());
+            pen.setPen(student.getPen());
+            var transcript = studentTranscriptService.getStudentTranscriptReport(pen, ReportFormat.PDF, false, null);
+            if (transcript != null) {
+                byte[] credentialByte = Base64.decodeBase64(transcript.getReportData());
                 ByteArrayInputStream bis = new ByteArrayInputStream(credentialByte);
                 HttpHeaders headers = new HttpHeaders();
                 headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME, type, TRAN));
