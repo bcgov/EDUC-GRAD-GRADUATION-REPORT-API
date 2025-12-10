@@ -83,7 +83,7 @@ public class RestWebClient {
     @Bean("gradReportEducStudentApiClient")
     public WebClient getGradEducStudentApiClientWebClient(OAuth2AuthorizedClientManager authorizedClientManager) {
         ServletOAuth2AuthorizedClientExchangeFilterFunction filter = new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
-        filter.setDefaultClientRegistrationId("grad-report-educ-student-api-client");
+        filter.setDefaultClientRegistrationId("graduation-report-api-client");
         DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
         defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
         return WebClient.builder()
