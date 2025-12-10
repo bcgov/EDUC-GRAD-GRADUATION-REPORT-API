@@ -13,7 +13,7 @@ public final class PackingSlipReportImpl extends ReportImpl implements PackingSl
     /**
      * Information to include on the packing slip.
      */
-    private ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.PackingSlipDetails packingSlipDetails;
+    private ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.PackingSlipDetails packingSlipDetails;
 
     /**
      * Constructs a new report using the default report template for packing
@@ -106,7 +106,7 @@ public final class PackingSlipReportImpl extends ReportImpl implements PackingSl
      *
      * @return A non-null instance.
      */
-    private ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.PackingSlipDetails getPackingSlipDetails() {
+    private ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.PackingSlipDetails getPackingSlipDetails() {
         return this.packingSlipDetails;
     }
 }

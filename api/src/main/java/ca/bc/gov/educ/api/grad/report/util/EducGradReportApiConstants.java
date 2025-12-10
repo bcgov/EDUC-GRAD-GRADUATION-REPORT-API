@@ -167,23 +167,10 @@ public class EducGradReportApiConstants {
     public static final String LOG_TRACE_ENTERING_WITH_ARGS = "Entering {} with args: {}";
     public static final String LOG_TRACE_EXITING = "Exiting {}";
 
-
     public static final String NO_ELIGIBLE_COURSES_TRANSCRIPT_REPORT_IS_NOT_CREATED = "Transcript has no eligible courses. Transcript Report is not created";
-
-    @Value("${endpoint.educ-grad-trax-api.get-district-details.url}")
-    private String districtDetails;
-
-    @Value("${endpoint.educ-grad-trax-api.school-by-school-id.url}")
-    private String schoolDetails;
 
     @Value("${endpoint.grad-program-api.program-name-by-program_code.url}")
     private String graduationProgram;
-
-    @Value("${spring.security.oauth2.client.registration.report-api-client.client-id}")
-    private String clientId;
-
-    @Value("${spring.security.oauth2.client.registration.report-api-client.client-secret}")
-    private String clientSecret;
 
     public static HttpHeaders getHeaders (String username, String password) {
         HttpHeaders httpHeaders = new HttpHeaders();

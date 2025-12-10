@@ -1,10 +1,13 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportFormat;
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.PersonalEducationNumber;
 import ca.bc.gov.educ.api.grad.report.model.entity.*;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
+import ca.bc.gov.educ.api.grad.report.service.v2.StudentTranscriptServiceImpl;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.Generated;
 import jakarta.transaction.Transactional;
@@ -55,6 +58,7 @@ public class CommonService extends BaseService {
     SchoolReportsLightRepository schoolReportsLightRepository;
     SchoolReportYearEndRepository schoolReportYearEndRepository;
     SchoolReportMonthlyRepository schoolReportMonthlyRepository;
+    StudentTranscriptServiceImpl studentTranscriptService;
 
     public static final int PAGE_SIZE = 1000;
 
@@ -86,7 +90,8 @@ public class CommonService extends BaseService {
                             SchoolReportsRepository schoolReportsRepository,
                             SchoolReportsLightRepository schoolReportsLightRepository,
                             SchoolReportYearEndRepository schoolReportYearEndRepository,
-                            SchoolReportMonthlyRepository schoolReportMonthlyRepository
+                            SchoolReportMonthlyRepository schoolReportMonthlyRepository,
+                            StudentTranscriptServiceImpl studentTranscriptService
                             ) {
         super(constants, restService, graduationServiceWebClient);
         this.gradStudentCertificatesTransformer = gradStudentCertificatesTransformer;
@@ -108,6 +113,7 @@ public class CommonService extends BaseService {
         this.schoolReportsLightRepository = schoolReportsLightRepository;
         this.schoolReportYearEndRepository= schoolReportYearEndRepository;
         this.schoolReportMonthlyRepository = schoolReportMonthlyRepository;
+        this.studentTranscriptService = studentTranscriptService;
     }
 
     @Transactional
@@ -469,9 +475,12 @@ public class CommonService extends BaseService {
 
     @Transactional
     public ResponseEntity<InputStreamResource> getStudentTranscriptByStudentID(UUID studentID) {
-        List<GradStudentTranscripts> studentTranscript = gradStudentTranscriptsTransformer.transformToDTO(gradStudentTranscriptsRepository.findByStudentID(studentID));
-        if (studentTranscript != null && !studentTranscript.isEmpty() && studentTranscript.get(0).getTranscript() != null) {
-            byte[] certificateByte = Base64.decodeBase64(studentTranscript.get(0).getTranscript().getBytes(StandardCharsets.US_ASCII));
+        var pen = new PersonalEducationNumber();
+        var student = studentTranscriptService.getStudentByIDFromStudentApi(studentID.toString());
+        pen.setPen(student.getPen());
+        var transcript = studentTranscriptService.getStudentTranscriptReport(pen, ReportFormat.PDF, false, null);
+        if (transcript != null) {
+            byte[] certificateByte = Base64.decodeBase64(transcript.getReportData());
             ByteArrayInputStream bis = new ByteArrayInputStream(certificateByte);
             HttpHeaders headers = new HttpHeaders();
             headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME, "TRAN", TRAN));

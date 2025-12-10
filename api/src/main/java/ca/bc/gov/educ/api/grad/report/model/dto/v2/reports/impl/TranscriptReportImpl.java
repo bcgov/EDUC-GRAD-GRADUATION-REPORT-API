@@ -4,6 +4,7 @@ import ca.bc.gov.educ.api.grad.report.constants.GraduationProgramCode;
 import ca.bc.gov.educ.api.grad.report.constants.TranscriptTypeCode;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Signatories;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student;
 import ca.bc.gov.educ.api.grad.report.reporting.adapter.BusinessEntityAdapter;
 import ca.bc.gov.educ.api.grad.report.service.v2.GradReportSignatureService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Map;
+
+import static ca.bc.gov.educ.api.grad.report.constants.ReportFormat.HTML;
+import static ca.bc.gov.educ.api.grad.report.constants.ReportFormat.XML;
+import static ca.bc.gov.educ.api.grad.report.reporting.adapter.BusinessEntityAdapter.adapt;
 import static java.lang.String.format;
 
 /**
@@ -124,8 +129,8 @@ public class TranscriptReportImpl extends StudentReportImpl implements Transcrip
      */
     @Override
     public void setGraduationData(final GraduationData graduationData) {
-        final AcademicAward aa
-                = BusinessEntityAdapter.adapt(graduationData, getStudent(), getGraduationProgramCode());
+        final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.AcademicAward aa
+                = adapt(graduationData, getStudent(), getGraduationProgramCode());
         getStudent().setAcademicAward(aa);
     }
 
@@ -148,7 +153,7 @@ public class TranscriptReportImpl extends StudentReportImpl implements Transcrip
     @Override
     public void setTranscript(final Transcript transcript) {
         ensureValidStudent("setTranscript");
-        BusinessEntityAdapter.adapt(transcript, getStudent());
+        adapt(transcript, getStudent());
         setReportDate(transcript.getIssueDate());
     }
 
@@ -163,7 +168,7 @@ public class TranscriptReportImpl extends StudentReportImpl implements Transcrip
     public void setGraduationProgram(final GradProgram gradProgram) {
         ensureValidStudent("setGraduationProgram");
         setGraduationProgramCode(gradProgram.getCode());
-        final GraduationProgram program = adapt(gradProgram);
+        final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.GraduationProgram program = adapt(gradProgram);
         getStudent().setGraduationProgram(program);
     }
 
@@ -175,10 +180,10 @@ public class TranscriptReportImpl extends StudentReportImpl implements Transcrip
      * @param graduationMessageText Explains why the student graduated (or not).
      */
     @Override
-    public void setGraduationStatus(final List<NonGradReason> reasons,
+    public void setGraduationStatus(final List<ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.NonGradReason> reasons,
             final String graduationMessageText) {
         ensureValidStudent("setGraduationStatus");
-        final Status status = adapt(reasons, graduationMessageText);
+        final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Status status = adapt(reasons, graduationMessageText);
         getStudent().setStatus(status);
     }
 
@@ -192,9 +197,9 @@ public class TranscriptReportImpl extends StudentReportImpl implements Transcrip
      */
     @Override
     protected String getFilenameSuffix() {
-        final Student student = getStudent();
-        final List<TranscriptResult> assessable = student.getAssessments();
-        final List<TranscriptResult> examinable = student.getTranscriptResults();
+        final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student student = getStudent();
+        final List<ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.TranscriptResult> assessable = student.getAssessments();
+        final List<ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.TranscriptResult> examinable = student.getTranscriptResults();
 
         final int assessments = assessable.size();
         final int examinations = examinable.size() - assessments;

@@ -17,7 +17,7 @@ public class DocumentStatusCodeEntity extends BaseEntity {
    
 	@Id
 	@Column(name = "DOCUMENT_STATUS_CODE", nullable = false)
-    private String documentStatusCode;
+    private String code;
 
 	@Column(name = "LABEL", nullable = true)
 	private String label;

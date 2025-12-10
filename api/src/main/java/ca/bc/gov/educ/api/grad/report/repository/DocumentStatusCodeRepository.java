@@ -13,7 +13,7 @@ public interface DocumentStatusCodeRepository extends JpaRepository<DocumentStat
 
     List<DocumentStatusCodeEntity> findAll();
 
-    @Query("select c from DocumentStatusCodeEntity c where c.documentStatusCode=:code")
+    @Query("select c from DocumentStatusCodeEntity c where c.code=:code")
     DocumentStatusCodeEntity findByDocumentStatusCode(String code);
 
 }

@@ -52,4 +52,7 @@ public class ReportApiConstants {
 
     @Value("${endpoint.pen-student-api.by-pen.url}")
     private String penStudentApiByPenUrl;
+
+    @Value("${endpoint.pen-student-api.by-studentid.url}")
+    private String penStudentApiByIDUrl;
 }

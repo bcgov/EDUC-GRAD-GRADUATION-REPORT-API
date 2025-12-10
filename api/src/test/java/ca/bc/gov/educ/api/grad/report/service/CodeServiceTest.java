@@ -57,7 +57,7 @@ public class CodeServiceTest {
 	public void testGetAllCertificateTypesCodeList() {
 		List<CertificateTypeCodeEntity> gradCertificateTypeList = new ArrayList<>();
 		CertificateTypeCodeEntity obj = new CertificateTypeCodeEntity();
-		obj.setCertificateTypeCode("E");
+		obj.setCode("E");
 		obj.setDescription("English Dogwood");
 		obj.setCreateUser("GRADUATION");
 		obj.setUpdateUser("GRADUATION");
@@ -65,7 +65,7 @@ public class CodeServiceTest {
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		gradCertificateTypeList.add(obj);
 		obj = new CertificateTypeCodeEntity();
-		obj.setCertificateTypeCode("F");
+		obj.setCode("F");
 		obj.setDescription("French Dogwood");
 		obj.setCreateUser("GRADUATION");
 		obj.setUpdateUser("GRADUATION");
@@ -88,7 +88,7 @@ public class CodeServiceTest {
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		obj.toString();
 		CertificateTypeCodeEntity objEntity = new CertificateTypeCodeEntity();
-		objEntity.setCertificateTypeCode("E");
+		objEntity.setCode("E");
 		objEntity.setDescription("English Dogwood");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
@@ -169,7 +169,7 @@ public class CodeServiceTest {
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		CertificateTypeCodeEntity objEntity = new CertificateTypeCodeEntity();
-		objEntity.setCertificateTypeCode("DC");
+		objEntity.setCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
@@ -191,7 +191,7 @@ public class CodeServiceTest {
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		CertificateTypeCodeEntity objEntity = new CertificateTypeCodeEntity();
-		objEntity.setCertificateTypeCode("DC");
+		objEntity.setCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
@@ -213,7 +213,7 @@ public class CodeServiceTest {
 		obj.setCreateDate(new Date(System.currentTimeMillis()));
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		CertificateTypeCodeEntity objEntity = new CertificateTypeCodeEntity();
-		objEntity.setCertificateTypeCode("DC");
+		objEntity.setCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
@@ -236,7 +236,7 @@ public class CodeServiceTest {
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		obj.toString();
 		CertificateTypeCodeEntity objEntity = new CertificateTypeCodeEntity();
-		objEntity.setCertificateTypeCode("DC");
+		objEntity.setCode("DC");
 		objEntity.setDescription("Data Correction by School");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");
@@ -426,7 +426,7 @@ public class CodeServiceTest {
 		req.setSchoolCategoryCode("02");
 
 		CertificateTypeCodeEntity tTypes = new CertificateTypeCodeEntity();
-		tTypes.setCertificateTypeCode("E");
+		tTypes.setCode("E");
 		tTypes.setPaperType("YED2");
 
 		List<ProgramCertificateTranscriptEntity> pList = new ArrayList<>();
@@ -482,7 +482,7 @@ public class CodeServiceTest {
 	public void testGetAllReportTypesDocumentStatusCodeList() {
 		List<DocumentStatusCodeEntity> documentStatusCodeList = new ArrayList<>();
 		DocumentStatusCodeEntity obj = new DocumentStatusCodeEntity();
-		obj.setDocumentStatusCode("TRAN");
+		obj.setCode("TRAN");
 		obj.setDescription("Transcript");
 		obj.setCreateUser("GRADUATION");
 		obj.setUpdateUser("GRADUATION");
@@ -490,7 +490,7 @@ public class CodeServiceTest {
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		documentStatusCodeList.add(obj);
 		obj = new DocumentStatusCodeEntity();
-		obj.setDocumentStatusCode("ACHV");
+		obj.setCode("ACHV");
 		obj.setDescription("Achievement");
 		obj.setCreateUser("GRADUATION");
 		obj.setUpdateUser("GRADUATION");
@@ -515,7 +515,7 @@ public class CodeServiceTest {
 		obj.setUpdateDate(new Date(System.currentTimeMillis()));
 		obj.toString();
 		DocumentStatusCodeEntity objEntity = new DocumentStatusCodeEntity();
-		objEntity.setDocumentStatusCode("TRAN");
+		objEntity.setCode("TRAN");
 		objEntity.setDescription("Transcript");
 		objEntity.setCreateUser("GRADUATION");
 		objEntity.setUpdateUser("GRADUATION");

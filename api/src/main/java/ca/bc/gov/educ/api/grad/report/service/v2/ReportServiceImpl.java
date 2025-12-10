@@ -34,7 +34,7 @@ public class ReportServiceImpl extends AbstractReportService implements ReportSe
      */
     @Override
     @PermitAll
-    public ReportDocument export(final Report report) throws IOException {
+    public ReportDocument export(final Report report) {
         return super.export(report);
     }
 

@@ -27,6 +27,8 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.Pen;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.Transcript;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.TranscriptResult;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.PostalAddressImpl;
+import ca.bc.gov.educ.api.grad.report.model.entity.CertificateTypeCodeEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.TranscriptTypesEntity;
 import ca.bc.gov.educ.api.grad.report.repository.CertificateTypeCodeRepository;
 import ca.bc.gov.educ.api.grad.report.repository.StudentCertificateRepository;

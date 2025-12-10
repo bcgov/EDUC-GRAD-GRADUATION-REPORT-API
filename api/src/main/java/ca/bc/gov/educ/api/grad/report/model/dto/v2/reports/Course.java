@@ -1,164 +1,59 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
-import java.util.Objects;
-
-import static java.lang.String.format;
-
-public class Course extends AbstractDomainEntity {
-
-    private static final long serialVersionUID = 4L;
-
-    private String name = "";
-    private String code = "";
-    private String level = "";
-    private String credits = "";
-    private String sessionDate = "";
-    private String type = "";
-    private String relatedCourse = "";
-    private String relatedLevel = "";
-
-    public Course() {
-    }
-
-    public Course(
-            final String name,
-            final String code,
-            final String level,
-            final String credits,
-            final String session,
-            final String type,
-            final String relatedCourse,
-            final String relatedLevel) {
-        this.name = name;
-        this.code = code;
-        this.level = level;
-        this.credits = credits;
-        this.sessionDate = session;
-        this.type = type;
-        this.relatedCourse = relatedCourse;
-        this.relatedLevel = relatedLevel;
-    }
 
 
-    public String getName() {
-        return this.name;
-    }
-
-
-    public String getCode() {
-        return this.code;
-    }
-
-
-    public String getLevel() {
-        return this.level;
-    }
-
-
-    public String getCredits() {
-        return this.credits;
-    }
-
-
-    public String getSessionDate() {
-        return this.sessionDate;
-    }
-
-
-    public String getType() {
-        return this.type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-
-    public String getRelatedCourse() {
-        return this.relatedCourse;
-    }
-
-    public void setRelatedCourse(String relatedCourse) {
-        this.relatedCourse = relatedCourse;
-    }
-
-
-    public String getRelatedLevel() {
-        return this.relatedLevel;
-    }
-
-    public void setRelatedLevel(String relatedLevel) {
-        this.relatedLevel = relatedLevel;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
-
-    public void setCredits(String credits) {
-        this.credits = credits;
-    }
-
-    public void setSessionDate(String sessionDate) {
-        this.sessionDate = sessionDate;
-    }
+public interface Course extends DomainEntity {
 
     /**
-     * Returns a unique identifier for this instance.
+     * Returns the course name (e.g., "LD History AP 12").
      *
-     * @return A unique number.
+     * @return A non-null string that contains the name of the course taken.
      */
+    String getName();
 
-    public int hashCode() {
-        int hash = 5;
-        hash = 67 * hash + Objects.hashCode(this.code);
-        hash = 67 * hash + Objects.hashCode(this.level);
-        hash = 67 * hash + Objects.hashCode(this.sessionDate);
-        return hash;
-    }
+    /**
+     * Returns the course code associated with the course name (e.g., "XHIAP").
+     *
+     * @return A non-null string that contains the course code (5 digits max).
+     */
+    String getCode();
 
+    /**
+     * Returns the code that represents the course level (e.g., "12", "12A").
+     *
+     * @return A non-null string that contains the course level (3 digits max).
+     */
+    String getLevel();
 
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Course other = (Course) obj;
-        if (!Objects.equals(this.code, other.code)) {
-            return false;
-        }
-        if (!Objects.equals(this.level, other.level)) {
-            return false;
-        }
-        return Objects.equals(this.sessionDate, other.sessionDate);
-    }
+    /**
+     * Returns a string that represents the credits earned by a student for
+     * completing this course suitable for displaying to the user. This can
+     * return results such as {2p, 2, (4), 4, 1}.
+     *
+     * @return A non-null, possibly empty String.
+     */
+    String getCredits();
 
+    /**
+     * Returns when the course was offered.
+     *
+     * @return The date the course was offered (or taken?).
+     */
+    String getSessionDate();
 
-    public Long getId() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    String getType();
 
+    /**
+     * Returns the related course code.
+     *
+     * @return
+     */
+    String getRelatedCourse();
 
-    public String toString() {
-        return format("%s("
-                + "courseName = <%s>, "
-                + "courseCode = <%s>, "
-                + "courseLevel = <%s>, "
-                + "courseType = <%s>"
-                + ")",
-                getClass().getSimpleName(),
-                getName(),
-                getCode(),
-                getLevel(),
-                getType());
-    }
+    /**
+     * Returns the grade level of the related course.
+     *
+     * @return
+     */
+    String getRelatedLevel();
+
 }

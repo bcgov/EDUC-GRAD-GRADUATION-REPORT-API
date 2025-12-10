@@ -4,5 +4,5 @@ import java.io.IOException;
 
 public interface ReportExport extends BusinessService{
     
-    ReportDocument export(Report report) throws IOException;
+    ReportDocument export(Report report) ;
 }

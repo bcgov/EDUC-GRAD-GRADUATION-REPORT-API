@@ -54,7 +54,7 @@ public class DistrictImpl extends AbstractDomainEntity implements District {
         return address;
     }
 
-    public void setAddress(ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.PostalAddressImpl address) {
+    public void setAddress(PostalAddress address) {
         this.address = address;
     }
 

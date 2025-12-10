@@ -23,15 +23,9 @@ public class TranscriptJasperReportImpl extends JasperReportImpl {
     public TranscriptJasperReportImpl(final Report report) {
         super(report);
     }
-
-    /**
-     * Ensures the report date is set before exporting the report.
-     *
-     * @return super.export()
-     * @throws IOException The report could not be filled.
-     */
+    
     @Override
-    public ReportDocument export() throws IOException {
+    public ReportDocument export() {
         final Report report = getReport();
 
         // Create the transcript.

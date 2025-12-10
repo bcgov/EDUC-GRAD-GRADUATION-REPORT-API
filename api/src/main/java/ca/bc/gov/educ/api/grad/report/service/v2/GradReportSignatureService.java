@@ -138,6 +138,6 @@ public class GradReportSignatureService {
     }
 
     public DistrictImpl getDistrictInfo(String districtCode) {
-        return restService.get(String.format(constants.getDistrictDetails(), districtCode), DistrictImpl.class, webClient);
+        return restService.get(String.format(constants.getDistrictByDistrictNumberUrl(), districtCode), DistrictImpl.class, webClient);
     }
 }

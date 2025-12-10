@@ -55,7 +55,7 @@ public class BusinessEntityAdapter {
      * @return A new Certificate instance populated with data.
      */
     public static Certificate adapt(
-            final Certificate certificate) {
+            final ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Certificate certificate) {
         return new Certificate.Builder()
                 .withIssueDate(certificate.getIssued())
                 .withSignatureBlockTypes(certificate.getSignatureBlockTypes())

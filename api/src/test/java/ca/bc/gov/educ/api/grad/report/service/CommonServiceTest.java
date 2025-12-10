@@ -1,8 +1,13 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportFormat;
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.PersonalEducationNumber;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.StudentTranscriptReport;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.GradSearchStudent;
 import ca.bc.gov.educ.api.grad.report.model.entity.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
+import ca.bc.gov.educ.api.grad.report.service.v2.StudentTranscriptServiceImpl;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import lombok.SneakyThrows;
 import org.junit.After;
@@ -34,8 +39,7 @@ import java.util.function.Function;
 import static ca.bc.gov.educ.api.grad.report.constants.ReportingSchoolTypesEnum.SCHOOL_AT_GRAD;
 import static ca.bc.gov.educ.api.grad.report.service.CommonService.PAGE_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -46,6 +50,8 @@ public class CommonServiceTest {
 
     @Autowired EducGradReportApiConstants constants;
     @Autowired CommonService commonService;
+    @MockBean
+    StudentTranscriptServiceImpl studentTranscriptService;
     @MockBean
     StudentCertificateRepository studentCertificateRepository;
     @MockBean GradStudentReportsRepository gradStudentReportsRepository;
@@ -421,7 +427,7 @@ public class CommonServiceTest {
         gradCertificateType.setDescription("School Completion Certificate");
 
         final DocumentStatusCodeEntity documentStatusCodeEntity = new DocumentStatusCodeEntity();
-        documentStatusCodeEntity.setDocumentStatusCode("COMPL");
+        documentStatusCodeEntity.setCode("COMPL");
         documentStatusCodeEntity.setDescription("School Completion Certificate");
         
         final DocumentStatusCode documentStatusCode = new DocumentStatusCode();
@@ -444,7 +450,7 @@ public class CommonServiceTest {
         studentCertificate2.setGradCertificateTypeCode(gradCertificateType.getCode());
         gradStudentCertificatesList.add(studentCertificate2);
         final CertificateTypeCodeEntity certificateTypeCodeEntity = new CertificateTypeCodeEntity();
-        certificateTypeCodeEntity.setCertificateTypeCode("SC");
+        certificateTypeCodeEntity.setCode("SC");
         certificateTypeCodeEntity.setDescription("School Completion Certificate");
         
         when(studentCertificateRepository.findByStudentID(studentID)).thenReturn(gradStudentCertificatesList);
@@ -496,7 +502,7 @@ public class CommonServiceTest {
         reportTypeCodeEntity.setDescription("School Completion Certificate");
         
         final DocumentStatusCodeEntity documentStatusCodeEntity = new DocumentStatusCodeEntity();
-        documentStatusCodeEntity.setDocumentStatusCode("COMPL");
+        documentStatusCodeEntity.setCode("COMPL");
         documentStatusCodeEntity.setDescription("School Completion Certificate");
         
         when(gradStudentReportsRepository.findByStudentID(studentID)).thenReturn(gradStudentReportsList);
@@ -697,7 +703,7 @@ public class CommonServiceTest {
         gradCertificateType.setDescription("School Completion Certificate");
 
         final DocumentStatusCodeEntity documentStatusCodeEntity = new DocumentStatusCodeEntity();
-        documentStatusCodeEntity.setDocumentStatusCode("COMPL");
+        documentStatusCodeEntity.setCode("COMPL");
         documentStatusCodeEntity.setDescription("School Completion Certificate");
 
         final DocumentStatusCode documentStatusCode = new DocumentStatusCode();
@@ -789,15 +795,16 @@ public class CommonServiceTest {
         documentStatus.setCode("COMPL");
         documentStatus.setDescription("Test Code Name");
 
-        when(gradStudentTranscriptsRepository.findByStudentID(studentID)).thenReturn(List.of(studentTranscript));
+        var student = new GradSearchStudent();
+        student.setPen("123456789");
+        when(studentTranscriptService.getStudentByIDFromStudentApi(studentID.toString())).thenReturn(student);
+        String reportData = "ABCD";
+        var report = new StudentTranscriptReport(reportData.getBytes(), ReportFormat.PDF, "ABC", "DEF");
+        when(studentTranscriptService.getStudentTranscriptReport(any(), any(), anyBoolean(), any())).thenReturn(report);
         var result = commonService.getStudentTranscriptByStudentID(studentID);
         assertThat(result).isNotNull();
         assertThat(result.getHeaders().get("Content-Disposition").toString()).hasToString("[inline; filename=student_TRAN_transcript.pdf]");
         assertThat(result.getBody()).isNotNull();
-
-        when(gradStudentTranscriptsRepository.findByStudentID(studentID)).thenReturn(List.of());
-        result = commonService.getStudentTranscriptByStudentID(studentID);
-        assertThat(result).isNull();
     }
 
     @Test

@@ -17,7 +17,7 @@ public class CertificateTypeCodeEntity extends BaseEntity {
    
 	@Id
 	@Column(name = "CERTIFICATE_TYPE_CODE", nullable = false)
-    private String certificateTypeCode;
+    private String code;
 
 	@Column(name = "LABEL", nullable = true)
 	private String label;

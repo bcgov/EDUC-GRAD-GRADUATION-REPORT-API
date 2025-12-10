@@ -1,13 +1,13 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl;
 
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.AbstractDomainEntity;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.MarkInterface;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Mark;
 
 import java.io.Serializable;
 
 import static ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.BusinessEntity.nullSafe;
 
-public class MarkImpl extends AbstractDomainEntity implements MarkInterface, Serializable {
+public class MarkImpl extends AbstractDomainEntity implements Mark, Serializable {
 
     private static final long serialVersionUID = 2L;
 

@@ -89,6 +89,17 @@ endpoint:
     get-students-for-yearly-run: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/yearlydistribution
     get-students-for-school-run: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentschoolreportdata
     student-for-special-grad-run-list:  https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentlistsearch
+    read-grad-student-record:
+      url: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentid/%s
+    read-grad-student-record-pen:
+      url: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/pen/%s
+  pen-student-api:
+    by-studentid:
+      url: https://student-api-75e61b-dev.apps.silver.devops.gov.bc.ca/api/v1/student/%s
+    search:
+      url: https://student-api-75e61b-dev.apps.silver.devops.gov.bc.ca/api/v1/student/paginated
+    by-pen:
+      url: https://student-api-75e61b-dev.apps.silver.devops.gov.bc.ca/api/v1/student?pen=%s
   grad-trax-api:
     school-by-school-id:
       url: http://test
@@ -100,6 +111,9 @@ endpoint:
       url: http://test
     district-by-dist-no:
       url: https://educ-grad-trax-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v2/trax/district?distNo=%s
+  grad-program-api:
+    program-name-by-program_code:
+      url: https://educ-grad-program-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/program/programs/%s
 
 #Splunk LogHelper
 splunk:

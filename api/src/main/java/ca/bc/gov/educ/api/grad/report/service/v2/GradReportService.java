@@ -5,6 +5,9 @@ import ca.bc.gov.educ.api.grad.report.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.ReportData;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.CanadianPostalAddressImpl;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.GradProgramImpl;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.PostalAddressImpl;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.SchoolImpl;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
 import ca.bc.gov.educ.api.grad.report.transformer.GradDataConvertionBean;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
@@ -312,7 +315,7 @@ public abstract class GradReportService {
      * @param studentInfo Student Info
      */
     School adaptSchool(final StudentInfo studentInfo, boolean checkEligibility) {
-        School school = new School();
+        SchoolImpl school = new SchoolImpl();
         if(checkEligibility) {
             TraxSchool traxSchool = getSchool(studentInfo.getSchoolId());
             if (traxSchool != null && "N".equalsIgnoreCase(traxSchool.getTranscriptEligibility())) {
@@ -337,7 +340,7 @@ public abstract class GradReportService {
         return school;
     }
 
-    void populateSchoolFromStudentInfo(School school, StudentInfo studentInfo) {
+    void populateSchoolFromStudentInfo(SchoolImpl school, StudentInfo studentInfo) {
         school.setSchoolId(studentInfo.getSchoolId());
         school.setMincode(studentInfo.getMincode());
         school.setName(studentInfo.getSchoolName());
@@ -355,7 +358,7 @@ public abstract class GradReportService {
         school.setAddress(address);
     }
 
-    void populateSchoolFromTraxSchool(School school, TraxSchool traxSchool) {
+    void populateSchoolFromTraxSchool(SchoolImpl school, TraxSchool traxSchool) {
         school.setSchoolCategoryCode(traxSchool.getSchoolCategoryLegacyCode());
         school.setSchoolId(traxSchool.getSchoolId());
         school.setMincode(traxSchool.getMinCode());
@@ -400,7 +403,7 @@ public abstract class GradReportService {
         TraxSchool traxSchool = null;
         if(!StringUtils.isBlank(schoolId)) {
             try {
-                traxSchool = restService.get(String.format(constants.getSchoolDetails(), schoolId), TraxSchool.class, webClient);
+                traxSchool = restService.get(String.format(constants.getSchoolBySchoolIdUrl(), schoolId), TraxSchool.class, webClient);
             } catch (Exception e) {
                 LOG.log(Level.WARNING, "Unable to get TRAX school by schoolId={0}. Reason {1}", new String[]{schoolId, e.getMessage()});
             }
@@ -408,11 +411,11 @@ public abstract class GradReportService {
         return traxSchool;
     }
 
-    public GradProgram getGraduationProgram(String programCode) {
-        GradProgram result = null;
+    GradProgramImpl getGraduationProgram(String programCode) {
+        GradProgramImpl result = null;
         if(!StringUtils.isBlank(programCode)) {
             try {
-                result = restService.get(String.format(constants.getGraduationProgram(), programCode), GradProgram.class, webClient);
+                result = restService.get(String.format(constants.getGraduationProgram(), programCode), GradProgramImpl.class, webClient);
                 if (result != null) {
                     result.setCode();
                 }

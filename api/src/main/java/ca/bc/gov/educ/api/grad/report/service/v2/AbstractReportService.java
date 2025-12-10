@@ -22,7 +22,7 @@ public abstract class AbstractReportService {
      * report (e.g., resource bundle or report template).
      * @param report The report to fill and export.
      */
-    public ReportDocument export(final Report report) throws IOException {
+    public ReportDocument export(final Report report) {
         final JasperReportImpl jasperReport = createJasperReportImpl(report);
         ReportDocument result = jasperReport.export();
 
@@ -41,7 +41,7 @@ public abstract class AbstractReportService {
      * @param report The HTML report document to process.
      * @return The HTML report document after processing.
      */
-    private ReportDocument postprocess(final ReportDocument report) throws IOException {
+    private ReportDocument postprocess(final ReportDocument report) {
         final byte[] bytes = report.asBytes();
         final String result = new String(bytes, UTF_8);
 

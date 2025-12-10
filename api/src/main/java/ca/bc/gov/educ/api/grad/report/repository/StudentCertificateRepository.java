@@ -27,24 +27,24 @@ public interface StudentCertificateRepository extends JpaRepository<StudentCerti
 
 	long deleteByStudentID(UUID studentID);
 
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.certificateTypeCode = c.gradCertificateTypeCode where c.documentStatusCode=:documentStatusCode and c.distributionDate is null")
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.code = c.gradCertificateTypeCode where c.documentStatusCode=:documentStatusCode and c.distributionDate is null")
 	List<StudentCredentialDistribution> findByDocumentStatusCodeAndNullDistributionDate(@Param("documentStatusCode") String documentStatusCode);
 
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.certificateTypeCode = c.gradCertificateTypeCode where c.documentStatusCode=:documentStatusCode")
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.code = c.gradCertificateTypeCode where c.documentStatusCode=:documentStatusCode")
 	List<StudentCredentialDistribution> findByDocumentStatusCode(@Param("documentStatusCode") String documentStatusCode);
 
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.certificateTypeCode = c.gradCertificateTypeCode  where c.studentID in (:subList)")
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList)")
 	List<StudentCredentialDistribution> findRecordsForUserRequest(List<UUID> subList);
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.certificateTypeCode = c.gradCertificateTypeCode  where c.studentID in (:subList) and c.distributionDate is null")
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList) and c.distributionDate is null")
 	List<StudentCredentialDistribution> findRecordsForUserRequestAndNullDistributionDate(List<UUID> subList);
 
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.certificateTypeCode = c.gradCertificateTypeCode  where c.studentID in (:subList) and c.distributionDate is null")
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList) and c.distributionDate is null")
 	List<StudentCredentialDistribution> findRecordsWithNullDistributionDateForUserRequest(List<UUID> subList);
 
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.certificateTypeCode = c.gradCertificateTypeCode  where c.studentID in (:subList) and c.distributionDate is null")
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList) and c.distributionDate is null")
 	List<StudentCredentialDistribution> findRecordsWithNullDistributionDateForUserRequestByStudentIdOnly(List<UUID> subList);
 
-	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.certificateTypeCode = c.gradCertificateTypeCode  where c.studentID in (:subList)")
+	@Query("select new ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution(c.id,c.gradCertificateTypeCode,c.studentID,cert.paperType,c.documentStatusCode,c.distributionDate) from StudentCertificateEntity c inner join CertificateTypeCodeEntity cert on cert.code = c.gradCertificateTypeCode  where c.studentID in (:subList)")
 	List<StudentCredentialDistribution> findRecordsForUserRequestByStudentIdOnly(List<UUID> subList);
 
 	@Modifying

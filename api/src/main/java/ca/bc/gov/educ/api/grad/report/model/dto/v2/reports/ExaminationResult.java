@@ -3,10 +3,8 @@ package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 
-import static ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.BusinessEntity.nullSafe;
-
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class ExaminationResult extends Mark {
+public final class ExaminationResult extends ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Mark {
 
     private static final long serialVersionUID = 1L;
 
@@ -68,7 +66,7 @@ public final class ExaminationResult extends Mark {
      * Used to create instances of the outer class.
      */
     public static final class Builder
-            extends Mark.Builder<ExaminationResult, Builder> {
+            extends ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Mark.Builder<ExaminationResult, Builder> {
 
         /**
          * Returns the builder used to construct outer class instances.

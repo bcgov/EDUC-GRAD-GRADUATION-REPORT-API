@@ -32,7 +32,7 @@ public final class CertificateReportImpl extends StudentReportImpl implements Ce
     /**
      * Contains the student, school, issue date, and signature set.
      */
-    private Certificate certificate;
+    private ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Certificate certificate;
     private CertificateType certificateType = SC;
     private CertificateSubType certificateSubType = REPRINT;
 
@@ -196,7 +196,7 @@ public final class CertificateReportImpl extends StudentReportImpl implements Ce
         this.certificateSubType = certificateSubtype;
     }
     
-    private Certificate getCertificate() {
+    private ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Certificate getCertificate() {
         return this.certificate;
     }
 

@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.reporting.jasper.impl;
 
 import ca.bc.gov.educ.api.grad.report.constants.ReportFormat;
+import ca.bc.gov.educ.api.grad.report.exception.GradReportAPIRuntimeException;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Parameters;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Predicate;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Report;
@@ -46,7 +47,7 @@ public class JasperReportImpl {
         setReport(report);
     }
 
-    public ReportDocument export() throws IOException {
+    public ReportDocument export() {
         final ReportFormat format = getFormat();
         final Exporter exporter = createExporter();
         final byte[] bytes;
@@ -88,7 +89,7 @@ public class JasperReportImpl {
         } catch (final Exception ex) {
             final String msg = "Could not export report";
             LOG.log(Level.SEVERE, msg, ex);
-            throw new IOException(ex);
+            throw new GradReportAPIRuntimeException(ex);
         }
 
         final ReportDocumentImpl result = new ReportDocumentImpl(bytes);
