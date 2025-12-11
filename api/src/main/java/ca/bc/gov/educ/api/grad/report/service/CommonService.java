@@ -727,7 +727,7 @@ public class CommonService extends BaseService {
             var transcript = studentTranscriptService.getStudentTranscriptReportDocument(reportParams);
             
             if (transcript != null) {
-                byte[] credentialByte = Base64.decodeBase64(transcript.getReportData());
+                byte[] credentialByte = transcript.getReportData();
                 ByteArrayInputStream bis = new ByteArrayInputStream(credentialByte);
                 HttpHeaders headers = new HttpHeaders();
                 headers.add(CONTENT_DISPOSITION, String.format(PDF_FILE_NAME, type, TRAN));
