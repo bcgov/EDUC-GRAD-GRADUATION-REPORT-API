@@ -1,20 +1,3 @@
-/*
- * *********************************************************************
- *  Copyright (c) 2017, Ministry of Education and Child Care, BC.
- *
- *  All rights reserved.
- *    This information contained herein may not be used in whole
- *    or in part without the express written consent of the
- *    Government of British Columbia, Canada.
- *
- *  Revision Control Information
- *  File:                $Id:: TranscriptCalculator.java 8921 2017-12-07 19:16#$
- *  Date of Last Commit: $Date:: 2017-12-07 11:16:33 -0800 (Thu, 07 Dec 2017)  $
- *  Revision Number:     $Rev:: 8921                                           $
- *  Last Commit by:      $Author:: DAJARVIS                                    $
- *
- * ***********************************************************************
- */
 package ca.bc.gov.educ.api.grad.report.reporting.jasper;
 
 import java.util.logging.Level;
@@ -22,11 +5,6 @@ import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
-/**
- * Responsible for computing various requirements for the transcript reports.
- *
- * @author CGI Information Management Consultants Inc.
- */
 public class TranscriptCalculator {
 
     private static final String CLASSNAME = TranscriptCalculator.class.getName();
