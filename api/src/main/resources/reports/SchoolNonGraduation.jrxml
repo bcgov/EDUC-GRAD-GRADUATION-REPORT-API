@@ -67,14 +67,14 @@
 	<parameter name="orgCode" class="java.lang.String"/>
 	<parameter name="orgImage" class="java.io.InputStream"/>
 	<parameter name="reportNumber" class="java.lang.String"/>
-	<parameter name="school" class="ca.bc.gov.educ.grad.report.model.school.School"/>
+	<parameter name="school" class="ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.School"/>
 	<parameter name="students" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource" isForPrompting="false"/>
 	<parameter name="hasStudents" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["false"]]></defaultValueExpression>
 	</parameter>
 	<variable name="V_FISCAL_DATES" class="java.lang.String">
-		<variableExpression><![CDATA[ca.bc.gov.educ.grad.report.model.reports.FiscalDates.getInstance().getFiscalDatesRange()]]></variableExpression>
-		<initialValueExpression><![CDATA[ca.bc.gov.educ.grad.report.model.reports.FiscalDates.getInstance().getFiscalDatesRange()]]></initialValueExpression>
+		<variableExpression><![CDATA[ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.FiscalDates.getInstance().getFiscalDatesRange()]]></variableExpression>
+		<initialValueExpression><![CDATA[ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.FiscalDates.getInstance().getFiscalDatesRange()]]></initialValueExpression>
 	</variable>
 	<variable name="V_LOGO_CODE" class="java.lang.String">
 		<variableExpression><![CDATA[$P{orgCode}]]></variableExpression>

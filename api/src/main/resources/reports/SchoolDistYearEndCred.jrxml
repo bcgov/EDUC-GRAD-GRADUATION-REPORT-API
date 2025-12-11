@@ -48,8 +48,8 @@
 	<parameter name="orgCode" class="java.lang.String"/>
 	<parameter name="orgImage" class="java.io.InputStream"/>
 	<parameter name="reportNumber" class="java.lang.String"/>
-	<parameter name="counts" class="ca.bc.gov.educ.grad.report.utils.TotalCounts"/>
-	<parameter name="school" class="ca.bc.gov.educ.grad.report.model.school.School"/>
+	<parameter name="counts" class="ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.TotalCounts"/>
+	<parameter name="school" class="ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.School"/>
 	<parameter name="students" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource" isForPrompting="false"/>
 	<parameter name="hasStudents" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["false"]]></defaultValueExpression>

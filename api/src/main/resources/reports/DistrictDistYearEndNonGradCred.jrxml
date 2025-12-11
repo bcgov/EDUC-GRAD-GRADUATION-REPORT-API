@@ -54,7 +54,7 @@
 	<parameter name="orgCode" class="java.lang.String"/>
 	<parameter name="orgImage" class="java.io.InputStream"/>
 	<parameter name="reportNumber" class="java.lang.String"/>
-	<parameter name="district" class="ca.bc.gov.educ.grad.report.model.district.District"/>
+	<parameter name="district" class="ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.District"/>
 	<parameter name="schools" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource" isForPrompting="false"/>
 	<parameter name="hasSchools" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["false"]]></defaultValueExpression>
