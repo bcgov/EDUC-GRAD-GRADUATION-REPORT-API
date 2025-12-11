@@ -1032,7 +1032,7 @@ public class ReportService {
                         String.format("Student with PEN %s doesn't have graduation data in GRAD Student system", pen));
             }
 
-            ca.bc.gov.educ.api.grad.report.model.dto.GraduationData graduationData = (ca.bc.gov.educ.api.grad.report.model.dto.GraduationData) jsonTransformer.unmarshall(graduationStudentRecord.getStudentGradData(), GraduationData.class);
+            ca.bc.gov.educ.api.grad.report.model.dto.GraduationData graduationData = (ca.bc.gov.educ.api.grad.report.model.dto.GraduationData) jsonTransformer.unmarshall(graduationStudentRecord.getStudentGradData(), ca.bc.gov.educ.api.grad.report.model.dto.GraduationData.class);
             //Override student demog information
             overrideDemogProperties(student,graduationData);
             return Pair.of(graduationStudentRecord, graduationData);
