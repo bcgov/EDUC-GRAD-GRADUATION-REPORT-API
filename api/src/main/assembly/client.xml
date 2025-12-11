@@ -25,7 +25,6 @@
             <outputDirectory>/</outputDirectory>
             <useDefaultExcludes>false</useDefaultExcludes>
             <includes>
-                ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch
                 <include>ca/bc/gov/educ/api/grad/report/model/dto/v2/reports/fetch/**</include>
             </includes>
         </fileSet>
