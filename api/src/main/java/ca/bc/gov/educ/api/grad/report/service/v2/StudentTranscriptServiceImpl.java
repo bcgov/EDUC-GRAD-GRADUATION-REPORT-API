@@ -683,10 +683,10 @@ public class StudentTranscriptServiceImpl extends GradReportService {
         final String methodName = "getStudentByIDFromStudentApi(String pen)";
         log.trace(CLASSNAME, methodName);
         try {
-            List<GradSearchStudent> stuDataList = restService.get(String.format(reportApiConstants.getPenStudentApiByIDUrl(),studentID),
+            GradSearchStudent stud = restService.get(String.format(reportApiConstants.getPenStudentApiByIDUrl(),studentID),
                     new ParameterizedTypeReference<>() {}, educStudentWebClient);
-            if(stuDataList != null && !stuDataList.isEmpty()) {
-                return stuDataList.get(0);
+            if(stud != null) {
+                return stud;
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
