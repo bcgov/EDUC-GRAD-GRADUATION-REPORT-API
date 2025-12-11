@@ -49,7 +49,7 @@
 	<field name="student.lastName" class="java.lang.String">
 		<fieldDescription><![CDATA[student.lastName]]></fieldDescription>
 	</field>
-	<field name="certificate" class="ca.bc.gov.educ.grad.report.dto.reports.data.impl.Certificate">
+	<field name="certificate" class="ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Certificate">
 		<fieldDescription><![CDATA[certificate]]></fieldDescription>
 	</field>
 	<field name="F_LABEL_MAP" class="java.util.HashMap">

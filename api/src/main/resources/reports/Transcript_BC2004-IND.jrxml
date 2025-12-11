@@ -81,7 +81,7 @@
 	<parameter name="P_COMPLETION_NOTICE" class="java.lang.Boolean">
 		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
 	</parameter>
-	<field name="student" class="ca.bc.gov.educ.grad.report.dto.reports.data.impl.Student">
+	<field name="student" class="ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student">
 		<fieldDescription><![CDATA[student]]></fieldDescription>
 	</field>
 	<field name="student.transcriptResults" class="java.util.List">

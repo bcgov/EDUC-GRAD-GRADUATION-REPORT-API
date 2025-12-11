@@ -44,7 +44,7 @@
 	<parameter name="P_SIGNATURE_LABEL" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Assistant Deputy Minister"]]></defaultValueExpression>
 	</parameter>
-	<field name="student" class="ca.bc.gov.educ.grad.report.dto.reports.data.impl.Student">
+	<field name="student" class="ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student">
 		<fieldDescription><![CDATA[student]]></fieldDescription>
 	</field>
 	<summary>
