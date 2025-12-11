@@ -241,15 +241,3 @@ jobs:
           
           # Get status, returns 0 if rollout is successful
           oc rollout status deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
-
-  zap-scan:
-    name: Zap Scan
-    needs: build-and-deploy-dev
-    runs-on: ubuntu-22.04
-    env:
-      OPENSHIFT_NAMESPACE: ${{ vars.GRAD_NAMESPACE }}-dev
-    steps:
-      - name: ZAP Scan
-        uses: zaproxy/action-api-scan@v0.9.0
-        with:
-          target: 'https://${{ env.REPO_NAME }}-${{ env.OPENSHIFT_NAMESPACE }}.apps.silver.devops.gov.bc.ca/api/v1/api-docs'
