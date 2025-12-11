@@ -11,7 +11,7 @@ import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class CommonService {
     final SchoolReportYearEndRepository schoolReportYearEndRepository;
     final SchoolReportMonthlyRepository schoolReportMonthlyRepository;
     final RESTService restService;
-    final EducGradReportApiConstants constants;
+    final ReportApiConstants constants;
     private final SchoolCacheService schoolCache;
     private final WebClient graduationServiceWebClient;
 
@@ -55,7 +55,7 @@ public class CommonService {
                          GradStudentTranscriptsRepository gradStudentTranscriptsRepository,
                          GradStudentReportsRepository gradStudentReportsRepository,
                          SchoolReportRepository schoolReportRepository, RESTService restService,
-                         SchoolReportYearEndRepository schoolReportYearEndRepository, EducGradReportApiConstants constants,
+                         SchoolReportYearEndRepository schoolReportYearEndRepository, ReportApiConstants constants,
                          SchoolReportMonthlyRepository schoolReportMonthlyRepository,
                          SchoolReportLightRepository schoolReportLightRepository, SchoolCacheService schoolCache,
                          @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient) {

@@ -1,10 +1,11 @@
-package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client;
+package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch;
 
 import java.io.Serializable;
 
-
 public class GradProgram implements Serializable {
-    private Code code = new Code();
+    private static final long serialVersionUID = 2L;
+
+    private Code code;
 
     private String expiryDate = "";
 
@@ -23,4 +24,5 @@ public class GradProgram implements Serializable {
     public void setExpiryDate(String value) {
         this.expiryDate = value;
     }
+
 }

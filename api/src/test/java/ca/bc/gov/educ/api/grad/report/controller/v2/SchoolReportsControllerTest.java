@@ -6,7 +6,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.v2.SchoolReportEntity;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.v2.InstituteService;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +59,7 @@ class SchoolReportsControllerTest {
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
 
-    mockMvc.perform(get(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + EducGradReportApiConstants.SEARCH_MAPPING).with(mockAuthority)
+    mockMvc.perform(get(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + ReportApiConstants.SEARCH_MAPPING).with(mockAuthority)
                     .param("schoolOfRecordId", UUID.randomUUID().toString())
                     .param("reportType", "type")
                     .contentType(MediaType.APPLICATION_JSON))
@@ -76,7 +76,7 @@ class SchoolReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(get(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + EducGradReportApiConstants.SEARCH_MAPPING).contentType(MediaType.APPLICATION_JSON).with(mockAuthority))
+    mockMvc.perform(get(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + ReportApiConstants.SEARCH_MAPPING).contentType(MediaType.APPLICATION_JSON).with(mockAuthority))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1));
   }
@@ -93,7 +93,7 @@ class SchoolReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(get(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + EducGradReportApiConstants.SEARCH_MAPPING)
+    mockMvc.perform(get(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + ReportApiConstants.SEARCH_MAPPING)
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(mockAuthority)
                     .param("schoolOfRecordId", schoolOfRecordId.toString()))
@@ -113,7 +113,7 @@ class SchoolReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(get(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + EducGradReportApiConstants.SEARCH_MAPPING)
+    mockMvc.perform(get(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + ReportApiConstants.SEARCH_MAPPING)
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(mockAuthority)
                     .param("reportTypeCode", reportTypeCode))
@@ -132,7 +132,7 @@ class SchoolReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(get(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + EducGradReportApiConstants.SEARCH_MAPPING)
+    mockMvc.perform(get(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + ReportApiConstants.SEARCH_MAPPING)
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(mockAuthority)
                     .param("reportTypeCode", reportTypeCode)
@@ -157,7 +157,7 @@ class SchoolReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(get(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
+    mockMvc.perform(get(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
                     .with(mockAuthority)
                     .param("schoolOfRecordId", schoolOfRecordId.toString())
                     .param("reportTypeCode", "type")
@@ -179,7 +179,7 @@ class SchoolReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(post(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + "/" + schoolOfRecordId + "/" + reportTypeCode + "/reset-update-user")
+    mockMvc.perform(post(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + "/" + schoolOfRecordId + "/" + reportTypeCode + "/reset-update-user")
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
@@ -193,7 +193,7 @@ class SchoolReportsControllerTest {
   void testUpdateSchoolReport_givenNoSchoolRecord_ReturnNotFound() throws Exception {
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(post(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + "/" + UUID.randomUUID() + "/type/reset-update-user")
+    mockMvc.perform(post(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + "/" + UUID.randomUUID() + "/type/reset-update-user")
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
@@ -203,7 +203,7 @@ class SchoolReportsControllerTest {
   void testUpdateSchoolReport_givenBadUUID_ReturnNotFound() throws Exception {
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(post(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + "/123456/type/reset-update-user")
+    mockMvc.perform(post(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + "/123456/type/reset-update-user")
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
@@ -222,7 +222,7 @@ class SchoolReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(post(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
+    mockMvc.perform(post(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(content))
@@ -241,7 +241,7 @@ class SchoolReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(delete(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + "/" + schoolOfRecordId + "/" + reportTypeCode)
+    mockMvc.perform(delete(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING + "/" + schoolOfRecordId + "/" + reportTypeCode)
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
@@ -258,7 +258,7 @@ class SchoolReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(delete(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
+    mockMvc.perform(delete(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("reportTypeCode", "type"))
@@ -271,7 +271,7 @@ class SchoolReportsControllerTest {
   void testDeleteSchoolReportsByType_givenMissingQueryParam_ReturnBadRequest() throws Exception {
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(delete(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
+    mockMvc.perform(delete(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("WRONG-PARAM", "type"))
@@ -285,7 +285,7 @@ class SchoolReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(delete(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
+    mockMvc.perform(delete(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("reportTypeCode", "type"))

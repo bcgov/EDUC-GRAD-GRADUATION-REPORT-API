@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.controller.v2;
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.SchoolReport;
 import ca.bc.gov.educ.api.grad.report.service.v2.SchoolReportService;
 import ca.bc.gov.educ.api.grad.report.util.*;
@@ -23,7 +24,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping(EducGradReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
+@RequestMapping(ReportApiConstants.SCHOOL_REPORTS_ROOT_MAPPING)
 @OpenAPIDefinition(info = @Info(title = "API for School Reports endpoints.", description = "This API is for reading and updating endpoints.", version = "2"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_REPORT_DATA","UPDATE_GRAD_STUDENT_REPORT_DATA"})})
 public class SchoolReportController {
   SchoolReportService service;
@@ -37,7 +38,7 @@ public class SchoolReportController {
       this.response = response;
   }
 
-  @GetMapping(EducGradReportApiConstants.SEARCH_MAPPING)
+  @GetMapping(ReportApiConstants.SEARCH_MAPPING)
   @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
   @Operation(summary = "Search School Reports", description = "Search for school reports with optional filters", tags = {"Reports"})
   @ApiResponses(value = {
@@ -64,7 +65,7 @@ public class SchoolReportController {
     return ResponseEntity.ok(stream);
   }
 
-  @PostMapping(EducGradReportApiConstants.UPDATE_SCHOOL_REPORTS_UPDATE_DETAILS)
+  @PostMapping(ReportApiConstants.UPDATE_SCHOOL_REPORTS_UPDATE_DETAILS)
   @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
   @Operation(summary = "Update school report: ", description = "Update school report by setting updateUser and updateDate to null", tags = {"Credential"})
   @ApiResponses(value = {
@@ -89,7 +90,7 @@ public class SchoolReportController {
     return service.saveSchoolReports(schoolReports);
   }
 
-  @DeleteMapping(EducGradReportApiConstants.DELETE_SCHOOL_REPORT)
+  @DeleteMapping(ReportApiConstants.DELETE_SCHOOL_REPORT)
   @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
   @Operation(summary = "Delete school report: ", description = "Delete a specific school report by schoolOfRecordId and reportTypeCode", tags = {"Credential"})
   @ApiResponses(value = {

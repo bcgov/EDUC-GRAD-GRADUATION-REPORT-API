@@ -7,7 +7,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.GradReportSignatureImageEntit
 import ca.bc.gov.educ.api.grad.report.repository.SignatureImageRepository;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
 import ca.bc.gov.educ.api.grad.report.transformer.GradReportSignatureTransformer;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +30,14 @@ public class GradReportSignatureService {
     SignatureImageRepository signatureImageRepository;
     GradReportSignatureTransformer gradReportSignatureTransformer;
     WebClient webClient;
-    EducGradReportApiConstants constants;
+    ReportApiConstants constants;
     RESTService restService;
 
     @Autowired
     public GradReportSignatureService(SignatureImageRepository signatureImageRepository,
                                       GradReportSignatureTransformer gradReportSignatureTransformer,
                                       @Qualifier("reportApiClient") WebClient webClient,
-                                      EducGradReportApiConstants constants,
+                                      ReportApiConstants constants,
                                       RESTService restService) {
         this.signatureImageRepository = signatureImageRepository;
         this.gradReportSignatureTransformer = gradReportSignatureTransformer;

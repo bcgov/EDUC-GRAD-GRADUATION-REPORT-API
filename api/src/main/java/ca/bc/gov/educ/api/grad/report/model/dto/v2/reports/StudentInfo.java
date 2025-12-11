@@ -32,7 +32,7 @@ public class StudentInfo {
 
     // student transcript info
     private String schoolId = "";
-    private Date reportDate = new Date(0L);
+    private LocalDate reportDate = LocalDate.now();
     private Date lastUpdateDate = new Date(0L);
     private String logo = "";
     private String gender = "";
@@ -91,7 +91,7 @@ public class StudentInfo {
             final String gradProgram,
             final String gradReqYear,
             final String gradMessage,
-            final Date updateDt,
+            final LocalDate updateDt,
             final String logoType,
             final String studentAddress1,
             final String studentAddress2,
@@ -324,7 +324,7 @@ public class StudentInfo {
     }
 
 
-    public Date getReportDate() {
+    public LocalDate getReportDate() {
         return this.reportDate;
     }
 

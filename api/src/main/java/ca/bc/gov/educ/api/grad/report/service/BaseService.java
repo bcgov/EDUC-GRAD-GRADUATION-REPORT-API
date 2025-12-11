@@ -3,7 +3,7 @@ package ca.bc.gov.educ.api.grad.report.service;
 import ca.bc.gov.educ.api.grad.report.model.dto.ReportGradStudentData;
 import ca.bc.gov.educ.api.grad.report.model.dto.TokenResponse;
 import ca.bc.gov.educ.api.grad.report.model.dto.TokenResponseCached;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.SneakyThrows;
@@ -31,14 +31,14 @@ public abstract class BaseService {
     @PersistenceContext
     EntityManager entityManager;
 
-    protected EducGradReportApiConstants constants;
+    protected ReportApiConstants constants;
     protected RESTService restService;
     protected WebClient graduationServiceWebClient;
 
     private TokenResponseCached tokenResponseCached;
 
     @Autowired
-    protected BaseService(EducGradReportApiConstants constants, RESTService restService,
+    protected BaseService(ReportApiConstants constants, RESTService restService,
                        @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient) {
         this.constants = constants;
         this.restService = restService;
@@ -94,7 +94,7 @@ public abstract class BaseService {
     }
 
     private TokenResponse getTokenResponse() {
-        HttpHeaders httpHeaders = EducGradReportApiConstants.getHeaders(
+        HttpHeaders httpHeaders = ReportApiConstants.getHeaders(
                 constants.getUserName(), constants.getPassword());
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "client_credentials");

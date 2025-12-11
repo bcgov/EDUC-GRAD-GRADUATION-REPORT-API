@@ -12,7 +12,7 @@ import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.BaseService;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +38,7 @@ public class SchoolReportService extends BaseService {
   InstituteService instituteService;
 
   @Autowired
-  protected SchoolReportService(EducGradReportApiConstants constants, RESTService restService,
+  protected SchoolReportService(ReportApiConstants constants, RESTService restService,
                                 @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient, SchoolReportRepository schoolReportsRepository,
                                 SchoolReportTransformer schoolReportsTransformer,
                                 SchoolReportLightRepository schoolReportsLightRepository, InstituteService instituteService) {

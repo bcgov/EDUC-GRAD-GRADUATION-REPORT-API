@@ -1,5 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.config;
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.*;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ public class RequestInterceptor implements AsyncHandlerInterceptor {
 	GradValidation validation;
 
 	@Autowired
-	EducGradReportApiConstants constants;
+    ReportApiConstants constants;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -35,17 +37,17 @@ public class RequestInterceptor implements AsyncHandlerInterceptor {
 		validation.clear();
 
 		// correlationID
-		val correlationID = request.getHeader(EducGradReportApiConstants.CORRELATION_ID);
+		val correlationID = request.getHeader(ReportApiConstants.CORRELATION_ID);
 		ThreadLocalStateUtil.setCorrelationID(correlationID != null ? correlationID : UUID.randomUUID().toString());
 
 		//Request Source
-		val requestSource = request.getHeader(EducGradReportApiConstants.REQUEST_SOURCE);
+		val requestSource = request.getHeader(ReportApiConstants.REQUEST_SOURCE);
 		if(requestSource != null) {
 			ThreadLocalStateUtil.setRequestSource(requestSource);
 		}
 
 			// Header userName
-			val userName = request.getHeader(EducGradReportApiConstants.USER_NAME);
+			val userName = request.getHeader(ReportApiConstants.USER_NAME);
 			if (userName != null) {
 				ThreadLocalStateUtil.setCurrentUser(userName);
 			}

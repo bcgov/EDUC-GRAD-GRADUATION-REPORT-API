@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client;
 
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Pen;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;

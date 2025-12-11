@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.config;
 
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-    private final EducGradReportApiConstants constants;
+    private final ReportApiConstants constants;
 
-    public SwaggerConfig(EducGradReportApiConstants constants) {
+    public SwaggerConfig(ReportApiConstants constants) {
         this.constants = constants;
     }
 

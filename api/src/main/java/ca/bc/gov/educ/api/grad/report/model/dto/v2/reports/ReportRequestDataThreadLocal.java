@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
 
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.ReportData;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.ReportData;
 
 public class ReportRequestDataThreadLocal {
 

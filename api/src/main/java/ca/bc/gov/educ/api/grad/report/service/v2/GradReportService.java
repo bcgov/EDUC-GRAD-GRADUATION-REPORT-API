@@ -1,16 +1,16 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.exception.DomainServiceException;
 import ca.bc.gov.educ.api.grad.report.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.ReportData;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.ReportData;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.CanadianPostalAddressImpl;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.GradProgramImpl;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.PostalAddressImpl;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.SchoolImpl;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
 import ca.bc.gov.educ.api.grad.report.transformer.GradDataConvertionBean;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.JsonTransformer;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -24,6 +24,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,7 +59,7 @@ public abstract class GradReportService {
     @Qualifier("reportApiClient")
     WebClient webClient;
     @Autowired
-    EducGradReportApiConstants constants;
+    ReportApiConstants constants;
     
     public Parameters<String, Object> createParameters() {
         Parameters<String, Object> parameters = reportService.createParameters();
@@ -120,11 +121,6 @@ public abstract class GradReportService {
         reportData.setReportIdentity(methodName);
         return reportData;
     }
-
-    Certificate getCertificate(ReportData reportData) {
-        return gradDataConvertionBean.getCertificate(reportData.getCertificate());
-    }
-
 
     InputStream openImageResource(final String resource) throws IOException {
         /** final URL url = getReportResource(resource); **/
@@ -206,7 +202,6 @@ public abstract class GradReportService {
     String getAccessToken() throws DomainServiceException {
         final String methodName = "getAccessToken()";
 
-
         ReportData reportData = getReportData(methodName);
         String accessToken = reportData.getAccessToken();
 
@@ -223,7 +218,7 @@ public abstract class GradReportService {
         return gradDataConvertionBean.getStudent(reportData).getPen();
     }
 
-    Date getIssueDate() throws DomainServiceException {
+    LocalDate getIssueDate() throws DomainServiceException {
         final String methodName = "getIssueDate()";
 
 

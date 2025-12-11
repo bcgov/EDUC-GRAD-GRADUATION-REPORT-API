@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.controller.v2;
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.ReportGradStudentData;
 import ca.bc.gov.educ.api.grad.report.model.dto.StudentCredentialDistribution;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.StudentSearchRequest;
@@ -25,7 +26,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController("commonControllerV2")
-@RequestMapping(EducGradReportApiConstants.GRAD_REPORT_API_V2_ROOT_MAPPING)
+@RequestMapping(ReportApiConstants.GRAD_REPORT_API_V2_ROOT_MAPPING)
 @OpenAPIDefinition(info = @Info(title = "API for Common v2 endpoints.", description = "This API is for Reading Common endpoints.", version = "2"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_GRAD_STUDENT_CERTIFICATE_DATA"})})
 public class CommonController {
 
@@ -42,7 +43,7 @@ public class CommonController {
         this.response = response;
     }
 
-    @PostMapping(EducGradReportApiConstants.USER_REQUEST_DIS_RUN)
+    @PostMapping(ReportApiConstants.USER_REQUEST_DIS_RUN)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Read All Student Transcripts/Certificates for User Req Distribution", description = "Read All Student Credentials for Distribution", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -55,7 +56,7 @@ public class CommonController {
         return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,onlyWithNullDistributionDate));
     }
 
-    @PostMapping(EducGradReportApiConstants.USER_REQUEST_DIS_RUN_WITH_NULL_DISTRIBUTION_DATE)
+    @PostMapping(ReportApiConstants.USER_REQUEST_DIS_RUN_WITH_NULL_DISTRIBUTION_DATE)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Read All Student Transcripts/Certificates with Null Distribution Date for User Req Distribution", description = "Read All Student Credentials with Null Distribution Date for Distribution", tags = { "Certificates" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -67,7 +68,7 @@ public class CommonController {
         return response.GET(commonService.getStudentCredentialsForUserRequestDisRun(credentialType,studentSearchRequest,!isPenNumberSearch));
     }
 
-    @PostMapping (EducGradReportApiConstants.REPORT_COUNT)
+    @PostMapping (ReportApiConstants.REPORT_COUNT)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Get Reports Count by id and status", description = "Get Students Count by id and status", tags = { "Business" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -79,7 +80,7 @@ public class CommonController {
         }
     }
 
-    @PostMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_YEAREND_REPORT)
+    @PostMapping(ReportApiConstants.STUDENT_FOR_SCHOOL_YEAREND_REPORT)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -88,7 +89,7 @@ public class CommonController {
         return response.GET(commonService.getYearEndReportGradStudentData(yearEndReportRequest));
     }
 
-    @GetMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_YEAREND_REPORT)
+    @GetMapping(ReportApiConstants.STUDENT_FOR_SCHOOL_YEAREND_REPORT)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -97,7 +98,7 @@ public class CommonController {
         return response.GET(commonService.getSchoolYearEndReportGradStudentData());
     }
 
-    @GetMapping(EducGradReportApiConstants.STUDENT_FOR_SCHOOL_REPORT)
+    @GetMapping(ReportApiConstants.STUDENT_FOR_SCHOOL_REPORT)
     @PreAuthorize(PermissionsConstants.READ_GRADUATION_STUDENT_CERTIFICATES)
     @Operation(summary = "Get List of students for school year end reports", description = "Get List of students for school year end reports", tags = { "School Year End Reports" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -106,7 +107,7 @@ public class CommonController {
         return response.GET(commonService.getSchoolReportGradStudentData());
     }
 
-    @PostMapping (EducGradReportApiConstants.REPORT_ARCHIVE)
+    @PostMapping (ReportApiConstants.REPORT_ARCHIVE)
     @PreAuthorize(PermissionsConstants.ARCHIVE_SCHOOL_REPORT)
     @Operation(summary = "Archive Reports", description = "Archive Reports", tags = { "Business" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
@@ -115,7 +116,7 @@ public class CommonController {
         return response.GET(commonService.archiveSchoolReports(batchId, schoolOfRecordIds, reportType));
     }
 
-    @PostMapping(EducGradReportApiConstants.UPDATE_STUDENT_CREDENTIAL)
+    @PostMapping(ReportApiConstants.UPDATE_STUDENT_CREDENTIAL)
     @PreAuthorize(PermissionsConstants.UPDATE_GRADUATION_STUDENT_REPORTS)
     @Operation(summary = "Update Student Credential", description = "Update Student Credential", tags = { "Credential" })
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})

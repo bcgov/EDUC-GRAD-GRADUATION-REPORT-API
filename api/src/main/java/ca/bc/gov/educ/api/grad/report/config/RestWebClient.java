@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.config;
 
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.LogHelper;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import io.netty.handler.logging.LogLevel;
@@ -25,13 +25,13 @@ import java.time.Duration;
 @Configuration
 @Profile("!test")
 public class RestWebClient {
-    EducGradReportApiConstants constants;
+    ReportApiConstants constants;
     private final HttpClient httpClient;
 
     LogHelper logHelper;
 
     @Autowired
-    public RestWebClient(EducGradReportApiConstants constants) {
+    public RestWebClient(ReportApiConstants constants) {
         this.constants = constants;
         this.httpClient = HttpClient.create(ConnectionProvider.create("graduation-report-api")).compress(true)
                 .resolver(spec -> spec.queryTimeout(Duration.ofMillis(200)).trace("DNS", LogLevel.TRACE));
@@ -118,9 +118,9 @@ public class RestWebClient {
     private ExchangeFilterFunction setRequestHeaders() {
         return (clientRequest, next) -> {
             ClientRequest modifiedRequest = ClientRequest.from(clientRequest)
-                    .header(EducGradReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID())
-                    .header(EducGradReportApiConstants.USER_NAME, ThreadLocalStateUtil.getCurrentUser())
-                    .header(EducGradReportApiConstants.REQUEST_SOURCE, EducGradReportApiConstants.API_NAME)
+                    .header(ReportApiConstants.CORRELATION_ID, ThreadLocalStateUtil.getCorrelationID())
+                    .header(ReportApiConstants.USER_NAME, ThreadLocalStateUtil.getCurrentUser())
+                    .header(ReportApiConstants.REQUEST_SOURCE, ReportApiConstants.API_NAME)
                     .build();
             return next.exchange(modifiedRequest);
         };
@@ -133,8 +133,8 @@ public class RestWebClient {
                         clientRequest.method(),
                         clientRequest.url().toString(),
                         clientResponse.statusCode().value(),
-                        clientRequest.headers().get(EducGradReportApiConstants.CORRELATION_ID),
-                        clientRequest.headers().get(EducGradReportApiConstants.REQUEST_SOURCE),
+                        clientRequest.headers().get(ReportApiConstants.CORRELATION_ID),
+                        clientRequest.headers().get(ReportApiConstants.REQUEST_SOURCE),
                         constants.isSplunkLogHelperEnabled())
                 ));
     }

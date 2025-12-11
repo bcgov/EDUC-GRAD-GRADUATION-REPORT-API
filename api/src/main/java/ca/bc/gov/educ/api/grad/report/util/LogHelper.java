@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.util;
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,11 +34,11 @@ public final class LogHelper {
       httpMap.put("server_http_response_code", status);
       httpMap.put("server_http_request_method", request.getMethod());
       httpMap.put("server_http_query_params", request.getQueryString());
-      val correlationID = request.getHeader(EducGradReportApiConstants.CORRELATION_ID);
+      val correlationID = request.getHeader(ReportApiConstants.CORRELATION_ID);
       if (correlationID != null) {
         httpMap.put("correlation_id", correlationID);
       }
-      val requestSource = request.getHeader(EducGradReportApiConstants.REQUEST_SOURCE);
+      val requestSource = request.getHeader(ReportApiConstants.REQUEST_SOURCE);
       if (requestSource != null) {
         httpMap.put("request_source", requestSource);
       }

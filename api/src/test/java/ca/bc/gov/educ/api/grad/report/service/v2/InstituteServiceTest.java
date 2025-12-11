@@ -3,7 +3,7 @@ package ca.bc.gov.educ.api.grad.report.service.v2;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.District;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import org.junit.After;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 class InstituteServiceTest {
 
     @Autowired
-    EducGradReportApiConstants constants;
+    ReportApiConstants constants;
     @MockBean
     RESTService restService;
     @MockBean

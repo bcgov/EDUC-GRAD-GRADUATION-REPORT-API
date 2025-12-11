@@ -14,7 +14,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 
-import static ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants.*;
+import static ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants.*;
 
 public class GradLocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
 

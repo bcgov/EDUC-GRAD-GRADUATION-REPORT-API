@@ -13,7 +13,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 
-import static ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants.SECOND_DEFAULT_DATE_FORMAT;
+import static ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants.SECOND_DEFAULT_DATE_FORMAT;
 
 public class GradLocalDateDeserializer extends StdDeserializer<LocalDate> {
 

@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.model.entity;
 
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -31,13 +31,13 @@ public class BaseEntity {
 		if (StringUtils.isBlank(createUser)) {
 			this.createUser = ThreadLocalStateUtil.getCurrentUser();
 			if (StringUtils.isBlank(createUser)) {
-				this.createUser = EducGradReportApiConstants.DEFAULT_CREATED_BY;
+				this.createUser = ReportApiConstants.DEFAULT_CREATED_BY;
 			}
 		}
 		if (StringUtils.isBlank(updateUser)) {
 			this.updateUser = ThreadLocalStateUtil.getCurrentUser();
 			if (StringUtils.isBlank(updateUser)) {
-				this.updateUser = EducGradReportApiConstants.DEFAULT_UPDATED_BY;
+				this.updateUser = ReportApiConstants.DEFAULT_UPDATED_BY;
 			}
 		}
 		this.createDate = new Date(System.currentTimeMillis());
@@ -50,13 +50,13 @@ public class BaseEntity {
 		if (StringUtils.isBlank(updateUser)) {
 			this.updateUser = ThreadLocalStateUtil.getCurrentUser();
 			if (StringUtils.isBlank(updateUser)) {
-				this.updateUser = EducGradReportApiConstants.DEFAULT_UPDATED_BY;
+				this.updateUser = ReportApiConstants.DEFAULT_UPDATED_BY;
 			}
 		}
 		if (StringUtils.isBlank(createUser)) {
 			this.createUser = ThreadLocalStateUtil.getCurrentUser();
 			if (StringUtils.isBlank(createUser)) {
-				this.createUser = EducGradReportApiConstants.DEFAULT_CREATED_BY;
+				this.createUser = ReportApiConstants.DEFAULT_CREATED_BY;
 			}
 		}
 		if (this.createDate == null) {

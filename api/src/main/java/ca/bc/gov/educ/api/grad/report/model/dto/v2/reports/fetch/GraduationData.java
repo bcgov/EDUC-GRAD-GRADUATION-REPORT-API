@@ -1,6 +1,5 @@
-package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client;
+package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch;
 
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
@@ -8,16 +7,17 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class GraduationData implements Serializable {
+    private static final long serialVersionUID = 2L;
+
     private LocalDate graduationDate;
     private boolean honorsFlag;
     private boolean dogwoodFlag;
-    private List<String> programCodes = new ArrayList<>();
-    private List<String> programNames = new ArrayList<>();
-    private String totalCreditsUsedForGrad = "";
+    private List<String> programCodes;
+    private List<String> programNames;
+    private String totalCreditsUsedForGrad;
 
-    @JsonFormat(pattern= ReportApiConstants.DEFAULT_DATE_FORMAT)
+    @JsonFormat(pattern="yyyy-MM-dd")
     public LocalDate getGraduationDate() {
         return graduationDate;
     }
@@ -43,6 +43,9 @@ public class GraduationData implements Serializable {
     }
 
     public List<String> getProgramCodes() {
+        if(programCodes == null) {
+            programCodes = new ArrayList<>();
+        }
         return programCodes;
     }
 
@@ -51,6 +54,9 @@ public class GraduationData implements Serializable {
     }
 
     public List<String> getProgramNames() {
+        if(programNames == null) {
+            programNames = new ArrayList<>();
+        }
         return programNames;
     }
 
@@ -65,5 +71,5 @@ public class GraduationData implements Serializable {
     public void setTotalCreditsUsedForGrad(String value) {
         this.totalCreditsUsedForGrad = value;
     }
-
+    
 }

@@ -17,15 +17,12 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.School;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Student;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.TranscriptCourse;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.*;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.AchievementCourse;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.GradProgram;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.GradSearchStudent;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.GraduationData;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.OtherProgram;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.PackingSlip;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.Pen;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.Transcript;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.TranscriptResult;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.AchievementCourse;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.OtherProgram;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.TranscriptResult;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.*;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.PostalAddressImpl;
 import ca.bc.gov.educ.api.grad.report.model.entity.CertificateTypeCodeEntity;
@@ -48,7 +45,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants.NO_ELIGIBLE_COURSES_TRANSCRIPT_REPORT_IS_NOT_CREATED;
+import static ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants.NO_ELIGIBLE_COURSES_TRANSCRIPT_REPORT_IS_NOT_CREATED;
 
 @Slf4j
 @Component
@@ -72,9 +69,9 @@ public class GradDataConvertionBean extends BaseServiceImpl {
     public StudentInfo getStudentInfo(ReportData reportData) {
         Student student = getStudent(reportData);
         School school = getSchool(reportData);
-        GraduationData gradData = reportData.getGraduationData();
+        ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.GraduationData gradData = reportData.getGraduationData();
         List<String> programCodes = gradData == null ? new ArrayList<>() : gradData.getProgramCodes();
-        Transcript transcript = reportData.getTranscript();
+        ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Transcript transcript = reportData.getTranscript();
         StudentInfo result = new StudentInfo(
                 student.getPen().getValue(),// String studNo,
                 student.getFirstName(),// String firstName,
@@ -123,9 +120,9 @@ public class GradDataConvertionBean extends BaseServiceImpl {
     }
 
     public ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Transcript getTranscript(ReportData reportData) {
-        Transcript clientTranscript = reportData.getTranscript();
+        ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Transcript clientTranscript = reportData.getTranscript();
         if(clientTranscript == null) {
-            reportData.setTranscript(new Transcript());
+            reportData.setTranscript(new ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Transcript());
             clientTranscript = reportData.getTranscript();
         }
         TranscriptImpl transcript = new TranscriptImpl();
@@ -140,11 +137,11 @@ public class GradDataConvertionBean extends BaseServiceImpl {
     
     public Student getStudent(ReportData reportData) {
         if (reportData.getStudent() == null) {
-           ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.Student st = new ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.Student();
+           ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Student st = new ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Student();
             reportData.setStudent(st);
         }
         if(reportData.getStudent().getPen() == null) {
-            reportData.getStudent().setPen(new Pen());
+            reportData.getStudent().setPen(new ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Pen());
         }
         StudentImpl student = new StudentImpl();
         BeanUtils.copyProperties(reportData.getStudent(), student);
@@ -183,7 +180,7 @@ public class GradDataConvertionBean extends BaseServiceImpl {
 
     public School getSchool(ReportData reportData) {
         if (reportData.getSchool() == null) {
-            ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.School sch = new ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.School();
+            ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.School sch = new ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.School();
             reportData.setSchool(sch);
         }
         if(reportData.getSchool().getMincode() == null) {
@@ -245,7 +242,7 @@ public class GradDataConvertionBean extends BaseServiceImpl {
     public List<ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.AchievementCourse> getAchievementCourses(ReportData reportData) {
         List<ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.AchievementCourse> result = new ArrayList<>();
         if(reportData.getStudentCourses() != null) {
-            for (AchievementCourse r : reportData.getStudentCourses()) {
+            for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.AchievementCourse r : reportData.getStudentCourses()) {
                 AchievementCourseImpl course = new AchievementCourseImpl();
                 BeanUtils.copyProperties(r, course);
                 result.add(course);
@@ -257,7 +254,7 @@ public class GradDataConvertionBean extends BaseServiceImpl {
     public List<Exam> getStudentExams(ReportData reportData) {
         List<Exam> result = new ArrayList<>();
         if (reportData.getStudentExams() != null) {
-            for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.Exam r : reportData.getStudentExams()) {
+            for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Exam r : reportData.getStudentExams()) {
                 if (r.getCourseCode() == null || r.getSessionDate() == null) {
                     throw new InvalidParameterException("Exam code and Session date can't be NULL");
                 }
@@ -272,12 +269,12 @@ public class GradDataConvertionBean extends BaseServiceImpl {
     public List<OptionalProgram> getOptionalPrograms(ReportData reportData) {
         List<OptionalProgram> result = new ArrayList<>();
         if (reportData.getOptionalPrograms() != null) {
-            for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.OptionalProgram r : reportData.getOptionalPrograms()) {
+            for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.OptionalProgram r : reportData.getOptionalPrograms()) {
                 if (r.getOptionalProgramCode() == null || r.getOptionalProgramName() == null) {
                     throw new InvalidParameterException("Optional Program code and name can't be NULL");
                 }
                 List<GradRequirement> requirementMet = new ArrayList<>();
-                for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.GradRequirement gr : r.getRequirementMet()) {
+                for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.GradRequirement gr : r.getRequirementMet()) {
                     GradRequirement data = new GradRequirementImpl();
                     BeanUtils.copyProperties(gr, data);
                     List<ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.AchievementCourse> acrs = new ArrayList<>();
@@ -290,7 +287,7 @@ public class GradDataConvertionBean extends BaseServiceImpl {
                     requirementMet.add(data);
                 }
                 List<NonGradReason> nonGradReasons = new ArrayList<>();
-                for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.NonGradReason gr : r.getNonGradReasons()) {
+                for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.NonGradReason gr : r.getNonGradReasons()) {
                     NonGradReason data = new NonGradReasonImpl();
                     BeanUtils.copyProperties(gr, data);
                     nonGradReasons.add(data);
@@ -308,7 +305,7 @@ public class GradDataConvertionBean extends BaseServiceImpl {
     public HashMap<String, String> getNongradReasons(ReportData reportData) {
         final HashMap<String, String> reasons = new HashMap<>();
         if (reportData.getNonGradReasons() != null) {
-            for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.NonGradReason reason : reportData.getNonGradReasons()) {
+            for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.NonGradReason reason : reportData.getNonGradReasons()) {
                 String code = ObjectUtils.defaultIfNull(StringUtils.trimToNull(reason.getCode()), "!" + RandomStringUtils.randomAlphabetic(3));
                 reasons.put(code, reason.getDescription());
             }
@@ -318,9 +315,9 @@ public class GradDataConvertionBean extends BaseServiceImpl {
 
     public List<AssessmentResult> getAssessmentCourses(ReportData reportData) {
         List<AssessmentResult> result = new ArrayList<>();
-        Assessment assessment = reportData.getAssessment();
+        ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Assessment assessment = reportData.getAssessment();
         if(assessment.getResults() != null) {
-            for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.AssessmentResult r : assessment.getResults()) {
+            for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.AssessmentResult r : assessment.getResults()) {
                 AssessmentResultImpl assessmentResult = new AssessmentResultImpl();
                 BeanUtils.copyProperties(r, assessmentResult);
                 result.add(assessmentResult);
@@ -329,7 +326,7 @@ public class GradDataConvertionBean extends BaseServiceImpl {
         return result;
     }
 
-    public Certificate getCertificate(ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.Certificate certificate) {
+    public Certificate getCertificate(ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Certificate certificate) {
         if(certificate != null) {
             CertificateImpl result = new CertificateImpl();
             BeanUtils.copyProperties(certificate, result);
@@ -450,9 +447,9 @@ public class GradDataConvertionBean extends BaseServiceImpl {
     public Pair<List<Student>, TotalCounts> getStudents(ReportData reportData) {
         Set<StudentImpl> result = new HashSet<>();
         TotalCounts totals = new TotalCounts();
-        ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.School school = reportData.getSchool();
-        List<ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.Student> students = school.getStudents();
-        for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.Student st : students) {
+        ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.School school = reportData.getSchool();
+        List<ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Student> students = school.getStudents();
+        for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Student st : students) {
             if(st.getPen() == null || StringUtils.isBlank(st.getPen().getPen())) {
                 log.warn("Skip Student {} without Pen #", st.getPen().getEntityID());
                 continue;
@@ -475,12 +472,12 @@ public class GradDataConvertionBean extends BaseServiceImpl {
             student.setCurrentMailingAddress(address);
 
             GraduationDataImpl gradData = new GraduationDataImpl();
-            GraduationData graduationData = st.getGraduationData();
+            ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.GraduationData graduationData = st.getGraduationData();
             BeanUtils.copyProperties(graduationData, gradData);
             student.setGraduationData(gradData);
 
             if(st.getNonGradReasons() != null) {
-                for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.NonGradReason rsn : st.getNonGradReasons()) {
+                for (ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.NonGradReason rsn : st.getNonGradReasons()) {
                     NonGradReasonImpl reason = new NonGradReasonImpl();
                     BeanUtils.copyProperties(rsn, reason);
                     student.getNonGradReasons().add(reason);
@@ -557,7 +554,7 @@ public class GradDataConvertionBean extends BaseServiceImpl {
     }
 
     public ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.GradProgram getGradProgram(ReportData reportData) {
-        GradProgram program = reportData.getGradProgram();
+        ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.GradProgram program = reportData.getGradProgram();
         assert program != null;
         return new GradProgramImpl(GraduationProgramCode.valueFrom(
                 program.getCode().getCode(),
@@ -566,7 +563,7 @@ public class GradDataConvertionBean extends BaseServiceImpl {
 
     public List<School> getSchools(ReportData reportData) {
         List<School> result = new ArrayList<>();
-        for(ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.School sch: reportData.getSchools()) {
+        for(ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.School sch: reportData.getSchools()) {
             SchoolImpl school = new SchoolImpl();
             BeanUtils.copyProperties(sch, school);
             PostalAddressImpl address = new PostalAddressImpl();

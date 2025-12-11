@@ -89,6 +89,7 @@ endpoint:
     get-students-for-yearly-run: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/yearlydistribution
     get-students-for-school-run: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentschoolreportdata
     student-for-special-grad-run-list:  https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentlistsearch
+    get-student-optional-programs: https://educ-grad-student-api-77c02f-test.apps.silver.devops.gov.bc.ca/api/v1/student/optionalprogram/studentid/%s
     read-grad-student-record:
       url: https://educ-grad-student-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/student/studentid/%s
     read-grad-student-record-pen:
@@ -114,7 +115,12 @@ endpoint:
   grad-program-api:
     program-name-by-program_code:
       url: https://educ-grad-program-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/program/programs/%s
-
+    program_requirement_codes:
+      url: https://educ-grad-program-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/program/programrequirementcode
+  grad-student-graduation-api:
+    get-special-cases:
+      url: https://educ-grad-student-graduation-api-77c02f-dev.apps.silver.devops.gov.bc.ca/api/v1/studentgraduation/lgSc/specialcase/%s
+      
 #Splunk LogHelper
 splunk:
   log-helper:

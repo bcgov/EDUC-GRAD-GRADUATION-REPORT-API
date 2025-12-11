@@ -9,7 +9,7 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.v2.DistrictReportTransfo
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 class DistrictReportsServiceTest {
 
   @Mock
-  protected EducGradReportApiConstants constants;
+  protected ReportApiConstants constants;
   @Mock
   protected RESTService restService;
   @Mock

@@ -6,7 +6,7 @@ import ca.bc.gov.educ.api.grad.report.model.entity.v2.DistrictReportEntity;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.District;
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.v2.InstituteService;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +60,7 @@ class DistrictReportsControllerTest {
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
 
-    mockMvc.perform(get(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + EducGradReportApiConstants.SEARCH_MAPPING).with(mockAuthority)
+    mockMvc.perform(get(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + ReportApiConstants.SEARCH_MAPPING).with(mockAuthority)
                     .param("districtId", UUID.randomUUID().toString())
                     .param("reportType", "type")
                     .contentType(MediaType.APPLICATION_JSON))
@@ -75,7 +75,7 @@ class DistrictReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(get(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + EducGradReportApiConstants.SEARCH_MAPPING).contentType(MediaType.APPLICATION_JSON).with(mockAuthority))
+    mockMvc.perform(get(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + ReportApiConstants.SEARCH_MAPPING).contentType(MediaType.APPLICATION_JSON).with(mockAuthority))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1));
   }
@@ -92,7 +92,7 @@ class DistrictReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(get(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + EducGradReportApiConstants.SEARCH_MAPPING)
+    mockMvc.perform(get(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + ReportApiConstants.SEARCH_MAPPING)
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(mockAuthority)
                     .param("districtId", districtId.toString()))
@@ -110,7 +110,7 @@ class DistrictReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(get(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + EducGradReportApiConstants.SEARCH_MAPPING)
+    mockMvc.perform(get(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + ReportApiConstants.SEARCH_MAPPING)
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(mockAuthority)
                     .param("reportTypeCode", reportTypeCode))
@@ -129,7 +129,7 @@ class DistrictReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(get(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + EducGradReportApiConstants.SEARCH_MAPPING)
+    mockMvc.perform(get(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + ReportApiConstants.SEARCH_MAPPING)
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(mockAuthority)
                     .param("reportTypeCode", reportTypeCode)
@@ -152,7 +152,7 @@ class DistrictReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_READ_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(get(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
+    mockMvc.perform(get(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
                     .with(mockAuthority)
                     .param("districtId", districtId.toString())
                     .param("reportTypeCode", reportTypeCode)
@@ -178,7 +178,7 @@ class DistrictReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(post(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
+    mockMvc.perform(post(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(content))
@@ -197,7 +197,7 @@ class DistrictReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(delete(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + "/" + districtId + "/" + reportTypeCode)
+    mockMvc.perform(delete(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING + "/" + districtId + "/" + reportTypeCode)
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
@@ -214,7 +214,7 @@ class DistrictReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(delete(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
+    mockMvc.perform(delete(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("reportTypeCode", "type"))
@@ -227,7 +227,7 @@ class DistrictReportsControllerTest {
   void testDeleteDistrictReportsByType_givenMissingQueryParam_ReturnBadRequest() throws Exception {
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(delete(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
+    mockMvc.perform(delete(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("WRONG-PARAM", "type"))
@@ -241,7 +241,7 @@ class DistrictReportsControllerTest {
 
     final GrantedAuthority grantedAuthority = () -> "SCOPE_UPDATE_GRAD_STUDENT_REPORT_DATA";
     final SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor mockAuthority = oidcLogin().authorities(grantedAuthority);
-    mockMvc.perform(delete(EducGradReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
+    mockMvc.perform(delete(ReportApiConstants.DISTRICT_REPORTS_ROOT_MAPPING)
                     .with(mockAuthority)
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("reportTypeCode", "type"))

@@ -12,7 +12,8 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.GraduationData;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.GradSearchStudent;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.NonGradReason;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.ReportData;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.ReportData;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.ReportRequest;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.*;
 import ca.bc.gov.educ.api.grad.report.model.entity.ProgramCertificateTranscriptEntity;
 import ca.bc.gov.educ.api.grad.report.repository.ProgramCertificateTranscriptRepository;
@@ -27,7 +28,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.IOException;
 import java.io.Serial;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -77,12 +77,12 @@ public class StudentTranscriptServiceImpl extends GradReportService {
         this.studentTranscriptRepository = studentTranscriptRepository;
     }
     
-    public StudentTranscriptReport buildOfficialTranscriptReport() throws IOException {
+    public StudentTranscriptReport buildOfficialTranscriptReport() {
         return createTranscriptReport(ReportFormat.PDF, false);
     }
 
 
-    public StudentTranscriptReport buildUnOfficialTranscriptReport(final ReportFormat format) throws IOException {
+    public StudentTranscriptReport buildUnOfficialTranscriptReport(final ReportFormat format) {
         return createTranscriptReport(format, true);
     }
 
@@ -396,13 +396,16 @@ public class StudentTranscriptServiceImpl extends GradReportService {
         return transcriptReport;
     }
 
+    public StudentTranscriptReport getStudentTranscriptReportDocument(ReportRequest reportRequest) {
+        ReportRequestDataThreadLocal.setReportData(reportRequest.getData());
+        if(reportRequest.getOptions().isPreview())
+            return buildUnOfficialTranscriptReport(ReportFormat.PDF);
+        else
+            return buildOfficialTranscriptReport();
+    }
+
     public Parameters<String, Object> createParameters() {
-        final String methodName = "createParameters()";
-        
-        Parameters<String, Object> parameters = reportService.createParameters();
-
-
-        return parameters;
+        return reportService.createParameters();
     }
 
     public GraduationReport createGraduationReport() {

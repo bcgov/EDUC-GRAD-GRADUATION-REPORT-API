@@ -3,12 +3,17 @@ package ca.bc.gov.educ.api.grad.report.service;
 
 import ca.bc.gov.educ.api.grad.report.constants.ReportFormat;
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.institute.District;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.PersonalEducationNumber;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.ReportData;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.ReportOptions;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.ReportRequest;
 import ca.bc.gov.educ.api.grad.report.model.entity.*;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
+import ca.bc.gov.educ.api.grad.report.service.report.ReportService;
 import ca.bc.gov.educ.api.grad.report.service.v2.StudentTranscriptServiceImpl;
-import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.Generated;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +64,7 @@ public class CommonService extends BaseService {
     SchoolReportYearEndRepository schoolReportYearEndRepository;
     SchoolReportMonthlyRepository schoolReportMonthlyRepository;
     StudentTranscriptServiceImpl studentTranscriptService;
+    ReportService reportService;
 
     public static final int PAGE_SIZE = 1000;
 
@@ -70,7 +76,7 @@ public class CommonService extends BaseService {
     private static final List<String> SCCP_CERT_TYPES = Arrays.asList("SC", "SCF", "SCI");
 
     @Autowired
-    protected CommonService(EducGradReportApiConstants constants, RESTService restService,
+    protected CommonService(ReportApiConstants constants, RESTService restService,
                             @Qualifier("graduationReportApiClient") WebClient graduationServiceWebClient,
                             GradStudentCertificatesTransformer gradStudentCertificatesTransformer,
                             StudentCertificateRepository studentCertificateRepository,
@@ -91,7 +97,8 @@ public class CommonService extends BaseService {
                             SchoolReportsLightRepository schoolReportsLightRepository,
                             SchoolReportYearEndRepository schoolReportYearEndRepository,
                             SchoolReportMonthlyRepository schoolReportMonthlyRepository,
-                            StudentTranscriptServiceImpl studentTranscriptService
+                            StudentTranscriptServiceImpl studentTranscriptService,
+                            ReportService reportService
                             ) {
         super(constants, restService, graduationServiceWebClient);
         this.gradStudentCertificatesTransformer = gradStudentCertificatesTransformer;
@@ -114,6 +121,7 @@ public class CommonService extends BaseService {
         this.schoolReportYearEndRepository= schoolReportYearEndRepository;
         this.schoolReportMonthlyRepository = schoolReportMonthlyRepository;
         this.studentTranscriptService = studentTranscriptService;
+        this.reportService = reportService;
     }
 
     @Transactional
@@ -707,10 +715,17 @@ public class CommonService extends BaseService {
     @Transactional
     public ResponseEntity<InputStreamResource> getStudentCredentialByType(UUID studentID, String type) {
         if (type.equalsIgnoreCase("TRAN")) {
-            var pen = new PersonalEducationNumber();
             var student = studentTranscriptService.getStudentByIDFromStudentApi(studentID.toString());
-            pen.setPen(student.getPen());
-            var transcript = studentTranscriptService.getStudentTranscriptReport(pen, ReportFormat.PDF, false, null);
+            ReportData reportData = reportService.prepareTranscriptData(student.getPen(), false, new ExceptionMessage());
+            ReportOptions options = new ReportOptions();
+            options.setReportFile("transcript");
+            options.setReportName("Transcript Report.pdf");
+            options.setPreview(true);
+            ReportRequest reportParams = new ReportRequest();
+            reportParams.setOptions(options);
+            reportParams.setData(reportData);
+            var transcript = studentTranscriptService.getStudentTranscriptReportDocument(reportParams);
+            
             if (transcript != null) {
                 byte[] credentialByte = Base64.decodeBase64(transcript.getReportData());
                 ByteArrayInputStream bis = new ByteArrayInputStream(credentialByte);
