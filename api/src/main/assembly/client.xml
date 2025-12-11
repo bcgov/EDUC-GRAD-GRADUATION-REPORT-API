@@ -17,7 +17,7 @@
             <directory>${project.build.directory}/classes</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>ca/bc/gov/educ/api/grad/report/api/client/**</include>
+                <include>ca/bc/gov/educ/api/grad/report/model/dto/v2/reports/fetch/**</include>
             </includes>
         </fileSet>
         <fileSet>
@@ -25,7 +25,8 @@
             <outputDirectory>/</outputDirectory>
             <useDefaultExcludes>false</useDefaultExcludes>
             <includes>
-                <include>ca/bc/gov/educ/grad/report/api/client/**</include>
+                ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch
+                <include>ca/bc/gov/educ/api/grad/report/model/dto/v2/reports/fetch/**</include>
             </includes>
         </fileSet>
     </fileSets>
