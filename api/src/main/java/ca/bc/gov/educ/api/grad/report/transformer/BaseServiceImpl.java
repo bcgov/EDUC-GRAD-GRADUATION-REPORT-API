@@ -24,7 +24,7 @@ public class BaseServiceImpl {
     RESTService restService;
 
     @Autowired
-    @Qualifier("reportApiClient")
+    @Qualifier("graduationReportApiClient")
     WebClient webClient;
 
     @Autowired

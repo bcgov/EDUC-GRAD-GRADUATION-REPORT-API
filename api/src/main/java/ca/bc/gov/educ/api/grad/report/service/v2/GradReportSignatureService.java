@@ -36,7 +36,7 @@ public class GradReportSignatureService {
     @Autowired
     public GradReportSignatureService(SignatureImageRepository signatureImageRepository,
                                       GradReportSignatureTransformer gradReportSignatureTransformer,
-                                      @Qualifier("reportApiClient") WebClient webClient,
+                                      @Qualifier("graduationReportApiClient") WebClient webClient,
                                       ReportApiConstants constants,
                                       RESTService restService) {
         this.signatureImageRepository = signatureImageRepository;

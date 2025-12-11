@@ -56,7 +56,7 @@ public abstract class GradReportService {
     @Autowired
     JsonTransformer jsonTransformer;
     @Autowired
-    @Qualifier("reportApiClient")
+    @Qualifier("graduationReportApiClient")
     WebClient webClient;
     @Autowired
     ReportApiConstants constants;
