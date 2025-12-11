@@ -17,8 +17,6 @@
  */
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports;
 
-import ca.bc.gov.educ.api.grad.report.constants.Constants;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;

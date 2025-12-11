@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
 import ca.bc.gov.educ.api.grad.report.constants.GradReportTypesEnum;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.grad.report.filter.SchoolReportsSpecifications;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
@@ -12,7 +13,6 @@ import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.BaseService;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -20,9 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.ByteArrayInputStream;

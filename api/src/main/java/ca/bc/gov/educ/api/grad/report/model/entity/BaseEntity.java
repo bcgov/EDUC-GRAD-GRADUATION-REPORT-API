@@ -2,13 +2,13 @@ package ca.bc.gov.educ.api.grad.report.model.entity;
 
 import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Date;
 
 @Data

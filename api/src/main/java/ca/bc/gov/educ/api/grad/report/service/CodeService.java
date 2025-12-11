@@ -1,24 +1,23 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
-import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.CertificateTypeCodeEntity;
+import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.ReportTypeCodeEntity;
 import ca.bc.gov.educ.api.grad.report.model.entity.TranscriptTypesEntity;
 import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.GradValidation;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service

@@ -1,9 +1,9 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.District;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.JsonTransformer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;

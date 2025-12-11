@@ -9,7 +9,6 @@ import ca.bc.gov.educ.api.grad.report.exception.DataException;
 import ca.bc.gov.educ.api.grad.report.exception.DomainServiceException;
 import ca.bc.gov.educ.api.grad.report.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.GraduationData;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.GradSearchStudent;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.NonGradReason;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.ReportData;

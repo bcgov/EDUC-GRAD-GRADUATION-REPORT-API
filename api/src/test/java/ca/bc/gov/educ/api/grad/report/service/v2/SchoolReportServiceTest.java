@@ -1,9 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import ca.bc.gov.educ.api.grad.report.constants.GradReportTypesEnum;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.SchoolReport;
@@ -13,7 +11,6 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.v2.SchoolReportTransform
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -27,6 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class SchoolReportServiceTest {
 

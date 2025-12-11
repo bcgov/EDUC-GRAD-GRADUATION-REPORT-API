@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
 import ca.bc.gov.educ.api.grad.report.constants.GradReportTypesEnum;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.filter.DistrictReportSpecifications;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.District;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.DistrictReport;
@@ -11,7 +12,6 @@ import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportLightRepositor
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.BaseService;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;

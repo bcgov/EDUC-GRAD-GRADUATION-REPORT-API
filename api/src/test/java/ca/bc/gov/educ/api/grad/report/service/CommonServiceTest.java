@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.service;
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.constants.ReportFormat;
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
 import ca.bc.gov.educ.api.grad.report.model.dto.institute.District;
@@ -8,7 +9,6 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.GradSearchStud
 import ca.bc.gov.educ.api.grad.report.model.entity.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.service.v2.StudentTranscriptServiceImpl;
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import lombok.SneakyThrows;
 import org.junit.After;
 import org.junit.Before;

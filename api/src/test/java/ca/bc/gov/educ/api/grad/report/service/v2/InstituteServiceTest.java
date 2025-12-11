@@ -1,12 +1,12 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.District;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import org.junit.After;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;

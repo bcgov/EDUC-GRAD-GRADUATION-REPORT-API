@@ -13,7 +13,6 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.DistrictOrga
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Grade;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.GraduationProgram;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.IncompletionReason;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Mark;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.PackingSlipDetails;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.PostalAddress;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.School;

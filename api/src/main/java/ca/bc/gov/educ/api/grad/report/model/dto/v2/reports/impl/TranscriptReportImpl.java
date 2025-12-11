@@ -5,7 +5,6 @@ import ca.bc.gov.educ.api.grad.report.constants.TranscriptTypeCode;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Signatories;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.business.Student;
-import ca.bc.gov.educ.api.grad.report.reporting.adapter.BusinessEntityAdapter;
 import ca.bc.gov.educ.api.grad.report.service.v2.GradReportSignatureService;
 import lombok.extern.slf4j.Slf4j;
 

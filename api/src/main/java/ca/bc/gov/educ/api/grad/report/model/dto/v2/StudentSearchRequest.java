@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.Address;
 import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.model.dto.Address;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

@@ -6,7 +6,6 @@ import ca.bc.gov.educ.api.grad.report.model.dto.SchoolClob;
 import ca.bc.gov.educ.api.grad.report.model.dto.institute.School;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
 import ca.bc.gov.educ.api.grad.report.util.JsonTransformer;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

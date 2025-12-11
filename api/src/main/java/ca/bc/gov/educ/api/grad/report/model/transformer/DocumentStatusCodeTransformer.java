@@ -1,15 +1,14 @@
 package ca.bc.gov.educ.api.grad.report.model.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import ca.bc.gov.educ.api.grad.report.model.dto.DocumentStatusCode;
+import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.DocumentStatusCode;
-import ca.bc.gov.educ.api.grad.report.model.entity.DocumentStatusCodeEntity;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 @Component

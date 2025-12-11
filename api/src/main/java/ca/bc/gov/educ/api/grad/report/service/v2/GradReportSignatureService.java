@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.exception.DomainServiceException;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.GradReportSignatureImage;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl.DistrictImpl;
@@ -7,7 +8,6 @@ import ca.bc.gov.educ.api.grad.report.model.entity.GradReportSignatureImageEntit
 import ca.bc.gov.educ.api.grad.report.repository.SignatureImageRepository;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
 import ca.bc.gov.educ.api.grad.report.transformer.GradReportSignatureTransformer;
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,6 +7,7 @@ import ca.bc.gov.educ.api.grad.report.reporting.jasper.impl.JasperReportImpl;
 import ca.bc.gov.educ.api.grad.report.reporting.jasper.impl.ReportDocumentImpl;
 
 import java.io.IOException;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class AbstractReportService {

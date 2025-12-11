@@ -2,10 +2,9 @@ package ca.bc.gov.educ.api.grad.report.service.report;
 
 import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.exception.EntityNotFoundException;
-import ca.bc.gov.educ.api.grad.report.exception.ServiceException;
 import ca.bc.gov.educ.api.grad.report.model.dto.*;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.YearEndReportRequest;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.client.GradSearchStudent;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.*;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.Address;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.GradProgram;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.GradRequirement;
@@ -14,9 +13,7 @@ import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.GraduationStatu
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.School;
 import ca.bc.gov.educ.api.grad.report.service.CodeService;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.fetch.*;
 import ca.bc.gov.educ.api.grad.report.service.v2.SchoolService;
-import ca.bc.gov.educ.api.grad.report.service.v2.StudentTranscriptServiceImpl;
 import ca.bc.gov.educ.api.grad.report.util.EducGraduationApiUtils;
 import ca.bc.gov.educ.api.grad.report.util.Generated;
 import ca.bc.gov.educ.api.grad.report.util.JsonTransformer;
@@ -30,7 +27,6 @@ import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 

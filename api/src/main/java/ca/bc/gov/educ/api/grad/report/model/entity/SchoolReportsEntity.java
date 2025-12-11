@@ -1,9 +1,9 @@
 package ca.bc.gov.educ.api.grad.report.model.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import jakarta.persistence.*;
 import java.util.UUID;
 
 @Data

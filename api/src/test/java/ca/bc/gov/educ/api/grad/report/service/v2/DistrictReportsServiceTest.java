@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.grad.report.service.v2;
 
 import ca.bc.gov.educ.api.grad.report.constants.GradReportTypesEnum;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.District;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.DistrictReport;
 import ca.bc.gov.educ.api.grad.report.model.entity.v2.DistrictReportEntity;
@@ -9,7 +10,6 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.v2.DistrictReportTransfo
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.DistrictReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -1,6 +1,9 @@
 package ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.impl;
 
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.*;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.AbstractDomainEntity;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.AchievementResult;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Course;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.Mark;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

@@ -1,12 +1,12 @@
 package ca.bc.gov.educ.api.grad.report.controller.v2;
 
 import ca.bc.gov.educ.api.grad.report.EducGradReportApiApplication;
+import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
 import ca.bc.gov.educ.api.grad.report.model.dto.v2.reports.SchoolReport;
 import ca.bc.gov.educ.api.grad.report.model.entity.v2.SchoolReportEntity;
-import ca.bc.gov.educ.api.grad.report.model.dto.v2.School;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.v2.InstituteService;
-import ca.bc.gov.educ.api.grad.report.constants.ReportApiConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {EducGradReportApiApplication.class})
