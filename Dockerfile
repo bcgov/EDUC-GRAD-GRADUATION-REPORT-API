@@ -5,7 +5,7 @@ COPY api/pom.xml .
 COPY api/src src
 COPY api/lib lib
 RUN mvn package -DskipTests
-RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+RUN mv target/*-client.jar target/educ-grad-graduation-report-api-client.jar.bkp && mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 FROM artifacts.developer.gov.bc.ca/docker-remote/openjdk:18.0.2.1-jdk-oracle
 RUN useradd -ms /bin/bash spring && mkdir -p /logs && chown -R spring:spring /logs && chmod 755 /logs
