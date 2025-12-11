@@ -58,6 +58,27 @@ public class RestWebClient {
                 .filter(this.log())
                 .build();
     }
+
+    @Primary
+    @Bean("reportApiClient")
+    public WebClient getGraduationApiClientWebClient(OAuth2AuthorizedClientManager authorizedClientManager) {
+        ServletOAuth2AuthorizedClientExchangeFilterFunction filter = new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
+        filter.setDefaultClientRegistrationId("graduation-report-api-client");
+        DefaultUriBuilderFactory defaultUriBuilderFactory = new DefaultUriBuilderFactory();
+        defaultUriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
+        return WebClient.builder()
+                .uriBuilderFactory(defaultUriBuilderFactory)
+                .filter(setRequestHeaders())
+                .exchangeStrategies(ExchangeStrategies
+                        .builder()
+                        .codecs(codecs -> codecs
+                                .defaultCodecs()
+                                .maxInMemorySize(50 * 1024 * 1024))
+                        .build())
+                .apply(filter.oauth2Configuration())
+                .filter(this.log())
+                .build();
+    }
     
     @Bean("gradReportEducStudentApiClient")
     public WebClient getGradEducStudentApiClientWebClient(OAuth2AuthorizedClientManager authorizedClientManager) {

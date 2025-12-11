@@ -22,7 +22,7 @@ public class MockConfiguration {
   }
 
   @Bean
-  @Qualifier("graduationReportApiClient")
+  @Qualifier("reportApiClient")
   public WebClient reportApiWebClient() {
     return Mockito.mock(WebClient.class);
   }
