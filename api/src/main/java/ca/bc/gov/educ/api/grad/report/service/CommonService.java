@@ -720,7 +720,7 @@ public class CommonService extends BaseService {
             ReportOptions options = new ReportOptions();
             options.setReportFile("transcript");
             options.setReportName("Transcript Report.pdf");
-            options.setPreview(true);
+            options.setPreview(false);
             ReportRequest reportParams = new ReportRequest();
             reportParams.setOptions(options);
             reportParams.setData(reportData);
