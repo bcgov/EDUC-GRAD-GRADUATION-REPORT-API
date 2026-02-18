@@ -7,6 +7,7 @@ import ca.bc.gov.educ.api.grad.report.model.transformer.*;
 import ca.bc.gov.educ.api.grad.report.repository.*;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
 import ca.bc.gov.educ.api.grad.report.util.Generated;
+import ca.bc.gov.educ.api.grad.report.util.TextNormalizer;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -731,20 +732,26 @@ public class CommonService extends BaseService {
         log.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
-        return processReportGradStudentDataList(students, new ArrayList<>());
+        List<ReportGradStudentData> result = processReportGradStudentDataList(students, new ArrayList<>());
+        result.forEach(TextNormalizer::normalizeObject);
+        return result;
     }
 
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(List<String> schools) {
         log.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
-        return processReportGradStudentDataList(students, schools);
+        List<ReportGradStudentData> result = processReportGradStudentDataList(students, schools);
+        result.forEach(TextNormalizer::normalizeObject);
+        return result;
     }
 
     public List<ReportGradStudentData> getSchoolReportGradStudentData() {
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> students = schoolReportMonthlyRepository.findStudentForSchoolReport(nextPage);
-        return processReportGradStudentDataList(students, new ArrayList<>());
+        List<ReportGradStudentData> result = processReportGradStudentDataList(students, new ArrayList<>());
+        result.forEach(TextNormalizer::normalizeObject);
+        return result;
     }
 
     private List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students, List<String> schools) {

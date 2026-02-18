@@ -12,6 +12,7 @@ import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportLightRepository;
 import ca.bc.gov.educ.api.grad.report.repository.v2.SchoolReportRepository;
 import ca.bc.gov.educ.api.grad.report.service.RESTService;
 import ca.bc.gov.educ.api.grad.report.util.EducGradReportApiConstants;
+import ca.bc.gov.educ.api.grad.report.util.TextNormalizer;
 import ca.bc.gov.educ.api.grad.report.util.ThreadLocalStateUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -165,20 +166,26 @@ public class CommonService {
     public List<ReportGradStudentData> getSchoolReportGradStudentData() {
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> students = schoolReportMonthlyRepository.findStudentForSchoolReport(nextPage);
-        return processReportGradStudentDataList(students, YearEndReportRequest.builder().build());
+        List<ReportGradStudentData> result = processReportGradStudentDataList(students, YearEndReportRequest.builder().build());
+        result.forEach(TextNormalizer::normalizeObject);
+        return result;
     }
 
     public List<ReportGradStudentData> getSchoolYearEndReportGradStudentData(YearEndReportRequest yearEndReportRequest) {
         log.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> schoolStudents = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
-        return processReportGradStudentDataList(schoolStudents, yearEndReportRequest);
+        List<ReportGradStudentData> result = processReportGradStudentDataList(schoolStudents, yearEndReportRequest);
+        result.forEach(TextNormalizer::normalizeObject);
+        return result;
     }
 
     public List<ReportGradStudentData> getYearEndReportGradStudentData(YearEndReportRequest yearEndReportRequest) {
         log.debug("getYearEndReportGradStudentData");
         if(yearEndReportRequest.getStudentList() != null && !yearEndReportRequest.getStudentList().isEmpty()) {
-            return getStudentsFromGradStudentApi(yearEndReportRequest);
+            List<ReportGradStudentData> result = getStudentsFromGradStudentApi(yearEndReportRequest);
+            result.forEach(TextNormalizer::normalizeObject);
+            return result;
         }
         return getSchoolYearEndReportGradStudentData(yearEndReportRequest);
     }
@@ -187,7 +194,9 @@ public class CommonService {
         log.debug("getSchoolYearEndReportGradStudentData>");
         PageRequest nextPage = PageRequest.of(0, PAGE_SIZE);
         Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(nextPage);
-        return processReportGradStudentDataList(students, YearEndReportRequest.builder().build());
+        List<ReportGradStudentData> result = processReportGradStudentDataList(students, YearEndReportRequest.builder().build());
+        result.forEach(TextNormalizer::normalizeObject);
+        return result;
     }
 
     private List<ReportGradStudentData> processReportGradStudentDataList(Page<SchoolReportEntity> students, YearEndReportRequest yearEndReportRequest) {
