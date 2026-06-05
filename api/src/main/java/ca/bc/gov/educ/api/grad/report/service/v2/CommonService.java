@@ -197,13 +197,16 @@ public class CommonService {
             PageRequest nextPage;
             result.addAll(getNextPageStudentsFromGradStudentApi(students, yearEndReportRequest));
             final int totalNumberOfPages = students.getTotalPages();
+            String correlationId = ThreadLocalStateUtil.getCorrelationID();
+            String currentUser = ThreadLocalStateUtil.getCurrentUser();
+            String requestSource = ThreadLocalStateUtil.getRequestSource();
             log.debug("Total number of pages: {}, total rows count {}", totalNumberOfPages, students.getTotalElements());
 
             List<Callable<Object>> tasks = new ArrayList<>();
 
             for (int i = 1; i < totalNumberOfPages; i++) {
                 nextPage = PageRequest.of(i, PAGE_SIZE);
-                UUIDPageTask pageTask = new UUIDPageTask(nextPage, yearEndReportRequest);
+                UUIDPageTask pageTask = new UUIDPageTask(nextPage, yearEndReportRequest, correlationId, currentUser, requestSource);
                 tasks.add(pageTask);
             }
 
@@ -218,7 +221,6 @@ public class CommonService {
         List<UUID> studentGuidsInBatch = students.getContent().stream().map(SchoolReportEntity::getGraduationStudentRecordId).distinct().toList();
         Map<UUID, ReportGradStudentData> studentMap = getReportGradStudentData(studentGuidsInBatch).stream()
             .collect(Collectors.toMap(ReportGradStudentData::getGraduationStudentRecordId, student -> student));
-
         for(SchoolReportEntity e: students.getContent()) {
             String paperType = e.getPaperType();
             String certificateTypeCode = e.getCertificateTypeCode(); //either transcript or certificate codes
@@ -335,16 +337,29 @@ public class CommonService {
 
         private final PageRequest pageRequest;
         private final YearEndReportRequest yearEndReportRequest;
+        private final String correlationId;
+        private final String currentUser;
+        private final String requestSource;
 
-        public UUIDPageTask(PageRequest pageRequest, YearEndReportRequest yearEndReportRequest) {
+        public UUIDPageTask(PageRequest pageRequest, YearEndReportRequest yearEndReportRequest, String correlationId, String currentUser, String requestSource) {
             this.pageRequest = pageRequest;
             this.yearEndReportRequest = yearEndReportRequest;
+            this.correlationId = correlationId;
+            this.currentUser = currentUser;
+            this.requestSource = requestSource;
         }
 
         @Override
         public Object call() throws Exception {
-            Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(pageRequest);
-            return Pair.of(pageRequest, getNextPageStudentsFromGradStudentApi(students, yearEndReportRequest));
+            ThreadLocalStateUtil.setCorrelationID(correlationId);
+            ThreadLocalStateUtil.setCurrentUser(currentUser);
+            ThreadLocalStateUtil.setRequestSource(requestSource);
+            try {
+                Page<SchoolReportEntity> students = schoolReportYearEndRepository.findStudentForSchoolYearEndReport(pageRequest);
+                return Pair.of(pageRequest, getNextPageStudentsFromGradStudentApi(students, yearEndReportRequest));
+            } finally {
+                ThreadLocalStateUtil.clear();
+            }
         }
     }
 

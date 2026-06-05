@@ -30,6 +30,9 @@ public class InstituteService {
 	}
 
 	public School getSchool(UUID schoolId) {
+		if (schoolId == null) {
+			return null;
+		}
 		var response = this.restService.get(String.format(educGraduationApiConstants.getSchoolBySchoolIdUrl(), schoolId),
 				School.class, graduationServiceWebClient);
 		return jsonTransformer.convertValue(response, new TypeReference<>() {});
@@ -45,4 +48,3 @@ public class InstituteService {
 		return jsonTransformer.convertValue(response, new TypeReference<>() {});
 	}
 }
-
