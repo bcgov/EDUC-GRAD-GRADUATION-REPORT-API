@@ -30,6 +30,9 @@ public class SchoolCacheService {
   }
 
   public School getSchool(UUID schoolId) {
+    if (schoolId == null) {
+      return null;
+    }
     synchronized (schools) {
       return schools.computeIfAbsent(schoolId, instituteService::getSchool);
     }
